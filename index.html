@@ -24,7 +24,7 @@
     };
   </script>
 
-  <!-- Phosphor Icons vía CSS (Carga nativa segura sin scripts que puedan fallar) -->
+  <!-- Phosphor Icons vía CSS -->
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
 
@@ -37,14 +37,12 @@
     .pt-safe { padding-top: max(env(safe-area-inset-top), 14px); }
     .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 20px); }
     
-    /* Evita el zoom involuntario de Safari en iPhone */
     input, select, textarea { font-size: 16px !important; }
     button, select, input, textarea, a { touch-action: manipulation; }
     
     ::-webkit-scrollbar { display: none; width: 0; height: 0; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Modales nativos seguros */
     .app-modal {
       display: none;
       position: fixed;
@@ -53,6 +51,15 @@
       background-color: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
+    }
+
+    /* Contenedor del escáner */
+    #qr-reader, #pos-qr-reader {
+      border: none !important;
+    }
+    #qr-reader video, #pos-qr-reader video {
+      border-radius: 1rem;
+      object-fit: cover;
     }
 
     @media print {
@@ -64,7 +71,7 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen">
 
-  <!-- CABECERA PRINCIPAL (Distribución limpia en 2 filas sin encimarse) -->
+  <!-- CABECERA PRINCIPAL -->
   <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
     
     <!-- Fila 1: Logo e Identidad -->
@@ -98,7 +105,7 @@
       </div>
     </div>
 
-    <!-- Fila 2: Botonera de Acciones (Cuadrícula ordenada de 5 botones) -->
+    <!-- Fila 2: Botonera de Acciones (Cuadrícula de 5 accesos) -->
     <div class="px-4 pb-2.5 max-w-5xl mx-auto w-full">
       <div class="grid grid-cols-5 gap-1.5 sm:gap-2 text-center">
         <button type="button" onclick="window.openNewRepairModal()" class="py-2.5 px-1 rounded-xl bg-iosBlue text-white text-[10px] sm:text-xs font-bold shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition">
@@ -121,7 +128,7 @@
     </div>
   </header>
 
-  <!-- Notificador en vivo -->
+  <!-- Notificador de Sincronización -->
   <div id="syncNotificationBar" class="hidden bg-indigo-950 border-b border-indigo-800 px-3 py-1 text-center text-[10px] font-medium text-indigo-200 flex items-center justify-center gap-2">
     <i class="ph-bold ph-arrows-clockwise animate-spin text-xs text-indigo-400"></i><span id="syncNotificationText">Sincronizando cambios en vivo...</span>
   </div>
@@ -197,9 +204,7 @@
     </div>
   </main>
 
-  <!-- =================================================================================== -->
-  <!-- MODAL: DETALLES DE ORDEN (MODIFICAR ESTADO Y APROBACIÓN POR WHATSAPP)               -->
-  <!-- =================================================================================== -->
+  <!-- MODAL: DETALLES DE ORDEN -->
   <div id="detailModal" class="app-modal flex-col justify-end sm:justify-center p-0 sm:p-4">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[92vh] flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800 bg-zinc-900">
@@ -222,7 +227,7 @@
 
       <div class="overflow-y-auto p-4 space-y-3.5 flex-1 pb-safe">
         
-        <!-- SECCIÓN 1: PRESUPUESTO & WHATSAPP PARA APROBAR / RECHAZAR -->
+        <!-- PRESUPUESTO & WHATSAPP PARA APROBACIÓN -->
         <div class="p-3 bg-zinc-950 border border-indigo-800/80 rounded-2xl space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="text-[10px] font-bold text-indigo-300 uppercase flex items-center gap-1">
@@ -231,13 +236,11 @@
             <span id="dtlBudgetApprovalBadge" class="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-700">🟡 Pendiente</span>
           </div>
 
-          <!-- Botón principal para enviar por WhatsApp si aprueba -->
           <button type="button" onclick="window.sendBudgetWhatsApp()" class="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow active:scale-95 transition">
             <i class="ph-bold ph-whatsapp-logo text-base"></i>
             <span>Consultar Presupuesto por WhatsApp (Aprueba/Rechaza)</span>
           </button>
 
-          <!-- Respuesta del cliente -->
           <div class="space-y-1 pt-1">
             <span class="text-[9px] text-zinc-400 uppercase font-bold block">Respuesta Recibida del Cliente:</span>
             <div class="grid grid-cols-3 gap-1.5">
@@ -248,14 +251,13 @@
           </div>
         </div>
 
-        <!-- SECCIÓN 2: MODIFICAR ESTADO OPERATIVO DEL EQUIPO -->
+        <!-- MODIFICAR ESTADO OPERATIVO -->
         <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="text-[10px] text-zinc-400 font-bold uppercase">Estado Operativo del Dispositivo:</span>
             <span id="dtlOperationalStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-950 text-amber-300 border border-amber-800">Espera</span>
           </div>
 
-          <!-- Botones interactivos directos para cambiar estado -->
           <div class="grid grid-cols-4 gap-1.5">
             <button type="button" id="btnOpStatusWaiting" onclick="window.updateDeviceOperationalStatus('WAITING')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] flex flex-col items-center gap-1 active:scale-95 transition border border-zinc-700">
               <i class="ph-bold ph-clock text-amber-400 text-base"></i> 1. Espera
@@ -280,7 +282,7 @@
           </div>
         </div>
 
-        <!-- SECCIÓN 3: NOTIFICACIONES DE ESTADO Y RETIRO POR WHATSAPP -->
+        <!-- NOTIFICACIONES DE AVANCE Y RETIRO -->
         <div class="p-3 bg-zinc-950 border border-emerald-800/60 rounded-2xl space-y-2">
           <span class="text-[10px] font-bold text-emerald-400 uppercase flex items-center gap-1">
             <i class="ph-bold ph-bell text-sm"></i> Avisos de Avance y Retiro
@@ -367,14 +369,14 @@
     </div>
   </div>
 
-  <!-- MODAL: VENTAS POS -->
+  <!-- MODAL: VENTAS (POS) -->
   <div id="salesModal" class="app-modal flex-col justify-end sm:justify-center p-0 sm:p-4">
     <div class="bg-zinc-900 sm:border border-amber-600/70 sm:rounded-3xl w-full h-[95vh] sm:h-[90vh] max-w-4xl flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-shopping-cart-simple text-amber-400 text-xl"></i><h3 class="text-sm font-bold text-white">Ventas Mostrador (POS)</h3></div><button type="button" onclick="window.closeModal('salesModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
         <div class="flex-1 flex flex-col border-b md:border-b-0 md:border-r border-zinc-800 p-3.5 space-y-3 overflow-hidden">
           <div class="flex gap-2 shrink-0"><input type="text" id="posSearchProduct" oninput="window.renderPosCatalog()" placeholder="Buscar repuesto..." class="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white"><button type="button" onclick="window.togglePosCam()" class="px-3 py-2 bg-purple-900 text-purple-200 rounded-xl font-bold flex items-center gap-1"><i class="ph-bold ph-camera"></i> Escanear</button></div>
-          <div id="posScannerBox" class="hidden p-2 bg-zinc-950 rounded-xl border border-purple-800 space-y-1"><button type="button" onclick="window.stopPosCam()" class="text-rose-400 font-bold w-full text-right py-1">Cerrar</button><div id="pos-qr-reader" class="w-full rounded-xl min-h-[160px] bg-black"></div></div>
+          <div id="posScannerBox" class="hidden p-2 bg-zinc-950 rounded-xl border border-purple-800 space-y-1"><button type="button" onclick="window.stopPosCam()" class="text-rose-400 font-bold w-full text-right py-1">Cerrar Cámara</button><div id="pos-qr-reader" class="w-full rounded-xl min-h-[180px] bg-black"></div></div>
           <div class="flex-1 overflow-y-auto"><div id="posCatalogGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div></div>
         </div>
         <div class="w-full md:w-[320px] flex flex-col bg-zinc-950/60 p-3.5 space-y-3 shrink-0 overflow-y-auto pb-safe">
@@ -387,13 +389,29 @@
     </div>
   </div>
 
-  <!-- MODAL: STOCK -->
+  <!-- MODAL: STOCK CON CÁMARA CORREGIDA -->
   <div id="stockModal" class="app-modal flex-col justify-end sm:justify-center p-0 sm:p-4">
     <div class="bg-zinc-900 border-t sm:border border-purple-800 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-2xl flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-barcode text-purple-400 text-xl"></i><h3 class="font-bold text-white text-sm">Control de Stock</h3></div><button type="button" onclick="window.closeModal('stockModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-barcode text-purple-400 text-xl"></i><h3 class="font-bold text-white text-sm">Control de Stock</h3></div><button type="button" onclick="window.closeStockModal()" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="p-4 overflow-y-auto space-y-3 flex-1 pb-safe">
-        <div class="grid grid-cols-2 gap-2"><button type="button" onclick="window.toggleStockCam()" id="btnStartScanner" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold flex items-center justify-center gap-1.5 shadow"><i class="ph-bold ph-camera text-base"></i><span id="btnScannerText">Cámara</span></button><button type="button" onclick="window.toggleStockForm()" class="py-2.5 px-3 rounded-xl bg-zinc-800 text-white font-bold flex items-center justify-center gap-1.5 shadow"><i class="ph-bold ph-plus-circle text-purple-400 text-base"></i><span>+ Producto</span></button></div>
-        <div id="scannerContainer" class="hidden p-2.5 bg-zinc-950 border border-purple-800 rounded-2xl space-y-1"><div class="flex justify-between text-[10px] text-purple-300"><span>Apunte al código de barras:</span><button type="button" onclick="window.stopStockCam()" class="text-rose-400 font-bold">Cerrar</button></div><div id="qr-reader" class="w-full rounded-xl min-h-[160px] bg-black"></div></div>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" onclick="window.toggleStockCam()" id="btnStartScanner" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
+            <i class="ph-bold ph-camera text-base"></i><span id="btnScannerText">Cámara</span>
+          </button>
+          <button type="button" onclick="window.toggleStockForm()" class="py-2.5 px-3 rounded-xl bg-zinc-800 text-white font-bold flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
+            <i class="ph-bold ph-plus-circle text-purple-400 text-base"></i><span>+ Producto</span>
+          </button>
+        </div>
+
+        <!-- Contenedor del Lector QR/Barras -->
+        <div id="scannerContainer" class="hidden p-3 bg-zinc-950 border border-purple-800 rounded-2xl space-y-2">
+          <div class="flex justify-between items-center text-xs text-purple-300 font-semibold">
+            <span>Apunte la cámara al código de barras o QR:</span>
+            <button type="button" onclick="window.stopStockCam()" class="text-rose-400 font-bold px-2 py-1 bg-rose-950/60 rounded-lg">Cerrar</button>
+          </div>
+          <div id="qr-reader" class="w-full rounded-2xl overflow-hidden min-h-[220px] bg-black"></div>
+        </div>
+
         <div id="newStockFormContainer" class="hidden p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><div class="flex gap-1"><input type="text" id="stkCode" placeholder="Código *" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white font-mono"><button type="button" onclick="window.autoBarcode()" class="px-2.5 bg-zinc-700 rounded-xl text-[10px] font-bold">Auto</button></div><input type="text" id="stkName" placeholder="Nombre Repuesto *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white"></div>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2"><select id="stkCategory" class="col-span-2 sm:col-span-1 w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-white"><option value="Pantallas">Pantallas</option><option value="Baterías">Baterías</option><option value="Pines">Pines</option><option value="Otros">Otros</option></select><input type="number" id="stkQuantity" value="1" placeholder="Cant" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-white font-bold"><input type="number" id="stkCostPrice" placeholder="Costo ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-zinc-300 font-mono"><input type="number" id="stkSalePrice" placeholder="Venta ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-emerald-400 font-bold font-mono"></div>
@@ -429,12 +447,12 @@
     </div>
   </div>
 
-  <!-- MODAL: LICENCIAS (MODO MAESTRO PROTEGIDO) -->
+  <!-- MODAL: LICENCIAS (PIN 8408 EN MODO SIGILO) -->
   <div id="licenseModal" class="app-modal flex-col justify-end sm:justify-center p-0 sm:p-4">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3 pb-safe shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
-      <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center"><span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado:</span><div id="licenseStatusText" onclick="window.secretTap()" class="font-mono text-base font-black text-amber-400 py-1 cursor-pointer select-none">DEMO</div></div>
-      <div id="masterAdminUnlockedView" class="hidden p-3 bg-zinc-950 rounded-2xl border border-indigo-700 space-y-2"><span class="text-[10px] font-bold text-indigo-300 uppercase">Panel Habilitación:</span><input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono"><button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 text-white font-bold rounded-xl">Emitir Clave PRO</button><div id="genResultBox" class="hidden p-2 bg-zinc-900 rounded-xl flex justify-between items-center"><span id="genGeneratedKey" class="font-mono text-emerald-400 font-bold text-xs"></span><button type="button" onclick="window.copyKey()" class="px-2 py-1 bg-zinc-800 rounded">Copiar</button></div></div>
+      <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center"><span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia:</span><div id="licenseStatusText" onclick="window.secretTap()" class="font-mono text-base font-black text-amber-400 py-1 cursor-pointer select-none">DEMO</div></div>
+      <div id="masterAdminUnlockedView" class="hidden p-3 bg-zinc-950 rounded-2xl border border-indigo-700 space-y-2"><span class="text-[10px] font-bold text-indigo-300 uppercase">Panel Habilitación (Creador):</span><input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono"><button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 text-white font-bold rounded-xl">Emitir Clave PRO</button><div id="genResultBox" class="hidden p-2 bg-zinc-900 rounded-xl flex justify-between items-center"><span id="genGeneratedKey" class="font-mono text-emerald-400 font-bold text-xs"></span><button type="button" onclick="window.copyKey()" class="px-2 py-1 bg-zinc-800 rounded">Copiar</button></div></div>
       <div class="flex gap-1.5"><input type="text" id="inpActivationKey" placeholder="OL-XXXX-XXXX" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase"><button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 text-white font-bold rounded-xl">Activar</button></div>
       <button type="button" onclick="window.closeModal('licenseModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1">Cerrar</button>
     </div>
@@ -444,7 +462,7 @@
   <div id="teamModal" class="app-modal flex-col justify-end sm:justify-center p-0 sm:p-4"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Equipo & Sincronización</h3><button type="button" onclick="window.closeModal('teamModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800"><span class="text-[10px] text-zinc-400 block mb-0.5">Código Taller:</span><div id="modalWorkshopCodeDisplay" class="font-mono text-base font-bold text-white">TALLER-XXXX</div></div><div class="space-y-1"><label class="text-[10px] text-zinc-400 block">Vincular a otro Taller:</label><div class="flex gap-1.5"><input type="text" id="inpJoinWorkshopCode" placeholder="Ej: TALLER-8291" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase"><button type="button" onclick="window.joinWorkshop()" class="px-3.5 py-2 rounded-xl bg-indigo-600 text-white font-bold">Unirme</button></div></div><button type="button" onclick="window.closeModal('teamModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1">Cerrar</button></div></div>
 
   <!-- MODAL: COMPARTIR -->
-  <div id="installModal" class="app-modal flex-col justify-end sm:justify-center p-0 sm:p-4"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Compartir Web App</h3><button type="button" onclick="window.closeModal('installModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-1"><span class="font-bold text-emerald-400 uppercase text-[10px] flex items-center gap-1"><i class="ph-bold ph-shield-check"></i> Privacidad de Taller Garantizada</span><p class="text-zinc-300 leading-tight">El nuevo dispositivo iniciará en un <b>taller nuevo independiente en blanco</b>. No accederá a tus clientes ni a tu caja.</p></div><div class="space-y-2"><button type="button" onclick="window.shareAppWA()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold flex items-center justify-center gap-2"><i class="ph-bold ph-whatsapp-logo text-base"></i> Compartir por WhatsApp</button><button type="button" onclick="window.copyAppUrl()" class="w-full py-2.5 rounded-xl bg-zinc-800 text-white font-bold flex items-center justify-center gap-2"><i class="ph-bold ph-copy text-base"></i> Copiar Enlace</button></div><button type="button" onclick="window.closeModal('installModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl">Cerrar</button></div></div>
+  <div id="installModal" class="app-modal flex-col justify-end sm:justify-center p-0 sm:p-4"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Compartir Web App</h3><button type="button" onclick="window.closeModal('installModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-1"><span class="font-bold text-emerald-400 uppercase text-[10px] flex items-center gap-1"><i class="ph-bold ph-shield-check"></i> Privacidad de Taller Garantizada</span><p class="text-zinc-300 leading-tight">El nuevo dispositivo iniciará en un <b>taller nuevo independiente en blanco</b>. No accederá a tus clientes ni a tu caja.</p></div><div class="space-y-2"><button type="button" onclick="window.shareAppWA()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold flex items-center justify-center gap-2"><i class="ph-bold ph-whatsapp-logo text-base"></i> Compartir por WhatsApp</button><button type="button" onclick="window.copyAppUrl()" class="w-full py-2.5 rounded-xl bg-zinc-800 text-white font-bold flex items-center justify-center gap-2"><i class="ph-bold ph-copy text-base"></i> Copiar Enlace Directo</button></div><button type="button" onclick="window.closeModal('installModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl">Cerrar</button></div></div>
 
   <!-- MODAL: TRASLADO ENTRE SUCURSALES -->
   <div id="transitModal" class="app-modal flex-col justify-end sm:justify-center p-0 sm:p-4"><div class="bg-zinc-900 border-t sm:border border-indigo-700 sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Enviar Equipo a Sucursal</h3><button type="button" onclick="window.closeModal('transitModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="space-y-2"><div><label class="text-[10px] text-zinc-400 block mb-0.5">Sucursal Destino *</label><select id="selTransitDestination" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></select></div><div><label class="text-[10px] text-zinc-400 block mb-0.5">Cadete / Datos</label><input type="text" id="inpTransitNotes" placeholder="Ej: Enviado con Cadete Juan" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white"></div></div><button type="button" onclick="window.confirmTransitDispatch()" class="w-full py-2.5 bg-indigo-600 text-white font-bold rounded-xl">Iniciar Viaje</button></div></div>
@@ -509,6 +527,7 @@
     window.openNewRepairModal = function() { $('newRepairForm').reset(); window.calcBalance('new'); window.openModal('newRepairModal'); };
     window.openSalesModal = function() { posCart = []; window.renderPosCart(); window.renderPosCatalog(); var s = $('posBranch'); if(s) s.innerHTML = (workshopSettings.branches||['Central']).map(function(b){ return '<option value="'+b+'">'+b+'</option>'; }).join(''); window.openModal('salesModal'); };
     window.openStockModal = function() { window.openModal('stockModal'); window.renderStockList(); };
+    window.closeStockModal = function() { window.stopStockCam(); window.closeModal('stockModal'); };
     window.openCashModal = function() { window.openModal('cashModal'); window.renderCashBranchSelector(); window.renderCashMovements(); };
     window.openInstallModal = function() { window.openModal('installModal'); };
     window.openTeamModal = function() { $('modalWorkshopCodeDisplay').textContent = currentWorkshopId; window.openModal('teamModal'); };
@@ -533,6 +552,150 @@
     window.handleSearch = function() { window.renderRepairsList(); var c = $('clearSearchBtn'); var el = $('searchInput'); if(el && el.value) c.classList.remove('hidden'); else c.classList.add('hidden'); };
     window.clearSearch = function() { var el = $('searchInput'); if(el) el.value = ''; $('clearSearchBtn').classList.add('hidden'); window.renderRepairsList(); };
     window.calcBalance = function(t) { var b = parseFloat($(t==='new'?'inpDeviceBudget':'editDeviceBudget').value)||0; var a = parseFloat($(t==='new'?'inpDeviceAdvance':'editDeviceAdvance').value)||0; var r = Math.max(0, b - a); var el = $(t==='new'?'newCalculatedBalance':'editCalculatedBalance'); if(el) el.textContent = '$' + r.toLocaleString(); };
+
+    // ESCÁNER DE CÁMARA PARA STOCK
+    window.toggleStockCam = function() {
+      var box = $('scannerContainer');
+      var btnText = $('btnScannerText');
+      if (!box) return;
+
+      if (!box.classList.contains('hidden')) {
+        window.stopStockCam();
+        return;
+      }
+
+      box.classList.remove('hidden');
+      if (btnText) btnText.textContent = 'Detener';
+
+      try {
+        if (!stockScanner) {
+          stockScanner = new Html5Qrcode("qr-reader");
+        }
+
+        var config = {
+          fps: 10,
+          qrbox: function(viewfinderWidth, viewfinderHeight) {
+            var minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+            var edge = Math.floor(minEdge * 0.7);
+            return { width: Math.max(edge, 200), height: Math.max(Math.floor(edge * 0.6), 140) };
+          },
+          aspectRatio: 1.333334
+        };
+
+        stockScanner.start(
+          { facingMode: "environment" },
+          config,
+          function(decodedText) {
+            var cleanCode = decodedText.trim();
+            window.stopStockCam();
+
+            var item = stockItems.find(function(x) { return x.code === cleanCode; });
+            if (item) {
+              if (confirm("🔍 Producto encontrado:\n" + item.name + " (" + item.code + ")\nStock actual: " + item.qty + " u.\n\n¿Desea sumar 1 unidad al stock?")) {
+                window.adjustStockQty(cleanCode, 1);
+                window.showToast("Stock Sumado", "+1 unidad a " + item.name);
+              }
+            } else {
+              var formBox = $('newStockFormContainer');
+              if (formBox) formBox.classList.remove('hidden');
+              var inpCode = $('stkCode');
+              if (inpCode) inpCode.value = cleanCode;
+              var inpName = $('stkName');
+              if (inpName) inpName.focus();
+              window.showToast("Código Nuevo", "Código: " + cleanCode + ". Complete los datos.");
+            }
+          },
+          function(errorMessage) {}
+        ).catch(function(err) {
+          window.stopStockCam();
+          window.showToast("Error de Cámara", "Permiso denegado o cámara no disponible.");
+        });
+      } catch(e) {
+        window.stopStockCam();
+        window.showToast("Cámara no disponible", "Verifique permisos en Safari.");
+      }
+    };
+
+    window.stopStockCam = function() {
+      var box = $('scannerContainer');
+      var btnText = $('btnScannerText');
+      if (btnText) btnText.textContent = 'Cámara';
+      if (box) box.classList.add('hidden');
+
+      if (stockScanner) {
+        try {
+          stockScanner.stop().then(function() {
+            try { stockScanner.clear(); } catch(e){}
+            stockScanner = null;
+          }).catch(function() {
+            try { stockScanner.clear(); } catch(e){}
+            stockScanner = null;
+          });
+        } catch(e) {
+          stockScanner = null;
+        }
+      }
+    };
+
+    // ESCÁNER DE CÁMARA PARA VENTAS (POS)
+    window.togglePosCam = function() {
+      var box = $('posScannerBox');
+      if (!box) return;
+
+      if (!box.classList.contains('hidden')) {
+        window.stopPosCam();
+        return;
+      }
+
+      box.classList.remove('hidden');
+
+      try {
+        if (!posScanner) {
+          posScanner = new Html5Qrcode("pos-qr-reader");
+        }
+
+        var config = {
+          fps: 10,
+          qrbox: { width: 220, height: 140 },
+          aspectRatio: 1.333334
+        };
+
+        posScanner.start(
+          { facingMode: "environment" },
+          config,
+          function(decodedText) {
+            var cleanCode = decodedText.trim();
+            window.stopPosCam();
+            window.addStockToPosCart(cleanCode);
+          },
+          function(err) {}
+        ).catch(function(err) {
+          window.stopPosCam();
+          window.showToast("Cámara POS", "No se pudo acceder a la cámara.");
+        });
+      } catch(e) {
+        window.stopPosCam();
+        window.showToast("Cámara POS", "No se pudo acceder a la cámara.");
+      }
+    };
+
+    window.stopPosCam = function() {
+      var box = $('posScannerBox');
+      if (box) box.classList.add('hidden');
+      if (posScanner) {
+        try {
+          posScanner.stop().then(function() {
+            try { posScanner.clear(); } catch(e){}
+            posScanner = null;
+          }).catch(function() {
+            try { posScanner.clear(); } catch(e){}
+            posScanner = null;
+          });
+        } catch(e) {
+          posScanner = null;
+        }
+      }
+    };
 
     // Gestión de Órdenes
     window.saveNewRepair = function(e) {
@@ -581,7 +744,7 @@
       window.closeModal('editRepairModal');
       window.openDetailModal(item.id);
       window.renderRepairsList();
-      window.showToast('Actualizado', 'Datos de la orden guardados.');
+      window.showToast('Actualizado', 'Datos guardados correctamente.');
     };
 
     window.openDetailModal = function(id) {
@@ -609,7 +772,6 @@
       else if (i.budgetStatus === 'REJECTED') { bBadge.textContent = '🔴 Rechazado'; bBadge.className = 'text-[9px] font-bold px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800'; }
       else { bBadge.textContent = '🟡 Pendiente'; bBadge.className = 'text-[9px] font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800'; }
 
-      // Actualiza estilos de botones de estado en el modal
       ['Waiting', 'InProgress', 'Transit', 'Ready'].forEach(function(s) {
         var btn = $('btnOpStatus' + s);
         if (btn) btn.className = 'p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-400 text-[10px] flex flex-col items-center gap-1 active:scale-95 transition border border-zinc-700';
@@ -622,7 +784,6 @@
       window.openModal('detailModal');
     };
 
-    // MODIFICAR ESTADOS OPERATIVOS
     window.updateDeviceOperationalStatus = function(s) {
       var item = repairs.find(function(r){ return r.id === selectedRepairId; }); if (!item) return;
       item.status = s;
@@ -634,12 +795,11 @@
       window.showToast('Estado Modificado', 'El equipo ahora figura en: ' + s);
     };
 
-    // APROBACIÓN DE PRESUPUESTO
     window.setCustomerBudgetResponse = function(st) {
       var item = repairs.find(function(r){ return r.id === selectedRepairId; }); if (!item) return;
       item.budgetStatus = st;
       if (st === 'APPROVED' && (item.status === 'WAITING' || item.status === 'RECEIVED')) {
-        item.status = 'IN_PROGRESS'; // Pasa automáticamente a taller si aprueba
+        item.status = 'IN_PROGRESS';
       }
       window.persistRepair(item);
       window.openDetailModal(item.id);
@@ -648,7 +808,6 @@
       window.showToast('Presupuesto Registrado', 'Decisión del cliente: ' + st);
     };
 
-    // ENVÍO DE PRESUPUESTO POR WHATSAPP (APROBAR O RECHAZAR)
     window.sendBudgetWhatsApp = function() {
       var item = repairs.find(function(r){ return r.id === selectedRepairId; }); if (!item) return;
       var b = parseFloat(item.budget)||0; var a = parseFloat(item.advancePayment)||0;
@@ -779,7 +938,7 @@
       $('headerCashBranchTag').innerText = currentBranchFilter === 'ALL' ? 'Todas' : currentBranchFilter;
     };
 
-    // STOCK & QR
+    // STOCK
     window.renderStockList = function() {
       var c = $('stockListContainer'); var s = ($('stkSearchInput').value || '').toLowerCase().trim();
       var f = stockItems.filter(function(i){ return i.name.toLowerCase().indexOf(s) > -1 || i.code.toLowerCase().indexOf(s) > -1; });
@@ -868,7 +1027,7 @@
       window.showToast('Venta Finalizada', 'Monto ingresado: $' + tot.toLocaleString());
     };
 
-    // LICENCIAS (PIN 8408 OCULTO)
+    // LICENCIAS (PIN 8408 EN MODO SIGILO)
     window.secretTap = function() {
       masterTapCount++;
       clearTimeout(masterTapTimer);
@@ -908,7 +1067,44 @@
       }
     };
 
-    // AUXILIARES PERSISTENCIA Y MQTT
+    // TRASLADO ENTRE SUCURSALES
+    window.openTransitPromptModal = function() {
+      var item = repairs.find(function(r){ return r.id === selectedRepairId; }); if (!item) return;
+      var branches = (workshopSettings.branches || ['Central']).filter(function(b){ return b !== item.branchCurrent; });
+      if (branches.length === 0) { window.showToast('Atención', 'Agregue más sucursales en Ajustes para enviar en viaje.'); return; }
+      $('selTransitDestination').innerHTML = branches.map(function(b){ return '<option value="'+b+'">'+b+'</option>'; }).join('');
+      $('inpTransitNotes').value = '';
+      window.openModal('transitModal');
+    };
+
+    window.confirmTransitDispatch = function() {
+      var item = repairs.find(function(r){ return r.id === selectedRepairId; }); if (!item) return;
+      item.status = 'IN_TRANSIT';
+      item.inTransit = true;
+      item.dispatchFrom = item.branchCurrent;
+      item.dispatchTo = $('selTransitDestination').value;
+      item.dispatchNotes = $('inpTransitNotes').value.trim();
+      window.persistRepair(item);
+      window.closeModal('transitModal');
+      window.openDetailModal(item.id);
+      window.renderRepairsList();
+      window.updateCounters();
+      window.showToast('En Viaje', 'Equipo despachado a ' + item.dispatchTo);
+    };
+
+    window.confirmArrivalAtDestination = function() {
+      var item = repairs.find(function(r){ return r.id === selectedRepairId; }); if (!item) return;
+      item.branchCurrent = item.dispatchTo;
+      item.inTransit = false;
+      item.status = 'IN_PROGRESS';
+      window.persistRepair(item);
+      window.openDetailModal(item.id);
+      window.renderRepairsList();
+      window.updateCounters();
+      window.showToast('Llegada Confirmada', 'Equipo radicado en ' + item.branchCurrent);
+    };
+
+    // PERSISTENCIA & MQTT
     window.persistRepair = function(r) {
       var idx = repairs.findIndex(function(x){ return x.id === r.id; });
       if (idx >= 0) repairs[idx] = r; else repairs.unshift(r);
@@ -990,10 +1186,54 @@
     };
     window.executeNativePrint = function() { window.setLabelFormat(activeLabelFormat); $('printArea').classList.remove('hidden'); window.print(); setTimeout(function(){ $('printArea').classList.add('hidden'); }, 500); };
 
-    // COMPARTIR
+    // COMPARTIR Y AJUSTES
     window.shareAppWA = function() { window.open('https://wa.me/?text=' + encodeURIComponent('👋 Te comparto OpenLine Gestión de Taller. Pruébala gratis aquí: ' + window.location.href), '_blank'); };
     window.copyAppUrl = function() { navigator.clipboard.writeText(window.location.href).then(function(){ window.showToast('Copiado', 'Enlace copiado al portapapeles.'); }); };
     window.joinWorkshop = function() { var c = $('inpJoinWorkshopCode').value.trim().toUpperCase(); if(!c) return; localStorage.setItem(WORKSHOP_ID_KEY, c); location.reload(); };
+
+    window.saveSettings = function() {
+      workshopSettings.name = $('cfgWorkshopName').value.trim() || 'OpenLine';
+      workshopSettings.subtitle = $('cfgWorkshopSubtitle').value.trim();
+      var rawB = $('cfgBranchesListInput').value;
+      if (rawB) workshopSettings.branches = rawB.split(',').map(function(b){ return b.trim(); }).filter(function(b){ return b.length > 0; });
+      localStorage.setItem('openline_local_settings_v8_' + currentWorkshopId, JSON.stringify(workshopSettings));
+      $('appHeaderTitle').textContent = workshopSettings.name;
+      $('appHeaderSubtitle').textContent = workshopSettings.subtitle;
+      window.renderBranchUIElements();
+      window.renderCashBranchSelector();
+      window.publishMQTT();
+      window.closeModal('settingsModal');
+      window.showToast('Ajustes Guardados', 'Configuración actualizada.');
+    };
+
+    window.handleLogoUpload = function(input) {
+      if(!input.files || !input.files[0]) return;
+      var r = new FileReader();
+      r.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+          var c = document.createElement('canvas'); var scale = Math.min(1, 250 / Math.max(img.width, img.height));
+          c.width = img.width * scale; c.height = img.height * scale;
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          workshopSettings.logo = c.toDataURL('image/png');
+          $('settingsLogoPreview').innerHTML = '<img src="' + workshopSettings.logo + '" class="w-full h-full object-cover">';
+          var customLogo = $('headerCustomLogo'); var defIcon = $('headerDefaultIcon');
+          customLogo.src = workshopSettings.logo; customLogo.classList.remove('hidden'); defIcon.classList.add('hidden');
+          localStorage.setItem('openline_local_settings_v8_' + currentWorkshopId, JSON.stringify(workshopSettings));
+          window.publishMQTT();
+        }; img.src = e.target.result;
+      }; r.readAsDataURL(input.files[0]); input.value = '';
+    };
+
+    window.removeLogo = function() {
+      workshopSettings.logo = '';
+      $('settingsLogoPreview').innerHTML = '<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>';
+      $('headerCustomLogo').classList.add('hidden');
+      $('headerDefaultIcon').classList.remove('hidden');
+      localStorage.setItem('openline_local_settings_v8_' + currentWorkshopId, JSON.stringify(workshopSettings));
+      window.publishMQTT();
+      window.showToast('Logo Quitado', 'Restablecido al ícono original.');
+    };
 
     // INICIALIZACIÓN
     window.addEventListener('DOMContentLoaded', function() {
@@ -1007,6 +1247,12 @@
         $('appHeaderTitle').textContent = workshopSettings.name;
         $('appHeaderSubtitle').textContent = workshopSettings.subtitle;
         $('headerWorkshopCode').textContent = currentWorkshopId;
+
+        if (workshopSettings.logo) {
+          $('headerCustomLogo').src = workshopSettings.logo;
+          $('headerCustomLogo').classList.remove('hidden');
+          $('headerDefaultIcon').classList.add('hidden');
+        }
 
         window.renderBranchUIElements();
         window.renderCashBranchSelector();
