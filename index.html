@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="es" class="bg-black">
+<html lang="es" class="h-full bg-black">
 <head>
   <meta charset="UTF-8">
-  <!-- Viewport optimizado para iOS: evita el zoom automático y se ajusta a las muescas (Notch) -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="OpenLine">
   <meta name="theme-color" content="#09090b">
-  <title>OpenLine - Gestión de Taller, Stock y Caja</title>
+  <title>OpenLine - Gestión de Taller, Stock, Caja y Ventas</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -21,12 +20,7 @@
             iosGreen: '#34C759',
             iosOrange: '#FF9500',
             iosRed: '#FF3B30',
-            iosPurple: '#AF52DE',
-            iosCard: '#18181b',
-            iosBorder: '#27272a'
-          },
-          fontFamily: {
-            sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Inter', 'Segoe UI', 'Roboto', 'sans-serif']
+            iosPurple: '#AF52DE'
           }
         }
       }
@@ -35,174 +29,152 @@
 
   <!-- Phosphor Icons CDN -->
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
-  <!-- Bibliotecas Externas -->
+  <!-- MQTT over WebSocket Library -->
   <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
+  <!-- HTML5 QR / Barcode Scanner -->
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
   <style>
-    /* Altura dinámica para pantallas iOS */
-    body { min-height: 100dvh; overscroll-behavior: none; }
-    .pt-safe { padding-top: max(env(safe-area-inset-top), 16px); }
-    .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 24px); }
+    .pt-safe { padding-top: max(env(safe-area-inset-top), 12px); }
+    .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 14px); }
+    canvas { touch-action: none; -webkit-touch-callout: none; }
+    ::-webkit-scrollbar { width: 0px; height: 0px; display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     
-    /* Eliminar zoom al hacer tap doble en iOS y ajustar scrollbar */
-    button, a, select, input { touch-action: manipulation; }
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 9999px; }
-
-    /* Formato de impresión */
     @media print {
       body * { visibility: hidden !important; }
       #printArea, #printArea * { visibility: visible !important; }
-      #printArea {
-        position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; margin: 0 !important; padding: 0 !important; display: block !important; background: white !important; color: black !important;
-      }
+      #printArea { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; margin: 0 !important; padding: 0 !important; display: block !important; background: white !important; color: black !important; }
     }
   </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col overflow-hidden">
+<body class="h-full bg-zinc-950 text-zinc-100 font-sans antialiased select-none flex flex-col overflow-hidden">
 
-  <!-- Barra de Navegación (Adaptada con botones más grandes para iOS) -->
-  <header class="bg-zinc-900/95 backdrop-blur-xl border-b border-zinc-800 pt-safe px-3 sm:px-5 pb-3 shrink-0">
-    <div class="max-w-5xl mx-auto flex items-center justify-between gap-3">
-      
-      <!-- Identidad y Taller -->
-      <div class="flex items-center gap-3 min-w-0">
-        <div id="headerLogoContainer" class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center overflow-hidden shadow-lg border border-white/10 shrink-0">
+  <!-- CABECERA REDISEÑADA EN 2 FILAS PARA EVITAR SUPERPOSICIÓN EN MÓVILES -->
+  <header class="sticky top-0 z-30 bg-zinc-900/95 backdrop-blur-xl border-b border-zinc-800 pt-safe flex flex-col shrink-0">
+    
+    <!-- Fila 1: Logo, Título, Licencia, Ajustes y Equipo -->
+    <div class="px-3 sm:px-5 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div id="headerLogoContainer" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center overflow-hidden shadow-lg border border-white/10 shrink-0">
           <i id="headerDefaultIcon" class="ph-bold ph-wrench text-white text-xl"></i>
           <img id="headerCustomLogo" src="" alt="Logo" class="w-full h-full object-cover hidden">
         </div>
-        <div class="min-w-0">
-          <div class="flex items-center gap-2 flex-wrap">
-            <h1 id="appHeaderTitle" class="text-sm sm:text-base font-bold text-white tracking-tight truncate">OpenLine</h1>
-            <span onclick="openTeamModal()" class="cursor-pointer text-[10px] font-mono font-bold bg-indigo-950/90 text-indigo-300 border border-indigo-700/60 px-2 py-0.5 rounded-full flex items-center gap-1.5 hover:bg-indigo-900/80 transition" title="Taller y Equipo">
+        <div class="min-w-0 flex flex-col">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <h1 id="appHeaderTitle" class="text-sm font-bold text-white tracking-tight truncate">OpenLine</h1>
+            <button type="button" onclick="openTeamModal()" class="text-[10px] font-mono font-bold bg-indigo-950/90 text-indigo-300 border border-indigo-700/60 px-1.5 py-0.5 rounded-full flex items-center gap-1 transition cursor-pointer">
               <span id="livePulseDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span id="headerWorkshopCode">TALLER-XXXX</span>
-            </span>
-            <span onclick="openLicenseModal()" class="cursor-pointer text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/70 text-amber-300 flex items-center gap-1">
-              <i class="ph-bold ph-shield-check"></i>
-              <span id="headerLicenseText">DEMO</span>
-            </span>
+            </button>
+            <button type="button" onclick="openLicenseModal()" class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/70 text-amber-300 flex items-center gap-1 cursor-pointer">
+              <i class="ph-bold ph-shield-check"></i> <span id="headerLicenseText">DEMO</span>
+            </button>
           </div>
-          <p id="appHeaderSubtitle" class="text-xs text-zinc-400 font-medium truncate mt-1">Servicio Técnico Profesional</p>
+          <p id="appHeaderSubtitle" class="text-[10px] text-zinc-400 font-medium truncate mt-0.5">Servicio Técnico Profesional</p>
         </div>
       </div>
 
-      <!-- Acciones Rápidas (Iconos y textos más grandes) -->
-      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-        <!-- Vender -->
-        <button onclick="openSalesModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:brightness-110 active:scale-95 text-white text-xs font-bold shadow-md transition cursor-pointer">
-          <i class="ph-bold ph-shopping-cart-simple text-base"></i>
-          <span class="hidden sm:inline">Vender</span>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button type="button" onclick="openTeamModal()" class="w-9 h-9 rounded-xl bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center text-indigo-400 border border-zinc-700/60 cursor-pointer">
+          <i class="ph-bold ph-users-three text-base"></i>
         </button>
+        <button type="button" onclick="openSettingsModal()" class="w-9 h-9 rounded-xl bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center text-zinc-300 hover:text-white border border-zinc-700/60 cursor-pointer">
+          <i class="ph-bold ph-gear text-base"></i>
+        </button>
+      </div>
+    </div>
 
-        <!-- Stock -->
-        <button onclick="openStockModal()" class="relative flex items-center gap-1.5 px-3 py-2 rounded-xl bg-purple-950/80 border border-purple-700/60 hover:bg-purple-900 text-purple-200 text-xs font-semibold transition cursor-pointer">
-          <i class="ph-bold ph-barcode text-base text-purple-400"></i>
-          <span class="hidden sm:inline">Stock</span>
-          <span id="stockWarningBadge" class="hidden absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400 animate-pulse border border-zinc-900"></span>
+    <!-- Fila 2: Botones de Acción Rápidos (Desplazables hacia los lados en móviles) -->
+    <div class="px-3 sm:px-5 pb-2.5 max-w-5xl mx-auto w-full">
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+        <button type="button" onclick="openNewRepairModal()" class="shrink-0 flex items-center gap-1 px-3 py-2 rounded-xl bg-iosBlue hover:bg-blue-600 text-white text-xs font-bold shadow-md cursor-pointer">
+          <i class="ph-bold ph-plus text-sm"></i> Ingreso
         </button>
-
-        <!-- Caja -->
-        <button onclick="openCashModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-950/80 border border-emerald-700/60 hover:bg-emerald-900 text-emerald-200 text-xs font-semibold transition cursor-pointer">
-          <i class="ph-bold ph-currency-dollar-simple text-base text-emerald-400"></i>
-          <span class="hidden sm:inline">Caja</span>
+        <button type="button" onclick="openSalesModal()" class="shrink-0 flex items-center gap-1 px-3 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white text-xs font-bold shadow-md cursor-pointer">
+          <i class="ph-bold ph-shopping-cart-simple text-sm"></i> Vender
         </button>
-
-        <!-- Botones Cuadrados (Más fáciles de tocar en iPhone) -->
-        <button onclick="openInstallModal()" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center justify-center shadow-md transition cursor-pointer" title="Compartir Web App">
-          <i class="ph-bold ph-share-network text-lg"></i>
+        <button type="button" onclick="openStockModal()" class="shrink-0 flex items-center gap-1 px-3 py-2 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-xs font-semibold cursor-pointer relative">
+          <i class="ph-bold ph-barcode text-sm text-purple-400"></i> Stock
+          <span id="stockWarningBadge" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse border border-zinc-900"></span>
         </button>
-        <button onclick="openTeamModal()" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white border border-zinc-700/60 transition flex items-center justify-center cursor-pointer">
-          <i class="ph-bold ph-users-three text-lg text-indigo-400"></i>
+        <button type="button" onclick="openCashModal()" class="shrink-0 flex items-center gap-1 px-3 py-2 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-xs font-semibold cursor-pointer">
+          <i class="ph-bold ph-currency-dollar-simple text-sm text-emerald-400"></i> Caja
         </button>
-        <button onclick="openSettingsModal()" class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white border border-zinc-700/60 transition flex items-center justify-center cursor-pointer">
-          <i class="ph-bold ph-gear text-lg"></i>
-        </button>
-        <button onclick="openNewRepairModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-iosBlue hover:bg-blue-600 active:scale-95 text-white text-xs font-bold shadow-md transition cursor-pointer">
-          <i class="ph-bold ph-plus text-base"></i>
-          <span class="hidden sm:inline">Ingreso</span>
+        <button type="button" onclick="openInstallModal()" class="shrink-0 flex items-center gap-1 px-3 py-2 rounded-xl bg-zinc-800 text-white text-xs font-semibold shadow-md cursor-pointer">
+          <i class="ph-bold ph-share-network text-sm"></i> Compartir
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Notificador en vivo -->
-  <div id="syncNotificationBar" class="hidden bg-indigo-950/90 border-b border-indigo-800/60 px-3 py-1.5 text-center text-[11px] font-medium text-indigo-200 backdrop-blur transition-all flex items-center justify-center gap-2">
+  <!-- Live Sync Bar -->
+  <div id="syncNotificationBar" class="hidden bg-indigo-950/90 border-b border-indigo-800/60 px-3 py-1.5 text-center text-[10px] font-medium text-indigo-200 backdrop-blur transition-all flex items-center justify-center gap-2">
     <i class="ph-bold ph-arrows-clockwise animate-spin text-sm text-indigo-400"></i>
     <span id="syncNotificationText">Sincronizando cambios en vivo...</span>
   </div>
 
-  <!-- Contenedor Principal con Scroll -->
-  <main class="flex-1 overflow-y-auto px-3 sm:px-5 py-4 max-w-5xl mx-auto w-full space-y-4 pb-safe">
-
+  <main class="flex-1 overflow-y-auto px-3 sm:px-5 py-4 max-w-5xl mx-auto w-full space-y-4">
     <!-- Selector de Sucursales -->
-    <div id="branchFilterContainer" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 shadow-sm space-y-2">
+    <div id="branchFilterContainer" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-2.5 shadow-sm space-y-1.5">
       <div class="flex items-center justify-between px-1">
-        <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-          <i class="ph-bold ph-map-pin text-rose-400 text-sm"></i>
-          <span>Filtrar por Sucursal:</span>
+        <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1">
+          <i class="ph-bold ph-map-pin text-rose-400 text-sm"></i> Filtrar por Sucursal:
         </span>
         <span id="currentBranchDisplayTag" class="text-xs font-mono text-zinc-300">Todas</span>
       </div>
-      <div id="branchTabsButtonsList" class="flex gap-2 overflow-x-auto no-scrollbar text-sm font-medium pb-1"></div>
+      <div id="branchTabsButtonsList" class="flex gap-1.5 overflow-x-auto no-scrollbar text-xs font-medium pb-0.5"></div>
     </div>
 
     <!-- Métricas -->
     <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-      <div onclick="openCashModal()" class="cursor-pointer bg-gradient-to-br from-zinc-900 to-emerald-950/40 border border-emerald-900/40 hover:border-emerald-600 rounded-2xl p-3 text-center shadow-sm transition">
-        <span class="text-[10px] text-emerald-400 block font-bold flex items-center justify-center gap-1">
-          <i class="ph-bold ph-wallet text-sm"></i> Saldo Caja (<span id="headerCashBranchTag">Todas</span>)
-        </span>
-        <span id="headerCashBalance" class="text-base sm:text-xl font-extrabold text-emerald-300 font-mono mt-1 block">$0</span>
-      </div>
+      <button type="button" onclick="openCashModal()" class="text-left cursor-pointer bg-gradient-to-br from-zinc-900 to-emerald-950/40 border border-emerald-900/40 hover:border-emerald-600 rounded-2xl p-3 shadow-sm transition">
+        <span class="text-[10px] text-emerald-400 font-bold flex items-center gap-1 justify-center"><i class="ph-bold ph-wallet"></i> Saldo Caja</span>
+        <span id="headerCashBalance" class="text-base font-extrabold text-emerald-300 font-mono mt-1 block text-center">$0</span>
+      </button>
 
       <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 text-center shadow-sm">
         <span class="text-[10px] text-zinc-400 block font-bold uppercase">Recibidos</span>
-        <span id="counterReceived" class="text-base sm:text-xl font-bold text-white mt-1 block">0</span>
+        <span id="counterReceived" class="text-base font-bold text-white mt-1 block">0</span>
       </div>
       <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 text-center shadow-sm">
         <span class="text-[10px] text-amber-400 block font-bold uppercase">En Taller</span>
-        <span id="counterInProgress" class="text-base sm:text-xl font-bold text-amber-400 mt-1 block">0</span>
+        <span id="counterInProgress" class="text-base font-bold text-amber-400 mt-1 block">0</span>
       </div>
       <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 text-center shadow-sm">
         <span class="text-[10px] text-indigo-400 block font-bold uppercase">En Viaje</span>
-        <span id="counterTransit" class="text-base sm:text-xl font-bold text-indigo-400 mt-1 block">0</span>
+        <span id="counterTransit" class="text-base font-bold text-indigo-400 mt-1 block">0</span>
       </div>
       <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 text-center shadow-sm col-span-2 sm:col-span-1">
         <span class="text-[10px] text-emerald-400 block font-bold uppercase">Listos</span>
-        <span id="counterReady" class="text-base sm:text-xl font-bold text-emerald-400 mt-1 block">0</span>
+        <span id="counterReady" class="text-base font-bold text-emerald-400 mt-1 block">0</span>
       </div>
     </div>
 
-    <!-- Buscador y Filtros (Inputs grandes para iOS) -->
-    <div class="space-y-3">
+    <!-- Buscador y Filtros -->
+    <div class="space-y-2.5">
       <div class="relative">
-        <i class="ph-bold ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-lg"></i>
-        <!-- text-base es obligatorio en inputs para evitar auto-zoom en iPhone -->
-        <input id="searchInput" type="text" oninput="handleSearch(this.value)" placeholder="Buscar cliente, modelo, IMEI..." class="w-full bg-zinc-900 border border-zinc-800 rounded-2xl pl-10 pr-10 py-3 text-base text-white placeholder-zinc-500 focus:outline-none focus:border-iosBlue shadow-sm">
-        <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white p-2">
-          <i class="ph-bold ph-x-circle text-lg"></i>
-        </button>
+        <i class="ph-bold ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-sm"></i>
+        <!-- text-base evita el zoom automático del iPhone al tipear -->
+        <input id="searchInput" type="text" oninput="handleSearch(this.value)" placeholder="Buscar cliente, modelo, IMEI..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-base text-white placeholder-zinc-500 focus:outline-none focus:border-iosBlue shadow-sm">
+        <button type="button" id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 p-1 cursor-pointer"><i class="ph-bold ph-x-circle text-base"></i></button>
       </div>
 
-      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar text-xs pb-2">
-        <button onclick="setFilter('ALL')" id="tabALL" class="filter-tab px-4 py-2 rounded-xl bg-zinc-800 text-white font-bold shrink-0 shadow-sm transition">Todos</button>
-        <button onclick="setFilter('WAITING')" id="tabWAITING" class="filter-tab px-4 py-2 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">En Espera</button>
-        <button onclick="setFilter('IN_PROGRESS')" id="tabIN_PROGRESS" class="filter-tab px-4 py-2 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">En Taller</button>
-        <button onclick="setFilter('IN_TRANSIT')" id="tabIN_TRANSIT" class="filter-tab px-4 py-2 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">En Viaje</button>
-        <button onclick="setFilter('READY')" id="tabREADY" class="filter-tab px-4 py-2 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Listos</button>
-        <button onclick="setFilter('DELIVERED')" id="tabDELIVERED" class="filter-tab px-4 py-2 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Entregados</button>
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs pb-1">
+        <button type="button" onclick="setFilter('ALL')" id="tabALL" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-800 text-white font-bold shrink-0 cursor-pointer">Todos</button>
+        <button type="button" onclick="setFilter('WAITING')" id="tabWAITING" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 cursor-pointer">En Espera</button>
+        <button type="button" onclick="setFilter('IN_PROGRESS')" id="tabIN_PROGRESS" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 cursor-pointer">En Taller</button>
+        <button type="button" onclick="setFilter('IN_TRANSIT')" id="tabIN_TRANSIT" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 cursor-pointer">En Viaje</button>
+        <button type="button" onclick="setFilter('READY')" id="tabREADY" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 cursor-pointer">Listos</button>
+        <button type="button" onclick="setFilter('DELIVERED')" id="tabDELIVERED" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 cursor-pointer">Entregados</button>
       </div>
     </div>
 
     <!-- Lista de Reparaciones -->
-    <div id="repairsList" class="space-y-3 pb-10"></div>
+    <div id="repairsList" class="space-y-3 pb-20"></div>
 
     <div id="emptyState" class="hidden text-center py-16 px-4">
-      <div class="w-16 h-16 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto mb-4 text-zinc-600">
+      <div class="w-16 h-16 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto mb-3 text-zinc-600">
         <i class="ph-bold ph-clipboard-text text-3xl"></i>
       </div>
       <h3 class="text-sm font-semibold text-zinc-300">No hay órdenes en esta vista</h3>
@@ -210,99 +182,76 @@
   </main>
 
   <!-- =================================================================================== -->
-  <!-- MODALES DE LA APLICACIÓN (Todos con botones grandes para iPhone)                   -->
+  <!-- MODALES DE LA APLICACIÓN (Todos configurados con text-base para iOS)               -->
   <!-- =================================================================================== -->
 
   <!-- MODAL: DETALLES DE ORDEN -->
   <div id="detailModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[92vh] flex flex-col shadow-2xl overflow-hidden text-sm text-zinc-300">
       <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-800 bg-zinc-900">
         <div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5">
             <span id="dtlOrderId" class="text-sm font-mono font-bold text-iosBlue">#OL-0000</span>
-            <span id="dtlDeviceTypeBadge" class="text-[10px] bg-zinc-800 px-2 py-0.5 rounded text-zinc-300">Dispositivo</span>
             <span id="dtlBranchBadge" class="text-[10px] bg-rose-950/80 text-rose-300 px-2 py-0.5 rounded font-bold">Central</span>
           </div>
           <h3 id="dtlDeviceTitle" class="text-base font-bold text-white mt-1">Dispositivo</h3>
         </div>
-        <div class="flex items-center gap-3">
-          <button onclick="openEditRepairModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-xs border border-zinc-700 transition cursor-pointer">
-            <i class="ph-bold ph-pencil-simple text-base text-amber-400"></i>
-            <span>Editar</span>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="openEditRepairModal()" class="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-xs border border-zinc-700 cursor-pointer">
+            <i class="ph-bold ph-pencil-simple text-amber-400"></i> Editar
           </button>
-          <button onclick="closeDetailModal()" class="w-9 h-9 rounded-full bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center cursor-pointer"><i class="ph-bold ph-x text-base"></i></button>
+          <button type="button" onclick="closeDetailModal()" class="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center cursor-pointer"><i class="ph-bold ph-x text-sm"></i></button>
         </div>
       </div>
 
-      <div class="overflow-y-auto p-5 space-y-4 flex-1 text-sm text-zinc-300 pb-safe">
-        
-        <div class="p-3 bg-zinc-950 border border-emerald-800/60 rounded-2xl space-y-2.5">
-          <span class="text-[10px] font-bold text-emerald-400 uppercase flex items-center gap-1.5">
-            <i class="ph-bold ph-whatsapp-logo text-base"></i> Notificar al Cliente
-          </span>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <button onclick="openClientWhatsApp()" class="py-2.5 px-2 rounded-xl bg-zinc-800 text-blue-400 font-bold flex flex-col items-center justify-center gap-1 text-[11px] cursor-pointer">
-              <i class="ph-bold ph-receipt text-lg"></i> Ingreso
-            </button>
-            <button onclick="openBudgetApprovalWhatsApp()" class="py-2.5 px-2 rounded-xl bg-zinc-800 text-amber-400 font-bold flex flex-col items-center justify-center gap-1 text-[11px] cursor-pointer">
-              <i class="ph-bold ph-calculator text-lg"></i> Presupuesto
-            </button>
-            <button onclick="openStatusWhatsApp()" class="py-2.5 px-2 rounded-xl bg-zinc-800 text-indigo-400 font-bold flex flex-col items-center justify-center gap-1 text-[11px] cursor-pointer">
-              <i class="ph-bold ph-bell text-lg"></i> Estado
-            </button>
-            <button onclick="openPickupNoticeModal()" class="py-2.5 px-2 rounded-xl bg-emerald-700 text-white font-bold flex flex-col items-center justify-center gap-1 shadow-md text-[11px] cursor-pointer">
-              <i class="ph-bold ph-check-circle text-lg"></i> Retirar
-            </button>
+      <div class="overflow-y-auto p-4 sm:p-5 space-y-4 flex-1 pb-safe">
+        <!-- Notificaciones de WhatsApp -->
+        <div class="p-3.5 bg-zinc-950 border border-emerald-800/60 rounded-2xl space-y-3">
+          <span class="text-xs font-bold text-emerald-400 uppercase flex items-center gap-1"><i class="ph-bold ph-whatsapp-logo text-base"></i> Avisos WhatsApp</span>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="openClientWhatsApp()" class="py-2.5 rounded-xl bg-zinc-800 text-blue-400 font-bold flex items-center justify-center gap-1 text-xs cursor-pointer"><i class="ph-bold ph-receipt text-base"></i> 1. Comprobante</button>
+            <button type="button" onclick="openBudgetApprovalWhatsApp()" class="py-2.5 rounded-xl bg-zinc-800 text-amber-400 font-bold flex items-center justify-center gap-1 text-xs cursor-pointer"><i class="ph-bold ph-calculator text-base"></i> 2. Presupuesto</button>
+            <button type="button" onclick="openStatusWhatsApp()" class="py-2.5 rounded-xl bg-zinc-800 text-indigo-400 font-bold flex items-center justify-center gap-1 text-xs cursor-pointer"><i class="ph-bold ph-bell text-base"></i> 3. Estado Taller</button>
+            <button type="button" onclick="openPickupNoticeModal()" class="py-2.5 rounded-xl bg-emerald-700 text-white font-bold flex items-center justify-center gap-1 shadow-md text-xs cursor-pointer"><i class="ph-bold ph-check-circle text-base"></i> 4. Avisar Retiro</button>
           </div>
         </div>
 
+        <!-- ESTADO OPERATIVO -->
         <div class="p-3.5 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-3">
           <div class="flex items-center justify-between">
-            <span class="text-xs text-zinc-400 font-bold uppercase">Estado Operativo:</span>
-            <span id="dtlOperationalStatusBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-950 text-amber-300 border border-amber-800">En Espera</span>
+            <span class="text-[11px] text-zinc-400 font-bold uppercase">Estado Operativo:</span>
+            <span id="dtlOperationalStatusBadge" class="text-[11px] font-bold px-2.5 py-1 rounded-md bg-amber-950 text-amber-300">En Espera</span>
           </div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <button id="btnOpStatusWaiting" onclick="updateDeviceOperationalStatus('WAITING')" class="p-2.5 rounded-xl border border-zinc-700 bg-zinc-800 font-bold text-zinc-300 text-xs flex flex-col items-center justify-center gap-1.5 cursor-pointer"><i class="ph-bold ph-clock text-amber-400 text-lg"></i> Espera</button>
-            <button id="btnOpStatusInProgress" onclick="updateDeviceOperationalStatus('IN_PROGRESS')" class="p-2.5 rounded-xl border border-zinc-700 bg-zinc-800 font-bold text-zinc-300 text-xs flex flex-col items-center justify-center gap-1.5 cursor-pointer"><i class="ph-bold ph-wrench text-iosBlue text-lg"></i> Taller</button>
-            <button id="btnOpStatusTransit" onclick="openTransitPromptModal()" class="p-2.5 rounded-xl border border-zinc-700 bg-zinc-800 font-bold text-zinc-300 text-xs flex flex-col items-center justify-center gap-1.5 cursor-pointer"><i class="ph-bold ph-truck text-indigo-400 text-lg"></i> Viaje</button>
-            <button id="btnOpStatusReady" onclick="updateDeviceOperationalStatus('READY')" class="p-2.5 rounded-xl border border-zinc-700 bg-zinc-800 font-bold text-zinc-300 text-xs flex flex-col items-center justify-center gap-1.5 cursor-pointer"><i class="ph-bold ph-check-circle text-emerald-400 text-lg"></i> Listo</button>
+          <div class="grid grid-cols-4 gap-2">
+            <button type="button" onclick="updateDeviceOperationalStatus('WAITING')" id="btnOpStatusWaiting" class="p-2 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] flex flex-col items-center gap-1 cursor-pointer"><i class="ph-bold ph-clock text-amber-400 text-lg"></i> Espera</button>
+            <button type="button" onclick="updateDeviceOperationalStatus('IN_PROGRESS')" id="btnOpStatusInProgress" class="p-2 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] flex flex-col items-center gap-1 cursor-pointer"><i class="ph-bold ph-wrench text-iosBlue text-lg"></i> Taller</button>
+            <button type="button" onclick="openTransitPromptModal()" id="btnOpStatusTransit" class="p-2 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] flex flex-col items-center gap-1 cursor-pointer"><i class="ph-bold ph-truck text-indigo-400 text-lg"></i> Viaje</button>
+            <button type="button" onclick="updateDeviceOperationalStatus('READY')" id="btnOpStatusReady" class="p-2 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] flex flex-col items-center gap-1 cursor-pointer"><i class="ph-bold ph-check-circle text-emerald-400 text-lg"></i> Listo</button>
           </div>
-          <div id="dtlTransitInfoBox" class="hidden p-3 rounded-xl bg-indigo-950/70 border border-indigo-700/60 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+          <div id="dtlTransitInfoBox" class="hidden p-3 rounded-xl bg-indigo-950/70 border border-indigo-700/60 flex items-center justify-between">
             <div>
-              <span class="font-bold text-indigo-300 block text-xs">🚚 Traslado en curso:</span>
-              <span class="text-xs text-zinc-300" id="dtlTransitRouteText">Origen ➔ Destino</span>
+              <span class="font-bold text-indigo-300 block text-xs">🚚 Traslado:</span>
+              <span class="text-[11px] text-zinc-300" id="dtlTransitRouteText">-</span>
             </div>
-            <button onclick="confirmArrivalAtDestination()" class="px-4 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs cursor-pointer">Confirmar Llegada</button>
-          </div>
-        </div>
-
-        <div class="p-3.5 bg-zinc-950 border border-indigo-800/60 rounded-2xl space-y-2.5">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-bold text-indigo-300 uppercase">Presupuesto</span>
-            <span id="dtlBudgetApprovalBadge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-700">🟡 Pendiente</span>
-          </div>
-          <div class="grid grid-cols-3 gap-2">
-            <button id="btnRespPending" onclick="setCustomerBudgetResponse('PENDING')" class="py-2 px-2 rounded-xl border border-zinc-700 bg-zinc-800 text-amber-300 font-semibold text-xs cursor-pointer">🟡 Espera</button>
-            <button id="btnRespApproved" onclick="setCustomerBudgetResponse('APPROVED')" class="py-2 px-2 rounded-xl border border-zinc-700 bg-zinc-800 text-emerald-300 font-semibold text-xs cursor-pointer">🟢 Aprobó</button>
-            <button id="btnRespRejected" onclick="setCustomerBudgetResponse('REJECTED')" class="py-2 px-2 rounded-xl border border-zinc-700 bg-zinc-800 text-rose-300 font-semibold text-xs cursor-pointer">🔴 Rechazó</button>
+            <button type="button" onclick="confirmArrivalAtDestination()" class="px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-lg text-xs cursor-pointer">Llegada</button>
           </div>
         </div>
 
         <div class="p-3.5 bg-zinc-950 border border-zinc-800 rounded-2xl flex items-center justify-between">
-          <div><span class="text-[10px] text-zinc-400 uppercase font-bold block">Cobro</span><span class="text-xs text-zinc-300">Ingresar a caja</span></div>
-          <button onclick="chargeRepairToCash()" class="py-2 px-4 rounded-xl bg-emerald-950/90 border border-emerald-600/70 text-emerald-300 font-bold text-xs flex items-center gap-1.5 cursor-pointer"><i class="ph-bold ph-wallet text-base"></i> Cobrar</button>
+          <div><span class="text-[11px] text-zinc-400 uppercase font-bold block">Cobro de Reparación</span><span class="text-xs text-zinc-300">Ingresar a caja</span></div>
+          <button type="button" onclick="chargeRepairToCash()" class="py-2 px-4 rounded-xl bg-emerald-950/90 border border-emerald-600/70 text-emerald-300 font-bold text-xs flex items-center gap-1 cursor-pointer"><i class="ph-bold ph-wallet text-base"></i> Cobrar</button>
         </div>
 
         <div class="p-3.5 bg-zinc-950 border border-zinc-800 rounded-2xl">
-          <span class="text-[10px] text-zinc-500 uppercase block">Cliente:</span>
+          <span class="text-[10px] text-zinc-500 uppercase block mb-1">Cliente:</span>
           <b class="text-white text-base" id="dtlClientName"></b>
-          <div class="text-zinc-400 font-mono text-sm mt-1" id="dtlClientPhone"></div>
+          <div class="text-zinc-400 font-mono text-sm mt-0.5" id="dtlClientPhone"></div>
         </div>
 
         <div class="grid grid-cols-3 gap-2 text-center">
-          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-zinc-500 block mb-1">TOTAL</span><b class="text-white font-mono text-sm" id="dtlBudgetTotal">$0</b></div>
-          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-emerald-400 block mb-1">SEÑA</span><b class="text-emerald-400 font-mono text-sm" id="dtlAdvancePaid">$0</b></div>
-          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-amber-400 block mb-1">RESTA</span><b class="text-amber-400 font-mono text-sm" id="dtlBalanceDue">$0</b></div>
+          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[10px] text-zinc-500 block mb-1">TOTAL</span><b class="text-white font-mono text-sm" id="dtlBudgetTotal">$0</b></div>
+          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[10px] text-emerald-400 block mb-1">SEÑA</span><b class="text-emerald-400 font-mono text-sm" id="dtlAdvancePaid">$0</b></div>
+          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[10px] text-amber-400 block mb-1">RESTA</span><b class="text-amber-400 font-mono text-sm" id="dtlBalanceDue">$0</b></div>
         </div>
 
         <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl text-center text-sm" id="dtlUnlockDisplay"></div>
@@ -313,128 +262,300 @@
         </div>
 
         <div class="flex gap-3 pt-2">
-          <button onclick="openPrintModalForCurrent()" class="flex-1 py-3 bg-iosBlue text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow cursor-pointer"><i class="ph-bold ph-printer text-lg"></i> Imprimir Etiqueta</button>
-          <button onclick="deleteCurrentRepair()" class="w-14 py-3 bg-rose-950/60 text-rose-300 rounded-xl flex items-center justify-center cursor-pointer"><i class="ph-bold ph-trash text-xl"></i></button>
+          <button type="button" onclick="openPrintModalForCurrent()" class="flex-1 py-3.5 bg-iosBlue hover:bg-blue-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 shadow cursor-pointer"><i class="ph-bold ph-printer text-lg"></i> Imprimir Etiqueta</button>
+          <button type="button" onclick="deleteCurrentRepair()" class="w-14 py-3.5 bg-rose-950/60 text-rose-300 rounded-xl flex items-center justify-center cursor-pointer"><i class="ph-bold ph-trash text-xl"></i></button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- RESTO DE MODALES (Adaptados con `text-base` en inputs para iOS Safari y funciones estandarizadas) -->
-
-  <!-- Modal Nuevo Ingreso -->
-  <div id="newRepairModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
-      <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-800 bg-zinc-900/90">
-        <h2 class="text-base font-bold text-white flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-iosBlue"></span>Nuevo Ingreso</h2>
-        <button type="button" onclick="closeNewRepairModal()" class="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-base"></i></button>
+  <!-- MODAL: ASIGNAR VIAJE A SUCURSAL -->
+  <div id="transitModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-zinc-900 border border-indigo-700/80 rounded-3xl w-full max-w-sm p-5 text-sm text-zinc-300 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between"><h3 class="font-bold text-white">Enviar a Sucursal</h3><button type="button" onclick="closeTransitModal()"><i class="ph-bold ph-x text-base"></i></button></div>
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs text-zinc-400 block mb-1">Sucursal Destino *</label>
+          <select id="selTransitDestination" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white font-bold focus:outline-none"></select>
+        </div>
+        <div>
+          <label class="text-xs text-zinc-400 block mb-1">Cadete / Detalle</label>
+          <input type="text" id="inpTransitNotes" placeholder="Ej: Enviado con Cadete" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white focus:outline-none">
+        </div>
       </div>
-      <form id="newRepairForm" onsubmit="saveNewRepair(event)" class="overflow-y-auto p-4 sm:p-5 space-y-4 flex-1 pb-safe">
-        <div id="newBranchSectionWrap" class="p-3.5 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2.5">
-          <label class="font-bold text-zinc-300 uppercase text-[10px]">Sucursal Receptora *</label>
-          <div id="newBranchOptionsList" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>
+      <button type="button" onclick="confirmTransitDispatch()" class="w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-white shadow cursor-pointer">Iniciar Viaje</button>
+    </div>
+  </div>
+
+  <!-- MODAL: EDITAR ORDEN -->
+  <div id="editRepairModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[92vh] flex flex-col shadow-2xl overflow-hidden text-sm text-zinc-300">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-800 bg-zinc-900"><h3 class="font-bold text-white">Editar Orden de Servicio</h3><button type="button" onclick="closeEditRepairModal()"><i class="ph-bold ph-x text-base"></i></button></div>
+      <form onsubmit="saveEditedRepair(event)" class="overflow-y-auto p-4 sm:p-5 space-y-4 flex-1 pb-safe">
+        <div class="space-y-1.5"><label class="font-bold text-zinc-400 text-xs">Sucursal</label><select id="editBranchCurrent" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white font-bold focus:outline-none"></select></div>
+        <div class="space-y-1.5"><label class="font-bold text-zinc-400 text-xs">Datos del Cliente</label><div class="grid grid-cols-2 gap-3"><input type="text" id="editClientName" required placeholder="Cliente" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white"><input type="tel" id="editClientPhone" required placeholder="Teléfono" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white font-mono"></div></div>
+        <div class="space-y-1.5"><label class="font-bold text-zinc-400 text-xs">Dispositivo</label><div class="grid grid-cols-3 gap-3"><select id="editDeviceType" class="bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-3 text-base text-white focus:outline-none"><option value="Celular">Celular</option><option value="Tablet">Tablet</option><option value="Notebook">Notebook</option><option value="Consola">Consola</option><option value="Otro">Otro</option></select><input type="text" id="editDeviceBrand" required placeholder="Marca" class="col-span-2 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white"></div><input type="text" id="editDeviceModel" required placeholder="Modelo" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white"><input type="text" id="editDeviceSerial" placeholder="IMEI / Serie" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white font-mono"></div>
+        <div class="space-y-1.5"><label class="font-bold text-zinc-400 text-xs">Seguridad</label><input type="text" id="editUnlockPin" placeholder="PIN o Contraseña" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white text-center font-mono"></div>
+        <div class="space-y-1.5"><label class="font-bold text-zinc-400 text-xs">Falla</label><textarea id="editDeviceFault" required rows="2" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white"></textarea></div>
+        <div class="grid grid-cols-2 gap-3"><div><label class="text-xs text-zinc-400">Ppto ($)</label><input type="number" id="editDeviceBudget" oninput="updateBalanceCalculation('edit')" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white font-bold"></div><div><label class="text-xs text-zinc-400">Seña ($)</label><input type="number" id="editDeviceAdvance" oninput="updateBalanceCalculation('edit')" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-emerald-400 font-bold"></div></div>
+        <div class="grid grid-cols-2 gap-3 pt-2">
+          <div><label class="text-xs text-zinc-400">Estado Ppto</label><select id="editBudgetStatus" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white font-bold"><option value="PENDING">🟡 En Espera</option><option value="APPROVED">🟢 Aprobado</option><option value="REJECTED">🔴 Rechazado</option></select></div>
+          <div><label class="text-xs text-zinc-400">Estado Taller</label><select id="editDeviceStatus" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white font-bold"><option value="WAITING">En Espera</option><option value="IN_PROGRESS">En Taller</option><option value="IN_TRANSIT">En Viaje</option><option value="READY">Listo para Retiro</option><option value="DELIVERED">Entregado</option></select></div>
         </div>
-        <div class="space-y-2">
-          <label class="font-bold text-zinc-300 uppercase text-[10px]">1. Datos del Cliente</label>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <input type="text" id="inpClientName" required placeholder="Nombre *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white">
-            <input type="tel" id="inpClientPhone" required placeholder="WhatsApp *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white">
-          </div>
-        </div>
-        <div class="space-y-2">
-          <label class="font-bold text-zinc-300 uppercase text-[10px]">2. Dispositivo</label>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <select id="inpDeviceType" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white col-span-2 sm:col-span-1">
-              <option value="Celular">Celular</option><option value="Tablet">Tablet</option><option value="Notebook">Notebook</option><option value="Consola">Consola</option><option value="Otro">Otro</option>
-            </select>
-            <input type="text" id="inpDeviceBrand" required placeholder="Marca *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white">
-            <input type="text" id="inpDeviceModel" required placeholder="Modelo *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white">
-          </div>
-          <input type="text" id="inpDeviceSerial" placeholder="IMEI / Serie (Opcional)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white font-mono">
-        </div>
-        <div class="space-y-3 bg-zinc-950/60 p-4 rounded-2xl border border-zinc-800">
-          <label class="font-bold text-zinc-300 uppercase text-[10px] block">3. Clave / Seguridad</label>
-          <div class="flex items-center gap-2 bg-zinc-800 p-1 rounded-xl">
-            <button type="button" onclick="setUnlockType('pin')" id="btnUnlockPin" class="flex-1 py-1.5 rounded-lg bg-iosBlue text-white font-bold text-xs">PIN</button>
-            <button type="button" onclick="setUnlockType('pattern')" id="btnUnlockPattern" class="flex-1 py-1.5 rounded-lg text-zinc-400 font-bold text-xs">Patrón</button>
-            <button type="button" onclick="setUnlockType('none')" id="btnUnlockNone" class="flex-1 py-1.5 rounded-lg text-zinc-400 font-bold text-xs">Sin Clave</button>
-          </div>
-          <div id="unlockViewPin"><input type="text" id="inpUnlockPin" placeholder="Ej: 1234" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white text-center font-mono"></div>
-          <div id="unlockViewPattern" class="hidden text-center space-y-2">
-            <canvas id="patternCanvas" width="220" height="220" class="bg-zinc-900 border border-zinc-700 rounded-2xl mx-auto touch-none"></canvas>
-            <button type="button" onclick="resetPatternCanvas()" class="text-rose-400 underline text-sm py-2">Borrar trazo</button>
-          </div>
-          <div id="unlockViewNone" class="hidden py-2 text-center text-sm text-zinc-500">Sin seguridad asignada.</div>
-        </div>
-        <div class="space-y-3 bg-zinc-950 p-4 rounded-2xl border border-zinc-800">
-          <textarea id="inpDeviceFault" required rows="2" placeholder="Falla informada..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white"></textarea>
-          <div class="grid grid-cols-2 gap-3">
-            <div><label class="text-[10px] text-zinc-400 block mb-1">Ppto ($)</label><input type="number" id="inpDeviceBudget" oninput="updateBalanceCalculation('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white font-bold"></div>
-            <div><label class="text-[10px] text-zinc-400 block mb-1">Seña ($)</label><input type="number" id="inpDeviceAdvance" oninput="updateBalanceCalculation('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-3 text-base text-emerald-400 font-bold"></div>
-          </div>
-          <div class="grid grid-cols-2 gap-3 pt-2">
-            <div><label class="text-[10px] text-zinc-400 block mb-1 font-bold">Estado Ppto</label>
-              <select id="inpNewBudgetStatus" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white"><option value="PENDING">En Espera</option><option value="APPROVED">Aprobado</option></select>
-            </div>
-            <div><label class="text-[10px] text-zinc-400 block mb-1 font-bold">Taller</label>
-              <select id="inpNewInitialStatus" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white"><option value="WAITING">En Recepción</option><option value="IN_PROGRESS">Pasa a Taller</option></select>
-            </div>
-          </div>
-          <div class="flex justify-between items-center text-sm pt-3 border-t border-zinc-800/80 mt-2">
-            <span class="text-zinc-400 font-bold">Resta pagar:</span><span id="newCalculatedBalance" class="font-mono font-bold text-amber-400 text-lg">$0</span>
-          </div>
-        </div>
-        <button type="submit" class="w-full py-3.5 rounded-2xl bg-iosBlue hover:bg-blue-600 font-bold text-white text-base shadow-lg transition mt-4 cursor-pointer">Guardar Ingreso e Imprimir</button>
+        <div class="flex justify-between items-center text-sm pt-2 border-t border-zinc-800/80 mt-2"><span class="text-zinc-400 font-bold">Resta pagar:</span><span id="editCalculatedBalance" class="font-mono font-bold text-amber-400 text-lg">$0</span></div>
+        <div class="flex gap-3 pt-3"><button type="button" onclick="closeEditRepairModal()" class="flex-1 py-3.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold rounded-xl cursor-pointer">Cancelar</button><button type="submit" class="flex-1 py-3.5 bg-iosBlue hover:bg-blue-600 text-white font-bold rounded-xl shadow cursor-pointer">Guardar Cambios</button></div>
       </form>
     </div>
   </div>
 
-  <!-- Modal Ventas POS (Con Text-Base en Inputs para iOS) -->
+  <!-- MODAL: VENTAS TÁCTIL (POS) -->
   <div id="salesModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm hidden items-center justify-center p-0 sm:p-4">
-    <div class="bg-zinc-900 sm:border border-amber-600/70 rounded-none sm:rounded-3xl w-full h-full sm:h-[92vh] max-w-5xl flex flex-col shadow-2xl overflow-hidden">
-      <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-800 bg-zinc-900 shrink-0 pt-safe sm:pt-4">
-        <div class="flex items-center gap-3"><i class="ph-bold ph-shopping-cart-simple text-amber-400 text-2xl"></i><h3 class="text-base font-bold text-white">Ventas POS</h3></div>
-        <button type="button" onclick="closeSalesModal()" class="w-9 h-9 rounded-full bg-zinc-800 text-zinc-400 flex items-center justify-center"><i class="ph-bold ph-x text-lg"></i></button>
+    <div class="bg-zinc-900 sm:border border-amber-600/70 sm:rounded-3xl w-full h-full sm:h-[92vh] max-w-5xl flex flex-col shadow-2xl overflow-hidden text-sm text-zinc-300">
+      <div class="flex items-center justify-between px-4 sm:px-5 py-4 border-b border-zinc-800 bg-zinc-900 pt-safe sm:pt-4">
+        <div class="flex items-center gap-2"><i class="ph-bold ph-shopping-cart-simple text-amber-400 text-2xl"></i><h3 class="font-bold text-white text-base">Ventas de Mostrador</h3></div>
+        <button type="button" onclick="closeSalesModal()" class="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 cursor-pointer"><i class="ph-bold ph-x text-lg"></i></button>
       </div>
+
       <div class="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
-        <div class="flex-1 flex flex-col border-b md:border-b-0 md:border-r border-zinc-800 p-4 space-y-4 overflow-hidden">
+        <div class="flex-1 flex flex-col border-b md:border-b-0 md:border-r border-zinc-800 p-4 space-y-3 overflow-hidden">
           <div class="flex gap-2 shrink-0">
-            <input type="text" id="posSearchProduct" oninput="renderPosCatalog()" placeholder="Buscar repuesto..." class="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none">
-            <button type="button" onclick="togglePosScanner()" class="px-4 py-3 bg-purple-900/80 text-purple-200 rounded-xl font-bold text-sm flex items-center gap-2 cursor-pointer"><i class="ph-bold ph-camera text-lg"></i> Escanear</button>
+            <input type="text" id="posSearchProduct" oninput="renderPosCatalog()" placeholder="Buscar repuesto..." class="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-amber-500">
+            <button type="button" onclick="togglePosScanner()" class="px-4 py-3 bg-purple-900/80 text-purple-200 rounded-xl font-bold flex items-center gap-2 cursor-pointer"><i class="ph-bold ph-camera text-lg"></i> Escanear</button>
           </div>
-          <div id="posScannerBox" class="hidden p-3 bg-zinc-950 rounded-xl border border-purple-800 space-y-2"><button type="button" onclick="stopPosScanner()" class="text-rose-400 font-bold w-full text-right py-2 text-sm">Cerrar Cámara</button><div id="pos-qr-reader" class="w-full rounded-xl min-h-[200px] bg-black"></div></div>
-          <div class="flex-1 overflow-y-auto pb-safe"><div id="posCatalogGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div></div>
+          <div id="posScannerBox" class="hidden p-3 bg-zinc-950 rounded-xl border border-purple-800 space-y-2">
+            <div class="flex justify-between items-center text-xs text-purple-300"><span>Lector activo</span><button type="button" onclick="stopPosScanner()" class="text-rose-400 font-bold">Cerrar</button></div>
+            <div id="pos-qr-reader" class="w-full rounded-xl min-h-[170px] bg-black"></div>
+          </div>
+          <div class="flex-1 overflow-y-auto pb-safe">
+            <div id="posCatalogGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+          </div>
         </div>
+
         <div class="w-full md:w-[350px] flex flex-col bg-zinc-950/60 p-4 space-y-3 shrink-0 overflow-y-auto pb-safe">
-          <div class="flex items-center justify-between border-b border-zinc-800 pb-2"><span class="font-bold text-white uppercase text-sm">Carrito</span><button type="button" onclick="clearPosCart()" class="text-xs text-rose-400 p-2">Vaciar</button></div>
-          <div id="posCartContainer" class="flex-1 space-y-2 overflow-y-auto min-h-[150px]"></div>
-          <div class="space-y-2 pt-2 border-t border-zinc-800">
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-2"><span class="font-bold text-white uppercase text-sm">Carrito</span><button type="button" onclick="clearPosCart()" class="text-xs text-rose-400 p-1 cursor-pointer">Vaciar</button></div>
+          <div id="posCartContainer" class="flex-1 space-y-2 overflow-y-auto min-h-[120px]"></div>
+          
+          <div class="space-y-2 pt-3 border-t border-zinc-800">
             <select id="posBranch" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white font-bold focus:outline-none"></select>
-            <select id="posPaymentMethod" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white focus:outline-none"><option value="Efectivo">Efectivo</option><option value="Transferencia">Transferencia</option><option value="Tarjeta">Tarjeta</option></select>
+            <select id="posPaymentMethod" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white focus:outline-none"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia</option><option value="Tarjeta">Tarjeta</option></select>
             <input type="text" id="posCustomerName" placeholder="Cliente (opcional)" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none">
           </div>
-          <div class="p-4 bg-zinc-900 rounded-2xl border border-amber-600/50 space-y-3 mt-4">
+
+          <div class="p-4 bg-zinc-900 rounded-2xl border border-amber-600/50 space-y-2 mt-2">
             <div class="flex items-center justify-between"><span class="text-xs uppercase font-bold text-zinc-400">Total:</span><span id="posTotalAmount" class="font-mono text-2xl font-black text-amber-400">$0</span></div>
-            <button type="button" onclick="completePosSale()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-base shadow cursor-pointer">Cobrar Venta</button>
+            <button type="button" onclick="completePosSale()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-base shadow cursor-pointer mt-2">Cobrar Venta</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal Stock, Caja, Ajustes, Compartir y Licencias con Text-Base implementados en JS globalmente -->
-  <!-- (Para mantener la longitud requerida, los modales restantes siguen la misma optimización visual que Nuevo Ingreso y POS) -->
-  
+  <!-- MODAL: CONTROL DE STOCK -->
+  <div id="stockModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-0 sm:p-4">
+    <div class="bg-zinc-900 border-t sm:border border-purple-800/80 sm:rounded-3xl w-full h-full sm:h-auto max-h-[92vh] max-w-3xl flex flex-col shadow-2xl overflow-hidden text-sm text-zinc-300">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-800 bg-zinc-900 pt-safe sm:pt-4">
+        <div class="flex items-center gap-2"><i class="ph-bold ph-barcode text-purple-400 text-2xl"></i><h3 class="font-bold text-white text-base">Control de Stock</h3></div>
+        <button type="button" onclick="closeStockModal()" class="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 cursor-pointer"><i class="ph-bold ph-x text-lg"></i></button>
+      </div>
+
+      <div class="p-4 sm:p-5 overflow-y-auto space-y-4 flex-1 pb-safe">
+        <div class="grid grid-cols-2 gap-3">
+          <button type="button" onclick="toggleBarcodeScanner()" id="btnStartScanner" class="py-3 px-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold flex items-center justify-center gap-2 shadow cursor-pointer"><i class="ph-bold ph-camera text-lg"></i><span id="btnScannerText">Escanear</span></button>
+          <button type="button" onclick="toggleNewStockForm()" class="py-3 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold flex items-center justify-center gap-2 cursor-pointer"><i class="ph-bold ph-plus-circle text-purple-400 text-lg"></i><span>Cargar Prod.</span></button>
+        </div>
+
+        <div id="scannerContainer" class="hidden p-3 bg-zinc-950 border border-purple-800/80 rounded-2xl space-y-2">
+          <div class="flex items-center justify-between text-xs text-purple-300"><span>Apunte al código de barras:</span><button type="button" onclick="stopBarcodeScanner()" class="text-rose-400 font-bold">Cerrar</button></div>
+          <div id="qr-reader" class="w-full rounded-xl overflow-hidden min-h-[200px] bg-black"></div>
+        </div>
+
+        <div id="newStockFormContainer" class="hidden p-4 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="flex gap-2">
+              <input type="text" id="stkCode" placeholder="Código *" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white font-mono text-base focus:outline-none">
+              <button type="button" onclick="generateRandomBarcode()" class="px-4 bg-zinc-700 rounded-xl text-sm font-bold cursor-pointer">Auto</button>
+            </div>
+            <input type="text" id="stkName" placeholder="Nombre Repuesto *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none">
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <select id="stkCategory" class="col-span-2 sm:col-span-1 w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white focus:outline-none"><option value="Módulos y Pantallas">Pantallas</option><option value="Baterías">Baterías</option><option value="Pines de Carga">Pines</option><option value="Accesorios y Fundas">Accesorios</option><option value="Otros">Otros</option></select>
+            <input type="number" id="stkQuantity" value="1" min="0" placeholder="Cant" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white font-bold focus:outline-none">
+            <input type="number" id="stkCostPrice" placeholder="Costo ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-zinc-300 font-mono focus:outline-none">
+            <input type="number" id="stkSalePrice" placeholder="Venta ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-emerald-400 font-bold font-mono focus:outline-none">
+          </div>
+          <button type="button" onclick="saveStockItem()" class="w-full py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 font-bold text-white transition text-base mt-2 cursor-pointer">Guardar en Stock</button>
+        </div>
+
+        <div class="relative">
+          <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 text-lg"></i>
+          <input type="text" id="stkSearchInput" oninput="renderStockList()" placeholder="Filtrar repuestos..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-12 pr-4 py-3 text-base text-white focus:outline-none shadow-sm">
+        </div>
+
+        <div id="stockListContainer" class="space-y-2 max-h-[40vh] overflow-y-auto"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CONTROL DE CAJA INDEPENDIENTE -->
+  <div id="cashModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden text-sm text-zinc-300">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-800 bg-zinc-900 pt-safe sm:pt-4">
+        <div class="flex items-center gap-2"><i class="ph-bold ph-currency-dollar-simple text-emerald-400 text-2xl"></i><h3 class="font-bold text-white text-base">Caja por Sucursal</h3></div>
+        <button type="button" onclick="closeCashModal()" class="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 cursor-pointer"><i class="ph-bold ph-x text-lg"></i></button>
+      </div>
+
+      <div class="p-4 sm:p-5 overflow-y-auto space-y-4 flex-1 pb-safe">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-zinc-950 p-3 rounded-2xl border border-zinc-800 gap-3">
+          <span class="font-bold text-zinc-300 text-xs">Caja Activa:</span>
+          <div id="cashBranchSelectorContainer" class="flex gap-2 overflow-x-auto no-scrollbar pb-1 sm:pb-0"></div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[10px] text-emerald-400 font-bold uppercase block">Ingresos</span><span id="cashTotalIncome" class="text-base font-bold text-emerald-400 font-mono mt-1 block">$0</span></div>
+          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[10px] text-rose-400 font-bold uppercase block">Egresos</span><span id="cashTotalExpense" class="text-base font-bold text-rose-400 font-mono mt-1 block">$0</span></div>
+          <div class="p-3 bg-gradient-to-b from-zinc-900 to-indigo-950/60 border border-indigo-700/60 rounded-xl"><span class="text-[10px] text-indigo-300 font-bold uppercase block">Saldo Neto</span><span id="cashNetBalance" class="text-base font-bold text-white font-mono mt-1 block">$0</span></div>
+        </div>
+
+        <div class="flex gap-3">
+          <button type="button" onclick="showCashForm('INCOME')" class="flex-1 py-3 rounded-xl bg-emerald-950/70 border border-emerald-600/70 text-emerald-200 font-bold flex items-center justify-center gap-2 cursor-pointer"><i class="ph-bold ph-arrow-circle-down-right text-lg"></i> + Ingreso</button>
+          <button type="button" onclick="showCashForm('EXPENSE')" class="flex-1 py-3 rounded-xl bg-rose-950/70 border border-rose-600/70 text-rose-200 font-bold flex items-center justify-center gap-2 cursor-pointer"><i class="ph-bold ph-arrow-circle-up-right text-lg"></i> - Salida</button>
+          <button type="button" onclick="showCashForm('SUPPLIER')" class="flex-1 py-3 rounded-xl bg-amber-950/70 border border-amber-600/70 text-amber-200 font-bold flex items-center justify-center gap-2 cursor-pointer"><i class="ph-bold ph-truck text-lg"></i> Prov.</button>
+        </div>
+
+        <div id="cashMovementForm" class="hidden p-4 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-3">
+          <div class="flex items-center justify-between"><span id="cashFormTitle" class="font-bold text-white uppercase text-xs">Registrar Movimiento</span><button type="button" onclick="hideCashForm()" class="p-1 cursor-pointer"><i class="ph-bold ph-x"></i></button></div>
+          <input type="hidden" id="cshType" value="INCOME">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <select id="cshBranch" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white font-bold focus:outline-none"></select>
+            <input type="number" id="cshAmount" placeholder="Monto ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white font-mono font-bold focus:outline-none">
+            <select id="cshMethod" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white focus:outline-none"><option value="Efectivo">Efectivo</option><option value="Transferencia">Transferencia</option><option value="Tarjeta">Tarjeta</option></select>
+          </div>
+          <div id="supplierFieldsContainer" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-zinc-900 rounded-xl border border-zinc-800">
+            <input type="text" id="cshSupplierName" placeholder="Proveedor" class="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none">
+            <input type="text" id="cshInvoiceNumber" placeholder="N° Factura / Remito" class="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none">
+          </div>
+          <input type="text" id="cshConcept" placeholder="Concepto (ej: Pago alquiler, flete...)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none">
+          <button type="button" onclick="saveCashMovement()" class="w-full py-3.5 rounded-xl bg-emerald-600 text-white font-bold text-base cursor-pointer mt-2">Guardar en Caja</button>
+        </div>
+
+        <div id="cashListContainer" class="space-y-2 max-h-[35vh] overflow-y-auto"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AVISAR RETIRO WHATSAPP -->
+  <div id="pickupNoticeModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-zinc-900 border-t sm:border border-emerald-600/70 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-5 text-sm text-zinc-300 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-zinc-800 pt-safe sm:pt-0"><div class="flex items-center gap-2"><i class="ph-bold ph-whatsapp-logo text-emerald-400 text-2xl"></i><h3 class="font-bold text-white text-base">Avisar Retiro</h3></div><button type="button" onclick="closePickupNoticeModal()" class="p-2 cursor-pointer"><i class="ph-bold ph-x text-lg"></i></button></div>
+      <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800"><span class="text-[10px] text-zinc-500 uppercase block mb-1">Dispositivo:</span><b class="text-white text-sm block truncate" id="pickupTargetDevice">-</b><div class="text-zinc-400 text-xs mt-1 truncate" id="pickupTargetClient">-</div></div>
+      <div class="grid grid-cols-2 gap-3">
+        <button type="button" id="btnPickupRepaired" onclick="setPickupResultType('repaired')" class="p-3.5 rounded-2xl border-2 border-emerald-600 bg-emerald-950/60 text-emerald-200 font-bold flex flex-col items-center justify-center gap-1.5 cursor-pointer"><i class="ph-bold ph-check-circle text-2xl"></i><span>REPARADO</span></button>
+        <button type="button" id="btnPickupUnrepaired" onclick="setPickupResultType('unrepaired')" class="p-3.5 rounded-2xl border border-zinc-700 bg-zinc-800 text-zinc-400 font-bold flex flex-col items-center justify-center gap-1.5 cursor-pointer"><i class="ph-bold ph-x-circle text-2xl"></i><span>NO REPARADO</span></button>
+      </div>
+      <div id="pickupViewRepaired" class="p-4 bg-zinc-950 rounded-xl border border-zinc-800 space-y-3"><div class="flex justify-between items-center text-xs"><span class="text-zinc-400">Saldo a cobrar:</span><span id="pickupRepairedBalance" class="font-mono font-bold text-amber-400 text-lg">$0</span></div><div><label class="text-[10px] text-zinc-400 block mb-1">Garantía:</label><input type="text" id="inpPickupWarrantyText" value="Garantía de 90 días sobre el trabajo realizado." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white focus:outline-none"></div></div>
+      <div id="pickupViewUnrepaired" class="hidden p-4 bg-zinc-950 rounded-xl border border-zinc-800 space-y-3"><div><label class="text-[10px] text-zinc-400 block mb-1">Motivo:</label><select id="selPickupUnrepairedReason" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white focus:outline-none"><option value="Sin solución por daño irreparable en placa.">Sin solución (Daño irreparable en placa)</option><option value="Repuesto no disponible en el mercado.">Repuesto no disponible en el mercado</option><option value="Presupuesto desestimado por el cliente.">Presupuesto rechazado por el cliente</option></select></div></div>
+      <button type="button" onclick="sendPickupWhatsAppMessage()" class="w-full py-3.5 rounded-xl bg-emerald-600 text-white font-bold text-base shadow-lg flex items-center justify-center gap-2 cursor-pointer pb-safe sm:pb-3"><i class="ph-bold ph-paper-plane-tilt text-lg"></i> Enviar Mensaje</button>
+    </div>
+  </div>
+
+  <!-- MODAL: IMPRESIÓN ETIQUETAS -->
+  <div id="printLabelModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-5 text-sm text-zinc-300 space-y-4">
+      <div class="flex items-center justify-between pb-2 pt-safe sm:pt-0"><div class="flex items-center gap-2"><i class="ph-bold ph-printer text-iosBlue text-xl"></i><h3 class="font-bold text-white text-base">Etiqueta Adhesiva</h3></div><button type="button" onclick="closePrintModal()" class="p-2 cursor-pointer"><i class="ph-bold ph-x text-lg"></i></button></div>
+      <div class="grid grid-cols-2 gap-3"><button type="button" id="btnPreviewThermal" onclick="setLabelPreviewFormat('thermal')" class="py-2.5 rounded-xl text-sm font-bold bg-iosOrange text-white shadow cursor-pointer">Térmica</button><button type="button" id="btnPreviewStandard" onclick="setLabelPreviewFormat('standard')" class="py-2.5 rounded-xl text-sm font-bold bg-zinc-800 text-zinc-400 cursor-pointer">A4 / Láser</button></div>
+      <div class="flex justify-center p-4 bg-zinc-950 rounded-2xl border border-zinc-800 overflow-x-auto" id="labelPreviewContainer"></div>
+      <button type="button" onclick="executeNativePrint()" class="w-full py-3.5 bg-iosBlue text-white font-bold text-base rounded-xl flex items-center justify-center gap-2 shadow cursor-pointer pb-safe sm:pb-3.5"><i class="ph-bold ph-printer text-lg"></i> Mandar a Imprimir</button>
+    </div>
+  </div>
+
+  <!-- MODAL: AJUSTES -->
+  <div id="settingsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-5 text-sm text-zinc-300 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between pb-2 pt-safe sm:pt-0"><div class="flex items-center gap-2"><i class="ph-bold ph-gear text-xl text-zinc-300"></i><h3 class="font-bold text-white text-base">Ajustes Taller</h3></div><button type="button" onclick="closeSettingsModal()" class="p-2 cursor-pointer"><i class="ph-bold ph-x text-lg"></i></button></div>
+      <div class="p-4 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-3 text-center">
+        <span class="text-[10px] text-zinc-400 uppercase font-bold block">Logo del Taller</span>
+        <div class="flex items-center justify-center gap-4">
+          <div id="settingsLogoPreview" class="w-16 h-16 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden shrink-0"><i class="ph-bold ph-storefront text-zinc-500 text-3xl"></i></div>
+          <div class="space-y-2 text-left">
+            <label class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-xl text-white text-sm font-bold"><i class="ph-bold ph-upload-simple"></i> Cargar Logo<input type="file" accept="image/*" onchange="handleLogoUpload(this)" class="hidden"></label>
+            <button id="btnRemoveLogo" type="button" onclick="removeWorkshopLogo()" class="block text-xs text-rose-400 hover:underline">Restablecer</button>
+          </div>
+        </div>
+      </div>
+      <div class="space-y-3">
+        <div><label class="text-[10px] text-zinc-400 block mb-1">Nombre Comercial *</label><input type="text" id="cfgWorkshopName" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white font-bold focus:outline-none"></div>
+        <div><label class="text-[10px] text-zinc-400 block mb-1">Subtítulo</label><input type="text" id="cfgWorkshopSubtitle" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none"></div>
+        <div><label class="text-[10px] text-zinc-400 block mb-1">Sucursales (separadas por coma)</label><input type="text" id="cfgBranchesListInput" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white focus:outline-none"></div>
+      </div>
+      <button type="button" onclick="saveWorkshopSettings()" class="w-full py-3.5 bg-iosBlue text-white font-bold text-base rounded-xl shadow cursor-pointer pb-safe sm:pb-3.5 mt-2">Guardar Configuración</button>
+    </div>
+  </div>
+
+  <!-- MODAL: EQUIPO -->
+  <div id="teamModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-5 text-sm text-zinc-300 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between pb-2 pt-safe sm:pt-0"><h3 class="font-bold text-white text-base">Equipo & Sincronización</h3><button type="button" onclick="closeTeamModal()" class="p-2 cursor-pointer"><i class="ph-bold ph-x text-lg"></i></button></div>
+      <div class="p-4 bg-zinc-950 rounded-xl border border-zinc-800 space-y-1"><span class="text-[10px] text-zinc-400 uppercase font-bold">Código de este Taller:</span><div id="modalWorkshopCodeDisplay" class="font-mono text-xl font-bold text-white">TALLER-XXXX</div></div>
+      <div class="space-y-2">
+        <label class="text-[10px] text-zinc-400 uppercase font-bold block">Vincularse a otro Taller:</label>
+        <div class="flex gap-2">
+          <input type="text" id="inpJoinWorkshopCode" placeholder="Ej: TALLER-8291" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white font-mono uppercase focus:outline-none">
+          <button type="button" onclick="joinWorkshopByCode()" class="px-5 py-3 rounded-xl bg-indigo-600 text-white font-bold text-base cursor-pointer">Unirme</button>
+        </div>
+      </div>
+      <button type="button" onclick="closeTeamModal()" class="w-full py-3.5 bg-zinc-800 text-white font-bold text-base rounded-xl cursor-pointer pb-safe sm:pb-3.5">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- MODAL: LICENCIAS (MODO SIGILO INTACTO) -->
+  <div id="licenseModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-5 text-sm text-zinc-300 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between pb-2 pt-safe sm:pt-0"><h3 class="font-bold text-white text-base">Licencia de la App</h3><button type="button" onclick="closeLicenseModal()" class="p-2 cursor-pointer"><i class="ph-bold ph-x text-lg"></i></button></div>
+      <div class="p-4 bg-zinc-950 rounded-xl border border-zinc-800 space-y-1">
+        <span class="text-[10px] text-zinc-400 uppercase font-bold">Estado:</span>
+        <div id="licenseStatusText" onclick="triggerMasterAuth()" class="font-mono text-lg font-bold text-amber-400 select-none cursor-pointer">DEMO</div>
+      </div>
+      <!-- Panel Maestro Seguro (Oculto por defecto) -->
+      <div id="masterAdminUnlockedView" class="hidden p-4 bg-zinc-950 rounded-2xl border border-indigo-700/60 space-y-3">
+        <span class="text-xs font-bold text-indigo-300 uppercase block">Panel de Habilitación:</span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white uppercase font-mono focus:outline-none">
+          <select id="genLicenseType" class="bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-3 text-base text-white focus:outline-none"><option value="LIFETIME">Vitalicia (PRO)</option><option value="DEMO15">Demo (15 Días)</option></select>
+        </div>
+        <button type="button" onclick="generateActivationKeyForClient()" class="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl cursor-pointer">Emitir Clave</button>
+        <div id="genResultBox" class="hidden p-3 bg-zinc-900 rounded-xl flex justify-between items-center"><span id="genGeneratedKey" class="font-mono text-emerald-400 font-bold text-sm"></span><button type="button" onclick="copyGeneratedKey()" class="px-3 py-1.5 bg-zinc-800 text-white font-bold rounded cursor-pointer text-xs">Copiar</button></div>
+      </div>
+      <div class="flex gap-2">
+        <input type="text" id="inpActivationKey" placeholder="OL-XXXX-XXXX" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 text-base text-white font-mono uppercase focus:outline-none">
+        <button type="button" onclick="applyActivationKey()" class="px-5 py-3 bg-amber-600 text-white font-bold text-base rounded-xl cursor-pointer">Activar</button>
+      </div>
+      <button type="button" onclick="closeLicenseModal()" class="w-full py-3.5 bg-zinc-800 text-white font-bold text-base rounded-xl cursor-pointer pb-safe sm:pb-3.5 mt-2">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- MODAL: COMPARTIR -->
+  <div id="installModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-5 text-sm text-zinc-300 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between pb-2 pt-safe sm:pt-0"><div class="flex items-center gap-2"><div class="w-10 h-10 rounded-xl bg-emerald-600/20 flex items-center justify-center text-emerald-400"><i class="ph-bold ph-share-network text-xl"></i></div><div><h3 class="font-bold text-white text-base">Compartir Web App</h3></div></div><button type="button" onclick="closeInstallModal()" class="p-2 cursor-pointer"><i class="ph-bold ph-x text-lg"></i></button></div>
+      <div class="p-4 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-1"><span class="font-bold text-emerald-400 uppercase flex items-center gap-1.5 text-xs"><i class="ph-bold ph-shield-check"></i> Privacidad Garantizada</span><p class="text-zinc-300 text-xs leading-relaxed">El nuevo dispositivo iniciará en un <b>taller nuevo en blanco</b>. No accederá a clientes ni stock de tu sucursal.</p></div>
+      <div class="space-y-3">
+        <button type="button" onclick="shareCleanAppViaWhatsApp()" class="w-full py-3.5 px-4 rounded-xl bg-emerald-600 text-white font-bold flex items-center justify-center gap-2 shadow cursor-pointer text-base"><i class="ph-bold ph-whatsapp-logo text-xl"></i> Compartir por WhatsApp</button>
+        <button type="button" onclick="copyCleanAppUrl()" class="w-full py-3.5 px-4 rounded-xl bg-zinc-800 text-white font-bold flex items-center justify-center gap-2 cursor-pointer text-base"><i class="ph-bold ph-copy text-xl"></i> Copiar Enlace Web</button>
+      </div>
+      <button type="button" onclick="closeInstallModal()" class="w-full py-3.5 bg-zinc-800 text-white font-bold text-base rounded-xl cursor-pointer pb-safe sm:pb-3.5 mt-2">Cerrar</button>
+    </div>
+  </div>
+
   <div id="toastContainer" class="fixed top-safe right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none mt-4"></div>
 
-  <!-- Funciones Core JavaScript -->
+  <!-- Core JavaScript (Funciones Hoisted para garantizar clics en iOS) -->
   <script>
-    // Variables de Sistema
     const WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     const DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     const LOCAL_REPAIRS_KEY = 'openline_local_repairs_v8';
     const LOCAL_SETTINGS_KEY = 'openline_local_settings_v8';
     const LICENSE_STORAGE_KEY = 'openline_license_status_v8';
+    const PERMANENT_LICENSE_VAULT_KEY = 'openline_permanent_license_vault_master';
     const STOCK_STORAGE_KEY = 'openline_local_stock_v8';
     const CASH_STORAGE_KEY = 'openline_local_cash_v8';
 
@@ -451,49 +572,42 @@
 
     let workshopSettings = { name: 'OpenLine', subtitle: 'Servicio Técnico', logo: '', branches: ['Central'], printerType: 'thermal' };
     let licenseInfo = { type: 'DEMO', key: '' };
-    let mqttClient = null, isMqttConnected = false, posHtml5Scanner = null;
+    let mqttClient = null, isMqttConnected = false, posHtml5Scanner = null, stockHtml5Scanner = null;
 
-    // Helpers UI
     function safeGet(id) { return document.getElementById(id); }
     function openModalElement(id) { const el = safeGet(id); if (el) { el.classList.remove('hidden'); el.classList.add('flex'); } }
     function closeModalElement(id) { const el = safeGet(id); if (el) { el.classList.add('hidden'); el.classList.remove('flex'); } }
     function showToast(title, msg, type = 'info') {
       const c = safeGet('toastContainer'); const t = document.createElement('div');
-      t.className = `p-4 rounded-2xl border shadow-2xl bg-zinc-900/95 backdrop-blur text-white text-sm border-zinc-700 pointer-events-auto`;
-      t.innerHTML = `<b class="block text-base mb-1">${title}</b><span class="text-zinc-300 leading-tight">${msg}</span>`;
+      t.className = `p-4 rounded-2xl border shadow-2xl bg-zinc-900/95 backdrop-blur text-white text-sm border-zinc-700 pointer-events-auto flex flex-col`;
+      t.innerHTML = `<b class="mb-1">${title}</b><span class="text-zinc-300 text-xs">${msg}</span>`;
       c.appendChild(t); setTimeout(() => t.remove(), 4000);
     }
+    function getTopic(sub) { return `openline/v4/workshop/${currentWorkshopId.toUpperCase().replace(/[^A-Z0-9_-]/g, '')}/${sub}`; }
 
-    // Funciones Hoisted (Globales y blindadas para OnClick de iOS)
+    // Modales y Botones Directos
     function openNewRepairModal() { currentPhotos = []; safeGet('newRepairForm').reset(); setUnlockType('pin'); safeGet('newPhotosGrid').innerHTML = ''; updateBalanceCalculation('new'); openModalElement('newRepairModal'); }
     function closeNewRepairModal() { closeModalElement('newRepairModal'); }
-    
-    function openSalesModal() { posCart = []; renderPosCart(); renderPosCatalog(); openModalElement('salesModal'); }
-    function closeSalesModal() { if(posHtml5Scanner) posHtml5Scanner.stop(); closeModalElement('salesModal'); }
-    
-    function openStockModal() { openModalElement('stockModal'); renderStockList(); }
-    function closeStockModal() { closeModalElement('stockModal'); }
-    
-    function openCashModal() { openModalElement('cashModal'); }
-    function closeCashModal() { closeModalElement('cashModal'); }
-    
+    function openSalesModal() { posCart = []; loadLocalStock(); renderPosCart(); renderPosCatalog(); const sel = safeGet('posBranch'); if (sel) sel.innerHTML = (workshopSettings.branches || ['Central']).map(b => `<option value="${b}">${b}</option>`).join(''); openModalElement('salesModal'); }
+    function closeSalesModal() { if(posHtml5Scanner) posHtml5Scanner.stop().catch(()=>{}); closeModalElement('salesModal'); }
+    function openStockModal() { loadLocalStock(); openModalElement('stockModal'); renderStockList(); }
+    function closeStockModal() { if(stockHtml5Scanner) stockHtml5Scanner.stop().catch(()=>{}); closeModalElement('stockModal'); updateStockBadge(); }
+    function openCashModal() { openModalElement('cashModal'); renderCashBranchSelector(); renderCashMovements(); }
+    function closeCashModal() { closeModalElement('cashModal'); updateCashBalanceUI(); }
     function openInstallModal() { openModalElement('installModal'); }
     function closeInstallModal() { closeModalElement('installModal'); }
-    
-    function openSettingsModal() { safeGet('cfgWorkshopName').value = workshopSettings.name; safeGet('cfgWorkshopSubtitle').value = workshopSettings.subtitle; openModalElement('settingsModal'); }
+    function openSettingsModal() { safeGet('cfgWorkshopName').value = workshopSettings.name; safeGet('cfgWorkshopSubtitle').value = workshopSettings.subtitle; safeGet('cfgBranchesListInput').value = (workshopSettings.branches || []).join(', '); const p = safeGet('settingsLogoPreview'); if(workshopSettings.logo) { p.innerHTML = `<img src="${workshopSettings.logo}" class="w-full h-full object-cover">`; safeGet('btnRemoveLogo').classList.remove('hidden'); } else { p.innerHTML = `<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>`; safeGet('btnRemoveLogo').classList.add('hidden'); } openModalElement('settingsModal'); }
     function closeSettingsModal() { closeModalElement('settingsModal'); }
-    
-    function openTeamModal() { openModalElement('teamModal'); }
+    function openTeamModal() { safeGet('modalWorkshopCodeDisplay').textContent = currentWorkshopId; openModalElement('teamModal'); }
     function closeTeamModal() { closeModalElement('teamModal'); }
-    
-    function openLicenseModal() { openModalElement('licenseModal'); }
+    function openLicenseModal() { updateLicenseUI(); openModalElement('licenseModal'); }
     function closeLicenseModal() { closeModalElement('licenseModal'); }
     function closeDetailModal() { closeModalElement('detailModal'); }
 
     // Búsqueda y Filtros
     function setFilter(f) { currentFilter = f; renderRepairsList(); }
-    function handleSearch() { renderRepairsList(); }
-    function clearSearch() { safeGet('searchInput').value = ''; renderRepairsList(); }
+    function handleSearch() { renderRepairsList(); const c = safeGet('clearSearchBtn'); if(safeGet('searchInput').value) c.classList.remove('hidden'); else c.classList.add('hidden'); }
+    function clearSearch() { safeGet('searchInput').value = ''; safeGet('clearSearchBtn').classList.add('hidden'); renderRepairsList(); }
 
     function updateBalanceCalculation(target) {
       const bgt = parseFloat(safeGet(target === 'new' ? 'inpDeviceBudget' : 'editDeviceBudget').value) || 0;
@@ -507,71 +621,104 @@
         const btn = safeGet('btnUnlock' + x.charAt(0).toUpperCase() + x.slice(1));
         const view = safeGet('unlockView' + x.charAt(0).toUpperCase() + x.slice(1));
         if (btn && view) {
-          btn.className = (x === t) ? 'flex-1 py-1.5 rounded-lg bg-iosBlue text-white font-bold text-xs transition' : 'flex-1 py-1.5 rounded-lg text-zinc-400 font-bold text-xs transition';
+          btn.className = (x === t) ? 'flex-1 py-2 rounded-xl bg-iosBlue text-white font-bold text-sm transition shadow' : 'flex-1 py-2 rounded-xl text-zinc-400 font-bold text-sm transition';
           if (x === t) view.classList.remove('hidden'); else view.classList.add('hidden');
         }
       });
       if (t === 'pattern') setTimeout(initPatternCanvas, 100);
     }
-
-    function resetPatternCanvas() { selectedPatternSequence = []; const c = safeGet('patternCanvas'); if(c) drawPatternGrid(c.getContext('2d'), []); }
     
     // Core Inicialización
     function bootstrapApp() {
       try {
         const sr = localStorage.getItem(LOCAL_REPAIRS_KEY + '_' + currentWorkshopId); if(sr) repairs = JSON.parse(sr) || [];
-        const ss = localStorage.getItem(STOCK_STORAGE_KEY + '_' + currentWorkshopId); if(ss) stockItems = JSON.parse(ss) || [];
-        const sc = localStorage.getItem(CASH_STORAGE_KEY + '_' + currentWorkshopId); if(sc) cashMovements = JSON.parse(sc) || [];
+        loadLocalStock(); loadLocalCash();
         const st = localStorage.getItem(LOCAL_SETTINGS_KEY + '_' + currentWorkshopId); if(st) workshopSettings = { ...workshopSettings, ...JSON.parse(st) };
+        restoreLicensePermanently();
         
         applyWorkshopBrandingUI();
+        renderBranchUIElements();
+        renderCashBranchSelector();
         renderRepairsList();
+        updateCounters();
+        updateStockBadge();
+        updateLicenseUI();
+        updateCashBalanceUI();
         
         if (typeof mqtt !== 'undefined') {
           mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'opl_' + myDeviceId, clean: true });
-          mqttClient.on('connect', () => { safeGet('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse'; });
+          mqttClient.on('connect', () => { safeGet('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse'; mqttClient.subscribe(getTopic('#'), { qos: 1 }); publishFullSnapshot(false); });
           mqttClient.on('message', (t, m) => {
             const p = JSON.parse(m.toString());
-            if (p && p.senderId !== myDeviceId && p.repairs) { repairs = p.repairs; localStorage.setItem(LOCAL_REPAIRS_KEY + '_' + currentWorkshopId, JSON.stringify(repairs)); renderRepairsList(); }
+            if (p && p.senderId !== myDeviceId) { 
+              if(p.repairs) { repairs = p.repairs; localStorage.setItem(LOCAL_REPAIRS_KEY + '_' + currentWorkshopId, JSON.stringify(repairs)); renderRepairsList(); updateCounters(); }
+              if(p.stockItems) { stockItems = p.stockItems; persistStockLocal(); renderStockList(); updateStockBadge(); }
+              if(p.cashMovements) { cashMovements = p.cashMovements; persistCashLocal(); renderCashMovements(); updateCashBalanceUI(); }
+              if(p.settings) { workshopSettings = { ...workshopSettings, ...p.settings }; localStorage.setItem(LOCAL_SETTINGS_KEY + '_' + currentWorkshopId, JSON.stringify(workshopSettings)); applyWorkshopBrandingUI(); renderBranchUIElements(); renderCashBranchSelector(); }
+            }
           });
         }
-      } catch (e) {
-        console.error("Error en Bootstrap:", e);
-      }
+      } catch (e) {}
     }
 
     function applyWorkshopBrandingUI() {
       safeGet('appHeaderTitle').textContent = workshopSettings.name;
       safeGet('appHeaderSubtitle').textContent = workshopSettings.subtitle;
       safeGet('headerWorkshopCode').textContent = currentWorkshopId;
+      const customLogo = safeGet('headerCustomLogo'); const defIcon = safeGet('headerDefaultIcon');
+      if (workshopSettings.logo) { customLogo.src = workshopSettings.logo; customLogo.classList.remove('hidden'); defIcon.classList.add('hidden'); }
+      else { customLogo.classList.add('hidden'); defIcon.classList.remove('hidden'); }
     }
 
     function getOperationalLabel(status) {
-      if (status === 'WAITING') return 'Espera';
+      if (status === 'WAITING' || status === 'RECEIVED') return 'Espera';
       if (status === 'IN_PROGRESS') return 'Taller';
       if (status === 'IN_TRANSIT') return 'Viaje';
       if (status === 'READY') return 'Listo';
       if (status === 'DELIVERED') return 'Entregado';
-      return 'Recibido';
+      return 'Espera';
+    }
+    function getBudgetLabel(status) {
+      if (status === 'APPROVED') return 'Aprobado';
+      if (status === 'REJECTED') return 'Rechazado';
+      return 'Pendiente';
     }
 
     function renderRepairsList() {
-      const container = safeGet('repairsList');
-      const empty = safeGet('emptyState');
-      const search = (safeGet('searchInput')?.value || '').toLowerCase().trim();
-      const filtered = repairs.filter(r => (currentFilter === 'ALL' || r.status === currentFilter) && (!search || r.clientName.toLowerCase().includes(search) || r.id.toLowerCase().includes(search)));
+      const container = safeGet('repairsList'); const empty = safeGet('emptyState'); const search = (safeGet('searchInput')?.value || '').toLowerCase().trim();
+      const filtered = repairs.filter(r => {
+        let ms = currentFilter === 'ALL' || r.status === currentFilter;
+        if(currentFilter === 'WAITING' && (r.status === 'RECEIVED' || r.status === 'WAITING')) ms = true;
+        const mb = currentBranchFilter === 'ALL' || r.branchCurrent === currentBranchFilter;
+        const mt = !search || r.clientName.toLowerCase().includes(search) || r.deviceModel.toLowerCase().includes(search) || r.id.toLowerCase().includes(search);
+        return ms && mb && mt;
+      });
 
       if (filtered.length === 0) { container.innerHTML = ''; empty.classList.remove('hidden'); return; }
       empty.classList.add('hidden');
       
       container.innerHTML = filtered.map(item => `
-        <div onclick="openDetailModal('${item.id}')" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 shadow-sm cursor-pointer mb-3 active:scale-[0.98] transition">
-          <div class="flex items-center justify-between mb-2">
-            <span class="font-mono text-sm font-bold text-iosBlue">${item.id}</span>
-            <span class="text-[10px] px-2.5 py-1 rounded-lg border bg-zinc-800 text-zinc-300 font-bold uppercase tracking-wider">${getOperationalLabel(item.status)}</span>
+        <div onclick="openDetailModal('${item.id}')" class="bg-zinc-900 border border-zinc-800 hover:border-zinc-700 active:scale-[0.98] rounded-3xl p-4 sm:p-5 shadow-md cursor-pointer transition flex flex-col gap-3 relative overflow-hidden">
+          ${item.inTransit ? `<div class="bg-indigo-950 text-indigo-300 border-b border-indigo-800/80 -mx-5 -mt-5 px-5 py-1.5 text-[10px] font-bold flex items-center justify-between mb-1"><span class="flex items-center gap-1.5"><i class="ph-bold ph-truck animate-pulse"></i> En camino: ${item.dispatchFrom} ➔ ${item.dispatchTo}</span></div>` : ''}
+          <div class="flex items-center justify-between gap-1">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="font-mono text-sm font-bold text-iosBlue">${item.id}</span>
+              <span class="text-[10px] px-2.5 py-1 rounded-lg border bg-zinc-800 text-zinc-300 font-bold uppercase tracking-wider">${getOperationalLabel(item.status)}</span>
+              <span class="text-[10px] px-2.5 py-1 rounded-lg border ${item.budgetStatus === 'APPROVED' ? 'bg-emerald-950 text-emerald-300 border-emerald-800' : (item.budgetStatus === 'REJECTED' ? 'bg-rose-950 text-rose-300 border-rose-800' : 'bg-amber-950 text-amber-300 border-amber-800')} font-bold uppercase tracking-wider">Ppto: ${getBudgetLabel(item.budgetStatus)}</span>
+            </div>
+            <span class="text-[10px] bg-rose-950/80 text-rose-300 border border-rose-800/50 px-2.5 py-1 rounded-lg font-bold">${item.branchCurrent || 'Central'}</span>
           </div>
-          <h4 class="text-base font-bold text-white truncate">${item.deviceBrand} ${item.deviceModel}</h4>
-          <p class="text-sm text-zinc-400 mt-1 truncate"><i class="ph-bold ph-user mr-1"></i>${item.clientName}</p>
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0 flex-1">
+              <h4 class="text-base font-bold text-white leading-tight truncate">${item.deviceBrand} ${item.deviceModel}</h4>
+              <p class="text-xs text-zinc-400 mt-1 truncate"><i class="ph-bold ph-user mr-1"></i>${item.clientName}</p>
+              <p class="text-xs text-zinc-400 mt-1 truncate"><i class="ph-bold ph-wrench mr-1"></i>${item.fault}</p>
+            </div>
+            <div class="text-right shrink-0">
+              <span class="text-base font-black text-white block font-mono">$${(parseFloat(item.budget) || 0).toLocaleString()}</span>
+              <span class="text-xs text-amber-400 font-mono font-bold block mt-1">Resta: $${Math.max(0, (parseFloat(item.budget) || 0) - (parseFloat(item.advancePayment) || 0)).toLocaleString()}</span>
+            </div>
+          </div>
         </div>
       `).join('');
     }
@@ -579,31 +726,336 @@
     function saveNewRepair(e) {
       e.preventDefault();
       const orderId = 'OL-' + Math.floor(1000 + Math.random() * 9000);
+      const bgt = parseFloat(safeGet('inpDeviceBudget').value) || 0;
+      const adv = parseFloat(safeGet('inpDeviceAdvance').value) || 0;
+      const selB = document.querySelector('input[name="inpNewBranch"]:checked')?.value || (workshopSettings.branches[0] || 'Central');
+      
       const r = {
-        id: orderId, createdAt: new Date().toISOString(), branchCurrent: 'Central',
+        id: orderId, createdAt: new Date().toISOString(), branchCurrent: selB, inTransit: false,
         status: safeGet('inpNewInitialStatus').value, budgetStatus: safeGet('inpNewBudgetStatus').value,
         clientName: safeGet('inpClientName').value.trim(), clientPhone: safeGet('inpClientPhone').value.trim(),
-        deviceType: safeGet('inpDeviceType').value, deviceBrand: safeGet('inpDeviceBrand').value.trim(), deviceModel: safeGet('inpDeviceModel').value.trim(),
-        fault: safeGet('inpDeviceFault').value.trim(), budget: parseFloat(safeGet('inpDeviceBudget').value) || 0, advancePayment: parseFloat(safeGet('inpDeviceAdvance').value) || 0
+        deviceType: safeGet('inpDeviceType').value, deviceBrand: safeGet('inpDeviceBrand').value.trim(), deviceModel: safeGet('inpDeviceModel').value.trim(), deviceSerial: safeGet('inpDeviceSerial').value.trim(),
+        fault: safeGet('inpDeviceFault').value.trim(), budget: bgt, advancePayment: adv, unlockPin: safeGet('inpUnlockPin').value.trim()
       };
-      repairs.unshift(r); localStorage.setItem(LOCAL_REPAIRS_KEY + '_' + currentWorkshopId, JSON.stringify(repairs));
-      if (mqttClient) mqttClient.publish(getTopic('snapshot'), JSON.stringify({ repairs, senderId: myDeviceId }), { retain: true });
-      closeNewRepairModal(); renderRepairsList(); showToast('Éxito', `Orden ${orderId} guardada.`, 'success');
+      if (adv > 0) {
+        cashMovements.unshift({ id: 'CSH-' + Math.floor(1000 + Math.random() * 9000), branch: selB, date: 'Hoy (Seña)', type: 'INCOME', amount: adv, concept: `Seña ingreso ${r.deviceBrand} ${r.deviceModel} #${orderId}`, method: 'Efectivo', supplier: '', invoice: orderId });
+        persistCashLocal(); updateCashBalanceUI();
+      }
+      persistRepair(r); closeNewRepairModal(); renderRepairsList(); updateCounters();
+      selectedRepairId = orderId; showToast('Éxito', `Orden ${orderId} guardada.`, 'success'); openPrintModalForCurrent();
     }
 
-    // Licencias (Modo Sigilo)
-    let tapCount = 0; let tapTimer;
-    safeGet('headerLicenseBadge').addEventListener('click', () => {
-      tapCount++; clearTimeout(tapTimer); tapTimer = setTimeout(() => tapCount = 0, 1500);
-      if(tapCount === 5) {
-        tapCount = 0; const pin = prompt("🔐 MODO MAESTRO\nIngresa tu PIN:");
-        if(pin === '8408') {
-          const clientCode = prompt("Generar licencia PRO permanente para el código:");
-          if(clientCode) prompt("✅ CLAVE GENERADA (Copia y entrega):", `OL-LIFETIME-${Math.floor(10000000+Math.random()*90000000)}`);
-        }
-      }
-    });
+    function updateCounters() {
+      const counts = { WAITING: 0, IN_PROGRESS: 0, IN_TRANSIT: 0, READY: 0, DELIVERED: 0 };
+      repairs.forEach(r => { if(counts[r.status] !== undefined) counts[r.status]++; else if(r.status === 'RECEIVED') counts.WAITING++; });
+      safeGet('counterReceived').textContent = counts.WAITING; safeGet('counterInProgress').textContent = counts.IN_PROGRESS;
+      safeGet('counterTransit').textContent = counts.IN_TRANSIT; safeGet('counterReady').textContent = counts.READY;
+    }
 
+    window.openDetailModal = function(id) {
+      selectedRepairId = id; const item = repairs.find(r => r.id === id); if(!item) return;
+      safeGet('dtlOrderId').textContent = '#' + item.id; safeGet('dtlDeviceTitle').textContent = `${item.deviceBrand} ${item.deviceModel}`;
+      safeGet('dtlBranchBadge').textContent = item.branchCurrent || 'Central'; safeGet('dtlClientName').textContent = item.clientName;
+      safeGet('dtlClientPhone').textContent = item.clientPhone; safeGet('dtlDeviceFault').textContent = item.fault;
+      safeGet('dtlBudgetTotal').textContent = `$${(parseFloat(item.budget)||0).toLocaleString()}`; safeGet('dtlAdvancePaid').textContent = `$${(parseFloat(item.advancePayment)||0).toLocaleString()}`;
+      safeGet('dtlBalanceDue').textContent = `$${Math.max(0, (parseFloat(item.budget)||0) - (parseFloat(item.advancePayment)||0)).toLocaleString()}`;
+      
+      safeGet('dtlOperationalStatusBadge').textContent = getOperationalLabel(item.status);
+      ['Waiting', 'InProgress', 'Transit', 'Ready'].forEach(s => { const btn = safeGet('btnOpStatus' + s); if (btn) btn.className = 'p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-400 text-[10px] flex flex-col items-center gap-1.5 cursor-pointer transition'; });
+      if (item.status === 'WAITING' || item.status === 'RECEIVED') safeGet('btnOpStatusWaiting').className = 'p-2.5 rounded-xl border-2 border-amber-500 bg-amber-950/70 font-bold text-amber-200 text-[10px] flex flex-col items-center gap-1.5 cursor-pointer shadow';
+      if (item.status === 'IN_PROGRESS') safeGet('btnOpStatusInProgress').className = 'p-2.5 rounded-xl border-2 border-blue-500 bg-blue-950/70 font-bold text-blue-200 text-[10px] flex flex-col items-center gap-1.5 cursor-pointer shadow';
+      if (item.status === 'IN_TRANSIT') safeGet('btnOpStatusTransit').className = 'p-2.5 rounded-xl border-2 border-indigo-500 bg-indigo-950/70 font-bold text-indigo-200 text-[10px] flex flex-col items-center gap-1.5 cursor-pointer shadow';
+      if (item.status === 'READY') safeGet('btnOpStatusReady').className = 'p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-950/70 font-bold text-emerald-200 text-[10px] flex flex-col items-center gap-1.5 cursor-pointer shadow';
+
+      const tb = safeGet('dtlTransitInfoBox'); if (item.inTransit) { tb.classList.remove('hidden'); tb.classList.add('flex'); safeGet('dtlTransitRouteText').textContent = `${item.dispatchFrom} ➔ ${item.dispatchTo}`; } else { tb.classList.add('hidden'); tb.classList.remove('flex'); }
+      
+      const bgtBadge = safeGet('dtlBudgetApprovalBadge');
+      if (item.budgetStatus === 'APPROVED') { bgtBadge.textContent = '🟢 APROBADO'; bgtBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-700'; }
+      else if (item.budgetStatus === 'REJECTED') { bgtBadge.textContent = '🔴 RECHAZADO'; bgtBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-700'; }
+      else { bgtBadge.textContent = '🟡 PENDIENTE'; bgtBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-700'; }
+
+      safeGet('dtlUnlockDisplay').innerHTML = `<span>Clave / Desbloqueo:</span> <b class="text-white font-mono text-base ml-2">${item.unlockPin || 'Sin clave'}</b>`;
+      openModalElement('detailModal');
+    };
+
+    window.updateDeviceOperationalStatus = function(newStatus) {
+      const item = repairs.find(r => r.id === selectedRepairId); if (!item) return;
+      item.status = newStatus; if (newStatus !== 'IN_TRANSIT') item.inTransit = false;
+      persistRepair(item); openDetailModal(item.id); renderRepairsList(); updateCounters();
+      showToast('Estado Modificado', `Equipo en: ${getOperationalLabel(newStatus)}`, 'success');
+    };
+    
+    window.setCustomerBudgetResponse = function(st) {
+      const item = repairs.find(r => r.id === selectedRepairId); if (!item) return;
+      item.budgetStatus = st; if (st === 'APPROVED' && (item.status === 'WAITING' || item.status === 'RECEIVED')) item.status = 'IN_PROGRESS';
+      persistRepair(item); openDetailModal(item.id); renderRepairsList(); updateCounters();
+    };
+
+    window.openTransitPromptModal = function() {
+      const item = repairs.find(r => r.id === selectedRepairId); if (!item) return;
+      const branches = (workshopSettings.branches || ['Central']).filter(b => b !== item.branchCurrent);
+      if (branches.length === 0) { showToast('Atención', 'Agrega más sucursales en Ajustes.', 'warning'); return; }
+      safeGet('selTransitDestination').innerHTML = branches.map(b => `<option value="${b}">${b}</option>`).join('');
+      safeGet('inpTransitNotes').value = ''; openModalElement('transitModal');
+    };
+    window.closeTransitModal = function() { closeModalElement('transitModal'); };
+    window.confirmTransitDispatch = function() {
+      const item = repairs.find(r => r.id === selectedRepairId); if (!item) return;
+      item.status = 'IN_TRANSIT'; item.inTransit = true; item.dispatchFrom = item.branchCurrent; item.dispatchTo = safeGet('selTransitDestination').value; item.dispatchNotes = safeGet('inpTransitNotes').value.trim();
+      persistRepair(item); closeTransitModal(); openDetailModal(item.id); renderRepairsList(); updateCounters(); showToast('En Viaje', `Despachado a ${item.dispatchTo}`, 'info');
+    };
+    window.confirmArrivalAtDestination = function() {
+      const item = repairs.find(r => r.id === selectedRepairId); if (!item) return;
+      item.branchCurrent = item.dispatchTo; item.inTransit = false; item.status = 'IN_PROGRESS';
+      persistRepair(item); openDetailModal(item.id); renderRepairsList(); updateCounters(); showToast('Llegada', 'Equipo en la nueva sucursal.', 'success');
+    };
+
+    window.chargeRepairToCash = function() {
+      const item = repairs.find(r => r.id === selectedRepairId); if (!item) return;
+      const toPay = Math.max(0, (parseFloat(item.budget)||0) - (parseFloat(item.advancePayment)||0));
+      if (toPay <= 0) { showToast('Abonado', 'Sin saldo pendiente.', 'info'); return; }
+      if (confirm(`¿Registrar cobro de $${toPay.toLocaleString()} en caja de ${item.branchCurrent}?`)) {
+        cashMovements.unshift({ id: 'CSH-' + Math.floor(1000 + Math.random() * 9000), branch: item.branchCurrent || 'Central', date: 'Hoy (Cobro)', type: 'INCOME', amount: toPay, concept: `Retiro ${item.deviceBrand} #${item.id}`, method: 'Efectivo', supplier: '', invoice: item.id });
+        item.advancePayment = item.budget; item.status = 'DELIVERED';
+        persistCashLocal(); persistRepair(item); renderRepairsList(); updateCounters(); updateCashBalanceUI(); closeDetailModal(); showToast('Cobrado', `Ingresado a caja.`, 'success');
+      }
+    };
+    
+    window.deleteCurrentRepair = function() { if (!confirm(`¿Eliminar la orden #${selectedRepairId}?`)) return; removeRepair(selectedRepairId); closeDetailModal(); renderRepairsList(); updateCounters(); showToast('Eliminada', 'Orden eliminada.', 'warning'); };
+
+    // Edición
+    window.openEditRepairModal = function() {
+      const item = repairs.find(r => r.id === selectedRepairId); if (!item) return;
+      const sel = safeGet('editBranchCurrent'); if(sel) { sel.innerHTML = (workshopSettings.branches || ['Central']).map(b => `<option value="${b}">${b}</option>`).join(''); sel.value = item.branchCurrent || 'Central'; }
+      safeGet('editClientName').value = item.clientName || ''; safeGet('editClientPhone').value = item.clientPhone || ''; safeGet('editDeviceType').value = item.deviceType || 'Celular'; safeGet('editDeviceBrand').value = item.deviceBrand || ''; safeGet('editDeviceModel').value = item.deviceModel || ''; safeGet('editDeviceSerial').value = item.deviceSerial || ''; safeGet('editUnlockPin').value = item.unlockPin || ''; safeGet('editDeviceFault').value = item.fault || ''; safeGet('editDeviceBudget').value = item.budget || 0; safeGet('editDeviceAdvance').value = item.advancePayment || 0; safeGet('editDeviceStatus').value = item.status === 'RECEIVED' ? 'WAITING' : item.status; safeGet('editBudgetStatus').value = item.budgetStatus || 'PENDING';
+      updateBalanceCalculation('edit'); openModalElement('editRepairModal');
+    };
+    window.closeEditRepairModal = function() { closeModalElement('editRepairModal'); };
+    window.saveEditedRepair = function(e) {
+      e.preventDefault(); const item = repairs.find(r => r.id === selectedRepairId); if (!item) return;
+      item.branchCurrent = safeGet('editBranchCurrent').value; item.clientName = safeGet('editClientName').value.trim(); item.clientPhone = safeGet('editClientPhone').value.trim(); item.deviceType = safeGet('editDeviceType').value; item.deviceBrand = safeGet('editDeviceBrand').value.trim(); item.deviceModel = safeGet('editDeviceModel').value.trim(); item.deviceSerial = safeGet('editDeviceSerial').value.trim(); item.unlockPin = safeGet('editUnlockPin').value.trim(); item.fault = safeGet('editDeviceFault').value.trim(); item.budget = parseFloat(safeGet('editDeviceBudget').value) || 0; item.advancePayment = parseFloat(safeGet('editDeviceAdvance').value) || 0; item.status = safeGet('editDeviceStatus').value; item.budgetStatus = safeGet('editBudgetStatus').value;
+      persistRepair(item); closeEditRepairModal(); openDetailModal(item.id); renderRepairsList(); updateCounters(); showToast('Actualizado', 'Cambios guardados.', 'success');
+    };
+
+    // WhatsApp
+    window.openClientWhatsApp = function() { const item = repairs.find(r => r.id === selectedRepairId); if (!item) return; window.open(`https://wa.me/${item.clientPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hola ${item.clientName}! Comprobante de recepción de tu ${item.deviceBrand} ${item.deviceModel} (Orden #${item.id}) en ${workshopSettings.name}. Falla: ${item.fault}.`)}`, '_blank'); };
+    window.openBudgetApprovalWhatsApp = function() { const item = repairs.find(r => r.id === selectedRepairId); if (!item) return; const b = parseFloat(item.budget)||0; const a = parseFloat(item.advancePayment)||0; window.open(`https://wa.me/${item.clientPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`*${workshopSettings.name} - PRESUPUESTO*\nHola${item.clientName}, presupuesto para tu ${item.deviceBrand}${item.deviceModel}:\nFalla: ${item.fault}\n\n💰 Total: $${b.toLocaleString()}\n💵 Seña: $${a.toLocaleString()}\n📌 Resta: $${(b-a).toLocaleString()}\n\nResponde APRUEBO o RECHAZO.`)}`, '_blank'); };
+    window.openStatusWhatsApp = function() {
+      const item = repairs.find(r => r.id === selectedRepairId); if (!item) return;
+      let s = ''; if (item.status === 'READY') s = `ya está *LISTO PARA RETIRAR* en ${item.branchCurrent}. Saldo: $${Math.max(0,(parseFloat(item.budget)||0)-(parseFloat(item.advancePayment)||0)).toLocaleString()}`;
+      else if (item.status === 'IN_PROGRESS') s = 'está siendo reparado en taller.'; else if (item.status === 'IN_TRANSIT') s = `viaja hacia ${item.branchCurrent}.`; else s = 'está en espera de revisión.';
+      window.open(`https://wa.me/${item.clientPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`*${workshopSettings.name} - ESTADO*\nHola ${item.clientName}, te informamos que tu${item.deviceBrand} (Orden #${item.id})${s}`)}`, '_blank');
+    };
+    window.openPickupNoticeModal = function() {
+      const item = repairs.find(r => r.id === selectedRepairId); if (!item) return;
+      safeGet('pickupTargetDevice').textContent = `${item.deviceBrand} ${item.deviceModel} (#${item.id})`; safeGet('pickupTargetClient').textContent = `Cliente: ${item.clientName}`;
+      safeGet('pickupRepairedBalance').textContent = `$${Math.max(0,(parseFloat(item.budget)||0)-(parseFloat(item.advancePayment)||0)).toLocaleString()}`;
+      setPickupResultType('repaired'); openModalElement('pickupNoticeModal');
+    };
+    window.closePickupNoticeModal = function() { closeModalElement('pickupNoticeModal'); };
+    window.setPickupResultType = function(t) { pickupResultType = t; if(t==='repaired') { safeGet('pickupViewRepaired').classList.remove('hidden'); safeGet('pickupViewUnrepaired').classList.add('hidden'); } else { safeGet('pickupViewUnrepaired').classList.remove('hidden'); safeGet('pickupViewRepaired').classList.add('hidden'); } };
+    window.sendPickupWhatsAppMessage = function() {
+      const item = repairs.find(r => r.id === selectedRepairId); if (!item) return;
+      let msg = '';
+      if(pickupResultType==='repaired') msg = `*${workshopSettings.name} - EQUIPO LISTO*\nEstimado/a ${item.clientName}, su ${item.deviceBrand} ${item.deviceModel} (Orden #${item.id}) ya está REPARADO.\nSucursal: ${item.branchCurrent}\n\nTotal: $${(parseFloat(item.budget)||0).toLocaleString()}\nResta: $${Math.max(0,(parseFloat(item.budget)||0)-(parseFloat(item.advancePayment)||0)).toLocaleString()}\nGarantía: ${safeGet('inpPickupWarrantyText').value.trim()}`;
+      else msg = `*${workshopSettings.name} - EQUIPO PARA RETIRAR*\nEstimado/a ${item.clientName}, su ${item.deviceBrand} ${item.deviceModel} (Orden #${item.id}) está disponible para retiro.\nSucursal: ${item.branchCurrent}\n\nInforme: ${safeGet('selPickupUnrepairedReason').value}\nCosto: $0`;
+      closePickupNoticeModal(); window.open(`https://wa.me/${item.clientPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(msg)}`, '_blank');
+    };
+
+    // CAJA POR SUCURSAL
+    function loadLocalCash() { const sc = localStorage.getItem(CASH_STORAGE_KEY + '_' + currentWorkshopId); if(sc) { try { cashMovements = JSON.parse(sc) || []; } catch(e) { cashMovements = []; } } else cashMovements = []; }
+    function persistCashLocal() { localStorage.setItem(CASH_STORAGE_KEY + '_' + currentWorkshopId, JSON.stringify(cashMovements)); }
+    function renderCashBranchSelector() {
+      const b = workshopSettings.branches || ['Central'];
+      safeGet('cashBranchSelectorContainer').innerHTML = `<button type="button" onclick="setCashBranchFilter('ALL')" class="px-3 py-1.5 rounded-xl ${currentCashBranch === 'ALL' ? 'bg-zinc-800 text-white font-bold' : 'bg-zinc-950 text-zinc-400'} text-xs shrink-0 cursor-pointer shadow">Todas</button>` + b.map(x => `<button type="button" onclick="setCashBranchFilter('${x}')" class="px-3 py-1.5 rounded-xl ${currentCashBranch === x ? 'bg-zinc-800 text-white font-bold' : 'bg-zinc-950 text-zinc-400'} text-xs shrink-0 truncate cursor-pointer shadow">${x}</button>`).join('');
+      const cb = safeGet('cshBranch'); if(cb) cb.innerHTML = b.map(x => `<option value="${x}">${x}</option>`).join('');
+    }
+    window.setCashBranchFilter = function(b) { currentCashBranch = b; renderCashBranchSelector(); renderCashMovements(); };
+    window.showCashForm = function(t) { safeGet('cashMovementForm').classList.remove('hidden'); safeGet('cshType').value = t; };
+    window.hideCashForm = function() { safeGet('cashMovementForm').classList.add('hidden'); safeGet('cshAmount').value = ''; safeGet('cshConcept').value = ''; };
+    window.saveCashMovement = function() {
+      const b = safeGet('cshBranch').value; const t = safeGet('cshType').value; const a = parseFloat(safeGet('cshAmount').value); const c = safeGet('cshConcept').value.trim();
+      if(!a || a <= 0 || !c) { showToast('Atención', 'Monto y concepto requeridos', 'warning'); return; }
+      const d = new Date(); cashMovements.unshift({ id: 'CSH-'+Math.floor(1000+Math.random()*9000), branch: b, date: `Hoy ${d.getHours()}:${d.getMinutes()}`, type: t, amount: a, concept: c });
+      persistCashLocal(); publishFullSnapshot(true); hideCashForm(); renderCashMovements(); updateCashBalanceUI(); showToast('Caja', 'Movimiento guardado.', 'success');
+    };
+    function renderCashMovements() {
+      let f = cashMovements; if (currentCashBranch !== 'ALL') f = f.filter(m => m.branch === currentCashBranch);
+      let inc = 0, exp = 0; f.forEach(m => { if(m.type==='INCOME') inc+=m.amount; else exp+=m.amount; });
+      safeGet('cashTotalIncome').innerText = '$' + inc.toLocaleString(); safeGet('cashTotalExpense').innerText = '$' + exp.toLocaleString(); safeGet('cashNetBalance').innerText = '$' + (inc - exp).toLocaleString();
+      safeGet('cashListContainer').innerHTML = f.map(m => `<div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl flex items-center justify-between gap-3 mb-2"><div class="min-w-0 flex-1"><div class="flex items-center gap-1.5"><span class="text-[9px] px-2 py-0.5 rounded-lg border font-bold ${m.type==='INCOME'?'bg-emerald-950 text-emerald-300 border-emerald-800':'bg-rose-950 text-rose-300 border-rose-800'}">${m.type==='INCOME'?'Ingreso':'Salida'}</span><span class="text-[9px] bg-zinc-800 px-2 py-0.5 rounded-lg text-zinc-300 font-bold">${m.branch}</span></div><h5 class="font-bold text-white text-sm mt-1 truncate">${m.concept}</h5></div><div class="text-right shrink-0"><span class="font-bold font-mono text-sm ${m.type==='INCOME'?'text-emerald-400':'text-rose-400'}">${m.type==='INCOME'?'+':'-'}$${m.amount.toLocaleString()}</span></div></div>`).join('');
+    }
+    function updateCashBalanceUI() {
+      let net = 0; let f = cashMovements; if (currentBranchFilter !== 'ALL') f = f.filter(m => m.branch === currentBranchFilter);
+      f.forEach(m => { if(m.type==='INCOME') net+=m.amount; else net-=m.amount; });
+      safeGet('headerCashBalance').innerText = '$' + net.toLocaleString(); safeGet('headerCashBranchTag').innerText = currentBranchFilter === 'ALL' ? 'Todas' : currentBranchFilter;
+    }
+
+    // STOCK & QR
+    function loadLocalStock() { const ss = localStorage.getItem(STOCK_STORAGE_KEY + '_' + currentWorkshopId); if(ss) { try { stockItems = JSON.parse(ss) || []; } catch(e) { stockItems = []; } } else stockItems = []; }
+    function persistStockLocal() { localStorage.setItem(STOCK_STORAGE_KEY + '_' + currentWorkshopId, JSON.stringify(stockItems)); }
+    window.toggleNewStockForm = function() { safeGet('newStockFormContainer').classList.toggle('hidden'); };
+    window.generateRandomBarcode = function() { safeGet('stkCode').value = '779' + Math.floor(100000000 + Math.random() * 900000000); };
+    window.saveStockItem = function() {
+      const code = safeGet('stkCode').value.trim(); const name = safeGet('stkName').value.trim(); const cat = safeGet('stkCategory').value;
+      const qty = parseInt(safeGet('stkQuantity').value)||0; const cost = parseFloat(safeGet('stkCostPrice').value)||0; const sale = parseFloat(safeGet('stkSalePrice').value)||0;
+      if (!code || !name) { showToast('Atención', 'Código y nombre requeridos.', 'warning'); return; }
+      const idx = stockItems.findIndex(i => i.code === code);
+      if (idx >= 0) stockItems[idx] = { code, name, category: cat, qty, cost, sale }; else stockItems.push({ code, name, category: cat, qty, cost, sale });
+      persistStockLocal(); publishFullSnapshot(true); showToast('Guardado', `Repuesto "${name}" actualizado.`, 'success');
+      safeGet('stkCode').value = ''; safeGet('stkName').value = ''; toggleNewStockForm(); renderStockList(); updateStockBadge();
+    };
+    window.adjustStockQty = function(code, delta) { const it = stockItems.find(i => i.code === code); if (!it) return; it.qty = Math.max(0, it.qty + delta); persistStockLocal(); publishFullSnapshot(true); renderStockList(); updateStockBadge(); };
+    window.deleteStockItem = function(code) { if (!confirm('¿Eliminar repuesto?')) return; stockItems = stockItems.filter(i => i.code !== code); persistStockLocal(); publishFullSnapshot(true); renderStockList(); updateStockBadge(); };
+    function renderStockList() {
+      const c = safeGet('stockListContainer'); const s = (safeGet('stkSearchInput')?.value || '').toLowerCase().trim();
+      let f = stockItems.filter(i => i.name.toLowerCase().includes(s) || i.code.toLowerCase().includes(s));
+      if (f.length === 0) { c.innerHTML = `<div class="p-4 text-center text-zinc-500">No hay repuestos.</div>`; return; }
+      c.innerHTML = f.map(i => `<div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl flex items-center justify-between gap-3 mb-2"><div class="min-w-0 flex-1"><span class="font-mono text-[10px] text-purple-400 font-bold">${i.code}</span><b class="text-white text-sm block truncate mt-0.5">${i.name}</b><div class="text-[11px] text-zinc-400 mt-0.5">Venta: <b class="text-emerald-400 font-mono">$${i.sale.toLocaleString()}</b></div></div><div class="flex items-center gap-1.5 shrink-0"><button type="button" onclick="adjustStockQty('${i.code}', -1)" class="w-8 h-8 rounded-xl bg-zinc-800 text-white font-bold text-base cursor-pointer shadow">-</button><span class="w-7 text-center font-bold font-mono text-sm ${i.qty <= 2 ? 'text-amber-400' : 'text-white'}">${i.qty}</span><button type="button" onclick="adjustStockQty('${i.code}', 1)" class="w-8 h-8 rounded-xl bg-purple-900/60 text-purple-200 font-bold text-base cursor-pointer shadow">+</button><button type="button" onclick="deleteStockItem('${i.code}')" class="p-2 text-zinc-500 hover:text-rose-400 ml-1 cursor-pointer"><i class="ph-bold ph-trash text-lg"></i></button></div></div>`).join('');
+    }
+    function updateStockBadge() { const b = safeGet('stockWarningBadge'); if (b) b.className = stockItems.some(i => i.qty <= 2) ? 'absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse border border-zinc-900' : 'hidden'; }
+    window.toggleBarcodeScanner = function() {
+      const c = safeGet('scannerContainer'); if (c.classList.contains('hidden')) { c.classList.remove('hidden'); safeGet('btnScannerText').textContent = 'Detener';
+        try { stockHtml5Scanner = new Html5Qrcode("qr-reader"); stockHtml5Scanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 250, height: 160 } }, (code) => { stopBarcodeScanner(); const cl = code.trim(); const ex = stockItems.find(i => i.code === cl); if (ex) { if (confirm(`Código: ${cl}\nSumar 1 a ${ex.name}?`)) adjustStockQty(cl, 1); } else { safeGet('newStockFormContainer').classList.remove('hidden'); safeGet('stkCode').value = cl; safeGet('stkName').focus(); } }).catch(() => { stopBarcodeScanner(); }); } catch(e) { stopBarcodeScanner(); }
+      } else { stopBarcodeScanner(); }
+    };
+    function stopBarcodeScanner() { if (stockHtml5Scanner) { stockHtml5Scanner.stop().then(() => { stockHtml5Scanner.clear(); safeGet('scannerContainer').classList.add('hidden'); safeGet('btnScannerText').textContent = 'Escanear con Cámara'; }).catch(()=>{}); } else safeGet('scannerContainer')?.classList.add('hidden'); }
+
+    // VENTAS POS
+    window.renderPosCatalog = function() {
+      const s = (safeGet('posSearchProduct')?.value || '').toLowerCase().trim(); const g = safeGet('posCatalogGrid');
+      let f = stockItems.filter(i => i.name.toLowerCase().includes(s) || i.code.toLowerCase().includes(s));
+      if (f.length === 0) { g.innerHTML = `<div class="col-span-2 sm:col-span-3 p-6 text-center text-zinc-500">Sin repuestos coincidentes.</div>`; return; }
+      g.innerHTML = f.map(i => `<div onclick="addStockToPosCart('${i.code}')" class="p-3 bg-zinc-950 border ${i.qty <= 0 ? 'border-rose-900/50 opacity-50' : 'border-zinc-800 hover:border-amber-500/80 active:scale-95'} rounded-2xl cursor-pointer flex flex-col justify-between transition select-none h-full"><div class="flex flex-col h-full justify-between"><div class="flex items-center justify-between gap-1 mb-2"><span class="text-[9px] font-mono text-purple-400 font-bold truncate">${i.code}</span><span class="text-[9px] px-2 py-0.5 rounded-lg font-bold ${i.qty <= 0 ? 'bg-rose-950 text-rose-400' : 'bg-zinc-800 text-zinc-300'}">${i.qty <= 0 ? 'Agotado' : `${i.qty} u.`}</span></div><h4 class="font-bold text-white text-xs leading-snug line-clamp-2 mb-2">${i.name}</h4><div class="flex items-center justify-between pt-2 border-t border-zinc-800/80"><span class="text-[10px] text-zinc-400">Venta</span><span class="font-black text-amber-400 font-mono text-sm">$${i.sale.toLocaleString()}</span></div></div></div>`).join('');
+    };
+    window.addStockToPosCart = function(code) { const i = stockItems.find(x => x.code === code); if(!i){showToast('No encontrado', 'Código inválido.', 'warning'); return;} if(i.qty <= 0){showToast('Sin stock', 'Producto agotado.', 'warning'); return;} const ic = posCart.find(c => c.code === code); if(ic) { if(ic.qty >= i.qty) return; ic.qty++; } else posCart.push({ code: i.code, name: i.name, price: i.sale, qty: 1 }); renderPosCart(); };
+    window.changePosCartQty = function(code, d) { const is = stockItems.find(x => x.code === code); const c = posCart.find(x => x.code === code); if(!c) return; c.qty += d; if(c.qty <= 0) posCart = posCart.filter(x => x.code !== code); else if(is && c.qty > is.qty) c.qty = is.qty; renderPosCart(); };
+    window.clearPosCart = function() { posCart = []; renderPosCart(); };
+    function renderPosCart() {
+      const cont = safeGet('posCartContainer'); let tot = 0;
+      if (posCart.length === 0) { cont.innerHTML = `<div class="p-6 text-center text-zinc-500">Carrito vacío.<br>Toca un producto.</div>`; safeGet('posTotalAmount').textContent = '$0'; return; }
+      cont.innerHTML = posCart.map(c => {
+        tot += c.qty * c.price;
+        return `<div class="p-3 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-between gap-2 mb-2"><div class="min-w-0 flex-1"><b class="text-white text-xs truncate block">${c.name}</b><span class="text-[10px] text-zinc-400 font-mono">$${c.price.toLocaleString()} x ${c.qty}</span></div><div class="flex items-center gap-2 shrink-0"><div class="flex items-center gap-1 bg-zinc-950 px-1 py-1 rounded-lg border border-zinc-700"><button type="button" onclick="changePosCartQty('${c.code}', -1)" class="w-6 h-6 rounded-md bg-zinc-800 text-white font-bold text-sm flex items-center justify-center cursor-pointer shadow">-</button><span class="w-6 text-center font-bold text-xs font-mono text-white">${c.qty}</span><button type="button" onclick="changePosCartQty('${c.code}', 1)" class="w-6 h-6 rounded-md bg-zinc-800 text-white font-bold text-sm flex items-center justify-center cursor-pointer shadow">+</button></div><span class="font-bold text-amber-400 font-mono text-sm w-16 text-right truncate">$${(c.qty*c.price).toLocaleString()}</span></div></div>`;
+      }).join(''); safeGet('posTotalAmount').textContent = '$' + tot.toLocaleString();
+    }
+    window.completePosSale = function() {
+      if (posCart.length === 0) return;
+      const b = safeGet('posBranch')?.value || 'Central'; const m = safeGet('posPaymentMethod').value; const c = safeGet('posCustomerName')?.value.trim() || 'Cliente Mostrador';
+      let tot = 0; let sl = [];
+      posCart.forEach(ci => { const t = stockItems.find(s => s.code === ci.code); if(t) t.qty = Math.max(0, t.qty - ci.qty); tot += (ci.qty * ci.price); sl.push(`${ci.qty}x ${ci.name}`); });
+      const sId = 'VTA-' + Math.floor(1000 + Math.random() * 9000);
+      cashMovements.unshift({ id: 'CSH-'+Math.floor(1000+Math.random()*9000), branch: b, date: 'Hoy', type: 'INCOME', amount: tot, concept: `Venta Mostrador #${sId}: ${sl.join(', ')}`, method: m, supplier: '', invoice: sId });
+      persistCashLocal(); persistStockLocal(); publishFullSnapshot(true); showToast('Venta Exitosa', `Cobrado $${tot.toLocaleString()}`, 'success'); closeSalesModal(); updateStockBadge(); updateCashBalanceUI();
+    };
+    window.togglePosScanner = function() { const b = safeGet('posScannerBox'); if (b.classList.contains('hidden')) { b.classList.remove('hidden'); try { posHtml5Scanner = new Html5Qrcode("pos-qr-reader"); posHtml5Scanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 220, height: 150 } }, (c) => { stopPosScanner(); addStockToPosCart(c.trim()); }).catch(() => stopPosScanner()); } catch(e) { stopPosScanner(); } } else stopPosScanner(); };
+    function stopPosScanner() { if(posHtml5Scanner) { posHtml5Scanner.stop().then(() => safeGet('posScannerBox').classList.add('hidden')).catch(()=>{}); } else safeGet('posScannerBox')?.classList.add('hidden'); }
+
+    // COMPARTIR APP
+    window.shareCleanAppViaWhatsApp = function() { window.open(`https://wa.me/?text=${encodeURIComponent(`👋 *¡Hola! Te comparto OpenLine Servicio Técnico!*\nUna web app completa para gestión de talleres.\n👉 *Pruébala gratis aquí:*\n🔗 ${window.location.protocol}//${window.location.host}${window.location.pathname}`)}`, '_blank'); };
+    window.copyCleanAppUrl = function() { navigator.clipboard.writeText(`${window.location.protocol}//${window.location.host}${window.location.pathname}`).then(() => showToast('Enlace Copiado', 'Enlace limpio copiado.', 'success')); };
+    window.downloadCleanAppHtmlFile = function() { const blob = new Blob(["<!DOCTYPE html>\n" + document.documentElement.outerHTML], { type: 'text/html;charset=utf-8' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'OpenLine-App.html'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href); showToast('Descarga Lista', 'Archivo HTML limpio descargado.', 'success'); };
+
+    // LICENCIAS
+    function createLicenseHash(wc, t) { let h = 0; const s = `${wc}_${t}_OPENLINE_SECURE_2026`; for(let i=0;i<s.length;i++){ h=((h<<5)-h)+s.charCodeAt(i); h|=0; } const hex = Math.abs(h).toString(16).toUpperCase().padStart(8, '0'); return `OL-${t}-${hex.substring(0, 4)}-${hex.substring(4, 8)}`; }
+    function isLicenseKeyValid(wc, key, et = 'LIFETIME') { if(!key) return false; const c = key.trim().toUpperCase(); if (c === 'OL-MASTER-PERMANENT') return true; return c === createLicenseHash(wc, et); }
+    function saveLicensePermanently(wc, ld) { try { localStorage.setItem(LICENSE_STORAGE_KEY + '_' + wc, JSON.stringify(ld)); let v = {}; const r = localStorage.getItem(PERMANENT_LICENSE_VAULT_KEY); if(r) v = JSON.parse(r) || {}; v[wc] = ld; localStorage.setItem(PERMANENT_LICENSE_VAULT_KEY, JSON.stringify(v)); } catch(e) {} }
+    function restoreLicensePermanently() { const s = localStorage.getItem(LICENSE_STORAGE_KEY + '_' + currentWorkshopId); if(s) { try { const p = JSON.parse(s); if(p && (p.type === 'LIFETIME' || isLicenseKeyValid(currentWorkshopId, p.key, 'LIFETIME'))) { licenseInfo = p; return; } } catch(e) {} } try { const r = localStorage.getItem(PERMANENT_LICENSE_VAULT_KEY); if(r) { const v = JSON.parse(r); if(v && v[currentWorkshopId]) licenseInfo = v[currentWorkshopId]; } } catch(e) {} }
+    function updateLicenseUI() { const t = safeGet('headerLicenseText'); const b = safeGet('headerLicenseBadge'); const l = safeGet('licenseStatusText'); const p = licenseInfo.type === 'LIFETIME'; if(t) t.textContent = p ? 'PRO' : 'DEMO'; if(b) b.className = p ? 'cursor-pointer text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-600/70 text-emerald-300 flex items-center gap-1' : 'cursor-pointer text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/70 text-amber-300 flex items-center gap-1'; if(l) l.textContent = p ? 'LICENCIA PRO PERMANENTE' : 'VERSIÓN DEMO'; }
+
+    window.generateActivationKeyForClient = function() { const c = safeGet('genTargetWorkshopCode')?.value.trim().toUpperCase(); const t = safeGet('genLicenseType')?.value || 'LIFETIME'; if(!c) return; safeGet('genGeneratedKey').textContent = createLicenseHash(c, t); safeGet('genResultBox').classList.remove('hidden'); };
+    window.copyGeneratedKey = function() { navigator.clipboard.writeText(safeGet('genGeneratedKey')?.textContent || '').then(() => showToast('Copiado', 'Clave copiada.', 'info')); };
+    window.applyActivationKey = function() {
+      const e = safeGet('inpActivationKey')?.value.trim().toUpperCase(); if(!e) return;
+      if (isLicenseKeyValid(currentWorkshopId, e, 'LIFETIME')) { licenseInfo = { type: 'LIFETIME', key: e, activatedAt: new Date().toISOString() }; saveLicensePermanently(currentWorkshopId, licenseInfo); updateLicenseUI(); publishFullSnapshot(true); closeLicenseModal(); showToast('Activación Exitosa', 'Licencia PRO permanente habilitada.', 'success'); }
+      else showToast('Clave Inválida', 'La clave no corresponde a este taller.', 'warning');
+    };
+
+    // AJUSTES
+    window.saveWorkshopSettings = function() {
+      workshopSettings.name = safeGet('cfgWorkshopName').value.trim() || 'OpenLine';
+      workshopSettings.subtitle = safeGet('cfgWorkshopSubtitle').value.trim();
+      const rb = safeGet('cfgBranchesListInput').value; if(rb) workshopSettings.branches = rb.split(',').map(b => b.trim()).filter(b => b.length > 0);
+      localStorage.setItem(LOCAL_SETTINGS_KEY + '_' + currentWorkshopId, JSON.stringify(workshopSettings));
+      applyWorkshopBrandingUI(); renderBranchUIElements(); renderCashBranchSelector();
+      publishFullSnapshot(true); closeSettingsModal(); showToast('Ajustes Guardados', 'Configuración de taller y sucursales actualizada.', 'success');
+    };
+    function renderBranchUIElements() {
+      const l = safeGet('branchTabsButtonsList'); const n = safeGet('newBranchOptionsList'); const b = workshopSettings.branches || ['Central'];
+      if(l) l.innerHTML = `<button type="button" onclick="setBranchFilter('ALL')" class="branch-filter-btn px-4 py-2 rounded-xl ${currentBranchFilter === 'ALL' ? 'bg-zinc-800 text-white font-bold' : 'bg-zinc-950 text-zinc-400'} text-xs shrink-0 cursor-pointer shadow-sm">Todas</button>` + b.map(x => `<button type="button" onclick="setBranchFilter('${x}')" class="branch-filter-btn px-4 py-2 rounded-xl ${currentBranchFilter === x ? 'bg-zinc-800 text-white font-bold' : 'bg-zinc-950 text-zinc-400'} text-xs shrink-0 truncate cursor-pointer shadow-sm">${x}</button>`).join('');
+      if(n) n.innerHTML = b.map((x, i) => `<label class="cursor-pointer"><input type="radio" name="inpNewBranch" value="${x}" ${i===0?'checked':''} class="peer hidden"><div class="p-3 text-center rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-300 peer-checked:bg-rose-950/80 peer-checked:border-rose-600 peer-checked:text-white font-bold truncate text-xs shadow">${x}</div></label>`).join('');
+    }
+    window.setBranchFilter = function(b) { currentBranchFilter = b; safeGet('currentBranchDisplayTag').textContent = b === 'ALL' ? 'Todas' : b; renderBranchUIElements(); renderRepairsList(); updateCashBalanceUI(); };
+
+    window.handleLogoUpload = function(input) {
+      if(!input.files || !input.files[0]) return;
+      const r = new FileReader();
+      r.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const c = document.createElement('canvas'); const scale = Math.min(1, 250 / Math.max(img.width, img.height));
+          c.width = img.width * scale; c.height = img.height * scale;
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          workshopSettings.logo = c.toDataURL('image/png');
+          safeGet('settingsLogoPreview').innerHTML = `<img src="${workshopSettings.logo}" class="w-full h-full object-cover">`;
+          safeGet('btnRemoveLogo').classList.remove('hidden'); applyWorkshopBrandingUI(); localStorage.setItem(LOCAL_SETTINGS_KEY + '_' + currentWorkshopId, JSON.stringify(workshopSettings)); publishFullSnapshot(true);
+        }; img.src = e.target.result;
+      }; r.readAsDataURL(input.files[0]); input.value = '';
+    };
+    window.removeWorkshopLogo = function() { workshopSettings.logo = ''; safeGet('settingsLogoPreview').innerHTML = `<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>`; safeGet('btnRemoveLogo').classList.add('hidden'); applyWorkshopBrandingUI(); localStorage.setItem(LOCAL_SETTINGS_KEY + '_' + currentWorkshopId, JSON.stringify(workshopSettings)); publishFullSnapshot(true); showToast('Logo Removido', 'Restablecido.', 'info'); };
+
+    window.joinWorkshopByCode = function() {
+      const c = safeGet('inpJoinWorkshopCode').value.trim().toUpperCase();
+      if(!c) return; localStorage.setItem(WORKSHOP_ID_KEY, c); location.reload();
+    };
+
+    // IMPRESIÓN ETIQUETAS
+    window.openPrintModalForCurrent = function() { activeLabelFormat = workshopSettings.printerType || 'thermal'; setLabelPreviewFormat(activeLabelFormat); openModalElement('printLabelModal'); };
+    window.closePrintModal = function() { closeModalElement('printLabelModal'); };
+    window.setLabelPreviewFormat = function(f) {
+      activeLabelFormat = f; const th = safeGet('btnPreviewThermal'); const st = safeGet('btnPreviewStandard');
+      if(f === 'thermal') { th.className = 'py-2.5 rounded-xl text-sm font-bold bg-iosOrange text-white shadow cursor-pointer'; st.className = 'py-2.5 rounded-xl text-sm font-bold bg-zinc-800 text-zinc-400 cursor-pointer'; }
+      else { st.className = 'py-2.5 rounded-xl text-sm font-bold bg-iosBlue text-white shadow cursor-pointer'; th.className = 'py-2.5 rounded-xl text-sm font-bold bg-zinc-800 text-zinc-400 cursor-pointer'; }
+      renderLabelMarkup();
+    };
+    function renderLabelMarkup() {
+      const i = repairs.find(r => r.id === selectedRepairId); if(!i) return;
+      const b = parseFloat(i.budget)||0; const a = parseFloat(i.advancePayment)||0; const date = new Date(i.createdAt).toLocaleDateString('es-AR');
+      let l = ''; if(workshopSettings.logo) l = `<img src="${workshopSettings.logo}" style="max-height: 24px; object-fit: contain; margin: 0 auto 3px auto; display: block;">`;
+      const html = activeLabelFormat === 'thermal'
+        ? `<div style="width: 250px; background: #fff; color: #000; font-family: monospace; padding: 10px; border-radius: 6px; border: 1px solid #000; text-align: left; line-height: 1.25;"><div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 4px; margin-bottom: 5px;">${l}<b style="font-size: 13px; text-transform: uppercase;">${workshopSettings.name}</b><br><span style="font-size: 9px;">Sucursal: ${i.branchCurrent}</span><br><b style="font-size: 15px; border: 1.5px solid #000; padding: 1px 4px; border-radius: 4px; display: inline-block; margin-top: 3px;">ORDEN #${i.id}</b></div><div style="font-size: 10px; margin-bottom: 4px;"><div><b>Cliente:</b> ${i.clientName}</div><div><b>Tel:</b> ${i.clientPhone}</div><div><b>Equipo:</b> ${i.deviceBrand} ${i.deviceModel}</div>${i.deviceSerial ? `<div><b>IMEI:</b> ${i.deviceSerial}</div>` : ''}<div><b>Clave:</b> <span style="background: #000; color: #fff; padding: 0 3px; font-weight: bold;">${i.unlockPin || 'Sin clave'}</span></div></div><div style="font-size: 9px; border-top: 1px dashed #000; padding-top: 3px; margin-bottom: 3px;"><b>Falla:</b> ${i.fault.substring(0, 60)}</div><div style="font-size: 10px; border-top: 1px dashed #000; padding-top: 3px; margin-bottom: 4px;"><div><b>Total:</b> $${b.toLocaleString()}</div><div><b>Seña:</b> $${a.toLocaleString()} | <b>Resta:</b> $${(b-a).toLocaleString()}</div></div><div style="text-align: center; border-top: 1px solid #000; padding-top: 4px; font-size: 8px;">¡Pegar en el dispositivo! • ${date}</div></div>`
+        : `<div style="width: 320px; background: #fff; color: #000; font-family: sans-serif; padding: 12px; border-radius: 6px; border: 2px dashed #000; line-height: 1.3;"><div style="display: flex; justify-content: space-between; border-bottom: 1.5px solid #000; padding-bottom: 5px; margin-bottom: 6px;"><div>${l}<b style="font-size: 13px;">${workshopSettings.name.toUpperCase()}</b><br><span style="font-size: 9px;">Sucursal: <b>${i.branchCurrent}</b></span></div><div style="text-align: right;"><span style="font-family: monospace; font-size: 13px; font-weight: 900; background: #000; color: #fff; padding: 2px 5px; border-radius: 4px;">#${i.id}</span><div style="font-size: 8px; color: #555; margin-top: 2px;">${date}</div></div></div><div style="font-size: 10px;"><div><b>Cliente:</b> ${i.clientName} (${i.clientPhone})</div><div><b>Equipo:</b> <span style="font-weight: bold; color: #0055ff;">${i.deviceBrand} ${i.deviceModel}</span></div>${i.deviceSerial ? `<div><b>IMEI:</b> ${i.deviceSerial}</div>` : ''}<div><b>Clave:</b> <b>${i.unlockPin || 'Sin clave'}</b></div><div><b>Falla:</b> ${i.fault}</div><div style="background: #eee; padding: 3px 5px; border-radius: 4px; margin-top: 3px;"><b>Total:</b> $${b.toLocaleString()} | <b>Seña:</b> $${a.toLocaleString()} | <b>Resta:</b> <b style="color: #b00;">$${(b-a).toLocaleString()}</b></div></div></div>`;
+      safeGet('labelPreviewContainer').innerHTML = html; safeGet('printArea').innerHTML = html;
+    }
+    window.executeNativePrint = function() { renderLabelMarkup(); safeGet('printArea').classList.remove('hidden'); window.print(); setTimeout(() => safeGet('printArea').classList.add('hidden'), 500); };
+
+    // FOTOS Y PATRÓN ANDROID
+    window.handleNewPhotoUpload = function(inp) {
+      if(!inp.files || !inp.files.length) return;
+      Array.from(inp.files).forEach(f => {
+        const r = new FileReader(); r.onload = (e) => { currentPhotos.push(e.target.result); safeGet('newPhotosGrid').innerHTML = currentPhotos.map(s => `<div class="relative w-14 h-14 rounded-xl overflow-hidden border border-zinc-700 shrink-0 shadow"><img src="${s}" class="w-full h-full object-cover"></div>`).join(''); }; r.readAsDataURL(f);
+      });
+    };
+    function initPatternCanvas() {
+      const c = safeGet('patternCanvas'); if(!c) return; const ctx = c.getContext('2d'); drawPatternGrid(ctx, []);
+      c.onmousedown = c.ontouchstart = (e) => { isDrawingPattern = true; handlePatternTouch(e, c, ctx); };
+      c.onmousemove = c.ontouchmove = (e) => { if(isDrawingPattern) handlePatternTouch(e, c, ctx); };
+      window.onmouseup = window.ontouchend = () => { isDrawingPattern = false; };
+    }
+    function drawPatternGrid(ctx, points) {
+      ctx.clearRect(0, 0, 220, 220); const coords = []; const sp = 65; const off = 45;
+      for(let r=0;r<3;r++) for(let c=0;c<3;c++) coords.push({x:off+c*sp, y:off+r*sp});
+      if(points.length>1) { ctx.strokeStyle='#007AFF'; ctx.lineWidth=4; ctx.beginPath(); for(let i=0;i<points.length;i++){ const p=coords[points[i]-1]; if(i===0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); } ctx.stroke(); }
+      coords.forEach((p, idx) => { ctx.fillStyle=points.includes(idx+1)?'#34C759':'#3f3f46'; ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill(); });
+    }
+    function handlePatternTouch(e, canvas, ctx) {
+      const rect = canvas.getBoundingClientRect(); const cx = e.touches ? e.touches[0].clientX : e.clientX; const cy = e.touches ? e.touches[0].clientY : e.clientY;
+      const x = cx - rect.left; const y = cy - rect.top; const coords = []; const sp = 65; const off = 45;
+      for(let r=0;r<3;r++) for(let c=0;c<3;c++) coords.push({x:off+c*sp, y:off+r*sp});
+      coords.forEach((p, idx) => { if(Math.hypot(p.x - x, p.y - y) < 25 && !selectedPatternSequence.includes(idx+1)) { selectedPatternSequence.push(idx+1); drawPatternGrid(ctx, selectedPatternSequence); } });
+    }
+
+    // ARRANQUE EN CARGA
     window.addEventListener('DOMContentLoaded', bootstrapApp);
   </script>
 </body>
