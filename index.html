@@ -69,7 +69,7 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen">
 
-  <!-- AVISO DE ACTUALIZACIÓN DEL CÓDIGO -->
+  <!-- AVISO DE ACTUALIZACIÓN DEL CÓDIGO (SONIDO SINTETIZADO) -->
   <div id="appUpdatingBanner" class="fixed top-4 inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 z-[10002] hidden items-center gap-3 bg-indigo-950/95 border-2 border-indigo-500 text-white px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-2xl transition-all duration-300 pointer-events-auto">
     <div class="w-9 h-9 rounded-xl bg-indigo-600/30 border border-indigo-400 flex items-center justify-center shrink-0">
       <i class="ph-bold ph-arrows-clockwise text-indigo-300 text-xl animate-spin"></i>
@@ -79,7 +79,7 @@
         <span>Esta aplicación se está actualizando</span>
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
       </h4>
-      <p class="text-[10px] text-indigo-200 mt-0.5">Mejoras instaladas. Datos y licencias preservados con éxito.</p>
+      <p class="text-[10px] text-indigo-200 mt-0.5">Mejoras instaladas. Datos y licencias preservados.</p>
     </div>
   </div>
 
@@ -94,11 +94,11 @@
         <div class="min-w-0 flex flex-col">
           <div class="flex items-center gap-1.5 flex-wrap">
             <h1 id="appHeaderTitle" class="text-sm font-bold text-white tracking-tight truncate">OpenLine</h1>
-            <button type="button" onclick="openTeamModal()" class="text-[10px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-2 py-0.5 rounded-full flex items-center gap-1 active:opacity-75 transition">
+            <button type="button" onclick="window.openTeamModal()" class="text-[10px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-2 py-0.5 rounded-full flex items-center gap-1 active:opacity-75 transition">
               <span id="livePulseDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span id="headerWorkshopCode">TALLER-XXXX</span>
             </button>
-            <button type="button" onclick="openLicenseModal()" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition">
+            <button type="button" onclick="window.openLicenseModal()" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition">
               <i class="ph-bold ph-shield-check"></i> <span id="headerLicenseText">DEMO</span>
             </button>
           </div>
@@ -106,32 +106,31 @@
         </div>
       </div>
       <div class="flex items-center gap-2 shrink-0">
-        <button type="button" onclick="openTeamModal()" class="w-9 h-9 rounded-xl bg-zinc-800 text-indigo-400 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm">
+        <button type="button" onclick="window.openTeamModal()" class="w-9 h-9 rounded-xl bg-zinc-800 text-indigo-400 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm">
           <i class="ph-bold ph-users-three text-lg"></i>
         </button>
-        <button type="button" onclick="openSettingsModal()" class="w-9 h-9 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm">
+        <button type="button" onclick="window.openSettingsModal()" class="w-9 h-9 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm">
           <i class="ph-bold ph-gear text-lg"></i>
         </button>
       </div>
     </div>
 
-    <!-- Botones de Acción -->
     <div class="px-4 pb-2.5 max-w-5xl mx-auto w-full">
       <div class="grid grid-cols-5 gap-1.5 sm:gap-2 text-center">
-        <button type="button" onclick="openNewRepairModal()" class="py-2.5 px-1 rounded-xl bg-iosBlue text-white text-[10px] sm:text-xs font-bold shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+        <button type="button" onclick="window.openNewRepairModal()" class="py-2.5 px-1 rounded-xl bg-iosBlue text-white text-[10px] sm:text-xs font-bold shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition">
           <i class="ph-bold ph-plus text-base"></i><span>Ingreso</span>
         </button>
-        <button type="button" onclick="openSalesModal()" class="py-2.5 px-1 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] sm:text-xs font-bold shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+        <button type="button" onclick="window.openSalesModal()" class="py-2.5 px-1 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] sm:text-xs font-bold shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition">
           <i class="ph-bold ph-shopping-cart-simple text-base"></i><span>Vender</span>
         </button>
-        <button type="button" onclick="openStockModal()" class="py-2.5 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] sm:text-xs font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition relative">
+        <button type="button" onclick="window.openStockModal()" class="py-2.5 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] sm:text-xs font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition relative">
           <i class="ph-bold ph-barcode text-base text-purple-400"></i><span>Stock</span>
           <span id="stockWarningBadge" class="hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
         </button>
-        <button type="button" onclick="openCashModal()" class="py-2.5 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] sm:text-xs font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+        <button type="button" onclick="window.openCashModal()" class="py-2.5 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] sm:text-xs font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition">
           <i class="ph-bold ph-currency-dollar-simple text-base text-emerald-400"></i><span>Caja</span>
         </button>
-        <button type="button" onclick="openInstallModal()" class="py-2.5 px-1 rounded-xl bg-zinc-800 text-white text-[10px] sm:text-xs font-semibold flex flex-col items-center justify-center gap-1 shadow active:scale-95 transition">
+        <button type="button" onclick="window.openInstallModal()" class="py-2.5 px-1 rounded-xl bg-zinc-800 text-white text-[10px] sm:text-xs font-semibold flex flex-col items-center justify-center gap-1 shadow active:scale-95 transition">
           <i class="ph-bold ph-share-network text-base"></i><span>Compartir</span>
         </button>
       </div>
@@ -152,7 +151,7 @@
 
     <!-- Métricas -->
     <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
-      <button type="button" onclick="openCashModal()" class="w-full text-center bg-gradient-to-br from-zinc-900 to-emerald-950/40 border border-emerald-900/40 rounded-2xl p-2.5 shadow-sm active:scale-95 transition">
+      <button type="button" onclick="window.openCashModal()" class="w-full text-center bg-gradient-to-br from-zinc-900 to-emerald-950/40 border border-emerald-900/40 rounded-2xl p-2.5 shadow-sm active:scale-95 transition">
         <span class="text-[10px] text-emerald-400 font-bold flex items-center justify-center gap-1">
           <i class="ph-bold ph-wallet"></i> Saldo Caja (<span id="headerCashBranchTag">Todas</span>)
         </span>
@@ -180,19 +179,19 @@
     <div class="space-y-2">
       <div class="relative">
         <i class="ph-bold ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-base"></i>
-        <input id="searchInput" type="text" oninput="handleSearch()" placeholder="Buscar cliente, modelo, IMEI..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-iosBlue shadow-sm">
-        <button type="button" id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 p-1">
+        <input id="searchInput" type="text" oninput="window.handleSearch()" placeholder="Buscar cliente, modelo, IMEI..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-iosBlue shadow-sm">
+        <button type="button" id="clearSearchBtn" onclick="window.clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 p-1">
           <i class="ph-bold ph-x-circle text-base"></i>
         </button>
       </div>
 
       <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs pb-0.5">
-        <button type="button" onclick="setFilter('ALL')" id="tabALL" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-800 text-white font-bold shrink-0 transition">Todos</button>
-        <button type="button" onclick="setFilter('WAITING')" id="tabWAITING" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Espera</button>
-        <button type="button" onclick="setFilter('IN_PROGRESS')" id="tabIN_PROGRESS" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Taller</button>
-        <button type="button" onclick="setFilter('IN_TRANSIT')" id="tabIN_TRANSIT" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Viaje</button>
-        <button type="button" onclick="setFilter('READY')" id="tabREADY" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Listos</button>
-        <button type="button" onclick="setFilter('DELIVERED')" id="tabDELIVERED" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Entregados</button>
+        <button type="button" onclick="window.setFilter('ALL')" id="tabALL" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-800 text-white font-bold shrink-0 transition">Todos</button>
+        <button type="button" onclick="window.setFilter('WAITING')" id="tabWAITING" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Espera</button>
+        <button type="button" onclick="window.setFilter('IN_PROGRESS')" id="tabIN_PROGRESS" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Taller</button>
+        <button type="button" onclick="window.setFilter('IN_TRANSIT')" id="tabIN_TRANSIT" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Viaje</button>
+        <button type="button" onclick="window.setFilter('READY')" id="tabREADY" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Listos</button>
+        <button type="button" onclick="window.setFilter('DELIVERED')" id="tabDELIVERED" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Entregados</button>
       </div>
     </div>
 
@@ -212,7 +211,7 @@
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[92vh] flex flex-col shadow-2xl text-xs">
       <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800 bg-zinc-900">
         <h2 class="text-sm font-bold text-white flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-iosBlue"></span>Nuevo Ingreso a Taller</h2>
-        <button type="button" onclick="closeModal('newRepairModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
+        <button type="button" onclick="window.closeModal('newRepairModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
       </div>
       
       <div class="overflow-y-auto p-4 space-y-3 flex-1 pb-safe">
@@ -265,9 +264,9 @@
           <div class="flex items-center justify-between">
             <label class="font-bold text-zinc-300 uppercase text-[9px] block">3. Clave / Seguridad</label>
             <div class="flex items-center gap-1 bg-zinc-800 p-0.5 rounded-lg text-[10px]">
-              <button type="button" onclick="setUnlockType('pin')" id="btnUnlockPin" class="px-2 py-0.5 rounded bg-iosBlue text-white font-medium">PIN</button>
-              <button type="button" onclick="setUnlockType('pattern')" id="btnUnlockPattern" class="px-2 py-0.5 rounded text-zinc-400">Patrón</button>
-              <button type="button" onclick="setUnlockType('none')" id="btnUnlockNone" class="px-2 py-0.5 rounded text-zinc-400">Sin Clave</button>
+              <button type="button" onclick="window.setUnlockType('pin')" id="btnUnlockPin" class="px-2 py-0.5 rounded bg-iosBlue text-white font-medium">PIN</button>
+              <button type="button" onclick="window.setUnlockType('pattern')" id="btnUnlockPattern" class="px-2 py-0.5 rounded text-zinc-400">Patrón</button>
+              <button type="button" onclick="window.setUnlockType('none')" id="btnUnlockNone" class="px-2 py-0.5 rounded text-zinc-400">Sin Clave</button>
             </div>
           </div>
           <div id="unlockViewPin">
@@ -277,7 +276,7 @@
             <canvas id="patternCanvas" width="220" height="220" class="bg-black border border-zinc-800 rounded-2xl mx-auto touch-none"></canvas>
             <div class="text-[10px] text-zinc-400">
               <span id="patternStatusLabel">Sin trazar</span> • 
-              <button type="button" onclick="resetPatternCanvas()" class="text-rose-400 underline font-bold">Borrar trazo</button>
+              <button type="button" onclick="window.resetPatternCanvas()" class="text-rose-400 underline font-bold">Borrar trazo</button>
             </div>
           </div>
           <div id="unlockViewNone" class="hidden py-1 text-center text-[11px] text-zinc-500">Sin clave / Dispositivo apagado.</div>
@@ -292,23 +291,23 @@
           <div class="flex items-center gap-2">
             <label class="flex-1 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
               <i class="ph-bold ph-camera text-iosBlue text-base"></i> Cámara
-              <input type="file" accept="image/*" capture="environment" onchange="handleNewPhotoUpload(this)" class="hidden">
+              <input type="file" accept="image/*" capture="environment" onchange="window.handleNewPhotoUpload(this)" class="hidden">
             </label>
             <label class="flex-1 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
               <i class="ph-bold ph-image text-emerald-400 text-base"></i> Galería
-              <input type="file" accept="image/*" multiple onchange="handleNewPhotoUpload(this)" class="hidden">
+              <input type="file" accept="image/*" multiple onchange="window.handleNewPhotoUpload(this)" class="hidden">
             </label>
           </div>
           <div id="newPhotosGrid" class="flex gap-2 overflow-x-auto py-1 no-scrollbar min-h-[60px]"></div>
         </div>
 
-        <!-- Falla y Presupuesto -->
+        <!-- Falla y Presupuesto Inicial -->
         <div class="space-y-2.5 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
-          <label class="font-bold text-zinc-300 uppercase text-[9px] block">5. Falla y Presupuesto Inicial</label>
+          <label class="font-bold text-zinc-300 uppercase text-[9px] block">5. Falla y Presupuesto</label>
           <textarea id="inpDeviceFault" rows="2" placeholder="Falla informada por el cliente..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white"></textarea>
           <div class="grid grid-cols-2 gap-2">
-            <div><label class="text-[9px] text-zinc-400 block mb-0.5">Ppto Inicial ($)</label><input type="number" id="inpDeviceBudget" oninput="calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></div>
-            <div><label class="text-[9px] text-zinc-400 block mb-0.5">Seña ($)</label><input type="number" id="inpDeviceAdvance" oninput="calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold"></div>
+            <div><label class="text-[9px] text-zinc-400 block mb-0.5">Ppto Inicial ($)</label><input type="number" id="inpDeviceBudget" oninput="window.calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></div>
+            <div><label class="text-[9px] text-zinc-400 block mb-0.5">Seña ($)</label><input type="number" id="inpDeviceAdvance" oninput="window.calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold"></div>
           </div>
           <div class="grid grid-cols-2 gap-2 pt-1">
             <div>
@@ -332,7 +331,7 @@
           </div>
         </div>
         
-        <button type="button" onclick="guardarIngresoDirecto()" class="w-full py-3 rounded-xl bg-iosBlue text-white font-bold text-sm shadow active:scale-95 transition">
+        <button type="button" onclick="window.guardarIngresoDirecto()" class="w-full py-3 rounded-xl bg-iosBlue text-white font-bold text-sm shadow active:scale-95 transition">
           Guardar Ingreso e Imprimir
         </button>
       </div>
@@ -351,17 +350,16 @@
           <h3 id="dtlDeviceTitle" class="text-sm font-bold text-white mt-0.5">Dispositivo</h3>
         </div>
         <div class="flex items-center gap-2">
-          <button type="button" onclick="openEditRepairModal()" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-xs border border-zinc-700 flex items-center gap-1 active:scale-95 transition">
+          <button type="button" onclick="window.openEditRepairModal()" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-xs border border-zinc-700 flex items-center gap-1 active:scale-95 transition">
             <i class="ph-bold ph-pencil-simple text-amber-400"></i> Editar
           </button>
-          <button type="button" onclick="closeModal('detailModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white">
+          <button type="button" onclick="window.closeModal('detailModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white">
             <i class="ph-bold ph-x text-sm"></i>
           </button>
         </div>
       </div>
 
       <div class="overflow-y-auto p-4 space-y-3.5 flex-1 pb-safe">
-        
         <!-- PRESUPUESTAR & APROBACIÓN -->
         <div class="p-3 bg-zinc-950 border border-indigo-800/80 rounded-2xl space-y-2.5">
           <div class="flex items-center justify-between">
@@ -371,7 +369,7 @@
             <span id="dtlBudgetApprovalBadge" class="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-700">🟡 Pendiente</span>
           </div>
 
-          <button type="button" onclick="openBudgetModal()" class="w-full py-3 px-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:brightness-110 text-white font-bold text-xs flex items-center justify-center gap-2 shadow active:scale-95 transition">
+          <button type="button" onclick="window.openBudgetModal()" class="w-full py-3 px-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:brightness-110 text-white font-bold text-xs flex items-center justify-center gap-2 shadow active:scale-95 transition">
             <i class="ph-bold ph-file-text text-base"></i>
             <span>Presupuestar (Detallar Reparación y Enviar)</span>
           </button>
@@ -379,9 +377,9 @@
           <div class="space-y-1 pt-1">
             <span class="text-[9px] text-zinc-400 uppercase font-bold block">Respuesta Recibida del Cliente:</span>
             <div class="grid grid-cols-3 gap-1.5">
-              <button type="button" onclick="setCustomerBudgetResponse('PENDING')" class="py-2 rounded-xl bg-zinc-800 text-amber-300 font-bold text-xs active:scale-95 transition">🟡 Espera</button>
-              <button type="button" onclick="setCustomerBudgetResponse('APPROVED')" class="py-2 rounded-xl bg-zinc-800 text-emerald-300 font-bold text-xs active:scale-95 transition">🟢 Aprobó</button>
-              <button type="button" onclick="setCustomerBudgetResponse('REJECTED')" class="py-2 rounded-xl bg-zinc-800 text-rose-300 font-bold text-xs active:scale-95 transition">🔴 Rechazó</button>
+              <button type="button" onclick="window.setCustomerBudgetResponse('PENDING')" class="py-2 rounded-xl bg-zinc-800 text-amber-300 font-bold text-xs active:scale-95 transition">🟡 Espera</button>
+              <button type="button" onclick="window.setCustomerBudgetResponse('APPROVED')" class="py-2 rounded-xl bg-zinc-800 text-emerald-300 font-bold text-xs active:scale-95 transition">🟢 Aprobó</button>
+              <button type="button" onclick="window.setCustomerBudgetResponse('REJECTED')" class="py-2 rounded-xl bg-zinc-800 text-rose-300 font-bold text-xs active:scale-95 transition">🔴 Rechazó</button>
             </div>
           </div>
         </div>
@@ -394,16 +392,16 @@
           </div>
 
           <div class="grid grid-cols-4 gap-1.5">
-            <button type="button" id="btnOpStatusWaiting" onclick="updateDeviceOperationalStatus('WAITING')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] flex flex-col items-center gap-1 active:scale-95 transition border border-zinc-700">
+            <button type="button" id="btnOpStatusWaiting" onclick="window.updateDeviceOperationalStatus('WAITING')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] flex flex-col items-center gap-1 active:scale-95 transition border border-zinc-700">
               <i class="ph-bold ph-clock text-amber-400 text-base"></i> 1. Espera
             </button>
-            <button type="button" id="btnOpStatusInProgress" onclick="updateDeviceOperationalStatus('IN_PROGRESS')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] flex flex-col items-center gap-1 active:scale-95 transition border border-zinc-700">
+            <button type="button" id="btnOpStatusInProgress" onclick="window.updateDeviceOperationalStatus('IN_PROGRESS')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] flex flex-col items-center gap-1 active:scale-95 transition border border-zinc-700">
               <i class="ph-bold ph-wrench text-iosBlue text-base"></i> 2. Taller
             </button>
-            <button type="button" id="btnOpStatusTransit" onclick="openTransitPromptModal()" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] flex flex-col items-center gap-1 active:scale-95 transition border border-zinc-700">
+            <button type="button" id="btnOpStatusTransit" onclick="window.openTransitPromptModal()" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] flex flex-col items-center gap-1 active:scale-95 transition border border-zinc-700">
               <i class="ph-bold ph-truck text-indigo-400 text-base"></i> 3. Viaje
             </button>
-            <button type="button" id="btnOpStatusReady" onclick="updateDeviceOperationalStatus('READY')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] flex flex-col items-center gap-1 active:scale-95 transition border border-zinc-700">
+            <button type="button" id="btnOpStatusReady" onclick="window.updateDeviceOperationalStatus('READY')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] flex flex-col items-center gap-1 active:scale-95 transition border border-zinc-700">
               <i class="ph-bold ph-check-circle text-emerald-400 text-base"></i> 4. Listo
             </button>
           </div>
@@ -413,7 +411,7 @@
               <span class="font-bold text-indigo-300 block text-xs">🚚 Traslado a otra sucursal:</span>
               <span class="text-[11px] text-zinc-300" id="dtlTransitRouteText">-</span>
             </div>
-            <button type="button" onclick="confirmArrivalAtDestination()" class="px-2.5 py-1 bg-emerald-600 text-white font-bold rounded-lg text-xs">Confirmar Llegada</button>
+            <button type="button" onclick="window.confirmArrivalAtDestination()" class="px-2.5 py-1 bg-emerald-600 text-white font-bold rounded-lg text-xs">Confirmar Llegada</button>
           </div>
         </div>
 
@@ -423,27 +421,27 @@
             <i class="ph-bold ph-bell text-sm"></i> Avisos Cliente
           </span>
           <div class="grid grid-cols-3 gap-1.5">
-            <button type="button" onclick="sendReceiptWhatsApp()" class="py-2 rounded-xl bg-zinc-800 text-blue-400 font-bold flex flex-col items-center gap-0.5 text-[10px] active:scale-95 transition">
+            <button type="button" onclick="window.sendReceiptWhatsApp()" class="py-2 rounded-xl bg-zinc-800 text-blue-400 font-bold flex flex-col items-center gap-0.5 text-[10px] active:scale-95 transition">
               <i class="ph-bold ph-receipt text-sm"></i> Comprobante
             </button>
-            <button type="button" onclick="sendStatusWhatsApp()" class="py-2 rounded-xl bg-zinc-800 text-indigo-400 font-bold flex flex-col items-center gap-0.5 text-[10px] active:scale-95 transition">
+            <button type="button" onclick="window.sendStatusWhatsApp()" class="py-2 rounded-xl bg-zinc-800 text-indigo-400 font-bold flex flex-col items-center gap-0.5 text-[10px] active:scale-95 transition">
               <i class="ph-bold ph-arrow-clockwise text-sm"></i> Avisar Estado
             </button>
-            <button type="button" onclick="openPickupNoticeModal()" class="py-2 rounded-xl bg-emerald-700 text-white font-bold flex flex-col items-center gap-0.5 text-[10px] active:scale-95 transition shadow">
+            <button type="button" onclick="window.openPickupNoticeModal()" class="py-2 rounded-xl bg-emerald-700 text-white font-bold flex flex-col items-center gap-0.5 text-[10px] active:scale-95 transition shadow">
               <i class="ph-bold ph-check-circle text-sm"></i> Avisar Retiro
             </button>
           </div>
         </div>
 
-        <!-- Cobro de Reparación -->
+        <!-- Cobro -->
         <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl flex items-center justify-between">
           <div><span class="text-[10px] text-zinc-400 uppercase font-bold block">Cobro de Reparación</span><span class="text-xs text-zinc-300">Ingresar saldo a caja local</span></div>
-          <button type="button" onclick="chargeRepairToCash()" class="py-1.5 px-3 rounded-xl bg-emerald-950 border border-emerald-600/70 text-emerald-300 font-bold text-xs flex items-center gap-1 active:scale-95 transition">
+          <button type="button" onclick="window.chargeRepairToCash()" class="py-1.5 px-3 rounded-xl bg-emerald-950 border border-emerald-600/70 text-emerald-300 font-bold text-xs flex items-center gap-1 active:scale-95 transition">
             <i class="ph-bold ph-wallet text-sm"></i> Cobrar a Caja
           </button>
         </div>
 
-        <!-- Datos y Presupuesto -->
+        <!-- Cliente y Costos -->
         <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl">
           <span class="text-[9px] text-zinc-500 uppercase block mb-0.5">Cliente:</span>
           <b class="text-white text-sm" id="dtlClientName"></b>
@@ -458,7 +456,7 @@
 
         <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-center text-xs" id="dtlUnlockDisplay"></div>
 
-        <!-- Falla Informada y Detalle Técnico -->
+        <!-- Detalle Técnico -->
         <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
           <div>
             <span class="text-[9px] text-zinc-500 uppercase block mb-0.5">Falla Reportada:</span>
@@ -470,17 +468,17 @@
           </div>
         </div>
 
-        <!-- Fotos en Detalle -->
+        <!-- Fotos -->
         <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl">
           <span class="text-[9px] text-zinc-500 uppercase block mb-1">Fotos de Recepción:</span>
           <div id="dtlPhotosGrid" class="grid grid-cols-3 gap-2"></div>
         </div>
 
         <div class="flex gap-2 pt-1">
-          <button type="button" onclick="openPrintModalForCurrent()" class="flex-1 py-2.5 bg-iosBlue text-white font-bold rounded-xl flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
+          <button type="button" onclick="window.openPrintModalForCurrent()" class="flex-1 py-2.5 bg-iosBlue text-white font-bold rounded-xl flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
             <i class="ph-bold ph-printer text-base"></i> Imprimir Etiqueta
           </button>
-          <button type="button" onclick="deleteCurrentRepair()" class="w-12 py-2.5 bg-rose-950 text-rose-300 rounded-xl flex items-center justify-center active:scale-95 transition">
+          <button type="button" onclick="window.deleteCurrentRepair()" class="w-12 py-2.5 bg-rose-950 text-rose-300 rounded-xl flex items-center justify-center active:scale-95 transition">
             <i class="ph-bold ph-trash text-base"></i>
           </button>
         </div>
@@ -501,7 +499,7 @@
             <p class="text-[10px] text-zinc-400" id="bgTargetDeviceTitle">Dispositivo</p>
           </div>
         </div>
-        <button type="button" onclick="closeModal('budgetModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white">
+        <button type="button" onclick="window.closeModal('budgetModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white">
           <i class="ph-bold ph-x text-sm"></i>
         </button>
       </div>
@@ -539,11 +537,11 @@
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-[9px] text-zinc-400 block mb-0.5 font-bold uppercase">Total Reparación ($) *</label>
-              <input type="number" id="bgTotalCost" oninput="calcBudgetBalance()" placeholder="0" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold font-mono">
+              <input type="number" id="bgTotalCost" oninput="window.calcBudgetBalance()" placeholder="0" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold font-mono">
             </div>
             <div>
               <label class="text-[9px] text-zinc-400 block mb-0.5 font-bold uppercase">Seña ya abonada ($)</label>
-              <input type="number" id="bgAdvance" oninput="calcBudgetBalance()" placeholder="0" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold font-mono">
+              <input type="number" id="bgAdvance" oninput="window.calcBudgetBalance()" placeholder="0" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold font-mono">
             </div>
           </div>
           <div class="flex justify-between items-center text-xs pt-2 border-t border-zinc-800">
@@ -553,11 +551,11 @@
         </div>
 
         <div class="space-y-2 pt-1">
-          <button type="button" onclick="saveBudgetAction(true)" class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg active:scale-95 transition">
+          <button type="button" onclick="window.saveBudgetAction(true)" class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg active:scale-95 transition">
             <i class="ph-bold ph-whatsapp-logo text-base"></i>
             <span>Guardar y Enviar Presupuesto por WhatsApp</span>
           </button>
-          <button type="button" onclick="saveBudgetAction(false)" class="w-full py-2.5 px-4 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition">
+          <button type="button" onclick="window.saveBudgetAction(false)" class="w-full py-2.5 px-4 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition">
             <i class="ph-bold ph-floppy-disk"></i>
             <span>Solo Guardar Presupuesto (Sin Enviar)</span>
           </button>
@@ -569,18 +567,18 @@
   <!-- MODAL: VENTAS POS -->
   <div id="salesModal" class="app-modal">
     <div class="bg-zinc-900 sm:border border-amber-600/70 sm:rounded-3xl w-full h-[95vh] sm:h-[90vh] max-w-4xl flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-shopping-cart-simple text-amber-400 text-xl"></i><h3 class="text-sm font-bold text-white">Ventas Mostrador (POS)</h3></div><button type="button" onclick="closeModal('salesModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-shopping-cart-simple text-amber-400 text-xl"></i><h3 class="text-sm font-bold text-white">Ventas Mostrador (POS)</h3></div><button type="button" onclick="window.closeModal('salesModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
         <div class="flex-1 flex flex-col border-b md:border-b-0 md:border-r border-zinc-800 p-3.5 space-y-3 overflow-hidden">
-          <div class="flex gap-2 shrink-0"><input type="text" id="posSearchProduct" oninput="renderPosCatalog()" placeholder="Buscar repuesto..." class="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white"><button type="button" onclick="togglePosCam()" class="px-3 py-2 bg-purple-900 text-purple-200 rounded-xl font-bold flex items-center gap-1"><i class="ph-bold ph-camera"></i> Escanear</button></div>
-          <div id="posScannerBox" class="hidden p-2 bg-zinc-950 rounded-xl border border-purple-800 space-y-1"><button type="button" onclick="stopPosCam()" class="text-rose-400 font-bold w-full text-right py-1">Cerrar Cámara</button><div id="pos-qr-reader" class="w-full rounded-xl min-h-[180px] bg-black"></div></div>
+          <div class="flex gap-2 shrink-0"><input type="text" id="posSearchProduct" oninput="window.renderPosCatalog()" placeholder="Buscar repuesto..." class="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white"><button type="button" onclick="window.togglePosCam()" class="px-3 py-2 bg-purple-900 text-purple-200 rounded-xl font-bold flex items-center gap-1"><i class="ph-bold ph-camera"></i> Escanear</button></div>
+          <div id="posScannerBox" class="hidden p-2 bg-zinc-950 rounded-xl border border-purple-800 space-y-1"><button type="button" onclick="window.stopPosCam()" class="text-rose-400 font-bold w-full text-right py-1">Cerrar Cámara</button><div id="pos-qr-reader" class="w-full rounded-xl min-h-[180px] bg-black"></div></div>
           <div class="flex-1 overflow-y-auto"><div id="posCatalogGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div></div>
         </div>
         <div class="w-full md:w-[320px] flex flex-col bg-zinc-950/60 p-3.5 space-y-3 shrink-0 overflow-y-auto pb-safe">
-          <div class="flex items-center justify-between border-b border-zinc-800 pb-1.5"><span class="font-bold text-white uppercase text-xs">Carrito</span><button type="button" onclick="clearPosCart()" class="text-[10px] text-rose-400">Vaciar</button></div>
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-1.5"><span class="font-bold text-white uppercase text-xs">Carrito</span><button type="button" onclick="window.clearPosCart()" class="text-[10px] text-rose-400">Vaciar</button></div>
           <div id="posCartContainer" class="flex-1 space-y-1.5 overflow-y-auto min-h-[100px]"></div>
           <div class="space-y-2 pt-2 border-t border-zinc-800"><select id="posBranch" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-bold"></select><select id="posPaymentMethod" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-2 text-white"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia</option><option value="Tarjeta">Tarjeta</option></select><input type="text" id="posCustomerName" placeholder="Cliente (opcional)" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white"></div>
-          <div class="p-3 bg-zinc-900 rounded-2xl border border-amber-600/50 space-y-2"><div class="flex items-center justify-between"><span class="text-xs uppercase font-bold text-zinc-400">Total:</span><span id="posTotalAmount" class="font-mono text-xl font-black text-amber-400">$0</span></div><button type="button" onclick="completePosSale()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-xs shadow">Cobrar Venta</button></div>
+          <div class="p-3 bg-zinc-900 rounded-2xl border border-amber-600/50 space-y-2"><div class="flex items-center justify-between"><span class="text-xs uppercase font-bold text-zinc-400">Total:</span><span id="posTotalAmount" class="font-mono text-xl font-black text-amber-400">$0</span></div><button type="button" onclick="window.completePosSale()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-xs shadow">Cobrar Venta</button></div>
         </div>
       </div>
     </div>
@@ -589,13 +587,13 @@
   <!-- MODAL: STOCK CON CÁMARA -->
   <div id="stockModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-purple-800 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-2xl flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-barcode text-purple-400 text-xl"></i><h3 class="font-bold text-white text-sm">Control de Stock</h3></div><button type="button" onclick="closeModal('stockModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-barcode text-purple-400 text-xl"></i><h3 class="font-bold text-white text-sm">Control de Stock</h3></div><button type="button" onclick="window.closeModal('stockModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="p-4 overflow-y-auto space-y-3 flex-1 pb-safe">
         <div class="grid grid-cols-2 gap-2">
-          <button type="button" onclick="toggleStockCam()" id="btnStartScanner" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
+          <button type="button" onclick="window.toggleStockCam()" id="btnStartScanner" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
             <i class="ph-bold ph-camera text-base"></i><span id="btnScannerText">Cámara</span>
           </button>
-          <button type="button" onclick="toggleStockForm()" class="py-2.5 px-3 rounded-xl bg-zinc-800 text-white font-bold flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
+          <button type="button" onclick="window.toggleStockForm()" class="py-2.5 px-3 rounded-xl bg-zinc-800 text-white font-bold flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
             <i class="ph-bold ph-plus-circle text-purple-400 text-base"></i><span>+ Producto</span>
           </button>
         </div>
@@ -603,17 +601,17 @@
         <div id="scannerContainer" class="hidden p-3 bg-zinc-950 border border-purple-800 rounded-2xl space-y-2">
           <div class="flex justify-between items-center text-xs text-purple-300 font-semibold">
             <span>Apunte la cámara al código de barras o QR:</span>
-            <button type="button" onclick="stopStockCam()" class="text-rose-400 font-bold px-2 py-1 bg-rose-950/60 rounded-lg">Cerrar</button>
+            <button type="button" onclick="window.stopStockCam()" class="text-rose-400 font-bold px-2 py-1 bg-rose-950/60 rounded-lg">Cerrar</button>
           </div>
           <div id="qr-reader" class="w-full rounded-2xl overflow-hidden min-h-[220px] bg-black"></div>
         </div>
 
         <div id="newStockFormContainer" class="hidden p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><div class="flex gap-1"><input type="text" id="stkCode" placeholder="Código *" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white font-mono"><button type="button" onclick="autoBarcode()" class="px-2.5 bg-zinc-700 rounded-xl text-[10px] font-bold">Auto</button></div><input type="text" id="stkName" placeholder="Nombre Repuesto *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white"></div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2"><select id="stkCategory" class="col-span-2 sm:col-span-1 w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white"><option value="Pantallas">Pantallas</option><option value="Baterías">Baterías</option><option value="Pines">Pines</option><option value="Otros">Otros</option></select><input type="number" id="stkQuantity" value="1" placeholder="Cant" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white font-bold"><input type="number" id="stkCostPrice" placeholder="Costo ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-zinc-300 font-mono"><input type="number" id="stkSalePrice" placeholder="Venta ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-emerald-400 font-bold font-mono"></div>
-          <button type="button" onclick="saveStockItem()" class="w-full py-2.5 rounded-xl bg-purple-600 text-white font-bold text-xs shadow">Guardar Repuesto</button>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><div class="flex gap-1"><input type="text" id="stkCode" placeholder="Código *" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white font-mono"><button type="button" onclick="window.autoBarcode()" class="px-2.5 bg-zinc-700 rounded-xl text-[10px] font-bold">Auto</button></div><input type="text" id="stkName" placeholder="Nombre Repuesto *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white"></div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2"><select id="stkCategory" class="col-span-2 sm:col-span-1 w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-white"><option value="Pantallas">Pantallas</option><option value="Baterías">Baterías</option><option value="Pines">Pines</option><option value="Otros">Otros</option></select><input type="number" id="stkQuantity" value="1" placeholder="Cant" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-white font-bold"><input type="number" id="stkCostPrice" placeholder="Costo ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-zinc-300 font-mono"><input type="number" id="stkSalePrice" placeholder="Venta ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-emerald-400 font-bold font-mono"></div>
+          <button type="button" onclick="window.saveStockItem()" class="w-full py-2.5 rounded-xl bg-purple-600 text-white font-bold text-xs shadow">Guardar Repuesto</button>
         </div>
-        <input type="text" id="stkSearchInput" oninput="renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-white">
+        <input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-white">
         <div id="stockListContainer" class="space-y-1.5 max-h-[40vh] overflow-y-auto"></div>
       </div>
     </div>
@@ -622,12 +620,12 @@
   <!-- MODAL: CAJA -->
   <div id="cashModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-2xl flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-currency-dollar-simple text-emerald-400 text-xl"></i><h3 class="font-bold text-white text-sm">Caja por Sucursal</h3></div><button type="button" onclick="closeModal('cashModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-currency-dollar-simple text-emerald-400 text-xl"></i><h3 class="font-bold text-white text-sm">Caja por Sucursal</h3></div><button type="button" onclick="window.closeModal('cashModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="p-4 overflow-y-auto space-y-3 flex-1 pb-safe">
         <div class="flex items-center justify-between bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 gap-2"><span class="font-bold text-zinc-300 text-xs">Caja:</span><div id="cashBranchSelectorContainer" class="flex gap-1 overflow-x-auto no-scrollbar"></div></div>
         <div class="grid grid-cols-3 gap-2 text-center"><div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-emerald-400 font-bold block">Ingresos</span><span id="cashTotalIncome" class="text-sm font-bold text-emerald-400 font-mono mt-0.5 block">$0</span></div><div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-rose-400 font-bold block">Egresos</span><span id="cashTotalExpense" class="text-sm font-bold text-rose-400 font-mono mt-0.5 block">$0</span></div><div class="p-2.5 bg-gradient-to-b from-zinc-900 to-indigo-950 border border-indigo-700/60 rounded-xl"><span class="text-[9px] text-indigo-300 font-bold block">Saldo</span><span id="cashNetBalance" class="text-sm font-bold text-white font-mono mt-0.5 block">$0</span></div></div>
-        <div class="flex gap-2"><button type="button" onclick="showCashIncome()" class="flex-1 py-2 rounded-xl bg-emerald-950 border border-emerald-600/70 text-emerald-200 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-arrow-down-left text-base"></i> + Ingreso</button><button type="button" onclick="showCashExpense()" class="flex-1 py-2 rounded-xl bg-rose-950 border border-rose-600/70 text-rose-200 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-arrow-up-right text-base"></i> - Salida</button></div>
-        <div id="cashMovementForm" class="hidden p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2"><div class="flex items-center justify-between"><span id="cashFormTitle" class="font-bold text-white text-xs">Registrar</span><button type="button" onclick="hideCashForm()"><i class="ph-bold ph-x"></i></button></div><input type="hidden" id="cshType" value="INCOME"><div class="grid grid-cols-1 sm:grid-cols-3 gap-2"><select id="cshBranch" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-bold"></select><input type="number" id="cshAmount" placeholder="Monto ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-mono font-bold"><select id="cshMethod" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia</option><option value="Tarjeta">Tarjeta</option></select></div><input type="text" id="cshConcept" placeholder="Concepto (ej: Pago repuesto...)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white"><button type="button" onclick="saveCashMovement()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow">Guardar en Caja</button></div>
+        <div class="flex gap-2"><button type="button" onclick="window.showCashIncome()" class="flex-1 py-2 rounded-xl bg-emerald-950 border border-emerald-600/70 text-emerald-200 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-arrow-down-left text-base"></i> + Ingreso</button><button type="button" onclick="window.showCashExpense()" class="flex-1 py-2 rounded-xl bg-rose-950 border border-rose-600/70 text-rose-200 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-arrow-up-right text-base"></i> - Salida</button></div>
+        <div id="cashMovementForm" class="hidden p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2"><div class="flex items-center justify-between"><span id="cashFormTitle" class="font-bold text-white text-xs">Registrar</span><button type="button" onclick="window.hideCashForm()"><i class="ph-bold ph-x"></i></button></div><input type="hidden" id="cshType" value="INCOME"><div class="grid grid-cols-1 sm:grid-cols-3 gap-2"><select id="cshBranch" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-bold"></select><input type="number" id="cshAmount" placeholder="Monto ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-mono font-bold"><select id="cshMethod" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia</option><option value="Tarjeta">Tarjeta</option></select></div><input type="text" id="cshConcept" placeholder="Concepto (ej: Pago repuesto...)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white"><button type="button" onclick="window.saveCashMovement()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow">Guardar en Caja</button></div>
         <div id="cashListContainer" class="space-y-1.5 max-h-[35vh] overflow-y-auto"></div>
       </div>
     </div>
@@ -636,8 +634,8 @@
   <!-- MODAL: AJUSTES -->
   <div id="settingsModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3 shadow-2xl text-xs text-zinc-300 pb-safe">
-      <div class="flex items-center justify-between pb-1"><div class="flex items-center gap-1.5"><i class="ph-bold ph-gear text-lg text-zinc-300"></i><h3 class="font-bold text-white text-sm">Ajustes Taller</h3></div><button type="button" onclick="closeModal('settingsModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
-      <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 text-center"><div class="flex items-center justify-center gap-3"><div id="settingsLogoPreview" class="w-12 h-12 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden shrink-0"><i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i></div><div class="space-y-1 text-left"><label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 text-white font-bold rounded-xl"><i class="ph-bold ph-upload-simple"></i> Logo<input type="file" accept="image/*" onchange="handleLogoUpload(this)" class="hidden"></label><button type="button" onclick="removeLogo()" id="btnRemoveLogo" class="block text-rose-400">Quitar</button></div></div></div>
+      <div class="flex items-center justify-between pb-1"><div class="flex items-center gap-1.5"><i class="ph-bold ph-gear text-lg text-zinc-300"></i><h3 class="font-bold text-white text-sm">Ajustes Taller</h3></div><button type="button" onclick="window.closeModal('settingsModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 text-center"><div class="flex items-center justify-center gap-3"><div id="settingsLogoPreview" class="w-12 h-12 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden shrink-0"><i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i></div><div class="space-y-1 text-left"><label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 text-white font-bold rounded-xl"><i class="ph-bold ph-upload-simple"></i> Logo<input type="file" accept="image/*" onchange="window.handleLogoUpload(this)" class="hidden"></label><button type="button" onclick="window.removeLogo()" id="btnRemoveLogo" class="block text-rose-400">Quitar</button></div></div></div>
       <div class="space-y-2"><input type="text" id="cfgWorkshopName" placeholder="Nombre Comercial" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"><input type="text" id="cfgWorkshopSubtitle" placeholder="Subtítulo" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white"><input type="text" id="cfgBranchesListInput" placeholder="Sucursales (ej: Resistencia, Goya)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white"></div>
       
       <!-- COPIAS DE SEGURIDAD / RESPALDO INDEPENDIENTE -->
@@ -656,66 +654,118 @@
         </div>
       </div>
 
-      <button type="button" onclick="saveSettings()" class="w-full py-2.5 bg-iosBlue text-white font-bold rounded-xl shadow">Guardar Configuración</button>
+      <button type="button" onclick="window.saveSettings()" class="w-full py-2.5 bg-iosBlue text-white font-bold rounded-xl shadow">Guardar Configuración</button>
     </div>
   </div>
 
-  <!-- MODAL: LICENCIAS (PIN 8408 EN MODO SIGILO) -->
+  <!-- MODAL: LICENCIAS & PANEL DE TELEMETRÍA MAESTRO -->
   <div id="licenseModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3 pb-safe shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
-      <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center">
-        <span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia:</span>
-        <div id="licenseStatusText" onclick="secretTap()" class="font-mono text-base font-black text-amber-400 py-1 cursor-pointer select-none">DEMO</div>
-      </div>
-      <div id="masterAdminUnlockedView" class="hidden p-3 bg-zinc-950 rounded-2xl border border-indigo-700 space-y-2">
-        <span class="text-[10px] font-bold text-indigo-300 uppercase">Panel Habilitación (Creador):</span>
-        <input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono">
-        <button type="button" onclick="emitKey()" class="w-full py-2 bg-indigo-600 text-white font-bold rounded-xl">Emitir Clave PRO</button>
-        <div id="genResultBox" class="hidden p-2 bg-zinc-900 rounded-xl flex justify-between items-center">
-          <span id="genGeneratedKey" class="font-mono text-emerald-400 font-bold text-xs"></span>
-          <button type="button" onclick="copyKey()" class="px-2 py-1 bg-zinc-800 rounded">Copiar</button>
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg p-4 space-y-3.5 pb-safe shadow-2xl text-xs text-zinc-300 max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+      
+      <div class="overflow-y-auto space-y-3.5 flex-1 pr-1">
+        <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center">
+          <span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia:</span>
+          <div id="licenseStatusText" onclick="window.secretTap()" class="font-mono text-base font-black text-amber-400 py-1 cursor-pointer select-none">DEMO</div>
+          <span class="text-[9px] text-zinc-600 block mt-0.5">Toca 5 veces para acceder al Modo Maestro</span>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- PANEL DE TELEMETRÍA MAESTRO EN TIEMPO REAL (OCULTO - DESBLOQUEO PIN 8408) -->
+        <!-- ========================================================================= -->
+        <div id="masterAdminUnlockedView" class="hidden p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3">
+          <div class="flex items-center justify-between border-b border-indigo-900 pb-2">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide">Telemetría de Talleres (SaaS)</span>
+            </div>
+            <button type="button" onclick="window.requestTelemetryBroadcast()" class="text-[10px] bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1">
+              <i class="ph-bold ph-arrows-clockwise"></i> Sondear Red
+            </button>
+          </div>
+
+          <!-- Métricas Generales del Creador -->
+          <div class="grid grid-cols-4 gap-1.5 text-center">
+            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl">
+              <span class="text-[8px] text-zinc-400 uppercase block font-bold">Total</span>
+              <b class="text-white text-xs font-mono" id="telTotalWorkshops">0</b>
+            </div>
+            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl">
+              <span class="text-[8px] text-emerald-400 uppercase block font-bold">En Línea</span>
+              <b class="text-emerald-400 text-xs font-mono" id="telOnlineWorkshops">0</b>
+            </div>
+            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl">
+              <span class="text-[8px] text-amber-400 uppercase block font-bold">DEMO</span>
+              <b class="text-amber-400 text-xs font-mono" id="telDemoWorkshops">0</b>
+            </div>
+            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl">
+              <span class="text-[8px] text-indigo-400 uppercase block font-bold">PRO</span>
+              <b class="text-indigo-400 text-xs font-mono" id="telProWorkshops">0</b>
+            </div>
+          </div>
+
+          <!-- Lista de Talleres que están probando o usaron la App -->
+          <div class="space-y-1.5">
+            <span class="text-[9px] text-zinc-400 uppercase font-bold block">Talleres Registrados & Actividad:</span>
+            <div id="telemetryWorkshopsList" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
+          </div>
+
+          <!-- Emisión de Claves PRO -->
+          <div class="pt-2 border-t border-indigo-900/60 space-y-2">
+            <span class="text-[9px] font-bold text-indigo-300 uppercase">Generar Clave Vitalicia:</span>
+            <div class="flex gap-1.5">
+              <input type="text" id="genTargetWorkshopCode" placeholder="Código Taller (ej: TALLER-8291)" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono">
+              <button type="button" onclick="window.emitKey()" class="px-3 py-2 bg-indigo-600 text-white font-bold rounded-xl text-xs shrink-0">Emitir</button>
+            </div>
+            <div id="genResultBox" class="hidden p-2 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800">
+              <span id="genGeneratedKey" class="font-mono text-emerald-400 font-bold text-xs"></span>
+              <button type="button" onclick="window.copyKey()" class="px-2 py-1 bg-zinc-800 rounded text-[10px] text-white font-bold">Copiar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-1.5 pt-1">
+          <input type="text" id="inpActivationKey" placeholder="OL-XXXX-XXXX" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase">
+          <button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 text-white font-bold rounded-xl shrink-0">Activar</button>
         </div>
       </div>
-      <div class="flex gap-1.5">
-        <input type="text" id="inpActivationKey" placeholder="OL-XXXX-XXXX" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase">
-        <button type="button" onclick="applyKey()" class="px-3 py-2 bg-amber-600 text-white font-bold rounded-xl">Activar</button>
-      </div>
-      <button type="button" onclick="closeModal('licenseModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1">Cerrar</button>
+
+      <button type="button" onclick="window.closeModal('licenseModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1 shrink-0">Cerrar</button>
     </div>
   </div>
 
   <!-- MODAL: EQUIPO -->
-  <div id="teamModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Equipo & Sincronización</h3><button type="button" onclick="closeModal('teamModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800"><span class="text-[10px] text-zinc-400 block mb-0.5">Código Taller:</span><div id="modalWorkshopCodeDisplay" class="font-mono text-base font-bold text-white">TALLER-XXXX</div></div><div class="space-y-1"><label class="text-[10px] text-zinc-400 block">Vincular a otro Taller:</label><div class="flex gap-1.5"><input type="text" id="inpJoinWorkshopCode" placeholder="Ej: TALLER-8291" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase"><button type="button" onclick="joinWorkshop()" class="px-3.5 py-2 rounded-xl bg-indigo-600 text-white font-bold">Unirme</button></div></div><button type="button" onclick="closeModal('teamModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1">Cerrar</button></div></div>
+  <div id="teamModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Equipo & Sincronización</h3><button type="button" onclick="window.closeModal('teamModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800"><span class="text-[10px] text-zinc-400 block mb-0.5">Código Taller:</span><div id="modalWorkshopCodeDisplay" class="font-mono text-base font-bold text-white">TALLER-XXXX</div></div><div class="space-y-1"><label class="text-[10px] text-zinc-400 block">Vincular a otro Taller:</label><div class="flex gap-1.5"><input type="text" id="inpJoinWorkshopCode" placeholder="Ej: TALLER-8291" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase"><button type="button" onclick="window.joinWorkshop()" class="px-3.5 py-2 rounded-xl bg-indigo-600 text-white font-bold">Unirme</button></div></div><button type="button" onclick="window.closeModal('teamModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1">Cerrar</button></div></div>
 
   <!-- MODAL: COMPARTIR -->
-  <div id="installModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Compartir Web App</h3><button type="button" onclick="closeModal('installModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-1"><span class="font-bold text-emerald-400 uppercase text-[10px] flex items-center gap-1"><i class="ph-bold ph-shield-check"></i> Privacidad de Taller Garantizada</span><p class="text-zinc-300 leading-tight">El nuevo dispositivo iniciará en un <b>taller nuevo independiente en blanco</b>. No accederá a tus clientes ni a tu caja.</p></div><div class="space-y-2"><button type="button" onclick="shareAppWA()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold flex items-center justify-center gap-2"><i class="ph-bold ph-whatsapp-logo text-base"></i> Compartir por WhatsApp</button><button type="button" onclick="copyAppUrl()" class="w-full py-2.5 rounded-xl bg-zinc-800 text-white font-bold flex items-center justify-center gap-2"><i class="ph-bold ph-copy text-base"></i> Copiar Enlace Directo</button></div><button type="button" onclick="closeModal('installModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl">Cerrar</button></div></div>
+  <div id="installModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Compartir Web App</h3><button type="button" onclick="window.closeModal('installModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-1"><span class="font-bold text-emerald-400 uppercase text-[10px] flex items-center gap-1"><i class="ph-bold ph-shield-check"></i> Privacidad de Taller Garantizada</span><p class="text-zinc-300 leading-tight">El nuevo dispositivo iniciará en un <b>taller nuevo independiente en blanco</b>. No accederá a tus clientes ni a tu caja.</p></div><div class="space-y-2"><button type="button" onclick="window.shareAppWA()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold flex items-center justify-center gap-2"><i class="ph-bold ph-whatsapp-logo text-base"></i> Compartir por WhatsApp</button><button type="button" onclick="window.copyAppUrl()" class="w-full py-2.5 rounded-xl bg-zinc-800 text-white font-bold flex items-center justify-center gap-2"><i class="ph-bold ph-copy text-base"></i> Copiar Enlace Directo</button></div><button type="button" onclick="window.closeModal('installModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl">Cerrar</button></div></div>
 
   <!-- MODAL: TRASLADO ENTRE SUCURSALES -->
-  <div id="transitModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-indigo-700 sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Enviar Equipo a Sucursal</h3><button type="button" onclick="closeModal('transitModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="space-y-2"><div><label class="text-[10px] text-zinc-400 block mb-0.5">Sucursal Destino *</label><select id="selTransitDestination" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></select></div><div><label class="text-[10px] text-zinc-400 block mb-0.5">Cadete / Datos</label><input type="text" id="inpTransitNotes" placeholder="Ej: Enviado con Cadete Juan" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white"></div></div><button type="button" onclick="confirmTransitDispatch()" class="w-full py-2.5 bg-indigo-600 text-white font-bold rounded-xl">Iniciar Viaje</button></div></div>
+  <div id="transitModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-indigo-700 sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Enviar Equipo a Sucursal</h3><button type="button" onclick="window.closeModal('transitModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="space-y-2"><div><label class="text-[10px] text-zinc-400 block mb-0.5">Sucursal Destino *</label><select id="selTransitDestination" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></select></div><div><label class="text-[10px] text-zinc-400 block mb-0.5">Cadete / Datos</label><input type="text" id="inpTransitNotes" placeholder="Ej: Enviado con Cadete Juan" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white"></div></div><button type="button" onclick="window.confirmTransitDispatch()" class="w-full py-2.5 bg-indigo-600 text-white font-bold rounded-xl">Iniciar Viaje</button></div></div>
 
-  <!-- MODAL: AVISAR RETIRO -->
-  <div id="pickupNoticeModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-emerald-600 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Avisar Retiro por WhatsApp</h3><button type="button" onclick="closeModal('pickupNoticeModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="p-2.5 bg-zinc-950 rounded-xl border border-zinc-800"><span class="text-[9px] text-zinc-500 uppercase block">Dispositivo:</span><b class="text-white text-xs block truncate" id="pickupTargetDevice">-</b><div class="text-zinc-400 text-[10px]" id="pickupTargetClient">-</div></div><div class="grid grid-cols-2 gap-2"><button type="button" onclick="setPickupRepaired()" id="btnPickupRepaired" class="p-2.5 rounded-xl border-2 border-emerald-600 bg-emerald-950/60 text-emerald-200 font-bold flex flex-col items-center gap-1"><i class="ph-bold ph-check-circle text-lg"></i> REPARADO</button><button type="button" onclick="setPickupUnrepaired()" id="btnPickupUnrepaired" class="p-2.5 rounded-xl border border-zinc-700 bg-zinc-800 text-zinc-400 font-bold flex flex-col items-center gap-1"><i class="ph-bold ph-x-circle text-lg"></i> NO REPARADO</button></div><div id="pickupViewRepaired" class="p-2.5 bg-zinc-950 rounded-xl border border-zinc-800 space-y-2"><div class="flex justify-between items-center"><span class="text-zinc-400">Saldo a cobrar:</span><span id="pickupRepairedBalance" class="font-mono font-bold text-amber-400 text-sm">$0</span></div><input type="text" id="inpPickupWarrantyText" value="Garantía de 90 días sobre el trabajo realizado." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white"></div><div id="pickupViewUnrepaired" class="hidden p-2.5 bg-zinc-950 rounded-xl border border-zinc-800 space-y-2"><select id="selPickupUnrepairedReason" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white"><option value="Sin solución por daño en placa.">Sin solución (Daño en placa)</option><option value="Repuesto no disponible.">Repuesto no disponible</option><option value="Presupuesto desestimado por el cliente.">Presupuesto rechazado</option></select></div><button type="button" onclick="sendPickupWhatsAppMessage()" class="w-full py-2.5 bg-emerald-600 text-white font-bold rounded-xl shadow">Enviar Notificación a WhatsApp</button></div></div>
+  <!-- MODAL: AVISAR RETIRO (LISTO O NO REPARADO) -->
+  <div id="pickupNoticeModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-emerald-600 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Avisar Retiro por WhatsApp</h3><button type="button" onclick="window.closeModal('pickupNoticeModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="p-2.5 bg-zinc-950 rounded-xl border border-zinc-800"><span class="text-[9px] text-zinc-500 uppercase block">Dispositivo:</span><b class="text-white text-xs block truncate" id="pickupTargetDevice">-</b><div class="text-zinc-400 text-[10px]" id="pickupTargetClient">-</div></div><div class="grid grid-cols-2 gap-2"><button type="button" onclick="window.setPickupRepaired()" id="btnPickupRepaired" class="p-2.5 rounded-xl border-2 border-emerald-600 bg-emerald-950/60 text-emerald-200 font-bold flex flex-col items-center gap-1"><i class="ph-bold ph-check-circle text-lg"></i> REPARADO</button><button type="button" onclick="window.setPickupUnrepaired()" id="btnPickupUnrepaired" class="p-2.5 rounded-xl border border-zinc-700 bg-zinc-800 text-zinc-400 font-bold flex flex-col items-center gap-1"><i class="ph-bold ph-x-circle text-lg"></i> NO REPARADO</button></div><div id="pickupViewRepaired" class="p-2.5 bg-zinc-950 rounded-xl border border-zinc-800 space-y-2"><div class="flex justify-between items-center"><span class="text-zinc-400">Saldo a cobrar:</span><span id="pickupRepairedBalance" class="font-mono font-bold text-amber-400 text-sm">$0</span></div><input type="text" id="inpPickupWarrantyText" value="Garantía de 90 días sobre el trabajo realizado." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white"></div><div id="pickupViewUnrepaired" class="hidden p-2.5 bg-zinc-950 rounded-xl border border-zinc-800 space-y-2"><select id="selPickupUnrepairedReason" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white"><option value="Sin solución por daño en placa.">Sin solución (Daño en placa)</option><option value="Repuesto no disponible.">Repuesto no disponible</option><option value="Presupuesto desestimado por el cliente.">Presupuesto rechazado</option></select></div><button type="button" onclick="window.sendPickupWhatsAppMessage()" class="w-full py-2.5 bg-emerald-600 text-white font-bold rounded-xl shadow">Enviar Notificación a WhatsApp</button></div></div>
 
   <!-- MODAL: EDITAR REPARACIÓN -->
-  <div id="editRepairModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg h-[92vh] flex flex-col shadow-2xl text-xs text-zinc-300"><div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><h3 class="text-sm font-bold text-white">Editar Orden de Servicio</h3><button type="button" onclick="closeModal('editRepairModal')"><i class="ph-bold ph-x text-sm"></i></button></div><form onsubmit="saveEditedRepair(event)" class="overflow-y-auto p-4 space-y-3 flex-1 pb-safe"><div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Sucursal</label><select id="editBranchCurrent" class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white font-bold"></select></div><div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Cliente</label><input type="text" id="editClientName" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white mb-1"><div class="flex gap-2"><select id="editClientCountryCode" class="bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-2 text-white font-bold w-32 shrink-0"><option value="549">🇦🇷 +54 9</option><option value="55">🇧🇷 +55</option><option value="56">🇨🇱 +56</option><option value="57">🇨🇴 +57</option><option value="52">🇲🇽 +52</option><option value="51">🇵🇪 +51</option><option value="598">🇺🇾 +598</option><option value="595">🇵🇾 +595</option><option value="591">🇧🇴 +591</option><option value="593">🇪🇨 +593</option><option value="58">🇻🇪 +58</option><option value="1">🇺🇸 +1</option><option value="">🌐 Otro</option></select><input type="tel" id="editClientPhone" required class="flex-1 bg-zinc-800 rounded-xl px-3 py-2 text-white font-mono"></div></div><div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Equipo</label><input type="text" id="editDeviceBrand" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white mb-1"><input type="text" id="editDeviceModel" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white"></div><div class="grid grid-cols-2 gap-2 pt-2"><button type="button" onclick="closeModal('editRepairModal')" class="py-2.5 bg-zinc-800 text-white font-bold rounded-xl">Cancelar</button><button type="submit" class="py-2.5 bg-iosBlue text-white font-bold rounded-xl">Guardar</button></div></form></div></div>
+  <div id="editRepairModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg h-[92vh] flex flex-col shadow-2xl text-xs text-zinc-300"><div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><h3 class="text-sm font-bold text-white">Editar Orden de Servicio</h3><button type="button" onclick="window.closeModal('editRepairModal')"><i class="ph-bold ph-x text-sm"></i></button></div><form onsubmit="window.saveEditedRepair(event)" class="overflow-y-auto p-4 space-y-3 flex-1 pb-safe"><div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Sucursal</label><select id="editBranchCurrent" class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white font-bold"></select></div><div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Cliente</label><input type="text" id="editClientName" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white mb-1"><div class="flex gap-2"><select id="editClientCountryCode" class="bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-2 text-white font-bold w-32 shrink-0"><option value="549">🇦🇷 +54 9</option><option value="55">🇧🇷 +55</option><option value="56">🇨🇱 +56</option><option value="57">🇨🇴 +57</option><option value="52">🇲🇽 +52</option><option value="51">🇵🇪 +51</option><option value="598">🇺🇾 +598</option><option value="595">🇵🇾 +595</option><option value="591">🇧🇴 +591</option><option value="593">🇪🇨 +593</option><option value="58">🇻🇪 +58</option><option value="1">🇺🇸 +1</option><option value="">🌐 Otro</option></select><input type="tel" id="editClientPhone" required class="flex-1 bg-zinc-800 rounded-xl px-3 py-2 text-white font-mono"></div></div><div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Equipo</label><input type="text" id="editDeviceBrand" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white mb-1"><input type="text" id="editDeviceModel" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white"></div><div class="grid grid-cols-2 gap-2 pt-2"><button type="button" onclick="window.closeModal('editRepairModal')" class="py-2.5 bg-zinc-800 text-white font-bold rounded-xl">Cancelar</button><button type="submit" class="py-2.5 bg-iosBlue text-white font-bold rounded-xl">Guardar</button></div></form></div></div>
 
   <!-- MODAL: IMPRESIÓN ETIQUETAS -->
-  <div id="printLabelModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Etiqueta Adhesiva de Equipo</h3><button type="button" onclick="closeModal('printLabelModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="grid grid-cols-2 gap-2"><button type="button" onclick="setLabelFormat('thermal')" id="btnPreviewThermal" class="py-2 rounded-xl font-bold bg-iosOrange text-white shadow">Térmica (58/80 mm)</button><button type="button" onclick="setLabelFormat('standard')" id="btnPreviewStandard" class="py-2 rounded-xl font-bold bg-zinc-800 text-zinc-400">A4 / Láser</button></div><div id="labelPreviewContainer" class="p-3 bg-white text-black flex justify-center rounded-xl overflow-hidden"></div><button type="button" onclick="executeNativePrint()" class="w-full py-2.5 bg-iosBlue text-white font-bold rounded-xl shadow">Mandar a Imprimir</button></div></div>
+  <div id="printLabelModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Etiqueta Adhesiva de Equipo</h3><button type="button" onclick="window.closeModal('printLabelModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="grid grid-cols-2 gap-2"><button type="button" onclick="window.setLabelFormat('thermal')" id="btnPreviewThermal" class="py-2 rounded-xl font-bold bg-iosOrange text-white shadow">Térmica (58/80 mm)</button><button type="button" onclick="window.setLabelFormat('standard')" id="btnPreviewStandard" class="py-2 rounded-xl font-bold bg-zinc-800 text-zinc-400">A4 / Láser</button></div><div id="labelPreviewContainer" class="p-3 bg-white text-black flex justify-center rounded-xl overflow-hidden"></div><button type="button" onclick="window.executeNativePrint()" class="w-full py-2.5 bg-iosBlue text-white font-bold rounded-xl shadow">Mandar a Imprimir</button></div></div>
 
   <div id="toastContainer" class="fixed top-safe left-0 right-0 z-[10000] flex flex-col items-center gap-2 pointer-events-none mt-2 px-4"></div>
   <div id="printArea" class="hidden"></div>
 
   <!-- =================================================================================== -->
-  <!-- SISTEMA DE BLINDAJE DE DATOS, MIGRACIONES Y LICENCIAS                               -->
+  <!-- SISTEMA DE TELEMETRÍA B2B, BLINDAJE Y CONTROL MAESTRO                               -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v8.8.0';
+    var APP_CODE_VERSION = 'v8.9.0';
 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var VERSION_STORAGE_KEY = 'openline_code_installed_version';
     var MASTER_REGISTRY_KEY = 'openline_master_lic_registry';
+    var TELEMETRY_STORAGE_KEY = 'openline_telemetry_master_db';
 
     var myDeviceId = localStorage.getItem(DEVICE_ID_KEY) || ('dev_' + Math.random().toString(36).substring(2, 9));
     localStorage.setItem(DEVICE_ID_KEY, myDeviceId);
@@ -754,14 +804,9 @@
           var k = this.getKey(entity);
           var serialized = JSON.stringify(data);
           localStorage.setItem(k, serialized);
-
-          // Copia de seguridad en segundo plano
           localStorage.setItem('openline_safety_backup_' + currentWorkshopId + '_' + entity, serialized);
-
-          // Compatibilidad retroactiva
           localStorage.setItem('openline_local_' + entity + '_v8_' + currentWorkshopId, serialized);
 
-          // BLINDAJE ESPECÍFICO DE LICENCIAS EN REGISTRO PERMANENTE
           if (entity === 'license' && data && data.type === 'LIFETIME') {
             this.lockLicenseInPermanentRegistry(currentWorkshopId, data);
           }
@@ -770,12 +815,9 @@
 
       load: function(entity, defaultVal) {
         try {
-          // Si es licencia, verificar primero la Bóveda Maestra de Licencias
           if (entity === 'license') {
             var licFromReg = this.recoverLicenseFromPermanentRegistry(currentWorkshopId);
-            if (licFromReg && licFromReg.type === 'LIFETIME') {
-              return licFromReg;
-            }
+            if (licFromReg && licFromReg.type === 'LIFETIME') return licFromReg;
           }
 
           var k = this.getKey(entity);
@@ -856,6 +898,8 @@
     var selectedPatternSequence = [];
     var masterTapCount = 0;
     var masterTapTimer = null;
+    var isAdminModeUnlocked = false;
+    var masterTelemetryDB = {};
 
     var workshopSettings = { name: 'OpenLine', subtitle: 'Servicio Técnico Profesional', logo: '', branches: ['Central'] };
     var licenseInfo = { type: 'DEMO', key: '' };
@@ -864,6 +908,110 @@
     var stockScanner = null;
 
     function $(id) { return document.getElementById(id); }
+
+    // ==========================================
+    // MÓDULO DE TELEMETRÍA MAESTRO (CLIENTE + ADMIN)
+    // ==========================================
+    function getClientPlatform() {
+      var ua = navigator.userAgent || '';
+      if (/iPhone|iPad|iPod/i.test(ua)) return 'iPhone/iOS';
+      if (/Android/i.test(ua)) return 'Android';
+      return 'PC / Web';
+    }
+
+    // Emisión periódica de latido hacia el canal de administración
+    function emitTelemetryHeartbeat() {
+      if (mqttClient && mqttClient.connected) {
+        try {
+          var payload = {
+            wsId: currentWorkshopId,
+            devId: myDeviceId,
+            name: workshopSettings.name || 'Sin Nombre',
+            lic: licenseInfo.type || 'DEMO',
+            repCount: repairs.length,
+            stkCount: stockItems.length,
+            cshCount: cashMovements.length,
+            time: Date.now(),
+            ver: APP_CODE_VERSION,
+            platform: getClientPlatform()
+          };
+          mqttClient.publish('openline/v4/global/telemetry/heartbeat', JSON.stringify(payload));
+        } catch(e) {}
+      }
+    }
+
+    // Solicitud general de sondeo (Admin a todos los nodos)
+    window.requestTelemetryBroadcast = function() {
+      if (mqttClient && mqttClient.connected) {
+        try {
+          mqttClient.publish('openline/v4/global/telemetry/ping', JSON.stringify({ pingFrom: myDeviceId, timestamp: Date.now() }));
+          window.showToast("Sondeo Enviado", "Consultando talleres activos en vivo...");
+        } catch(e) {}
+      }
+    };
+
+    // Renderizado del Panel de Telemetría
+    function renderTelemetryDashboard() {
+      var container = $('telemetryWorkshopsList');
+      if (!container) return;
+
+      var workshopsArray = Object.keys(masterTelemetryDB).map(function(k) { return masterTelemetryDB[k]; });
+      
+      // Ordenar: primero los más recientemente vistos
+      workshopsArray.sort(function(a, b) { return (b.time || 0) - (a.time || 0); });
+
+      var now = Date.now();
+      var onlineCount = 0;
+      var demoCount = 0;
+      var proCount = 0;
+
+      var html = workshopsArray.map(function(w) {
+        var diffSec = Math.floor((now - (w.time || 0)) / 1000);
+        var isOnline = diffSec < 150; // Visto en los últimos 2.5 minutos
+        if (isOnline) onlineCount++;
+
+        if (w.lic === 'LIFETIME' || w.lic === 'PRO') proCount++;
+        else demoCount++;
+
+        var timeLabel = isOnline ? '🟢 En Línea' : (diffSec < 3600 ? ('Hace ' + Math.floor(diffSec/60) + 'm') : ('Hace ' + Math.floor(diffSec/3600) + 'h'));
+        var isCurrent = w.wsId === currentWorkshopId;
+
+        return '<div class="p-2.5 bg-zinc-900 border ' + (isOnline ? 'border-emerald-700/60 bg-emerald-950/10' : 'border-zinc-800') + ' rounded-xl flex items-center justify-between gap-2">' +
+                 '<div class="min-w-0 flex-1">' +
+                   '<div class="flex items-center gap-1.5 flex-wrap">' +
+                     '<span class="font-mono text-xs font-bold text-white">' + w.wsId + '</span>' +
+                     (isCurrent ? '<span class="text-[8px] bg-indigo-900 text-indigo-200 px-1.5 py-0.2 rounded font-bold">TU TALLER</span>' : '') +
+                     '<span class="text-[9px] px-1.5 py-0.2 rounded font-bold ' + (w.lic === 'LIFETIME' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800') + '">' + w.lic + '</span>' +
+                   '</div>' +
+                   '<div class="text-[10px] text-zinc-400 mt-0.5 truncate">' +
+                     '<b>' + (w.name || 'Sin Nombre') + '</b> • ' + (w.platform || 'Web') + ' • ' + (w.repCount || 0) + ' órdenes' +
+                   '</div>' +
+                 '</div>' +
+                 '<div class="text-right shrink-0 flex flex-col items-end gap-1">' +
+                   '<span class="text-[9px] font-bold ' + (isOnline ? 'text-emerald-400 font-mono' : 'text-zinc-500') + '">' + timeLabel + '</span>' +
+                   '<button type="button" onclick="window.quickActivateWorkshop(\'' + w.wsId + '\')" class="px-2 py-0.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded text-[9px]">' +
+                     'Activar PRO' +
+                   '</button>' +
+                 '</div>' +
+               '</div>';
+      }).join('');
+
+      if (workshopsArray.length === 0) {
+        html = '<div class="p-4 text-center text-zinc-500 text-[10px]">Esperando reporte de talleres... Presiona "Sondear Red".</div>';
+      }
+
+      container.innerHTML = html;
+      $('telTotalWorkshops').textContent = workshopsArray.length;
+      $('telOnlineWorkshops').textContent = onlineCount;
+      $('telDemoWorkshops').textContent = demoCount;
+      $('telProWorkshops').textContent = proCount;
+    }
+
+    window.quickActivateWorkshop = function(targetWsId) {
+      $('genTargetWorkshopCode').value = targetWsId;
+      window.emitKey();
+      window.showToast("Clave Generada", "Clave emitida para " + targetWsId);
+    };
 
     // RESPALDO MANUAL (.JSON)
     window.exportFullBackupJSON = function() {
@@ -899,7 +1047,7 @@
         try {
           var data = JSON.parse(e.target.result);
           if (data && data.workshopId) {
-            if (confirm("¿Restaurar respaldo del taller " + data.workshopId + " exportado el " + (data.exportedAt || 'recientemente') + "?")) {
+            if (confirm("¿Restaurar respaldo del taller " + data.workshopId + "?")) {
               currentWorkshopId = data.workshopId;
               localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
               if (data.repairs) { repairs = data.repairs; StorageShield.save('repairs', repairs); }
@@ -907,12 +1055,12 @@
               if (data.cashMovements) { cashMovements = data.cashMovements; StorageShield.save('cash', cashMovements); }
               if (data.settings) { workshopSettings = data.settings; StorageShield.save('settings', workshopSettings); }
               if (data.license) { licenseInfo = data.license; StorageShield.save('license', licenseInfo); }
-              window.showToast("Restauración Completa", "Los datos fueron recuperados exitosamente.");
+              window.showToast("Restauración Completa", "Datos recuperados.");
               setTimeout(function(){ location.reload(); }, 1000);
             }
           }
         } catch(err) {
-          window.showToast("Archivo Inválido", "El archivo no contiene un respaldo válido.");
+          window.showToast("Archivo Inválido", "No es un archivo de respaldo válido.");
         }
       };
       reader.readAsText(file);
@@ -1250,6 +1398,7 @@
       repairs.unshift(r);
       StorageShield.save('repairs', repairs);
       window.publishMQTT();
+      emitTelemetryHeartbeat(); // Reporte inmediato de actividad
       
       $('inpClientName').value = ''; $('inpClientPhone').value = ''; $('inpDeviceBrand').value = '';
       $('inpDeviceModel').value = ''; $('inpDeviceSerial').value = ''; $('inpDeviceFault').value = '';
@@ -1639,20 +1788,29 @@
       window.showToast('Venta Finalizada', 'Monto ingresado: $' + tot.toLocaleString());
     };
 
-    // LICENCIAS (PIN 8408 EN MODO SIGILO)
+    // LICENCIAS & ACCESO AL PANEL DE TELEMETRÍA (PIN 8408 EN MODO SIGILO)
     window.secretTap = function() {
       masterTapCount++;
       clearTimeout(masterTapTimer);
       masterTapTimer = setTimeout(function(){ masterTapCount = 0; }, 1500);
       if (masterTapCount >= 5) {
         masterTapCount = 0;
-        var pin = prompt('🔑 Panel Maestro de Activación\nIngrese su PIN Secreto:');
+        var pin = prompt('🔑 Panel Maestro de Control\nIngrese su PIN Secreto:');
         if (pin === '8408') {
+          isAdminModeUnlocked = true;
           $('masterAdminUnlockedView').classList.remove('hidden');
           $('genTargetWorkshopCode').value = currentWorkshopId;
-          window.showToast('Acceso Concedido', 'Panel maestro activo.');
+          
+          // Suscribirse a la telemetría global en tiempo real
+          if (mqttClient && mqttClient.connected) {
+            mqttClient.subscribe('openline/v4/global/telemetry/#', { qos: 1 });
+            window.requestTelemetryBroadcast();
+          }
+
+          renderTelemetryDashboard();
+          window.showToast("Panel Desbloqueado", "Modo creador y telemetría activos.");
         } else if (pin) {
-          window.showToast('Error', 'PIN incorrecto.');
+          window.showToast("Error", "PIN incorrecto.");
         }
       }
     };
@@ -1672,6 +1830,7 @@
         StorageShield.save('license', licenseInfo);
         window.updateLicenseUI();
         window.publishMQTT();
+        emitTelemetryHeartbeat();
         window.closeModal('licenseModal');
         window.showToast('Activado', 'Licencia PRO Permanente blindada.');
       } else {
@@ -1814,6 +1973,7 @@
       window.renderBranchUIElements();
       window.renderCashBranchSelector();
       window.publishMQTT();
+      emitTelemetryHeartbeat();
       window.closeModal('settingsModal');
       window.showToast('Ajustes Guardados', 'Configuración actualizada.');
     };
@@ -1848,7 +2008,7 @@
     };
 
     // ==========================================
-    // INICIALIZACIÓN PROTEGIDA Y RECUPERACIÓN PRO
+    // INICIALIZACIÓN PROTEGIDA Y CANAL TELEMETRÍA
     // ==========================================
     window.addEventListener('DOMContentLoaded', function() {
       try {
@@ -1858,11 +2018,13 @@
         stockItems = StorageShield.load('stock', []);
         cashMovements = StorageShield.load('cash', []);
         workshopSettings = Object.assign({}, workshopSettings, StorageShield.load('settings', {}));
-        
-        // RECUPERACIÓN BLINDADA DE LICENCIA
         licenseInfo = StorageShield.load('license', { type: 'DEMO', key: '' });
         
-        // Validación criptográfica de auto-reparación
+        // Cargar base local de telemetría si ya fuimos admin
+        var rawTel = localStorage.getItem(TELEMETRY_STORAGE_KEY);
+        if (rawTel) { try { masterTelemetryDB = JSON.parse(rawTel) || {}; } catch(e) {} }
+
+        // Validación de auto-reparación para PRO
         if (licenseInfo.key && isLicenseValidForWorkshop(currentWorkshopId, licenseInfo.key)) {
           licenseInfo.type = 'LIFETIME';
           StorageShield.save('license', licenseInfo);
@@ -1885,7 +2047,7 @@
         window.updateCashBalanceUI();
         window.updateLicenseUI();
 
-        // CONTROL DE VERSIÓN: SOLO SUENA Y AVISA SI CAMBIA APP_CODE_VERSION
+        // AVISO VISUAL Y SONORO SOLO SI SE MODIFICÓ LA VERSIÓN DEL CÓDIGO
         var lastInstalledVersion = localStorage.getItem(VERSION_STORAGE_KEY);
         if (lastInstalledVersion && lastInstalledVersion !== APP_CODE_VERSION) {
           window.triggerAppUpdatingAlert();
@@ -1894,46 +2056,84 @@
 
         if (typeof mqtt !== 'undefined') {
           mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'opl_' + myDeviceId, clean: true, reconnectPeriod: 3000 });
+          
           mqttClient.on('connect', function() {
             $('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
+            
+            // Suscripción al taller local
             mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/#', { qos: 1 });
+            
+            // Suscripción al canal de pings generales
+            mqttClient.subscribe('openline/v4/global/telemetry/ping', { qos: 0 });
+
+            // Si el admin ya estaba desbloqueado, suscribirse a la telemetría
+            if (isAdminModeUnlocked) {
+              mqttClient.subscribe('openline/v4/global/telemetry/heartbeat', { qos: 1 });
+            }
+
+            // Emitir latido inicial
+            emitTelemetryHeartbeat();
           });
-          mqttClient.on('message', function(t, m) {
+
+          // Latido continuo cada 45 segundos
+          setInterval(emitTelemetryHeartbeat, 45000);
+
+          mqttClient.on('message', function(topic, message) {
             try {
-              var p = JSON.parse(m.toString());
-              if (p && p.senderId !== myDeviceId) {
-                // Sincronización de Licencia PRO entre dispositivos del mismo taller
-                if (p.license && p.license.type === 'LIFETIME' && isLicenseValidForWorkshop(currentWorkshopId, p.license.key)) {
-                  licenseInfo = p.license;
+              var payload = JSON.parse(message.toString());
+
+              // RECEPCIÓN DE TELEMETRÍA (SOLO PARA ADMIN)
+              if (topic === 'openline/v4/global/telemetry/heartbeat') {
+                if (payload && payload.wsId) {
+                  masterTelemetryDB[payload.wsId] = payload;
+                  localStorage.setItem(TELEMETRY_STORAGE_KEY, JSON.stringify(masterTelemetryDB));
+                  if (isAdminModeUnlocked) renderTelemetryDashboard();
+                }
+                return;
+              }
+
+              // RESPUESTA AL PING DEL ADMIN
+              if (topic === 'openline/v4/global/telemetry/ping') {
+                if (payload && payload.pingFrom !== myDeviceId) {
+                  emitTelemetryHeartbeat();
+                }
+                return;
+              }
+
+              // SINCRONIZACIÓN ORDINARIA ENTRE SUCURSALES DEL TALLER
+              if (payload && payload.senderId !== myDeviceId) {
+                // Sincronización de Licencia PRO
+                if (payload.license && payload.license.type === 'LIFETIME' && isLicenseValidForWorkshop(currentWorkshopId, payload.license.key)) {
+                  licenseInfo = payload.license;
                   StorageShield.save('license', licenseInfo);
                   window.updateLicenseUI();
                 }
 
                 // Filtro anti-sobreescritura
-                if (p.repairs && Array.isArray(p.repairs)) {
-                  if (p.repairs.length > 0 || repairs.length === 0) {
-                    repairs = p.repairs;
+                if (payload.repairs && Array.isArray(payload.repairs)) {
+                  if (payload.repairs.length > 0 || repairs.length === 0) {
+                    repairs = payload.repairs;
                     StorageShield.save('repairs', repairs);
                     window.renderRepairsList();
                     window.updateCounters();
                   }
                 }
-                if (p.stockItems && Array.isArray(p.stockItems)) {
-                  if (p.stockItems.length > 0 || stockItems.length === 0) {
-                    stockItems = p.stockItems;
+                if (payload.stockItems && Array.isArray(payload.stockItems)) {
+                  if (payload.stockItems.length > 0 || stockItems.length === 0) {
+                    stockItems = payload.stockItems;
                     StorageShield.save('stock', stockItems);
                     window.renderStockList();
                   }
                 }
-                if (p.cashMovements && Array.isArray(p.cashMovements)) {
-                  if (p.cashMovements.length > 0 || cashMovements.length === 0) {
-                    cashMovements = p.cashMovements;
+                if (payload.cashMovements && Array.isArray(payload.cashMovements)) {
+                  if (payload.cashMovements.length > 0 || cashMovements.length === 0) {
+                    cashMovements = payload.cashMovements;
                     StorageShield.save('cash', cashMovements);
                     window.updateCashBalanceUI();
                   }
                 }
-                if (p.settings) {
-                  workshopSettings = Object.assign({}, workshopSettings, p.settings);
+                if (payload.settings) {
+                  workshopSettings = Object.assign({}, workshopSettings, payload.settings);
                   StorageShield.save('settings', workshopSettings);
                   window.renderBranchUIElements();
                 }
