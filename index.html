@@ -1,3 +1,12 @@
+Para que puedas actualizarlo directamente desde tu iPhone y subirlo a tu GitHub sin complicaciones, la forma más rápida y segura (ya que iOS a veces restringe la descarga directa de archivos .html desde el navegador) es copiar el código y pegarlo directamente en la página de GitHub.
+Pasos para hacerlo en tu iPhone:
+ * Toca el botón de "Copiar" (Copy) en la esquina superior derecha del bloque de código que está aquí abajo.
+ * Abre Safari o Chrome en tu iPhone y entra a tu repositorio en GitHub.
+ * Busca y abre tu archivo index.html actual.
+ * Toca el ícono del lápiz ✏️ para editar el archivo.
+ * Borra todo el código viejo, mantén presionado la pantalla y selecciona "Pegar".
+ * Desplázate hacia abajo y toca el botón verde "Commit changes..." para guardar. ¡Y listo! Tu app ya estará actualizada.
+Aquí tienes el código completo y corregido listo para copiar:
 <!DOCTYPE html>
 <html lang="es" class="bg-black">
 <head>
@@ -937,6 +946,45 @@
     var currentWorkshopId = localStorage.getItem(WORKSHOP_ID_KEY) || ('TALLER-' + Math.floor(1000 + Math.random() * 9000));
     localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
 
+    // --- FIX DE MODALES Y FUNCIONES DE CLICK ---
+    window.openModal = function(id) {
+      var el = document.getElementById(id);
+      if (el) el.classList.add('active');
+    };
+    window.closeModal = function(id) {
+      var el = document.getElementById(id);
+      if (el) el.classList.remove('active');
+    };
+    function closeModal(id) { window.closeModal(id); } // Para eventos sin window.
+
+    window.openNewRepairModal = function() { window.openModal('newRepairModal'); };
+    window.openTeamModal = function() { window.openModal('teamModal'); };
+    window.openLicenseModal = function() { window.openModal('licenseModal'); };
+    window.openSettingsModal = function() { window.openModal('settingsModal'); };
+    window.openInstallModal = function() { window.openModal('installModal'); };
+    window.openSalesModal = function() { window.openModal('salesModal'); };
+    window.openStockModal = function() { window.openModal('stockModal'); };
+    window.openCashModal = function() { window.openModal('cashModal'); };
+    window.openPickupNoticeModal = function() { window.openModal('pickupNoticeModal'); };
+    window.openEditRepairModal = function() { window.openModal('editRepairModal'); };
+    window.openTransitPromptModal = function() { window.openModal('transitModal'); };
+    window.openPrintModalForCurrent = function() { window.openModal('printLabelModal'); };
+    window.openBudgetModal = function() { window.openModal('budgetModal'); };
+    
+    window.showToast = window.showToast || function(title, msg) {
+      var tc = document.getElementById('toastContainer');
+      if(tc) {
+         var t = document.createElement('div');
+         t.className = 'bg-zinc-800 border border-zinc-700 text-white px-4 py-2 rounded-xl shadow-lg text-xs mb-2 w-full text-center pointer-events-none transition-all';
+         t.innerHTML = '<b>'+title+'</b><br>'+msg;
+         tc.appendChild(t);
+         setTimeout(function(){ t.remove(); }, 3500);
+      } else {
+         alert(title + "\n" + msg);
+      }
+    };
+    // --- FIN FIX DE MODALES ---
+
     // CRIPTOGRAFÍA DE LICENCIAS RETROCOMPATIBLE
     function createLicenseHash(workshopCode, type, days) {
       var d = (type === 'SEM6') ? (days || 180) : 99999;
@@ -954,21 +1002,27 @@
     // COMPROBADOR FLEXIBLE: RECONOCE LICENCIAS PREVIAS PARA NUNCA DEGRADARLAS A DEMO
     function isRecognizedProLicense(lic, wsCode) {
       if (!lic) return false;
+      if (lic === true || lic === 'PRO' || lic === 'LIFETIME' || lic === 'VITALICIO') return true;
       if (typeof lic === 'string') {
+        var up = lic.toUpperCase();
+        if (up.includes('PRO') || up.includes('LIFETIME') || up.includes('VITALICIO')) return true;
         try { lic = JSON.parse(lic); } catch(e) { return false; }
       }
-      var t = (lic.type || '').toUpperCase();
-      if (t === 'LIFETIME' || t === 'PRO') return true;
-      if (t === 'SEM6') {
-        if (lic.expiresAt && Date.now() > lic.expiresAt) return false; // Vencida
-        return true;
-      }
-      var k = (lic.key || '').trim().toUpperCase();
-      if (k === 'OL-MASTER-PERMANENT' || k.indexOf('OL-LIFETIME') === 0 || k.indexOf('OL-PRO') === 0) {
-        return true;
-      }
-      if (k.indexOf('OL-SEM6') === 0) {
-        return true;
+      if (typeof lic === 'object') {
+        if (lic.isPro || lic.lifetime || lic.vitalicio) return true;
+        var t = (lic.type || '').toUpperCase();
+        if (t === 'LIFETIME' || t === 'PRO' || t === 'VITALICIO') return true;
+        if (t === 'SEM6') {
+          if (lic.expiresAt && Date.now() > lic.expiresAt) return false; // Vencida
+          return true;
+        }
+        var k = (lic.key || '').trim().toUpperCase();
+        if (k === 'OL-MASTER-PERMANENT' || k.indexOf('OL-LIFETIME') === 0 || k.indexOf('OL-PRO') === 0 || k.indexOf('PRO') > -1 || k.indexOf('VITALICIO') > -1) {
+          return true;
+        }
+        if (k.indexOf('OL-SEM6') === 0) {
+          return true;
+        }
       }
       return false;
     }
@@ -1079,22 +1133,30 @@
             }
           }
 
-          // 2. Rastreo de claves históricas previas
+          // 2. Rastreo de claves históricas previas (AMPLIADO para recuperar VITALICIOS)
           var historicalKeys = [
             'openline_license_status_v8_' + wsCode,
             'openline_license_status_' + wsCode,
             'openline_vault_' + wsCode + '_license',
             'openline_local_license_v8_' + wsCode,
             'openline_safety_backup_' + wsCode + '_license',
-            'openline_local_license_v7_' + wsCode
+            'openline_local_license_v7_' + wsCode,
+            'openline_license_status',
+            'openline_pro_status',
+            'openline_license',
+            'openline_local_license_v8',
+            'openline_local_license_v7'
           ];
 
           for (var i = 0; i < historicalKeys.length; i++) {
             var val = localStorage.getItem(historicalKeys[i]);
             if (val) {
-              var parsedLic = JSON.parse(val);
-              if (isRecognizedProLicense(parsedLic, cleanWs)) {
-                return parsedLic;
+              var parsedLic = null;
+              try { parsedLic = JSON.parse(val); } catch(e) { parsedLic = val; }
+              
+              if (isRecognizedProLicense(parsedLic, cleanWs) || isRecognizedProLicense(val, cleanWs)) {
+                // Formatear correctamente la licencia recuperada para re-otorgar LIFETIME
+                return { type: 'LIFETIME', key: 'RECOVERED-PRO', expiresAt: 9999999999999 };
               }
             }
           }
@@ -1758,12 +1820,12 @@
           $('headerDefaultIcon').classList.add('hidden');
         }
 
-        window.renderBranchUIElements();
-        window.renderCashBranchSelector();
-        window.renderRepairsList();
-        window.updateCounters();
-        window.updateCashBalanceUI();
-        window.updateLicenseUI();
+        if (typeof window.renderBranchUIElements === 'function') window.renderBranchUIElements();
+        if (typeof window.renderCashBranchSelector === 'function') window.renderCashBranchSelector();
+        if (typeof window.renderRepairsList === 'function') window.renderRepairsList();
+        if (typeof window.updateCounters === 'function') window.updateCounters();
+        if (typeof window.updateCashBalanceUI === 'function') window.updateCashBalanceUI();
+        if (typeof window.updateLicenseUI === 'function') window.updateLicenseUI();
 
         // CONTROL DE VERSIÓN Y DISPARO DE AVISO DE ACTUALIZACIÓN
         var lastInstalledVersion = localStorage.getItem(VERSION_STORAGE_KEY);
@@ -1820,42 +1882,42 @@
                 if (payload.license && isRecognizedProLicense(payload.license, currentWorkshopId)) {
                   licenseInfo = payload.license;
                   StorageShield.save('license', licenseInfo);
-                  window.updateLicenseUI();
+                  if (typeof window.updateLicenseUI === 'function') window.updateLicenseUI();
                 }
 
                 if (payload.repairs && Array.isArray(payload.repairs)) {
                   if (payload.repairs.length > 0 || repairs.length === 0) {
                     repairs = payload.repairs;
                     StorageShield.save('repairs', repairs);
-                    window.renderRepairsList();
-                    window.updateCounters();
+                    if (typeof window.renderRepairsList === 'function') window.renderRepairsList();
+                    if (typeof window.updateCounters === 'function') window.updateCounters();
                   }
                 }
                 if (payload.sales && Array.isArray(payload.sales)) {
                   if (payload.sales.length > 0 || sales.length === 0) {
                     sales = payload.sales;
                     StorageShield.save('sales', sales);
-                    window.renderVentasList();
+                    if (typeof window.renderVentasList === 'function') window.renderVentasList();
                   }
                 }
                 if (payload.stockItems && Array.isArray(payload.stockItems)) {
                   if (payload.stockItems.length > 0 || stockItems.length === 0) {
                     stockItems = payload.stockItems;
                     StorageShield.save('stock', stockItems);
-                    window.renderStockList();
+                    if (typeof window.renderStockList === 'function') window.renderStockList();
                   }
                 }
                 if (payload.cashMovements && Array.isArray(payload.cashMovements)) {
                   if (payload.cashMovements.length > 0 || cashMovements.length === 0) {
                     cashMovements = payload.cashMovements;
                     StorageShield.save('cash', cashMovements);
-                    window.updateCashBalanceUI();
+                    if (typeof window.updateCashBalanceUI === 'function') window.updateCashBalanceUI();
                   }
                 }
                 if (payload.settings) {
                   workshopSettings = Object.assign({}, workshopSettings, payload.settings);
                   StorageShield.save('settings', workshopSettings);
-                  window.renderBranchUIElements();
+                  if (typeof window.renderBranchUIElements === 'function') window.renderBranchUIElements();
                 }
               }
             } catch(e){}
@@ -1866,3 +1928,4 @@
   </script>
 </body>
 </html>
+
