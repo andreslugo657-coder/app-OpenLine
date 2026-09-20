@@ -70,18 +70,23 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen">
 
-  <!-- AVISO DE ACTUALIZACIÓN DEL CÓDIGO (SONIDO SINTETIZADO) -->
-  <div id="appUpdatingBanner" class="fixed top-4 inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 z-[10002] hidden items-center gap-3 bg-indigo-950/95 border-2 border-indigo-500 text-white px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-2xl transition-all duration-300 pointer-events-auto">
-    <div class="w-9 h-9 rounded-xl bg-indigo-600/30 border border-indigo-400 flex items-center justify-center shrink-0">
-      <i class="ph-bold ph-arrows-clockwise text-indigo-300 text-xl animate-spin"></i>
+  <!-- AVISO DE ACTUALIZACIÓN DE CÓDIGO (SONIDO SINTETIZADO) -->
+  <div id="appUpdatingBanner" class="fixed top-4 inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 z-[10002] hidden items-center justify-between gap-3 bg-indigo-950/95 border-2 border-indigo-500 text-white px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-2xl transition-all duration-300 pointer-events-auto max-w-md">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="w-9 h-9 rounded-xl bg-indigo-600/30 border border-indigo-400 flex items-center justify-center shrink-0">
+        <i class="ph-bold ph-arrows-clockwise text-indigo-300 text-xl animate-spin"></i>
+      </div>
+      <div class="min-w-0">
+        <h4 class="text-xs font-bold text-white tracking-wide flex items-center gap-1.5">
+          <span>Esta aplicación se está actualizando</span>
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        </h4>
+        <p class="text-[10px] text-indigo-200 mt-0.5">Mejoras instaladas. Datos y licencias preservados con éxito.</p>
+      </div>
     </div>
-    <div class="min-w-0 pr-2">
-      <h4 class="text-xs font-bold text-white tracking-wide flex items-center gap-1.5">
-        <span>Esta aplicación se está actualizando</span>
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-      </h4>
-      <p class="text-[10px] text-indigo-200 mt-0.5">Mejoras instaladas. Datos y licencias preservados con éxito.</p>
-    </div>
+    <button type="button" onclick="window.dismissUpdateBanner()" class="w-7 h-7 rounded-lg bg-indigo-900/80 hover:bg-indigo-800 text-indigo-300 flex items-center justify-center shrink-0">
+      <i class="ph-bold ph-x text-xs"></i>
+    </button>
   </div>
 
   <!-- CABECERA -->
@@ -293,7 +298,7 @@
     </div>
   </div>
 
-  <!-- MODAL: PREVIEW DE TICKET DE VENTA (IMPRIMIR / WHATSAPP) -->
+  <!-- MODAL: PREVIEW DE TICKET DE VENTA -->
   <div id="saleTicketModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Comprobante de Venta</h3><button type="button" onclick="window.closeModal('saleTicketModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -745,9 +750,9 @@
         <div id="newStockFormContainer" class="hidden p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><div class="flex gap-1"><input type="text" id="stkCode" placeholder="Código *" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white font-mono"><button type="button" onclick="window.autoBarcode()" class="px-2.5 bg-zinc-700 rounded-xl text-[10px] font-bold">Auto</button></div><input type="text" id="stkName" placeholder="Nombre Repuesto *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white"></div>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2"><select id="stkCategory" class="col-span-2 sm:col-span-1 w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-white"><option value="Pantallas">Pantallas</option><option value="Baterías">Baterías</option><option value="Pines">Pines</option><option value="Otros">Otros</option></select><input type="number" id="stkQuantity" value="1" placeholder="Cant" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-white font-bold"><input type="number" id="stkCostPrice" placeholder="Costo ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-zinc-300 font-mono"><input type="number" id="stkSalePrice" placeholder="Venta ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-emerald-400 font-bold font-mono"></div>
-          <button type="button" onclick="window.saveStockItem()" class="w-full py-2.5 rounded-xl bg-purple-600 text-white font-bold text-xs shadow">Guardar Repuesto</button>
+          <button type="button" onclick="saveStockItem()" class="w-full py-2.5 rounded-xl bg-purple-600 text-white font-bold text-xs shadow">Guardar Repuesto</button>
         </div>
-        <input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-white">
+        <input type="text" id="stkSearchInput" oninput="renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-white">
         <div id="stockListContainer" class="space-y-1.5 max-h-[40vh] overflow-y-auto"></div>
       </div>
     </div>
@@ -756,12 +761,12 @@
   <!-- MODAL: CAJA -->
   <div id="cashModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-2xl flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-currency-dollar-simple text-emerald-400 text-xl"></i><h3 class="font-bold text-white text-sm">Caja por Sucursal</h3></div><button type="button" onclick="window.closeModal('cashModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-currency-dollar-simple text-emerald-400 text-xl"></i><h3 class="font-bold text-white text-sm">Caja por Sucursal</h3></div><button type="button" onclick="closeModal('cashModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="p-4 overflow-y-auto space-y-3 flex-1 pb-safe">
         <div class="flex items-center justify-between bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 gap-2"><span class="font-bold text-zinc-300 text-xs">Caja:</span><div id="cashBranchSelectorContainer" class="flex gap-1 overflow-x-auto no-scrollbar"></div></div>
         <div class="grid grid-cols-3 gap-2 text-center"><div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-emerald-400 font-bold block">Ingresos</span><span id="cashTotalIncome" class="text-sm font-bold text-emerald-400 font-mono mt-0.5 block">$0</span></div><div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-rose-400 font-bold block">Egresos</span><span id="cashTotalExpense" class="text-sm font-bold text-rose-400 font-mono mt-0.5 block">$0</span></div><div class="p-2.5 bg-gradient-to-b from-zinc-900 to-indigo-950 border border-indigo-700/60 rounded-xl"><span class="text-[9px] text-indigo-300 font-bold block">Saldo</span><span id="cashNetBalance" class="text-sm font-bold text-white font-mono mt-0.5 block">$0</span></div></div>
-        <div class="flex gap-2"><button type="button" onclick="window.showCashIncome()" class="flex-1 py-2 rounded-xl bg-emerald-950 border border-emerald-600/70 text-emerald-200 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-arrow-down-left text-base"></i> + Ingreso</button><button type="button" onclick="window.showCashExpense()" class="flex-1 py-2 rounded-xl bg-rose-950 border border-rose-600/70 text-rose-200 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-arrow-up-right text-base"></i> - Salida</button></div>
-        <div id="cashMovementForm" class="hidden p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2"><div class="flex items-center justify-between"><span id="cashFormTitle" class="font-bold text-white text-xs">Registrar</span><button type="button" onclick="window.hideCashForm()"><i class="ph-bold ph-x"></i></button></div><input type="hidden" id="cshType" value="INCOME"><div class="grid grid-cols-1 sm:grid-cols-3 gap-2"><select id="cshBranch" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-bold"></select><input type="number" id="cshAmount" placeholder="Monto ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-mono font-bold"><select id="cshMethod" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia</option><option value="Tarjeta">Tarjeta</option></select></div><input type="text" id="cshConcept" placeholder="Concepto (ej: Pago repuesto...)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white"><button type="button" onclick="window.saveCashMovement()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow">Guardar en Caja</button></div>
+        <div class="flex gap-2"><button type="button" onclick="showCashIncome()" class="flex-1 py-2 rounded-xl bg-emerald-950 border border-emerald-600/70 text-emerald-200 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-arrow-down-left text-base"></i> + Ingreso</button><button type="button" onclick="showCashExpense()" class="flex-1 py-2 rounded-xl bg-rose-950 border border-rose-600/70 text-rose-200 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-arrow-up-right text-base"></i> - Salida</button></div>
+        <div id="cashMovementForm" class="hidden p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2"><div class="flex items-center justify-between"><span id="cashFormTitle" class="font-bold text-white text-xs">Registrar</span><button type="button" onclick="hideCashForm()"><i class="ph-bold ph-x"></i></button></div><input type="hidden" id="cshType" value="INCOME"><div class="grid grid-cols-1 sm:grid-cols-3 gap-2"><select id="cshBranch" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-bold"></select><input type="number" id="cshAmount" placeholder="Monto ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-mono font-bold"><select id="cshMethod" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia</option><option value="Tarjeta">Tarjeta</option></select></div><input type="text" id="cshConcept" placeholder="Concepto (ej: Pago repuesto...)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white"><button type="button" onclick="saveCashMovement()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow">Guardar en Caja</button></div>
         <div id="cashListContainer" class="space-y-1.5 max-h-[35vh] overflow-y-auto"></div>
       </div>
     </div>
@@ -770,8 +775,8 @@
   <!-- MODAL: AJUSTES (CON CLAVE MAESTRA DE ADMIN) -->
   <div id="settingsModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3 shadow-2xl text-xs text-zinc-300 pb-safe">
-      <div class="flex items-center justify-between pb-1"><div class="flex items-center gap-1.5"><i class="ph-bold ph-gear text-lg text-zinc-300"></i><h3 class="font-bold text-white text-sm">Ajustes Taller</h3></div><button type="button" onclick="window.closeModal('settingsModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
-      <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 text-center"><div class="flex items-center justify-center gap-3"><div id="settingsLogoPreview" class="w-12 h-12 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden shrink-0"><i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i></div><div class="space-y-1 text-left"><label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 text-white font-bold rounded-xl"><i class="ph-bold ph-upload-simple"></i> Logo<input type="file" accept="image/*" onchange="window.handleLogoUpload(this)" class="hidden"></label><button type="button" onclick="window.removeLogo()" id="btnRemoveLogo" class="block text-rose-400">Quitar</button></div></div></div>
+      <div class="flex items-center justify-between pb-1"><div class="flex items-center gap-1.5"><i class="ph-bold ph-gear text-lg text-zinc-300"></i><h3 class="font-bold text-white text-sm">Ajustes Taller</h3></div><button type="button" onclick="closeModal('settingsModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 text-center"><div class="flex items-center justify-center gap-3"><div id="settingsLogoPreview" class="w-12 h-12 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden shrink-0"><i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i></div><div class="space-y-1 text-left"><label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 text-white font-bold rounded-xl"><i class="ph-bold ph-upload-simple"></i> Logo<input type="file" accept="image/*" onchange="handleLogoUpload(this)" class="hidden"></label><button type="button" onclick="removeLogo()" id="btnRemoveLogo" class="block text-rose-400">Quitar</button></div></div></div>
       <div class="space-y-2">
         <input type="text" id="cfgWorkshopName" placeholder="Nombre Comercial" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
         <input type="text" id="cfgWorkshopSubtitle" placeholder="Subtítulo" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white">
@@ -798,7 +803,7 @@
         </div>
       </div>
 
-      <button type="button" onclick="window.saveSettings()" class="w-full py-2.5 bg-iosBlue text-white font-bold rounded-xl shadow">Guardar Configuración</button>
+      <button type="button" onclick="saveSettings()" class="w-full py-2.5 bg-iosBlue text-white font-bold rounded-xl shadow">Guardar Configuración</button>
     </div>
   </div>
 
@@ -822,9 +827,14 @@
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               <span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide">Telemetría de Talleres (SaaS)</span>
             </div>
-            <button type="button" onclick="window.requestTelemetryBroadcast()" class="text-[10px] bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1">
-              <i class="ph-bold ph-arrows-clockwise"></i> Sondear Red
-            </button>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="window.triggerAppUpdatingAlert()" class="text-[10px] bg-indigo-900/80 hover:bg-indigo-700 text-indigo-200 px-2 py-1 rounded-lg font-bold flex items-center gap-1">
+                🔊 Probar Alerta
+              </button>
+              <button type="button" onclick="window.requestTelemetryBroadcast()" class="text-[10px] bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1">
+                <i class="ph-bold ph-arrows-clockwise"></i> Sondear Red
+              </button>
+            </div>
           </div>
 
           <!-- Métricas Generales del Creador -->
@@ -887,22 +897,22 @@
   </div>
 
   <!-- MODAL: EQUIPO -->
-  <div id="teamModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Equipo & Sincronización</h3><button type="button" onclick="window.closeModal('teamModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800"><span class="text-[10px] text-zinc-400 block mb-0.5">Código Taller:</span><div id="modalWorkshopCodeDisplay" class="font-mono text-base font-bold text-white">TALLER-XXXX</div></div><div class="space-y-1"><label class="text-[10px] text-zinc-400 block">Vincular a otro Taller:</label><div class="flex gap-1.5"><input type="text" id="inpJoinWorkshopCode" placeholder="Ej: TALLER-8291" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase"><button type="button" onclick="window.joinWorkshop()" class="px-3.5 py-2 rounded-xl bg-indigo-600 text-white font-bold">Unirme</button></div></div><button type="button" onclick="window.closeModal('teamModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1">Cerrar</button></div></div>
+  <div id="teamModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Equipo & Sincronización</h3><button type="button" onclick="closeModal('teamModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800"><span class="text-[10px] text-zinc-400 block mb-0.5">Código Taller:</span><div id="modalWorkshopCodeDisplay" class="font-mono text-base font-bold text-white">TALLER-XXXX</div></div><div class="space-y-1"><label class="text-[10px] text-zinc-400 block">Vincular a otro Taller:</label><div class="flex gap-1.5"><input type="text" id="inpJoinWorkshopCode" placeholder="Ej: TALLER-8291" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase"><button type="button" onclick="joinWorkshop()" class="px-3.5 py-2 rounded-xl bg-indigo-600 text-white font-bold">Unirme</button></div></div><button type="button" onclick="closeModal('teamModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1">Cerrar</button></div></div>
 
   <!-- MODAL: COMPARTIR -->
-  <div id="installModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Compartir Web App</h3><button type="button" onclick="window.closeModal('installModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-1"><span class="font-bold text-emerald-400 uppercase text-[10px] flex items-center gap-1"><i class="ph-bold ph-shield-check"></i> Privacidad de Taller Garantizada</span><p class="text-zinc-300 leading-tight">El nuevo dispositivo iniciará en un <b>taller nuevo independiente en blanco</b>. No accederá a tus clientes ni a tu caja.</p></div><div class="space-y-2"><button type="button" onclick="window.shareAppWA()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold flex items-center justify-center gap-2"><i class="ph-bold ph-whatsapp-logo text-base"></i> Compartir por WhatsApp</button><button type="button" onclick="window.copyAppUrl()" class="w-full py-2.5 rounded-xl bg-zinc-800 text-white font-bold flex items-center justify-center gap-2"><i class="ph-bold ph-copy text-base"></i> Copiar Enlace Directo</button></div><button type="button" onclick="window.closeModal('installModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl">Cerrar</button></div></div>
+  <div id="installModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Compartir Web App</h3><button type="button" onclick="closeModal('installModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-1"><span class="font-bold text-emerald-400 uppercase text-[10px] flex items-center gap-1"><i class="ph-bold ph-shield-check"></i> Privacidad de Taller Garantizada</span><p class="text-zinc-300 leading-tight">El nuevo dispositivo iniciará en un <b>taller nuevo independiente en blanco</b>. No accederá a tus clientes ni a tu caja.</p></div><div class="space-y-2"><button type="button" onclick="shareAppWA()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold flex items-center justify-center gap-2"><i class="ph-bold ph-whatsapp-logo text-base"></i> Compartir por WhatsApp</button><button type="button" onclick="copyAppUrl()" class="w-full py-2.5 rounded-xl bg-zinc-800 text-white font-bold flex items-center justify-center gap-2"><i class="ph-bold ph-copy text-base"></i> Copiar Enlace Directo</button></div><button type="button" onclick="closeModal('installModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl">Cerrar</button></div></div>
 
   <!-- MODAL: TRASLADO ENTRE SUCURSALES -->
-  <div id="transitModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-indigo-700 sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Enviar Equipo a Sucursal</h3><button type="button" onclick="window.closeModal('transitModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="space-y-2"><div><label class="text-[10px] text-zinc-400 block mb-0.5">Sucursal Destino *</label><select id="selTransitDestination" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></select></div><div><label class="text-[10px] text-zinc-400 block mb-0.5">Cadete / Datos</label><input type="text" id="inpTransitNotes" placeholder="Ej: Enviado con Cadete Juan" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white"></div></div><button type="button" onclick="window.confirmTransitDispatch()" class="w-full py-2.5 bg-indigo-600 text-white font-bold rounded-xl">Iniciar Viaje</button></div></div>
+  <div id="transitModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-indigo-700 sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Enviar Equipo a Sucursal</h3><button type="button" onclick="closeModal('transitModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="space-y-2"><div><label class="text-[10px] text-zinc-400 block mb-0.5">Sucursal Destino *</label><select id="selTransitDestination" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></select></div><div><label class="text-[10px] text-zinc-400 block mb-0.5">Cadete / Datos</label><input type="text" id="inpTransitNotes" placeholder="Ej: Enviado con Cadete Juan" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white"></div></div><button type="button" onclick="confirmTransitDispatch()" class="w-full py-2.5 bg-indigo-600 text-white font-bold rounded-xl">Iniciar Viaje</button></div></div>
 
-  <!-- MODAL: AVISAR RETIRO (LISTO O NO REPARADO) -->
-  <div id="pickupNoticeModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-emerald-600 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Avisar Retiro por WhatsApp</h3><button type="button" onclick="window.closeModal('pickupNoticeModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="p-2.5 bg-zinc-950 rounded-xl border border-zinc-800"><span class="text-[9px] text-zinc-500 uppercase block">Dispositivo:</span><b class="text-white text-xs block truncate" id="pickupTargetDevice">-</b><div class="text-zinc-400 text-[10px]" id="pickupTargetClient">-</div></div><div class="grid grid-cols-2 gap-2"><button type="button" onclick="window.setPickupRepaired()" id="btnPickupRepaired" class="p-2.5 rounded-xl border-2 border-emerald-600 bg-emerald-950/60 text-emerald-200 font-bold flex flex-col items-center gap-1"><i class="ph-bold ph-check-circle text-lg"></i> REPARADO</button><button type="button" onclick="window.setPickupUnrepaired()" id="btnPickupUnrepaired" class="p-2.5 rounded-xl border border-zinc-700 bg-zinc-800 text-zinc-400 font-bold flex flex-col items-center gap-1"><i class="ph-bold ph-x-circle text-lg"></i> NO REPARADO</button></div><div id="pickupViewRepaired" class="p-2.5 bg-zinc-950 rounded-xl border border-zinc-800 space-y-2"><div class="flex justify-between items-center"><span class="text-zinc-400">Saldo a cobrar:</span><span id="pickupRepairedBalance" class="font-mono font-bold text-amber-400 text-sm">$0</span></div><input type="text" id="inpPickupWarrantyText" value="Garantía de 90 días sobre el trabajo realizado." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white"></div><div id="pickupViewUnrepaired" class="hidden p-2.5 bg-zinc-950 rounded-xl border border-zinc-800 space-y-2"><select id="selPickupUnrepairedReason" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white"><option value="Sin solución por daño en placa.">Sin solución (Daño en placa)</option><option value="Repuesto no disponible.">Repuesto no disponible</option><option value="Presupuesto desestimado por el cliente.">Presupuesto rechazado</option></select></div><button type="button" onclick="window.sendPickupWhatsAppMessage()" class="w-full py-2.5 bg-emerald-600 text-white font-bold rounded-xl shadow">Enviar Notificación a WhatsApp</button></div></div>
+  <!-- MODAL: AVISAR RETIRO -->
+  <div id="pickupNoticeModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-emerald-600 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Avisar Retiro por WhatsApp</h3><button type="button" onclick="closeModal('pickupNoticeModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="p-2.5 bg-zinc-950 rounded-xl border border-zinc-800"><span class="text-[9px] text-zinc-500 uppercase block">Dispositivo:</span><b class="text-white text-xs block truncate" id="pickupTargetDevice">-</b><div class="text-zinc-400 text-[10px]" id="pickupTargetClient">-</div></div><div class="grid grid-cols-2 gap-2"><button type="button" onclick="setPickupRepaired()" id="btnPickupRepaired" class="p-2.5 rounded-xl border-2 border-emerald-600 bg-emerald-950/60 text-emerald-200 font-bold flex flex-col items-center gap-1"><i class="ph-bold ph-check-circle text-lg"></i> REPARADO</button><button type="button" onclick="setPickupUnrepaired()" id="btnPickupUnrepaired" class="p-2.5 rounded-xl border border-zinc-700 bg-zinc-800 text-zinc-400 font-bold flex flex-col items-center gap-1"><i class="ph-bold ph-x-circle text-lg"></i> NO REPARADO</button></div><div id="pickupViewRepaired" class="p-2.5 bg-zinc-950 rounded-xl border border-zinc-800 space-y-2"><div class="flex justify-between items-center"><span class="text-zinc-400">Saldo a cobrar:</span><span id="pickupRepairedBalance" class="font-mono font-bold text-amber-400 text-sm">$0</span></div><input type="text" id="inpPickupWarrantyText" value="Garantía de 90 días sobre el trabajo realizado." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white"></div><div id="pickupViewUnrepaired" class="hidden p-2.5 bg-zinc-950 rounded-xl border border-zinc-800 space-y-2"><select id="selPickupUnrepairedReason" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white"><option value="Sin solución por daño en placa.">Sin solución (Daño en placa)</option><option value="Repuesto no disponible.">Repuesto no disponible</option><option value="Presupuesto desestimado por el cliente.">Presupuesto rechazado</option></select></div><button type="button" onclick="sendPickupWhatsAppMessage()" class="w-full py-2.5 bg-emerald-600 text-white font-bold rounded-xl shadow">Enviar Notificación a WhatsApp</button></div></div>
 
   <!-- MODAL: EDITAR REPARACIÓN -->
-  <div id="editRepairModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg h-[92vh] flex flex-col shadow-2xl text-xs text-zinc-300"><div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><h3 class="text-sm font-bold text-white">Editar Orden de Servicio</h3><button type="button" onclick="window.closeModal('editRepairModal')"><i class="ph-bold ph-x text-sm"></i></button></div><form onsubmit="window.saveEditedRepair(event)" class="overflow-y-auto p-4 space-y-3 flex-1 pb-safe"><div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Sucursal</label><select id="editBranchCurrent" class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white font-bold"></select></div><div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Cliente</label><input type="text" id="editClientName" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white mb-1"><div class="flex gap-2"><select id="editClientCountryCode" class="bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-2 text-white font-bold w-32 shrink-0"><option value="549">🇦🇷 +54 9</option><option value="55">🇧🇷 +55</option><option value="56">🇨🇱 +56</option><option value="57">🇨🇴 +57</option><option value="52">🇲🇽 +52</option><option value="51">🇵🇪 +51</option><option value="598">🇺🇾 +598</option><option value="595">🇵🇾 +595</option><option value="591">🇧🇴 +591</option><option value="593">🇪🇨 +593</option><option value="58">🇻🇪 +58</option><option value="1">🇺🇸 +1</option><option value="">🌐 Otro</option></select><input type="tel" id="editClientPhone" required class="flex-1 bg-zinc-800 rounded-xl px-3 py-2 text-white font-mono"></div></div><div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Equipo</label><input type="text" id="editDeviceBrand" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white mb-1"><input type="text" id="editDeviceModel" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white"></div><div class="grid grid-cols-2 gap-2 pt-2"><button type="button" onclick="window.closeModal('editRepairModal')" class="py-2.5 bg-zinc-800 text-white font-bold rounded-xl">Cancelar</button><button type="submit" class="py-2.5 bg-iosBlue text-white font-bold rounded-xl">Guardar</button></div></form></div></div>
+  <div id="editRepairModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg h-[92vh] flex flex-col shadow-2xl text-xs text-zinc-300"><div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><h3 class="text-sm font-bold text-white">Editar Orden de Servicio</h3><button type="button" onclick="closeModal('editRepairModal')"><i class="ph-bold ph-x text-sm"></i></button></div><form onsubmit="saveEditedRepair(event)" class="overflow-y-auto p-4 space-y-3 flex-1 pb-safe"><div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Sucursal</label><select id="editBranchCurrent" class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white font-bold"></select></div><div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Cliente</label><input type="text" id="editClientName" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white mb-1"><div class="flex gap-2"><select id="editClientCountryCode" class="bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-2 text-white font-bold w-32 shrink-0"><option value="549">🇦🇷 +54 9</option><option value="55">🇧🇷 +55</option><option value="56">🇨🇱 +56</option><option value="57">🇨🇴 +57</option><option value="52">🇲🇽 +52</option><option value="51">🇵🇪 +51</option><option value="598">🇺🇾 +598</option><option value="595">🇵🇾 +595</option><option value="591">🇧🇴 +591</option><option value="593">🇪🇨 +593</option><option value="58">🇻🇪 +58</option><option value="1">🇺🇸 +1</option><option value="">🌐 Otro</option></select><input type="tel" id="editClientPhone" required class="flex-1 bg-zinc-800 rounded-xl px-3 py-2 text-white font-mono"></div></div><div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Equipo</label><input type="text" id="editDeviceBrand" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white mb-1"><input type="text" id="editDeviceModel" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white"></div><div class="grid grid-cols-2 gap-2 pt-2"><button type="button" onclick="closeModal('editRepairModal')" class="py-2.5 bg-zinc-800 text-white font-bold rounded-xl">Cancelar</button><button type="submit" class="py-2.5 bg-iosBlue text-white font-bold rounded-xl">Guardar</button></div></form></div></div>
 
   <!-- MODAL: IMPRESIÓN ETIQUETAS -->
-  <div id="printLabelModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Etiqueta Adhesiva de Equipo</h3><button type="button" onclick="window.closeModal('printLabelModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="grid grid-cols-2 gap-2"><button type="button" onclick="window.setLabelFormat('thermal')" id="btnPreviewThermal" class="py-2 rounded-xl font-bold bg-iosOrange text-white shadow">Térmica (58/80 mm)</button><button type="button" onclick="window.setLabelFormat('standard')" id="btnPreviewStandard" class="py-2 rounded-xl font-bold bg-zinc-800 text-zinc-400">A4 / Láser</button></div><div id="labelPreviewContainer" class="p-3 bg-white text-black flex justify-center rounded-xl overflow-hidden"></div><button type="button" onclick="window.executeNativePrint()" class="w-full py-2.5 bg-iosBlue text-white font-bold rounded-xl shadow">Mandar a Imprimir</button></div></div>
+  <div id="printLabelModal" class="app-modal"><div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300"><div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Etiqueta Adhesiva de Equipo</h3><button type="button" onclick="closeModal('printLabelModal')"><i class="ph-bold ph-x text-sm"></i></button></div><div class="grid grid-cols-2 gap-2"><button type="button" onclick="setLabelFormat('thermal')" id="btnPreviewThermal" class="py-2 rounded-xl font-bold bg-iosOrange text-white shadow">Térmica (58/80 mm)</button><button type="button" onclick="setLabelFormat('standard')" id="btnPreviewStandard" class="py-2 rounded-xl font-bold bg-zinc-800 text-zinc-400">A4 / Láser</button></div><div id="labelPreviewContainer" class="p-3 bg-white text-black flex justify-center rounded-xl overflow-hidden"></div><button type="button" onclick="executeNativePrint()" class="w-full py-2.5 bg-iosBlue text-white font-bold rounded-xl shadow">Mandar a Imprimir</button></div></div>
 
   <div id="toastContainer" class="fixed top-safe left-0 right-0 z-[10000] flex flex-col items-center gap-2 pointer-events-none mt-2 px-4"></div>
   <div id="printArea" class="hidden"></div>
@@ -911,7 +921,7 @@
   <!-- SISTEMA PRINCIPAL JAVASCRIPT BLINDADO                                              -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v9.2.0';
+    var APP_CODE_VERSION = 'v9.3.0';
 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
@@ -941,22 +951,40 @@
       return (type === 'SEM6') ? ('OL-SEM6-' + d + '-' + hex.substring(0, 6)) : ('OL-LIFETIME-' + hex.substring(0, 6));
     }
 
-    // VALIDADOR AMIGABLE CON VERSIONES PREVIAS (NO REVOCA LICENCIAS ACTIVAS)
+    // COMPROBADOR FLEXIBLE: RECONOCE LICENCIAS PREVIAS PARA NUNCA DEGRADARLAS A DEMO
+    function isRecognizedProLicense(lic, wsCode) {
+      if (!lic) return false;
+      if (typeof lic === 'string') {
+        try { lic = JSON.parse(lic); } catch(e) { return false; }
+      }
+      var t = (lic.type || '').toUpperCase();
+      if (t === 'LIFETIME' || t === 'PRO') return true;
+      if (t === 'SEM6') {
+        if (lic.expiresAt && Date.now() > lic.expiresAt) return false; // Vencida
+        return true;
+      }
+      var k = (lic.key || '').trim().toUpperCase();
+      if (k === 'OL-MASTER-PERMANENT' || k.indexOf('OL-LIFETIME') === 0 || k.indexOf('OL-PRO') === 0) {
+        return true;
+      }
+      if (k.indexOf('OL-SEM6') === 0) {
+        return true;
+      }
+      return false;
+    }
+
     function verifyLicenseKey(wsCode, key) {
       if (!key) return null;
       var clean = key.trim().toUpperCase();
 
-      // Reconocimiento universal de claves maestras o vitalicias previas
-      if (clean === 'OL-MASTER-PERMANENT' || clean.indexOf('OL-LIFETIME') === 0) {
+      if (clean === 'OL-MASTER-PERMANENT' || clean.indexOf('OL-LIFETIME') === 0 || clean.indexOf('OL-PRO') === 0) {
         return { type: 'LIFETIME', days: 99999 };
       }
 
-      // Hash vitalicio actual
       if (clean === createLicenseHash(wsCode.toUpperCase(), 'LIFETIME')) {
         return { type: 'LIFETIME', days: 99999 };
       }
 
-      // Licencias semestrales
       if (clean.indexOf('OL-SEM6-') === 0) {
         var parts = clean.split('-');
         var days = parseInt(parts[2], 10) || 180;
@@ -981,7 +1009,7 @@
       return false;
     }
 
-    // BÓVEDA INDESTRUCTIBLE DE DATOS Y MULTI-MIGRACIÓN
+    // BÓVEDA MULTI-MIGRACIÓN PARA RECUPERAR TODAS LAS LICENCIAS PREVIAS
     var StorageShield = {
       getKey: function(entity) {
         return 'openline_vault_' + currentWorkshopId + '_' + entity;
@@ -995,8 +1023,8 @@
           localStorage.setItem('openline_safety_backup_' + currentWorkshopId + '_' + entity, serialized);
           localStorage.setItem('openline_local_' + entity + '_v8_' + currentWorkshopId, serialized);
 
-          // BLINDAJE: Si es licencia PRO, guardarla en el registro maestro permanente
-          if (entity === 'license' && data && (data.type === 'SEM6' || data.type === 'LIFETIME')) {
+          // BLINDAJE: Si es PRO, perpetuarla en el registro maestro
+          if (entity === 'license' && data && isRecognizedProLicense(data, currentWorkshopId)) {
             this.lockLicenseInPermanentRegistry(currentWorkshopId, data);
           }
         } catch(e) {}
@@ -1004,7 +1032,6 @@
 
       load: function(entity, defaultVal) {
         try {
-          // Si es licencia, verificar primero el registro maestro
           if (entity === 'license') {
             var licFromReg = this.recoverLicenseFromPermanentRegistry(currentWorkshopId);
             if (licFromReg) return licFromReg;
@@ -1013,9 +1040,11 @@
           var k = this.getKey(entity);
           var saved = localStorage.getItem(k);
 
-          // Búsqueda en versiones previas si no existe en la bóveda actual
+          // Si no está en la clave canónica, rastrear exhaustivamente en claves históricas
           if (!saved) {
-            saved = localStorage.getItem('openline_local_' + entity + '_v8_' + currentWorkshopId) ||
+            saved = localStorage.getItem('openline_license_status_v8_' + currentWorkshopId) ||
+                    localStorage.getItem('openline_license_status_' + currentWorkshopId) ||
+                    localStorage.getItem('openline_local_' + entity + '_v8_' + currentWorkshopId) ||
                     localStorage.getItem('openline_local_' + entity + '_v7_' + currentWorkshopId) ||
                     localStorage.getItem('openline_safety_backup_' + currentWorkshopId + '_' + entity);
           }
@@ -1039,15 +1068,33 @@
       },
 
       recoverLicenseFromPermanentRegistry: function(wsCode) {
+        var cleanWs = wsCode.toUpperCase();
         try {
+          // 1. Registro Maestro
           var raw = localStorage.getItem(MASTER_REGISTRY_KEY);
           if (raw) {
             var reg = JSON.parse(raw);
-            if (reg && reg[wsCode.toUpperCase()]) {
-              var candidate = reg[wsCode.toUpperCase()];
-              // Si ya era LIFETIME o tiene key válida, conservarlo
-              if (candidate.type === 'LIFETIME' || verifyLicenseKey(wsCode, candidate.key)) {
-                return candidate;
+            if (reg && reg[cleanWs] && isRecognizedProLicense(reg[cleanWs], cleanWs)) {
+              return reg[cleanWs];
+            }
+          }
+
+          // 2. Rastreo de claves históricas previas
+          var historicalKeys = [
+            'openline_license_status_v8_' + wsCode,
+            'openline_license_status_' + wsCode,
+            'openline_vault_' + wsCode + '_license',
+            'openline_local_license_v8_' + wsCode,
+            'openline_safety_backup_' + wsCode + '_license',
+            'openline_local_license_v7_' + wsCode
+          ];
+
+          for (var i = 0; i < historicalKeys.length; i++) {
+            var val = localStorage.getItem(historicalKeys[i]);
+            if (val) {
+              var parsedLic = JSON.parse(val);
+              if (isRecognizedProLicense(parsedLic, cleanWs)) {
+                return parsedLic;
               }
             }
           }
@@ -1061,6 +1108,14 @@
           entities.forEach(function(ent) {
             var canKey = 'openline_vault_' + currentWorkshopId + '_' + ent;
             if (!localStorage.getItem(canKey)) {
+              if (ent === 'license') {
+                var prevLic = localStorage.getItem('openline_license_status_v8_' + currentWorkshopId) ||
+                              localStorage.getItem('openline_license_status_' + currentWorkshopId);
+                if (prevLic) {
+                  localStorage.setItem(canKey, prevLic);
+                  return;
+                }
+              }
               for (var v = 8; v >= 1; v--) {
                 var legacy = localStorage.getItem('openline_local_' + ent + '_v' + v + '_' + currentWorkshopId);
                 if (legacy) {
@@ -1131,7 +1186,7 @@
       localStorage.setItem(ACTIVE_USER_KEY, activeUser);
       $('headerActiveUserDisplay').textContent = activeUser;
       window.closeModal('switchUserModal');
-      window.showToast("Usuario Activo", "Operando ahora como: " + activeUser);
+      window.showToast("Usuario Activo", "Operando como: " + activeUser);
     };
 
     window.addNewStaffMember = function() {
@@ -1148,7 +1203,6 @@
       }
     };
 
-    // CLAVE MAESTRA ADMIN
     window.requestAdminPinAuth = function(actionDesc, onSuccessCallback) {
       var correctPin = (workshopSettings.adminPin || '1234').trim();
       var entered = prompt("🔒 ACCIÓN PROTEGIDA POR ADMINISTRADOR\n" + (actionDesc || "Esta acción requiere autorización") + "\n\nIngrese la Clave Maestra de Admin de este taller:");
@@ -1159,7 +1213,6 @@
       }
     };
 
-    // VERIFICACIÓN DE SUSCRIPCIÓN Y CUENTA REGRESIVA
     window.getLicenseDaysRemaining = function() {
       if (!licenseInfo || licenseInfo.type === 'DEMO') return 0;
       if (licenseInfo.type === 'LIFETIME') return 99999;
@@ -1439,78 +1492,7 @@
       setTimeout(function(){ $('printArea').classList.add('hidden'); }, 500);
     };
 
-    // VENTAS MOSTRADOR (POS)
-    window.completePosSale = function() {
-      if (window.isLicenseExpired()) {
-        alert("⚠️ ATENCIÓN: Tu suscripción semestral ha vencido.\nPara realizar nuevas ventas de mostrador, renueva tu licencia con tu asesor.");
-        window.openLicenseModal();
-        return;
-      }
-
-      if (posCart.length === 0) return;
-      var b = $('posBranch').value || 'Central';
-      var m = $('posPaymentMethod').value;
-      var cust = $('posCustomerName').value.trim() || 'Mostrador';
-      var phone = $('posCustomerPhone').value.trim();
-
-      var tot = 0;
-      var slDesc = [];
-      var soldItems = [];
-
-      posCart.forEach(function(ci) {
-        var target = stockItems.find(function(s) { return s.code === ci.code; });
-        if (target) target.qty = Math.max(0, target.qty - ci.qty);
-        tot += (ci.qty * ci.price);
-        slDesc.push(ci.qty + 'x ' + ci.name);
-        soldItems.push({ code: ci.code, name: ci.name, price: ci.price, qty: ci.qty });
-      });
-
-      var sId = 'VTA-' + Math.floor(1000 + Math.random() * 9000);
-
-      var saleObj = {
-        id: sId,
-        timestamp: Date.now(),
-        date: new Date().toISOString(),
-        branch: b,
-        paymentMethod: m,
-        customerName: cust,
-        customerPhone: phone,
-        soldBy: activeUser,
-        items: soldItems,
-        total: tot
-      };
-
-      sales.unshift(saleObj);
-      StorageShield.save('sales', sales);
-
-      cashMovements.unshift({
-        id: 'CSH-' + Math.floor(1000 + Math.random() * 9000),
-        branch: b,
-        date: 'Hoy',
-        type: 'INCOME',
-        amount: tot,
-        concept: 'Venta #' + sId + ' (' + cust + '): ' + slDesc.join(', '),
-        method: m
-      });
-      StorageShield.save('cash', cashMovements);
-      StorageShield.save('stock', stockItems);
-
-      window.publishMQTT();
-      window.closeModal('salesModal');
-      window.updateCashBalanceUI();
-
-      window.openSaleTicketModal(sId);
-      window.showToast('Venta Exitosa', 'Cobrado: $' + tot.toLocaleString());
-    };
-
     // TELEMETRÍA Y MODO MAESTRO
-    function getClientPlatform() {
-      var ua = navigator.userAgent || '';
-      if (/iPhone|iPad|iPod/i.test(ua)) return 'iPhone/iOS';
-      if (/Android/i.test(ua)) return 'Android';
-      return 'PC / Web';
-    }
-
     function emitTelemetryHeartbeat() {
       if (mqttClient && mqttClient.connected) {
         try {
@@ -1662,149 +1644,54 @@
       }
     };
 
-    // ACTUALIZACIÓN DE UI SEGÚN ESTADO DE LICENCIA
-    window.updateLicenseUI = function() {
-      var days = window.getLicenseDaysRemaining();
-      var expired = window.isLicenseExpired();
-      var textEl = $('headerLicenseText');
-      var btnEl = $('headerLicenseBtn');
-      var statusEl = $('licenseStatusText');
-      var countdownEl = $('licenseDetailCountdown');
-
-      if (licenseInfo.type === 'LIFETIME') {
-        textEl.textContent = 'PRO Vitalicio';
-        btnEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
-        statusEl.textContent = 'LICENCIA PRO PERMANENTE';
-        statusEl.className = 'font-mono text-base font-black text-emerald-400 py-1 cursor-pointer select-none';
-        countdownEl.textContent = 'Acceso ilimitado de por vida';
-      } else if (licenseInfo.type === 'SEM6') {
-        if (expired) {
-          textEl.textContent = 'PRO Vencido';
-          btnEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-950 border border-rose-600/70 text-rose-300 flex items-center gap-1 active:opacity-75 transition animate-pulse';
-          statusEl.textContent = 'SUSCRIPCIÓN VENCIDA';
-          statusEl.className = 'font-mono text-base font-black text-rose-400 py-1 cursor-pointer select-none';
-          countdownEl.textContent = '0 días restantes - Modo solo lectura';
-        } else {
-          textEl.textContent = 'PRO ' + days + 'd';
-          if (days <= 15) {
-            btnEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950 border border-amber-500 text-amber-300 flex items-center gap-1 active:opacity-75 transition animate-pulse';
-            countdownEl.textContent = '⚠️ Vence en ' + days + ' días. Toca para renovar.';
-          } else {
-            btnEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-950 border border-indigo-600/70 text-indigo-300 flex items-center gap-1 active:opacity-75 transition';
-            countdownEl.textContent = 'Suscripción semestral activa: ' + days + ' días restantes';
-          }
-          statusEl.textContent = 'LICENCIA PRO SEMESTRAL';
-          statusEl.className = 'font-mono text-base font-black text-indigo-400 py-1 cursor-pointer select-none';
-        }
-      } else {
-        textEl.textContent = 'DEMO';
-        btnEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition';
-        statusEl.textContent = 'VERSIÓN DEMO';
-        statusEl.className = 'font-mono text-base font-black text-amber-400 py-1 cursor-pointer select-none';
-        countdownEl.textContent = 'Versión de prueba para evaluación de taller';
-      }
-    };
-
-    // RESPALDO MANUAL (.JSON)
-    window.exportFullBackupJSON = function() {
-      try {
-        var bundle = {
-          workshopId: currentWorkshopId,
-          exportedAt: new Date().toISOString(),
-          version: APP_CODE_VERSION,
-          repairs: repairs,
-          stockItems: stockItems,
-          cashMovements: cashMovements,
-          sales: sales,
-          settings: workshopSettings,
-          license: licenseInfo
-        };
-        var blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'Respaldo_' + currentWorkshopId + '_' + new Date().toISOString().slice(0, 10) + '.json';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.showToast("Respaldo Descargado", "Copia de seguridad generada.");
-      } catch(e) {
-        window.showToast("Error", "No se pudo exportar el respaldo.");
-      }
-    };
-
-    window.importFullBackupJSON = function(input) {
-      if (!input.files || !input.files[0]) return;
-      var file = input.files[0];
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          var data = JSON.parse(e.target.result);
-          if (data && data.workshopId) {
-            if (confirm("¿Restaurar respaldo del taller " + data.workshopId + "?")) {
-              currentWorkshopId = data.workshopId;
-              localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
-              if (data.repairs) { repairs = data.repairs; StorageShield.save('repairs', repairs); }
-              if (data.stockItems) { stockItems = data.stockItems; StorageShield.save('stock', stockItems); }
-              if (data.cashMovements) { cashMovements = data.cashMovements; StorageShield.save('cash', cashMovements); }
-              if (data.sales) { sales = data.sales; StorageShield.save('sales', sales); }
-              if (data.settings) { workshopSettings = data.settings; StorageShield.save('settings', workshopSettings); }
-              if (data.license) { licenseInfo = data.license; StorageShield.save('license', licenseInfo); }
-              window.showToast("Restauración Completa", "Datos recuperados.");
-              setTimeout(function(){ location.reload(); }, 1000);
-            }
-          }
-        } catch(err) {
-          window.showToast("Archivo Inválido", "No es un archivo de respaldo válido.");
-        }
-      };
-      reader.readAsText(file);
-      input.value = '';
-    };
-
-    // CONTROL DE MODALES
-    window.openModal = function(id) { var el = $(id); if (el) el.classList.add('active'); };
-    window.closeModal = function(id) { var el = $(id); if (el) el.classList.remove('active'); };
-
-    window.showToast = function(title, msg) {
-      var c = $('toastContainer'); if (!c) return;
-      var t = document.createElement('div');
-      t.className = 'p-3 rounded-2xl shadow-2xl bg-zinc-900 border border-zinc-700 pointer-events-auto text-center w-full max-w-sm';
-      t.innerHTML = '<b class="block text-white text-xs mb-0.5">' + title + '</b><span class="text-zinc-300 text-[11px]">' + msg + '</span>';
-      c.appendChild(t);
-      setTimeout(function() { t.remove(); }, 3000);
-    };
-
-    // SÍNTESIS NATIVA DE AUDIO
+    // SÍNTESIS NATIVA DE AUDIO Y AVISO DE ACTUALIZACIÓN
     var audioCtx = null;
     function getAudioContext() {
       if (!audioCtx) {
         var AudioContextClass = window.AudioContext || window.webkitAudioContext;
         if (AudioContextClass) audioCtx = new AudioContextClass();
       }
-      if (audioCtx && audioCtx.state === 'suspended') { audioCtx.resume(); }
       return audioCtx;
     }
-    document.addEventListener('touchstart', function() { getAudioContext(); }, { once: true, passive: true });
-    document.addEventListener('click', function() { getAudioContext(); }, { once: true, passive: true });
 
-    function playAudioNotification() {
+    function playToneSequence(ctx) {
       try {
-        var ctx = getAudioContext();
-        if (!ctx) return;
         var now = ctx.currentTime;
-        var notes = [523.25, 659.25, 783.99, 1046.50];
+        var notes = [523.25, 659.25, 783.99, 1046.50]; // Acorde armónico
         notes.forEach(function(freq, idx) {
           var osc = ctx.createOscillator();
           var gain = ctx.createGain();
           osc.type = 'sine';
           osc.frequency.setValueAtTime(freq, now + idx * 0.06);
-          gain.gain.setValueAtTime(0.08, now + idx * 0.06);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.22);
+          gain.gain.setValueAtTime(0.09, now + idx * 0.06);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.24);
           osc.connect(gain);
           gain.connect(ctx.destination);
           osc.start(now + idx * 0.06);
-          osc.stop(now + idx * 0.06 + 0.22);
+          osc.stop(now + idx * 0.06 + 0.24);
         });
+      } catch(e) {}
+    }
+
+    function playAudioNotification() {
+      try {
+        var ctx = getAudioContext();
+        if (!ctx) return;
+        if (ctx.state === 'suspended') {
+          ctx.resume().then(function() {
+            playToneSequence(ctx);
+          }).catch(function() {
+            var playOnTouch = function() {
+              ctx.resume().then(function() { playToneSequence(ctx); });
+              document.removeEventListener('touchstart', playOnTouch);
+              document.removeEventListener('click', playOnTouch);
+            };
+            document.addEventListener('touchstart', playOnTouch, { once: true, passive: true });
+            document.addEventListener('click', playOnTouch, { once: true, passive: true });
+          });
+        } else {
+          playToneSequence(ctx);
+        }
       } catch(e) {}
     }
 
@@ -1812,548 +1699,24 @@
       playAudioNotification();
       var banner = $('appUpdatingBanner');
       if (banner) {
-        banner.style.setProperty('display', 'flex', 'important');
+        banner.classList.remove('hidden');
+        banner.classList.add('flex');
         clearTimeout(window._updatingTimer);
         window._updatingTimer = setTimeout(function() {
-          banner.style.setProperty('display', 'none', 'important');
-        }, 3600);
+          window.dismissUpdateBanner();
+        }, 5500);
       }
     };
 
-    // MENÚS Y VENTANAS
-    window.openNewRepairModal = function() {
-      if (window.isLicenseExpired()) {
-        alert("⚠️ ATENCIÓN: Tu suscripción semestral ha vencido.\nPara continuar registrando ingresos, renueva tu licencia con tu asesor por WhatsApp.");
-        window.openLicenseModal();
-        return;
-      }
-      $('inpClientName').value = ''; $('inpClientPhone').value = ''; $('inpDeviceBrand').value = '';
-      $('inpDeviceModel').value = ''; $('inpDeviceSerial').value = ''; $('inpDeviceFault').value = '';
-      $('inpDeviceBudget').value = ''; $('inpDeviceAdvance').value = ''; $('inpUnlockPin').value = '';
-      currentPhotos = [];
-      window.renderNewPhotosCarousel();
-      window.calcBalance('new');
-      window.setUnlockType('pin');
-      window.openModal('newRepairModal');
-    };
-
-    window.openSalesModal = function() {
-      if (window.isLicenseExpired()) {
-        alert("⚠️ ATENCIÓN: Tu suscripción semestral ha vencido.\nPara realizar nuevas ventas de mostrador, renueva tu licencia con tu asesor.");
-        window.openLicenseModal();
-        return;
-      }
-      posCart = [];
-      window.renderPosCart();
-      window.renderPosCatalog();
-      var s = $('posBranch');
-      if(s) s.innerHTML = (workshopSettings.branches||['Central']).map(function(b){ return '<option value="'+b+'">'+b+'</option>'; }).join('');
-      window.openModal('salesModal');
-    };
-
-    window.openStockModal = function() { window.openModal('stockModal'); window.renderStockList(); };
-    window.closeStockModal = function() { window.stopStockCam(); window.closeModal('stockModal'); };
-    window.openCashModal = function() { window.openModal('cashModal'); window.renderCashBranchSelector(); window.renderCashMovements(); };
-    window.openInstallModal = function() { window.openModal('installModal'); };
-    window.openTeamModal = function() { $('modalWorkshopCodeDisplay').textContent = currentWorkshopId; window.openModal('teamModal'); };
-    window.openSettingsModal = function() { $('cfgWorkshopName').value = workshopSettings.name; $('cfgWorkshopSubtitle').value = workshopSettings.subtitle; $('cfgBranchesListInput').value = (workshopSettings.branches||[]).join(', '); window.openModal('settingsModal'); };
-    window.openLicenseModal = function() { window.openModal('licenseModal'); };
-    window.openEditRepairModal = function() {
-      var item = repairs.find(function(r){ return r.id === selectedRepairId; }); if(!item) return;
-      var sel = $('editBranchCurrent'); if(sel) { sel.innerHTML = (workshopSettings.branches || ['Central']).map(function(b){ return '<option value="'+b+'">'+b+'</option>'; }).join(''); sel.value = item.branchCurrent || 'Central'; }
-      $('editClientName').value = item.clientName || ''; $('editClientPhone').value = item.clientPhone || ''; $('editDeviceBrand').value = item.deviceBrand || ''; $('editDeviceModel').value = item.deviceModel || '';
-      window.openModal('editRepairModal');
-    };
-
-    window.setFilter = function(f) {
-      currentFilter = f;
-      var tabs = document.querySelectorAll('.filter-tab');
-      for(var i=0; i<tabs.length; i++) { tabs[i].className = 'filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition'; }
-      var activeTab = $('tab' + f);
-      if(activeTab) activeTab.className = 'filter-tab px-3 py-1.5 rounded-xl bg-zinc-800 text-white font-bold shrink-0 transition';
-      window.renderRepairsList();
-    };
-
-    window.handleSearch = function() { window.renderRepairsList(); var c = $('clearSearchBtn'); var el = $('searchInput'); if(el && el.value) c.classList.remove('hidden'); else c.classList.add('hidden'); };
-    window.clearSearch = function() { var el = $('searchInput'); if(el) el.value = ''; $('clearSearchBtn').classList.add('hidden'); window.renderRepairsList(); };
-    window.calcBalance = function(t) { var b = parseFloat($(t==='new'?'inpDeviceBudget':'editDeviceBudget').value)||0; var a = parseFloat($(t==='new'?'inpDeviceAdvance':'editDeviceAdvance').value)||0; var r = Math.max(0, b - a); var el = $(t==='new'?'newCalculatedBalance':'editCalculatedBalance'); if(el) el.textContent = '$' + r.toLocaleString(); };
-
-    function formatWhatsAppNumber(phone) {
-      var clean = (phone || '').replace(/[^0-9]/g, '');
-      return clean.replace(/^0+/, '');
-    }
-
-    // FOTOS
-    window.handleNewPhotoUpload = function(input) {
-      if (!input.files || input.files.length === 0) return;
-      Array.from(input.files).forEach(function(f) {
-        var r = new FileReader();
-        r.onload = function(e) {
-          currentPhotos.push(e.target.result);
-          window.renderNewPhotosCarousel();
-        };
-        r.readAsDataURL(f);
-      });
-      input.value = '';
-    };
-
-    window.renderNewPhotosCarousel = function() {
-      var grid = $('newPhotosGrid');
-      if (grid) {
-        grid.innerHTML = currentPhotos.map(function(s, idx) {
-          return '<div class="relative w-14 h-14 rounded-xl overflow-hidden border border-zinc-700 shrink-0 shadow"><img src="' + s + '" class="w-full h-full object-cover"><button type="button" onclick="window.removePhoto(' + idx + ')" class="absolute top-0.5 right-0.5 bg-black/70 rounded-full w-5 h-5 flex items-center justify-center text-white"><i class="ph-bold ph-x text-[10px]"></i></button></div>';
-        }).join('');
-      }
-      var badge = $('photoCountBadge');
-      if (badge) badge.textContent = currentPhotos.length + ' fotos';
-    };
-
-    window.removePhoto = function(idx) { currentPhotos.splice(idx, 1); window.renderNewPhotosCarousel(); };
-
-    // PATRÓN ANDROID
-    window.setUnlockType = function(t) {
-      activeUnlockType = t;
-      ['pin', 'pattern', 'none'].forEach(function(x) {
-        var btn = $('btnUnlock' + x.charAt(0).toUpperCase() + x.slice(1));
-        var view = $('unlockView' + x.charAt(0).toUpperCase() + x.slice(1));
-        if (btn && view) {
-          btn.className = (x === t) ? 'px-2 py-0.5 rounded bg-iosBlue text-white font-medium' : 'px-2 py-0.5 rounded text-zinc-400';
-          if (x === t) view.classList.remove('hidden'); else view.classList.add('hidden');
-        }
-      });
-      if (t === 'pattern') setTimeout(window.initPatternCanvas, 150);
-    };
-
-    window.initPatternCanvas = function() {
-      var canvas = $('patternCanvas'); if (!canvas) return;
-      var ctx = canvas.getContext('2d');
-      selectedPatternSequence = [];
-      window.drawPatternGrid(ctx, []);
-      canvas.onmousedown = canvas.ontouchstart = function(e) {
-        isDrawingPattern = true; selectedPatternSequence = []; window.handlePatternTouch(e, canvas, ctx);
-      };
-      canvas.onmousemove = canvas.ontouchmove = function(e) { if (isDrawingPattern) window.handlePatternTouch(e, canvas, ctx); };
-      window.onmouseup = window.ontouchend = function() {
-        isDrawingPattern = false;
-        var lbl = $('patternStatusLabel');
-        if (lbl) lbl.textContent = selectedPatternSequence.length > 0 ? ('Trazado: ' + selectedPatternSequence.join('-')) : 'Sin trazar';
-      };
-    };
-
-    window.drawPatternGrid = function(ctx, points) {
-      ctx.clearRect(0, 0, 220, 220);
-      var coords = []; var sp = 60; var off = 50;
-      for (var r = 0; r < 3; r++) { for (var col = 0; col < 3; col++) { coords.push({ x: off + col * sp, y: off + r * sp }); } }
-      if (points.length > 1) {
-        ctx.strokeStyle = '#007AFF'; ctx.lineWidth = 4; ctx.beginPath();
-        for (var i = 0; i < points.length; i++) {
-          var pt = coords[points[i] - 1];
-          if (i === 0) ctx.moveTo(pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
-        }
-        ctx.stroke();
-      }
-      coords.forEach(function(pt, idx) {
-        ctx.fillStyle = points.includes(idx + 1) ? '#34C759' : '#3f3f46';
-        ctx.beginPath(); ctx.arc(pt.x, pt.y, 8, 0, Math.PI * 2); ctx.fill();
-      });
-    };
-
-    window.handlePatternTouch = function(e, canvas, ctx) {
-      if (e.preventDefault) e.preventDefault();
-      var rect = canvas.getBoundingClientRect();
-      var cx = e.touches ? e.touches[0].clientX : e.clientX;
-      var cy = e.touches ? e.touches[0].clientY : e.clientY;
-      var x = cx - rect.left; var y = cy - rect.top;
-      var sp = 60; var off = 50; var coords = [];
-      for (var r = 0; r < 3; r++) { for (var col = 0; col < 3; col++) { coords.push({ x: off + col * sp, y: off + r * sp }); } }
-      coords.forEach(function(pt, idx) {
-        if (Math.hypot(pt.x - x, pt.y - y) < 24 && !selectedPatternSequence.includes(idx + 1)) {
-          selectedPatternSequence.push(idx + 1);
-          window.drawPatternGrid(ctx, selectedPatternSequence);
-        }
-      });
-    };
-
-    window.resetPatternCanvas = function() {
-      selectedPatternSequence = [];
-      var canvas = $('patternCanvas');
-      if (canvas) { var ctx = canvas.getContext('2d'); window.drawPatternGrid(ctx, []); }
-      var lbl = $('patternStatusLabel'); if (lbl) lbl.textContent = 'Sin trazar';
-    };
-
-    // PRESUPUESTAR
-    window.openBudgetModal = function() {
-      var item = repairs.find(function(r){ return r.id === selectedRepairId; });
-      if (!item) return;
-
-      $('bgTargetDeviceTitle').textContent = item.deviceBrand + ' ' + item.deviceModel + ' (#' + item.id + ')';
-      $('bgClientNameText').textContent = item.clientName + ' (+' + item.clientPhone + ')';
-      $('bgReportedFaultText').textContent = item.fault;
-
-      $('bgRepairDetails').value = item.repairDetails || '';
-      $('bgEstimatedTime').value = item.estimatedTime || '24 a 48 hs';
-      $('bgWarranty').value = item.warranty || 'Garantía de 90 días';
-      $('bgTotalCost').value = item.budget || 0;
-      $('bgAdvance').value = item.advancePayment || 0;
-
-      window.calcBudgetBalance();
-      window.openModal('budgetModal');
-    };
-
-    window.calcBudgetBalance = function() {
-      var t = parseFloat($('bgTotalCost').value) || 0;
-      var a = parseFloat($('bgAdvance').value) || 0;
-      var bal = Math.max(0, t - a);
-      $('bgCalculatedBalance').textContent = '$' + bal.toLocaleString();
-    };
-
-    window.saveBudgetAction = function(sendWhatsApp) {
-      var item = repairs.find(function(r){ return r.id === selectedRepairId; });
-      if (!item) return;
-
-      var total = parseFloat($('bgTotalCost').value) || 0;
-      var advance = parseFloat($('bgAdvance').value) || 0;
-      var details = $('bgRepairDetails').value.trim();
-      var estTime = $('bgEstimatedTime').value.trim() || '24 a 48 hs';
-      var warr = $('bgWarranty').value.trim() || 'Garantía de 90 días';
-
-      if (!details) { window.showToast("Atención", "Especifique el detalle de la reparación."); return; }
-      if (total <= 0) { window.showToast("Atención", "Ingrese el monto total presupuestado."); return; }
-
-      item.budget = total;
-      item.advancePayment = advance;
-      item.repairDetails = details;
-      item.estimatedTime = estTime;
-      item.warranty = warr;
-      item.budgetStatus = 'PENDING';
-
-      window.persistRepair(item);
-      window.closeModal('budgetModal');
-      window.openDetailModal(item.id);
-      window.renderRepairsList();
-      window.updateCounters();
-      window.showToast("Presupuesto Guardado", "Detalle técnico asentado en la orden.");
-
-      if (sendWhatsApp) {
-        var rest = Math.max(0, total - advance);
-        var phoneClean = formatWhatsAppNumber(item.clientPhone);
-        var msg = '*' + workshopSettings.name.toUpperCase() + ' - PRESUPUESTO DE SERVICIO TÉCNICO* 🛠️\n' +
-                  '----------------------------------------\n' +
-                  'Hola *' + item.clientName + '*, le enviamos el detalle y presupuesto para su dispositivo:\n\n' +
-                  '📱 *Equipo:* ' + item.deviceBrand + ' ' + item.deviceModel + '\n' +
-                  '🔖 *Orden:* #' + item.id + '\n' +
-                  '📍 *Sucursal:* ' + (item.branchCurrent || 'Central') + '\n' +
-                  '📋 *Falla inicial:* ' + item.fault + '\n\n' +
-                  '🔧 *Trabajo / Reparación a realizar:*\n' + details + '\n\n' +
-                  '⏱️ *Tiempo estimado:* ' + estTime + '\n' +
-                  '🛡️ *Términos:* ' + warr + '\n\n' +
-                  '💰 *Total Presupuestado:* $' + total.toLocaleString() + '\n' +
-                  '💵 *Seña entregada:* $' + advance.toLocaleString() + '\n' +
-                  '📌 *Saldo restante al retirar:* *$' + rest.toLocaleString() + '*\n\n' +
-                  'Por favor responda a este mensaje con su decisión:\n' +
-                  '👉 Escriba *APRUEBO* para dar inicio al trabajo.\n' +
-                  '👉 Escriba *RECHAZO* si desestima la reparación.';
-        
-        window.open('https://wa.me/' + phoneClean + '?text=' + encodeURIComponent(msg), '_blank');
+    window.dismissUpdateBanner = function() {
+      var banner = $('appUpdatingBanner');
+      if (banner) {
+        banner.classList.add('hidden');
+        banner.classList.remove('flex');
       }
     };
 
-    // STOCK
-    window.renderStockList = function() {
-      var c = $('stockListContainer'); var s = ($('stkSearchInput').value || '').toLowerCase().trim();
-      var f = stockItems.filter(function(i){ return i.name.toLowerCase().indexOf(s) > -1 || i.code.toLowerCase().indexOf(s) > -1; });
-      if (f.length === 0) { c.innerHTML = '<div class="p-4 text-center text-zinc-500">No hay repuestos registrados.</div>'; return; }
-      c.innerHTML = f.map(function(i){
-        return '<div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-2xl flex items-center justify-between gap-2 mb-1.5"><div class="min-w-0 flex-1"><span class="font-mono text-[9px] text-purple-400 font-bold">' + i.code + '</span><b class="text-white text-xs block truncate mt-0.5">' + i.name + '</b><div class="text-[10px] text-zinc-400 mt-0.5">Venta: <b class="text-emerald-400 font-mono">$' + i.sale.toLocaleString() + '</b></div></div><div class="flex items-center gap-1.5 shrink-0"><button type="button" onclick="window.adjustStockQty(\'' + i.code + '\', -1)" class="w-7 h-7 rounded-xl bg-zinc-800 text-white font-bold">-</button><span class="w-6 text-center font-bold font-mono text-xs ' + (i.qty <= 2 ? 'text-amber-400' : 'text-white') + '">' + i.qty + '</span><button type="button" onclick="window.adjustStockQty(\'' + i.code + '\', 1)" class="w-7 h-7 rounded-xl bg-purple-900/60 text-purple-200 font-bold">+</button></div></div>';
-      }).join('');
-    };
-
-    window.adjustStockQty = function(code, delta) {
-      var it = stockItems.find(function(x){ return x.code === code; }); if(!it) return;
-      it.qty = Math.max(0, it.qty + delta);
-      StorageShield.save('stock', stockItems);
-      window.publishMQTT();
-      window.renderStockList();
-    };
-
-    window.toggleStockForm = function() { $('newStockFormContainer').classList.toggle('hidden'); };
-    window.autoBarcode = function() { $('stkCode').value = '779' + Math.floor(100000000 + Math.random() * 900000000); };
-    window.saveStockItem = function() {
-      var code = $('stkCode').value.trim(); var name = $('stkName').value.trim(); var cat = $('stkCategory').value;
-      var qty = parseInt($('stkQuantity').value)||0; var cost = parseFloat($('stkCostPrice').value)||0; var sale = parseFloat($('stkSalePrice').value)||0;
-      if (!code || !name) { window.showToast('Atención', 'Código y nombre son obligatorios.'); return; }
-      var idx = stockItems.findIndex(function(i){ return i.code === code; });
-      if (idx >= 0) stockItems[idx] = { code: code, name: name, category: cat, qty: qty, cost: cost, sale: sale };
-      else stockItems.push({ code: code, name: name, category: cat, qty: qty, cost: cost, sale: sale });
-      StorageShield.save('stock', stockItems);
-      window.publishMQTT();
-      $('stkCode').value = ''; $('stkName').value = '';
-      window.toggleStockForm();
-      window.renderStockList();
-      window.showToast('Guardado', 'Repuesto añadido al catálogo.');
-    };
-
-    // ESCÁNER DE CÁMARA
-    window.toggleStockCam = function() {
-      var box = $('scannerContainer'); var btnText = $('btnScannerText'); if (!box) return;
-      if (!box.classList.contains('hidden')) { window.stopStockCam(); return; }
-      box.classList.remove('hidden'); if (btnText) btnText.textContent = 'Detener';
-      try {
-        if (!stockScanner) stockScanner = new Html5Qrcode("qr-reader");
-        stockScanner.start(
-          { facingMode: "environment" }, { fps: 10, qrbox: { width: 240, height: 160 }, aspectRatio: 1.333334 },
-          function(decodedText) {
-            var cleanCode = decodedText.trim(); window.stopStockCam();
-            var item = stockItems.find(function(x) { return x.code === cleanCode; });
-            if (item) {
-              if (confirm("🔍 Producto:\n" + item.name + " (" + item.code + ")\nStock actual: " + item.qty + " u.\n\n¿Desea sumar 1 unidad?")) {
-                window.adjustStockQty(cleanCode, 1);
-                window.showToast("Stock Actualizado", "+1 a " + item.name);
-              }
-            } else {
-              var formBox = $('newStockFormContainer'); if (formBox) formBox.classList.remove('hidden');
-              var inpCode = $('stkCode'); if (inpCode) inpCode.value = cleanCode;
-              var inpName = $('stkName'); if (inpName) inpName.focus();
-              window.showToast("Código Escaneado", cleanCode);
-            }
-          }, function(err) {}
-        ).catch(function(err) { window.stopStockCam(); window.showToast("Cámara", "No se pudo iniciar el escáner."); });
-      } catch(e) { window.stopStockCam(); }
-    };
-
-    window.stopStockCam = function() {
-      var box = $('scannerContainer'); var btnText = $('btnScannerText');
-      if (btnText) btnText.textContent = 'Cámara'; if (box) box.classList.add('hidden');
-      if (stockScanner) { try { stockScanner.stop().then(function() { try { stockScanner.clear(); } catch(e){} stockScanner = null; }).catch(function() { stockScanner = null; }); } catch(e) { stockScanner = null; } }
-    };
-
-    window.togglePosCam = function() {
-      var box = $('posScannerBox'); if (!box) return;
-      if (!box.classList.contains('hidden')) { window.stopPosCam(); return; }
-      box.classList.remove('hidden');
-      try {
-        if (!posScanner) posScanner = new Html5Qrcode("pos-qr-reader");
-        posScanner.start(
-          { facingMode: "environment" }, { fps: 10, qrbox: { width: 220, height: 140 }, aspectRatio: 1.333334 },
-          function(decodedText) {
-            var cleanCode = decodedText.trim(); window.stopPosCam(); window.addStockToPosCart(cleanCode);
-          }, function(err) {}
-        ).catch(function(err) { window.stopPosCam(); window.showToast("Cámara POS", "No se pudo acceder a la cámara."); });
-      } catch(e) { window.stopPosCam(); }
-    };
-
-    window.stopPosCam = function() {
-      var box = $('posScannerBox'); if (box) box.classList.add('hidden');
-      if (posScanner) { try { posScanner.stop().then(function() { try { posScanner.clear(); } catch(e){} posScanner = null; }).catch(function() { posScanner = null; }); } catch(e) { posScanner = null; } }
-    };
-
-    // VENTAS POS
-    window.renderPosCatalog = function() {
-      var s = ($('posSearchProduct').value || '').toLowerCase().trim(); var g = $('posCatalogGrid');
-      var f = stockItems.filter(function(i){ return i.name.toLowerCase().indexOf(s) > -1 || i.code.toLowerCase().indexOf(s) > -1; });
-      if (f.length === 0) { g.innerHTML = '<div class="col-span-2 sm:col-span-3 p-4 text-center text-zinc-500">Sin repuestos.</div>'; return; }
-      g.innerHTML = f.map(function(i){
-        return '<button type="button" onclick="window.addStockToPosCart(\'' + i.code + '\')" class="p-2.5 bg-zinc-950 border ' + (i.qty <= 0 ? 'border-rose-950 opacity-40' : 'border-zinc-800 active:scale-95') + ' rounded-2xl text-left flex flex-col justify-between h-24 select-none"><div class="flex items-center justify-between w-full mb-1"><span class="text-[8px] font-mono text-purple-400 font-bold truncate">' + i.code + '</span><span class="text-[8px] px-1.5 py-0.2 rounded font-bold ' + (i.qty <= 0 ? 'bg-rose-950 text-rose-400' : 'bg-zinc-800 text-zinc-300') + '">' + i.qty + ' u.</span></div><h4 class="font-bold text-white text-[11px] leading-tight line-clamp-2">' + i.name + '</h4><div class="flex items-center justify-between w-full pt-1 border-t border-zinc-800/80"><span class="text-[9px] text-zinc-400">Venta</span><span class="font-bold text-amber-400 font-mono text-xs">$' + i.sale.toLocaleString() + '</span></div></button>';
-      }).join('');
-    };
-
-    window.addStockToPosCart = function(code) {
-      var it = stockItems.find(function(x){ return x.code === code; }); if (!it || it.qty <= 0) { window.showToast('Sin Stock', 'Repuesto agotado.'); return; }
-      var inC = posCart.find(function(x){ return x.code === it.code; });
-      if (inC) { if (inC.qty < it.qty) inC.qty++; } else { posCart.push({ code: it.code, name: it.name, price: it.sale, qty: 1 }); }
-      window.renderPosCart();
-    };
-
-    window.changePosCartQty = function(code, delta) {
-      var itemStock = stockItems.find(function(i){ return i.code === code; });
-      var cartItem = posCart.find(function(c){ return c.code === code; });
-      if (!cartItem) return;
-      cartItem.qty += delta;
-      if (cartItem.qty <= 0) posCart = posCart.filter(function(c){ return c.code !== code; });
-      else if (itemStock && cartItem.qty > itemStock.qty) cartItem.qty = itemStock.qty;
-      window.renderPosCart();
-    };
-
-    window.clearPosCart = function() { posCart = []; window.renderPosCart(); };
-
-    window.renderPosCart = function() {
-      var cont = $('posCartContainer'); var tot = 0;
-      if (posCart.length === 0) { cont.innerHTML = '<div class="p-4 text-center text-zinc-500">Carrito vacío.</div>'; $('posTotalAmount').textContent = '$0'; return; }
-      cont.innerHTML = posCart.map(function(c){
-        tot += c.qty * c.price;
-        return '<div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-between gap-1.5 mb-1.5"><div class="min-w-0 flex-1"><b class="text-white text-xs truncate block">' + c.name + '</b><span class="text-[9px] text-zinc-400 font-mono">$' + c.price.toLocaleString() + ' x ' + c.qty + '</span></div><div class="flex items-center gap-1.5 shrink-0"><button type="button" onclick="window.changePosCartQty(\'' + c.code + '\', -1)" class="w-6 h-6 rounded bg-zinc-800 text-white font-bold">-</button><span class="w-5 text-center font-bold text-xs font-mono text-white">' + c.qty + '</span><button type="button" onclick="window.changePosCartQty(\'' + c.code + '\', 1)" class="w-6 h-6 rounded bg-zinc-800 text-white font-bold">+</button><span class="font-bold text-amber-400 font-mono text-xs w-14 text-right truncate">$' + (c.qty*c.price).toLocaleString() + '</span></div></div>';
-      }).join('');
-      $('posTotalAmount').textContent = '$' + tot.toLocaleString();
-    };
-
-    // TRASLADOS
-    window.openTransitPromptModal = function() {
-      var item = repairs.find(function(r){ return r.id === selectedRepairId; }); if (!item) return;
-      var branches = (workshopSettings.branches || ['Central']).filter(function(b){ return b !== item.branchCurrent; });
-      if (branches.length === 0) { window.showToast('Atención', 'Agregue más sucursales en Ajustes para enviar en viaje.'); return; }
-      $('selTransitDestination').innerHTML = branches.map(function(b){ return '<option value="'+b+'">'+b+'</option>'; }).join('');
-      $('inpTransitNotes').value = '';
-      window.openModal('transitModal');
-    };
-
-    window.confirmTransitDispatch = function() {
-      var item = repairs.find(function(r){ return r.id === selectedRepairId; }); if (!item) return;
-      item.status = 'IN_TRANSIT';
-      item.inTransit = true;
-      item.dispatchFrom = item.branchCurrent;
-      item.dispatchTo = $('selTransitDestination').value;
-      item.dispatchNotes = $('inpTransitNotes').value.trim();
-      window.persistRepair(item);
-      window.closeModal('transitModal');
-      window.openDetailModal(item.id);
-      window.renderRepairsList();
-      window.updateCounters();
-      window.showToast('En Viaje', 'Despachado a ' + item.dispatchTo);
-    };
-
-    window.confirmArrivalAtDestination = function() {
-      var item = repairs.find(function(r){ return r.id === selectedRepairId; }); if (!item) return;
-      item.branchCurrent = item.dispatchTo;
-      item.inTransit = false;
-      item.status = 'IN_PROGRESS';
-      window.persistRepair(item);
-      window.openDetailModal(item.id);
-      window.renderRepairsList();
-      window.updateCounters();
-      window.showToast('Llegada Confirmada', 'Equipo radicado en ' + item.branchCurrent);
-    };
-
-    window.persistRepair = function(r) {
-      var idx = repairs.findIndex(function(x){ return x.id === r.id; });
-      if (idx >= 0) repairs[idx] = r; else repairs.unshift(r);
-      StorageShield.save('repairs', repairs);
-      window.publishMQTT();
-    };
-
-    window.publishMQTT = function() {
-      if (mqttClient && mqttClient.connected) {
-        try {
-          mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/snapshot', JSON.stringify({ repairs: repairs, stockItems: stockItems, cashMovements: cashMovements, sales: sales, settings: workshopSettings, license: licenseInfo, senderId: myDeviceId }), { retain: true });
-        } catch(e){}
-      }
-    };
-
-    window.updateCounters = function() {
-      var c = { WAITING: 0, IN_PROGRESS: 0, IN_TRANSIT: 0, READY: 0 };
-      repairs.forEach(function(r){ if (c[r.status] !== undefined) c[r.status]++; else if (r.status === 'RECEIVED') c.WAITING++; });
-      $('counterReceived').textContent = c.WAITING; $('counterInProgress').textContent = c.IN_PROGRESS;
-      $('counterTransit').textContent = c.IN_TRANSIT; $('counterReady').textContent = c.READY;
-    };
-
-    window.renderRepairsList = function() {
-      var cont = $('repairsList'); var emp = $('emptyState');
-      var s = ($('searchInput').value || '').toLowerCase().trim();
-      var f = repairs.filter(function(r){
-        var ms = currentFilter === 'ALL' || r.status === currentFilter;
-        if (currentFilter === 'WAITING' && (r.status === 'RECEIVED' || r.status === 'WAITING')) ms = true;
-        var mb = currentBranchFilter === 'ALL' || r.branchCurrent === currentBranchFilter;
-        var mt = !s || r.clientName.toLowerCase().indexOf(s) > -1 || r.deviceModel.toLowerCase().indexOf(s) > -1 || r.id.toLowerCase().indexOf(s) > -1;
-        return ms && mb && mt;
-      });
-
-      if (f.length === 0) { cont.innerHTML = ''; emp.classList.remove('hidden'); return; }
-      emp.classList.add('hidden');
-
-      cont.innerHTML = f.map(function(i){
-        var st = i.status === 'WAITING' || i.status === 'RECEIVED' ? 'Espera' : (i.status === 'IN_PROGRESS' ? 'Taller' : (i.status === 'READY' ? 'Listo' : (i.status === 'IN_TRANSIT' ? 'Viaje' : 'Entregado')));
-        var bp = i.budgetStatus === 'APPROVED' ? 'bg-emerald-950 text-emerald-300 border-emerald-800' : (i.budgetStatus === 'REJECTED' ? 'bg-rose-950 text-rose-300 border-rose-800' : 'bg-amber-950 text-amber-300 border-amber-800');
-        var bt = i.budgetStatus === 'APPROVED' ? 'Aprobado' : (i.budgetStatus === 'REJECTED' ? 'Rechazado' : 'Pendiente');
-        return '<button type="button" onclick="window.openDetailModal(\'' + i.id + '\')" class="w-full text-left bg-zinc-900 border border-zinc-800 rounded-3xl p-4 shadow-md active:scale-95 transition flex flex-col gap-2.5 overflow-hidden relative">' + (i.inTransit ? '<div class="bg-indigo-950 text-indigo-300 border-b border-indigo-800 -mx-4 -mt-4 px-4 py-1 text-[10px] font-bold">🚚 Viajando a ' + i.dispatchTo + '</div>' : '') + '<div class="flex items-center justify-between"><div class="flex items-center gap-1.5 flex-wrap"><span class="font-mono text-xs font-bold text-iosBlue">' + i.id + '</span><span class="text-[9px] px-2 py-0.5 rounded-lg border bg-zinc-800 text-zinc-300 font-bold uppercase">' + st + '</span><span class="text-[9px] px-2 py-0.5 rounded-lg border ' + bp + ' font-bold">Ppto: ' + bt + '</span></div><span class="text-[9px] bg-rose-950 text-rose-300 px-2 py-0.5 rounded-lg font-bold">' + (i.branchCurrent||'Central') + '</span></div><div class="flex items-start justify-between gap-2"><div class="min-w-0 flex-1"><h4 class="text-sm font-bold text-white truncate">' + i.deviceBrand + ' ' + i.deviceModel + '</h4><p class="text-xs text-zinc-400 mt-0.5 truncate">👤 ' + i.clientName + ' • <span class="text-zinc-500">' + (i.createdBy ? ('Por: ' + i.createdBy) : '') + '</span></p></div><div class="text-right shrink-0"><span class="text-sm font-black text-white font-mono">$' + (parseFloat(i.budget)||0).toLocaleString() + '</span><span class="text-[10px] text-amber-400 font-mono font-bold block">Resta: $' + Math.max(0, (parseFloat(i.budget)||0) - (parseFloat(i.advancePayment)||0)).toLocaleString() + '</span></div></div></button>';
-      }).join('');
-    };
-
-    window.renderBranchUIElements = function() {
-      var b = workshopSettings.branches || ['Central'];
-      $('branchTabsButtonsList').innerHTML = '<button type="button" onclick="window.setBranchFilter(\'ALL\')" class="px-3 py-1.5 rounded-xl ' + (currentBranchFilter === 'ALL' ? 'bg-zinc-800 text-white font-bold' : 'bg-zinc-950 text-zinc-400') + ' text-[11px] shrink-0">Todas</button>' + b.map(function(x){
-        return '<button type="button" onclick="window.setBranchFilter(\'' + x + '\')" class="px-3 py-1.5 rounded-xl ' + (currentBranchFilter === x ? 'bg-zinc-800 text-white font-bold' : 'bg-zinc-950 text-zinc-400') + ' text-[11px] shrink-0">' + x + '</button>';
-      }).join('');
-      $('newBranchOptionsList').innerHTML = b.map(function(x, idx){
-        return '<label class="cursor-pointer"><input type="radio" name="inpNewBranch" value="' + x + '" ' + (idx===0?'checked':'') + ' class="peer hidden"><div class="p-2 text-center rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-300 peer-checked:bg-rose-900 peer-checked:text-white font-bold text-[11px]">' + x + '</div></label>';
-      }).join('');
-    };
-
-    window.setBranchFilter = function(b) {
-      currentBranchFilter = b;
-      $('currentBranchDisplayTag').textContent = b === 'ALL' ? 'Todas' : b;
-      window.renderBranchUIElements();
-      window.renderRepairsList();
-      window.updateCashBalanceUI();
-    };
-
-    // IMPRESIÓN DE ETIQUETAS
-    window.openPrintModalForCurrent = function() { window.setLabelFormat(activeLabelFormat); window.openModal('printLabelModal'); };
-    window.setLabelFormat = function(f) {
-      activeLabelFormat = f;
-      $('btnPreviewThermal').className = f === 'thermal' ? 'py-2 rounded-xl font-bold bg-iosOrange text-white shadow' : 'py-2 rounded-xl font-bold bg-zinc-800 text-zinc-400';
-      $('btnPreviewStandard').className = f === 'standard' ? 'py-2 rounded-xl font-bold bg-iosBlue text-white shadow' : 'py-2 rounded-xl font-bold bg-zinc-800 text-zinc-400';
-      var i = repairs.find(function(r){ return r.id === selectedRepairId; }); if(!i) return;
-      var b = parseFloat(i.budget)||0; var a = parseFloat(i.advancePayment)||0;
-      var html = '<div style="width:230px;background:#fff;color:#000;font-family:monospace;padding:8px;border:1px solid #000;text-align:left;line-height:1.25;"><div style="text-align:center;border-bottom:1px dashed #000;padding-bottom:3px;margin-bottom:4px;"><b style="font-size:12px;">' + workshopSettings.name.toUpperCase() + '</b><br><span style="font-size:9px;">Sucursal: ' + i.branchCurrent + '</span><br><b style="font-size:13px;border:1px solid #000;padding:1px 3px;display:inline-block;margin-top:2px;">#' + i.id + '</b></div><div style="font-size:9px;"><b>Cliente:</b> ' + i.clientName + '<br><b>Equipo:</b> ' + i.deviceBrand + ' ' + i.deviceModel + '<br><b>Seguridad:</b> ' + (i.unlockPin||'Sin clave') + '<br><b>Total:</b> $' + b.toLocaleString() + ' | <b>Resta:</b> $' + (b-a).toLocaleString() + '<br><b>Recibió:</b> ' + (i.createdBy||'Admin') + '</div></div>';
-      $('labelPreviewContainer').innerHTML = html; $('printArea').innerHTML = html;
-    };
-    window.executeNativePrint = function() { window.setLabelFormat(activeLabelFormat); $('printArea').classList.remove('hidden'); window.print(); setTimeout(function(){ $('printArea').classList.add('hidden'); }, 500); };
-
-    // COMPARTIR Y AJUSTES
-    window.shareAppWA = function() { window.open('https://wa.me/?text=' + encodeURIComponent('👋 Te comparto OpenLine Gestión de Taller. Pruébala gratis aquí: ' + window.location.href), '_blank'); };
-    window.copyAppUrl = function() { navigator.clipboard.writeText(window.location.href).then(function(){ window.showToast('Copiado', 'Enlace copiado al portapapeles.'); }); };
-    window.joinWorkshop = function() { var c = $('inpJoinWorkshopCode').value.trim().toUpperCase(); if(!c) return; localStorage.setItem(WORKSHOP_ID_KEY, c); location.reload(); };
-
-    window.saveSettings = function() {
-      workshopSettings.name = $('cfgWorkshopName').value.trim() || 'OpenLine';
-      workshopSettings.subtitle = $('cfgWorkshopSubtitle').value.trim();
-      var rawB = $('cfgBranchesListInput').value;
-      if (rawB) workshopSettings.branches = rawB.split(',').map(function(b){ return b.trim(); }).filter(function(b){ return b.length > 0; });
-      var newPin = $('cfgWorkshopAdminPin').value.trim();
-      if (newPin) workshopSettings.adminPin = newPin;
-
-      StorageShield.save('settings', workshopSettings);
-      $('appHeaderTitle').textContent = workshopSettings.name;
-      $('appHeaderSubtitle').textContent = workshopSettings.subtitle;
-      window.renderBranchUIElements();
-      window.renderCashBranchSelector();
-      window.publishMQTT();
-      emitTelemetryHeartbeat();
-      window.closeModal('settingsModal');
-      window.showToast('Ajustes Guardados', 'Configuración actualizada.');
-    };
-
-    window.handleLogoUpload = function(input) {
-      if(!input.files || !input.files[0]) return;
-      var r = new FileReader();
-      r.onload = function(e) {
-        var img = new Image();
-        img.onload = function() {
-          var c = document.createElement('canvas'); var scale = Math.min(1, 250 / Math.max(img.width, img.height));
-          c.width = img.width * scale; c.height = img.height * scale;
-          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-          workshopSettings.logo = c.toDataURL('image/png');
-          $('settingsLogoPreview').innerHTML = '<img src="' + workshopSettings.logo + '" class="w-full h-full object-cover">';
-          var customLogo = $('headerCustomLogo'); var defIcon = $('headerDefaultIcon');
-          customLogo.src = workshopSettings.logo; customLogo.classList.remove('hidden'); defIcon.classList.add('hidden');
-          StorageShield.save('settings', workshopSettings);
-          window.publishMQTT();
-        }; img.src = e.target.result;
-      }; r.readAsDataURL(input.files[0]); input.value = '';
-    };
-
-    window.removeLogo = function() {
-      workshopSettings.logo = '';
-      $('settingsLogoPreview').innerHTML = '<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>';
-      $('headerCustomLogo').classList.add('hidden');
-      $('headerDefaultIcon').classList.remove('hidden');
-      StorageShield.save('settings', workshopSettings);
-      window.publishMQTT();
-      window.showToast('Logo Quitado', 'Restablecido al ícono original.');
-    };
-
-    // ==========================================
-    // INICIALIZACIÓN PROTEGIDA Y RECUPERACIÓN PRO
-    // ==========================================
+    // INICIALIZACIÓN BLINDADA
     window.addEventListener('DOMContentLoaded', function() {
       try {
         StorageShield.autoMigrateLegacyData();
@@ -2363,30 +1726,26 @@
         cashMovements = StorageShield.load('cash', []);
         sales = StorageShield.load('sales', []);
         workshopSettings = Object.assign({}, workshopSettings, StorageShield.load('settings', {}));
+        
+        // RECUPERACIÓN ABSOLUTA DE LICENCIA
         licenseInfo = StorageShield.load('license', { type: 'DEMO', key: '', expiresAt: 0 });
         
+        var recovered = StorageShield.recoverLicenseFromPermanentRegistry(currentWorkshopId);
+        if (recovered && isRecognizedProLicense(recovered, currentWorkshopId)) {
+          licenseInfo = recovered;
+          if (licenseInfo.type === 'LIFETIME' || !licenseInfo.type) {
+            licenseInfo.type = 'LIFETIME';
+            licenseInfo.expiresAt = 9999999999999;
+          }
+          StorageShield.save('license', licenseInfo);
+        }
+
         var savedUser = localStorage.getItem(ACTIVE_USER_KEY);
         if (savedUser) activeUser = savedUser;
         $('headerActiveUserDisplay').textContent = activeUser;
 
         var rawTel = localStorage.getItem(TELEMETRY_STORAGE_KEY);
         if (rawTel) { try { masterTelemetryDB = JSON.parse(rawTel) || {}; } catch(e) {} }
-
-        // BLINDAJE: Si el taller ya contaba con licencia PRO / LIFETIME, mantenerla de por vida
-        if (licenseInfo && (licenseInfo.type === 'LIFETIME' || (licenseInfo.key && licenseInfo.key.indexOf('OL-LIFETIME') === 0))) {
-          licenseInfo.type = 'LIFETIME';
-          licenseInfo.expiresAt = 9999999999999;
-          StorageShield.save('license', licenseInfo);
-        } else if (licenseInfo.key) {
-          var verified = verifyLicenseKey(currentWorkshopId, licenseInfo.key);
-          if (verified) {
-            licenseInfo.type = verified.type;
-            if (!licenseInfo.expiresAt && verified.type === 'SEM6') {
-              licenseInfo.expiresAt = Date.now() + (verified.days * 24 * 3600 * 1000);
-            }
-            StorageShield.save('license', licenseInfo);
-          }
-        }
 
         $('appHeaderTitle').textContent = workshopSettings.name;
         $('appHeaderSubtitle').textContent = workshopSettings.subtitle;
@@ -2406,10 +1765,15 @@
         window.updateCashBalanceUI();
         window.updateLicenseUI();
 
-        // Sonido y alerta visual SOLO cuando se cambia APP_CODE_VERSION
+        // CONTROL DE VERSIÓN Y DISPARO DE AVISO DE ACTUALIZACIÓN
         var lastInstalledVersion = localStorage.getItem(VERSION_STORAGE_KEY);
-        if (lastInstalledVersion && lastInstalledVersion !== APP_CODE_VERSION) {
-          window.triggerAppUpdatingAlert();
+        var hasExistingData = localStorage.getItem(WORKSHOP_ID_KEY) !== null;
+        var isUpdate = (lastInstalledVersion && lastInstalledVersion !== APP_CODE_VERSION) || (!lastInstalledVersion && hasExistingData);
+        
+        if (isUpdate) {
+          setTimeout(function() {
+            window.triggerAppUpdatingAlert();
+          }, 350);
         }
         localStorage.setItem(VERSION_STORAGE_KEY, APP_CODE_VERSION);
 
@@ -2452,17 +1816,13 @@
               }
 
               if (payload && payload.senderId !== myDeviceId) {
-                // Sincronización de licencias
-                if (payload.license && payload.license.key) {
-                  var v = verifyLicenseKey(currentWorkshopId, payload.license.key);
-                  if (v) {
-                    licenseInfo = payload.license;
-                    StorageShield.save('license', licenseInfo);
-                    window.updateLicenseUI();
-                  }
+                // BLINDAJE: Solo actualizar licencia si es PRO (nunca degradar a DEMO desde la red)
+                if (payload.license && isRecognizedProLicense(payload.license, currentWorkshopId)) {
+                  licenseInfo = payload.license;
+                  StorageShield.save('license', licenseInfo);
+                  window.updateLicenseUI();
                 }
 
-                // Sincronización anti-sobrescritura de entidades
                 if (payload.repairs && Array.isArray(payload.repairs)) {
                   if (payload.repairs.length > 0 || repairs.length === 0) {
                     repairs = payload.repairs;
