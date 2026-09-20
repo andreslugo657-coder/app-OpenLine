@@ -43,6 +43,7 @@
     ::-webkit-scrollbar { display: none; width: 0; height: 0; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+    /* Modales nativos seguros */
     .app-modal {
       display: none;
       position: fixed;
@@ -79,7 +80,7 @@
         <span>Esta aplicación se está actualizando</span>
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
       </h4>
-      <p class="text-[10px] text-indigo-200 mt-0.5">Mejoras instaladas. Datos y licencias preservados.</p>
+      <p class="text-[10px] text-indigo-200 mt-0.5">Mejoras instaladas. Datos y licencias preservados con éxito.</p>
     </div>
   </div>
 
@@ -98,7 +99,7 @@
               <span id="livePulseDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span id="headerWorkshopCode">TALLER-XXXX</span>
             </button>
-            <button type="button" onclick="window.openLicenseModal()" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition">
+            <button type="button" id="headerLicenseBtn" onclick="window.openLicenseModal()" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition">
               <i class="ph-bold ph-shield-check"></i> <span id="headerLicenseText">DEMO</span>
             </button>
           </div>
@@ -115,6 +116,7 @@
       </div>
     </div>
 
+    <!-- Botones de Acción -->
     <div class="px-4 pb-2.5 max-w-5xl mx-auto w-full">
       <div class="grid grid-cols-5 gap-1.5 sm:gap-2 text-center">
         <button type="button" onclick="window.openNewRepairModal()" class="py-2.5 px-1 rounded-xl bg-iosBlue text-white text-[10px] sm:text-xs font-bold shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition">
@@ -667,11 +669,12 @@
         <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center">
           <span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia:</span>
           <div id="licenseStatusText" onclick="window.secretTap()" class="font-mono text-base font-black text-amber-400 py-1 cursor-pointer select-none">DEMO</div>
-          <span class="text-[9px] text-zinc-600 block mt-0.5">Toca 5 veces para acceder al Modo Maestro</span>
+          <span id="licenseDetailCountdown" class="text-[11px] text-zinc-400 font-mono block mt-0.5">Versión de prueba</span>
+          <span class="text-[9px] text-zinc-600 block mt-1">Toca 5 veces sobre el estado para acceder al Modo Maestro</span>
         </div>
 
         <!-- ========================================================================= -->
-        <!-- PANEL DE TELEMETRÍA MAESTRO EN TIEMPO REAL (OCULTO - DESBLOQUEO PIN 8408) -->
+        <!-- PANEL DE TELEMETRÍA MAESTRO (PIN 8408)                                    -->
         <!-- ========================================================================= -->
         <div id="masterAdminUnlockedView" class="hidden p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3">
           <div class="flex items-center justify-between border-b border-indigo-900 pb-2">
@@ -704,29 +707,38 @@
             </div>
           </div>
 
-          <!-- Lista de Talleres que están probando o usaron la App -->
+          <!-- Lista de Talleres que están probando la App -->
           <div class="space-y-1.5">
-            <span class="text-[9px] text-zinc-400 uppercase font-bold block">Talleres Registrados & Actividad:</span>
+            <span class="text-[9px] text-zinc-400 uppercase font-bold block">Talleres Registrados & Días Restantes:</span>
             <div id="telemetryWorkshopsList" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
           </div>
 
-          <!-- Emisión de Claves PRO -->
+          <!-- Emisión de Claves Semestrales o Permanentes -->
           <div class="pt-2 border-t border-indigo-900/60 space-y-2">
-            <span class="text-[9px] font-bold text-indigo-300 uppercase">Generar Clave Vitalicia:</span>
-            <div class="flex gap-1.5">
-              <input type="text" id="genTargetWorkshopCode" placeholder="Código Taller (ej: TALLER-8291)" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono">
-              <button type="button" onclick="window.emitKey()" class="px-3 py-2 bg-indigo-600 text-white font-bold rounded-xl text-xs shrink-0">Emitir</button>
+            <span class="text-[9px] font-bold text-indigo-300 uppercase">Generar Licencia de Activación:</span>
+            <div class="grid grid-cols-3 gap-1.5">
+              <input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="col-span-2 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono text-xs">
+              <select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold">
+                <option value="SEM6" selected>6 Meses (180d)</option>
+                <option value="LIFETIME">Vitalicio</option>
+              </select>
             </div>
-            <div id="genResultBox" class="hidden p-2 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800">
+            <button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs">
+              Emitir Clave
+            </button>
+            <div id="genResultBox" class="hidden p-2.5 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800">
               <span id="genGeneratedKey" class="font-mono text-emerald-400 font-bold text-xs"></span>
-              <button type="button" onclick="window.copyKey()" class="px-2 py-1 bg-zinc-800 rounded text-[10px] text-white font-bold">Copiar</button>
+              <button type="button" onclick="window.copyKey()" class="px-2.5 py-1 bg-zinc-800 rounded text-[10px] text-white font-bold">Copiar</button>
             </div>
           </div>
         </div>
 
-        <div class="flex gap-1.5 pt-1">
-          <input type="text" id="inpActivationKey" placeholder="OL-XXXX-XXXX" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase">
-          <button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 text-white font-bold rounded-xl shrink-0">Activar</button>
+        <div class="space-y-1.5 pt-1">
+          <label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar o Renovar Licencia:</label>
+          <div class="flex gap-1.5">
+            <input type="text" id="inpActivationKey" placeholder="OL-SEM6-180-XXXX o OL-LIFETIME-XXXX" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs">
+            <button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs">Activar</button>
+          </div>
         </div>
       </div>
 
@@ -756,16 +768,17 @@
   <div id="printArea" class="hidden"></div>
 
   <!-- =================================================================================== -->
-  <!-- SISTEMA DE TELEMETRÍA B2B, BLINDAJE Y CONTROL MAESTRO                               -->
+  <!-- SISTEMA DE LICENCIAS SEMESTRALES (180 DÍAS), ANTI-FRAUDE Y TELEMETRÍA               -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v8.9.0';
+    var APP_CODE_VERSION = 'v9.0.0';
 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var VERSION_STORAGE_KEY = 'openline_code_installed_version';
     var MASTER_REGISTRY_KEY = 'openline_master_lic_registry';
     var TELEMETRY_STORAGE_KEY = 'openline_telemetry_master_db';
+    var CLOCK_CHECK_KEY = 'openline_vault_clock_check';
 
     var myDeviceId = localStorage.getItem(DEVICE_ID_KEY) || ('dev_' + Math.random().toString(36).substring(2, 9));
     localStorage.setItem(DEVICE_ID_KEY, myDeviceId);
@@ -773,24 +786,55 @@
     var currentWorkshopId = localStorage.getItem(WORKSHOP_ID_KEY) || ('TALLER-' + Math.floor(1000 + Math.random() * 9000));
     localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
 
-    // FUNCIÓN CRIPTOGRÁFICA DE LICENCIAS
-    function createLicenseHash(workshopCode, type) {
+    // CRIPTOGRAFÍA DE LICENCIAS: SEMESTRAL (180 DÍAS) & VITALICIA
+    function createLicenseHash(workshopCode, type, days) {
+      var d = (type === 'SEM6') ? (days || 180) : 99999;
+      var str = workshopCode + '_' + type + '_' + d + '_OPENLINE_SECURE_2026';
       var hash = 0;
-      var str = workshopCode + '_' + type + '_OPENLINE_SECURE_2026';
       for (var i = 0; i < str.length; i++) {
         hash = ((hash << 5) - hash) + str.charCodeAt(i);
         hash |= 0;
       }
       var hex = Math.abs(hash).toString(16).toUpperCase();
-      while (hex.length < 8) hex = '0' + hex;
-      return 'OL-' + type + '-' + hex.substring(0, 4) + '-' + hex.substring(4, 8);
+      while (hex.length < 6) hex = '0' + hex;
+      if (type === 'SEM6') {
+        return 'OL-SEM6-' + d + '-' + hex.substring(0, 6);
+      } else {
+        return 'OL-LIFETIME-' + hex.substring(0, 6);
+      }
     }
 
-    function isLicenseValidForWorkshop(wsCode, key) {
-      if (!key) return false;
-      var cleanKey = key.trim().toUpperCase();
-      if (cleanKey === 'OL-MASTER-PERMANENT') return true;
-      return cleanKey === createLicenseHash(wsCode.toUpperCase(), 'LIFETIME');
+    function verifyLicenseKey(wsCode, key) {
+      if (!key) return null;
+      var clean = key.trim().toUpperCase();
+      if (clean === 'OL-MASTER-PERMANENT') {
+        return { type: 'LIFETIME', days: 99999 };
+      }
+      if (clean === createLicenseHash(wsCode.toUpperCase(), 'LIFETIME')) {
+        return { type: 'LIFETIME', days: 99999 };
+      }
+      if (clean.indexOf('OL-SEM6-') === 0) {
+        var parts = clean.split('-');
+        var days = parseInt(parts[2], 10) || 180;
+        if (clean === createLicenseHash(wsCode.toUpperCase(), 'SEM6', days)) {
+          return { type: 'SEM6', days: days };
+        }
+      }
+      return null;
+    }
+
+    // PROTECCIÓN ANTI-FRAUDE DE RELOJ (Evita atrasar la fecha del sistema)
+    function checkClockTampering() {
+      try {
+        var lastClock = parseInt(localStorage.getItem(CLOCK_CHECK_KEY) || '0', 10);
+        var now = Date.now();
+        if (lastClock > 0 && now < (lastClock - 1800000)) { // Retroceso mayor a 30 mins
+          window.showToast("Alerta de Seguridad", "Se detectó un cambio no autorizado en la fecha del sistema.");
+          return true;
+        }
+        localStorage.setItem(CLOCK_CHECK_KEY, now.toString());
+      } catch(e) {}
+      return false;
     }
 
     // BÓVEDA INDESTRUCTIBLE DE DATOS Y LICENCIAS
@@ -807,7 +851,7 @@
           localStorage.setItem('openline_safety_backup_' + currentWorkshopId + '_' + entity, serialized);
           localStorage.setItem('openline_local_' + entity + '_v8_' + currentWorkshopId, serialized);
 
-          if (entity === 'license' && data && data.type === 'LIFETIME') {
+          if (entity === 'license' && data && (data.type === 'SEM6' || data.type === 'LIFETIME')) {
             this.lockLicenseInPermanentRegistry(currentWorkshopId, data);
           }
         } catch(e) {}
@@ -817,7 +861,7 @@
         try {
           if (entity === 'license') {
             var licFromReg = this.recoverLicenseFromPermanentRegistry(currentWorkshopId);
-            if (licFromReg && licFromReg.type === 'LIFETIME') return licFromReg;
+            if (licFromReg) return licFromReg;
           }
 
           var k = this.getKey(entity);
@@ -854,9 +898,8 @@
             var reg = JSON.parse(raw);
             if (reg && reg[wsCode.toUpperCase()]) {
               var candidate = reg[wsCode.toUpperCase()];
-              if (candidate.type === 'LIFETIME' && isLicenseValidForWorkshop(wsCode, candidate.key)) {
-                return candidate;
-              }
+              var verified = verifyLicenseKey(wsCode, candidate.key);
+              if (verified) return candidate;
             }
           }
         } catch(e) {}
@@ -902,16 +945,32 @@
     var masterTelemetryDB = {};
 
     var workshopSettings = { name: 'OpenLine', subtitle: 'Servicio Técnico Profesional', logo: '', branches: ['Central'] };
-    var licenseInfo = { type: 'DEMO', key: '' };
+    var licenseInfo = { type: 'DEMO', key: '', expiresAt: 0 };
     var mqttClient = null;
     var posScanner = null;
     var stockScanner = null;
 
     function $(id) { return document.getElementById(id); }
 
-    // ==========================================
-    // MÓDULO DE TELEMETRÍA MAESTRO (CLIENTE + ADMIN)
-    // ==========================================
+    // CÁLCULO DE DÍAS RESTANTES Y BLOQUEO POR VENCIMIENTO
+    window.getLicenseDaysRemaining = function() {
+      if (!licenseInfo || licenseInfo.type === 'DEMO') return 0;
+      if (licenseInfo.type === 'LIFETIME') return 99999;
+      if (!licenseInfo.expiresAt) return 0;
+      var diffMs = licenseInfo.expiresAt - Date.now();
+      return Math.max(0, Math.ceil(diffMs / (24 * 3600 * 1000)));
+    };
+
+    window.isLicenseExpired = function() {
+      checkClockTampering();
+      if (licenseInfo.type === 'LIFETIME') return false;
+      if (licenseInfo.type === 'SEM6') {
+        return (Date.now() > (licenseInfo.expiresAt || 0));
+      }
+      return false; // Modo DEMO operativo para pruebas
+    };
+
+    // MÓDULO DE TELEMETRÍA MAESTRO
     function getClientPlatform() {
       var ua = navigator.userAgent || '';
       if (/iPhone|iPad|iPod/i.test(ua)) return 'iPhone/iOS';
@@ -919,15 +978,19 @@
       return 'PC / Web';
     }
 
-    // Emisión periódica de latido hacia el canal de administración
     function emitTelemetryHeartbeat() {
       if (mqttClient && mqttClient.connected) {
         try {
+          var remaining = window.getLicenseDaysRemaining();
+          var licLabel = licenseInfo.type === 'LIFETIME' ? 'PRO Vitalicio' : (licenseInfo.type === 'SEM6' ? ('PRO (' + remaining + 'd)') : 'DEMO');
+          if (window.isLicenseExpired()) licLabel = 'VENCIDA';
+
           var payload = {
             wsId: currentWorkshopId,
             devId: myDeviceId,
             name: workshopSettings.name || 'Sin Nombre',
-            lic: licenseInfo.type || 'DEMO',
+            lic: licLabel,
+            daysLeft: remaining,
             repCount: repairs.length,
             stkCount: stockItems.length,
             cshCount: cashMovements.length,
@@ -940,38 +1003,32 @@
       }
     }
 
-    // Solicitud general de sondeo (Admin a todos los nodos)
     window.requestTelemetryBroadcast = function() {
       if (mqttClient && mqttClient.connected) {
         try {
           mqttClient.publish('openline/v4/global/telemetry/ping', JSON.stringify({ pingFrom: myDeviceId, timestamp: Date.now() }));
-          window.showToast("Sondeo Enviado", "Consultando talleres activos en vivo...");
+          window.showToast("Sondeo Enviado", "Consultando estado de talleres en vivo...");
         } catch(e) {}
       }
     };
 
-    // Renderizado del Panel de Telemetría
     function renderTelemetryDashboard() {
       var container = $('telemetryWorkshopsList');
       if (!container) return;
 
       var workshopsArray = Object.keys(masterTelemetryDB).map(function(k) { return masterTelemetryDB[k]; });
-      
-      // Ordenar: primero los más recientemente vistos
       workshopsArray.sort(function(a, b) { return (b.time || 0) - (a.time || 0); });
 
       var now = Date.now();
-      var onlineCount = 0;
-      var demoCount = 0;
-      var proCount = 0;
+      var onlineCount = 0, demoCount = 0, proCount = 0;
 
       var html = workshopsArray.map(function(w) {
         var diffSec = Math.floor((now - (w.time || 0)) / 1000);
-        var isOnline = diffSec < 150; // Visto en los últimos 2.5 minutos
+        var isOnline = diffSec < 150;
         if (isOnline) onlineCount++;
 
-        if (w.lic === 'LIFETIME' || w.lic === 'PRO') proCount++;
-        else demoCount++;
+        var isPro = (w.lic && w.lic.indexOf('PRO') >= 0);
+        if (isPro) proCount++; else demoCount++;
 
         var timeLabel = isOnline ? '🟢 En Línea' : (diffSec < 3600 ? ('Hace ' + Math.floor(diffSec/60) + 'm') : ('Hace ' + Math.floor(diffSec/3600) + 'h'));
         var isCurrent = w.wsId === currentWorkshopId;
@@ -981,7 +1038,7 @@
                    '<div class="flex items-center gap-1.5 flex-wrap">' +
                      '<span class="font-mono text-xs font-bold text-white">' + w.wsId + '</span>' +
                      (isCurrent ? '<span class="text-[8px] bg-indigo-900 text-indigo-200 px-1.5 py-0.2 rounded font-bold">TU TALLER</span>' : '') +
-                     '<span class="text-[9px] px-1.5 py-0.2 rounded font-bold ' + (w.lic === 'LIFETIME' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800') + '">' + w.lic + '</span>' +
+                     '<span class="text-[9px] px-1.5 py-0.2 rounded font-bold ' + (isPro ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800') + '">' + (w.lic || 'DEMO') + '</span>' +
                    '</div>' +
                    '<div class="text-[10px] text-zinc-400 mt-0.5 truncate">' +
                      '<b>' + (w.name || 'Sin Nombre') + '</b> • ' + (w.platform || 'Web') + ' • ' + (w.repCount || 0) + ' órdenes' +
@@ -990,7 +1047,7 @@
                  '<div class="text-right shrink-0 flex flex-col items-end gap-1">' +
                    '<span class="text-[9px] font-bold ' + (isOnline ? 'text-emerald-400 font-mono' : 'text-zinc-500') + '">' + timeLabel + '</span>' +
                    '<button type="button" onclick="window.quickActivateWorkshop(\'' + w.wsId + '\')" class="px-2 py-0.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded text-[9px]">' +
-                     'Activar PRO' +
+                     'Emitir Clave' +
                    '</button>' +
                  '</div>' +
                '</div>';
@@ -1128,6 +1185,11 @@
 
     // MENÚS Y VENTANAS
     window.openNewRepairModal = function() {
+      if (window.isLicenseExpired()) {
+        alert("⚠️ ATENCIÓN: Tu suscripción semestral ha vencido.\nPara continuar registrando ingresos, renueva tu licencia con tu asesor por WhatsApp.");
+        window.openLicenseModal();
+        return;
+      }
       $('inpClientName').value = ''; $('inpClientPhone').value = ''; $('inpDeviceBrand').value = '';
       $('inpDeviceModel').value = ''; $('inpDeviceSerial').value = ''; $('inpDeviceFault').value = '';
       $('inpDeviceBudget').value = ''; $('inpDeviceAdvance').value = ''; $('inpUnlockPin').value = '';
@@ -1138,6 +1200,11 @@
       window.openModal('newRepairModal');
     };
     window.openSalesModal = function() {
+      if (window.isLicenseExpired()) {
+        alert("⚠️ ATENCIÓN: Tu suscripción semestral ha vencido.\nPara realizar nuevas ventas de mostrador, renueva tu licencia con tu asesor.");
+        window.openLicenseModal();
+        return;
+      }
       posCart = [];
       window.renderPosCart();
       window.renderPosCatalog();
@@ -1354,6 +1421,12 @@
 
     // GUARDAR ORDEN DIRECTO (BLINDADO)
     window.guardarIngresoDirecto = function() {
+      if (window.isLicenseExpired()) {
+        alert("⚠️ ATENCIÓN: Tu suscripción semestral ha vencido.\nPara continuar registrando ingresos, renueva tu licencia con tu asesor por WhatsApp.");
+        window.openLicenseModal();
+        return;
+      }
+
       var id = 'OL-' + Math.floor(1000 + Math.random() * 9000);
       var b = parseFloat($('inpDeviceBudget').value)||0;
       var a = parseFloat($('inpDeviceAdvance').value)||0;
@@ -1398,7 +1471,7 @@
       repairs.unshift(r);
       StorageShield.save('repairs', repairs);
       window.publishMQTT();
-      emitTelemetryHeartbeat(); // Reporte inmediato de actividad
+      emitTelemetryHeartbeat();
       
       $('inpClientName').value = ''; $('inpClientPhone').value = ''; $('inpDeviceBrand').value = '';
       $('inpDeviceModel').value = ''; $('inpDeviceSerial').value = ''; $('inpDeviceFault').value = '';
@@ -1774,6 +1847,12 @@
     };
 
     window.completePosSale = function() {
+      if (window.isLicenseExpired()) {
+        alert("⚠️ ATENCIÓN: Tu suscripción semestral ha vencido.\nPara realizar nuevas ventas de mostrador, renueva tu licencia con tu asesor.");
+        window.openLicenseModal();
+        return;
+      }
+
       if (posCart.length === 0) return;
       var b = $('posBranch').value || 'Central'; var m = $('posPaymentMethod').value; var cust = $('posCustomerName').value.trim() || 'Mostrador';
       var tot = 0; var sl = [];
@@ -1788,27 +1867,26 @@
       window.showToast('Venta Finalizada', 'Monto ingresado: $' + tot.toLocaleString());
     };
 
-    // LICENCIAS & ACCESO AL PANEL DE TELEMETRÍA (PIN 8408 EN MODO SIGILO)
+    // LICENCIAS (PIN 8408 EN MODO SIGILO)
     window.secretTap = function() {
       masterTapCount++;
       clearTimeout(masterTapTimer);
       masterTapTimer = setTimeout(function(){ masterTapCount = 0; }, 1500);
       if (masterTapCount >= 5) {
         masterTapCount = 0;
-        var pin = prompt('🔑 Panel Maestro de Control\nIngrese su PIN Secreto:');
+        var pin = prompt('🔑 Panel Maestro de Activación y Telemetría\nIngrese su PIN Secreto:');
         if (pin === '8408') {
           isAdminModeUnlocked = true;
           $('masterAdminUnlockedView').classList.remove('hidden');
           $('genTargetWorkshopCode').value = currentWorkshopId;
           
-          // Suscribirse a la telemetría global en tiempo real
           if (mqttClient && mqttClient.connected) {
             mqttClient.subscribe('openline/v4/global/telemetry/#', { qos: 1 });
             window.requestTelemetryBroadcast();
           }
 
           renderTelemetryDashboard();
-          window.showToast("Panel Desbloqueado", "Modo creador y telemetría activos.");
+          window.showToast("Acceso Concedido", "Panel maestro y generador semestral activos.");
         } else if (pin) {
           window.showToast("Error", "PIN incorrecto.");
         }
@@ -1817,22 +1895,33 @@
 
     window.emitKey = function() {
       var code = $('genTargetWorkshopCode').value.trim().toUpperCase(); if (!code) return;
-      var key = createLicenseHash(code, 'LIFETIME');
+      var type = $('genLicTypeSelect').value || 'SEM6';
+      var key = createLicenseHash(code, type, 180);
       $('genGeneratedKey').textContent = key;
       $('genResultBox').classList.remove('hidden');
     };
 
     window.copyKey = function() { navigator.clipboard.writeText($('genGeneratedKey').textContent).then(function(){ window.showToast('Copiado', 'Clave copiada.'); }); };
+    
     window.applyKey = function() {
       var k = $('inpActivationKey').value.trim().toUpperCase(); if (!k) return;
-      if (isLicenseValidForWorkshop(currentWorkshopId, k)) {
-        licenseInfo = { type: 'LIFETIME', key: k, activatedAt: new Date().toISOString() };
+      var verified = verifyLicenseKey(currentWorkshopId, k);
+      if (verified) {
+        var duration = verified.days || 180;
+        licenseInfo = {
+          type: verified.type,
+          key: k,
+          activatedAt: Date.now(),
+          durationDays: duration,
+          expiresAt: (verified.type === 'LIFETIME') ? 9999999999999 : (Date.now() + (duration * 24 * 3600 * 1000))
+        };
         StorageShield.save('license', licenseInfo);
         window.updateLicenseUI();
         window.publishMQTT();
         emitTelemetryHeartbeat();
         window.closeModal('licenseModal');
-        window.showToast('Activado', 'Licencia PRO Permanente blindada.');
+        var msg = (verified.type === 'SEM6') ? 'Suscripción Semestral (180 días) habilitada.' : 'Licencia PRO Vitalicia habilitada.';
+        window.showToast('Activado', msg);
       } else {
         window.showToast('Inválido', 'Clave no válida para este taller.');
       }
@@ -1898,10 +1987,47 @@
       $('counterTransit').textContent = c.IN_TRANSIT; $('counterReady').textContent = c.READY;
     };
 
+    // ACTUALIZACIÓN DE UI SEGÚN ESTADO SEMESTRAL O DEMO
     window.updateLicenseUI = function() {
-      var p = licenseInfo.type === 'LIFETIME';
-      $('headerLicenseText').textContent = p ? 'PRO' : 'DEMO';
-      $('licenseStatusText').textContent = p ? 'LICENCIA PRO PERMANENTE' : 'VERSIÓN DEMO';
+      var days = window.getLicenseDaysRemaining();
+      var expired = window.isLicenseExpired();
+      var textEl = $('headerLicenseText');
+      var btnEl = $('headerLicenseBtn');
+      var statusEl = $('licenseStatusText');
+      var countdownEl = $('licenseDetailCountdown');
+
+      if (licenseInfo.type === 'LIFETIME') {
+        textEl.textContent = 'PRO Vitalicio';
+        btnEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
+        statusEl.textContent = 'LICENCIA PRO PERMANENTE';
+        statusEl.className = 'font-mono text-base font-black text-emerald-400 py-1 cursor-pointer select-none';
+        countdownEl.textContent = 'Acceso ilimitado de por vida';
+      } else if (licenseInfo.type === 'SEM6') {
+        if (expired) {
+          textEl.textContent = 'PRO Vencido';
+          btnEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-950 border border-rose-600/70 text-rose-300 flex items-center gap-1 active:opacity-75 transition animate-pulse';
+          statusEl.textContent = 'SUSCRIPCIÓN VENCIDA';
+          statusEl.className = 'font-mono text-base font-black text-rose-400 py-1 cursor-pointer select-none';
+          countdownEl.textContent = '0 días restantes - Modo solo lectura';
+        } else {
+          textEl.textContent = 'PRO ' + days + 'd';
+          if (days <= 15) {
+            btnEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950 border border-amber-500 text-amber-300 flex items-center gap-1 active:opacity-75 transition animate-pulse';
+            countdownEl.textContent = '⚠️ Vence en ' + days + ' días. Toca para renovar.';
+          } else {
+            btnEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-950 border border-indigo-600/70 text-indigo-300 flex items-center gap-1 active:opacity-75 transition';
+            countdownEl.textContent = 'Suscripción semestral activa: ' + days + ' días restantes';
+          }
+          statusEl.textContent = 'LICENCIA PRO SEMESTRAL';
+          statusEl.className = 'font-mono text-base font-black text-indigo-400 py-1 cursor-pointer select-none';
+        }
+      } else {
+        textEl.textContent = 'DEMO';
+        btnEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition';
+        statusEl.textContent = 'VERSIÓN DEMO';
+        statusEl.className = 'font-mono text-base font-black text-amber-400 py-1 cursor-pointer select-none';
+        countdownEl.textContent = 'Versión de prueba para evaluación de taller';
+      }
     };
 
     window.renderRepairsList = function() {
@@ -2018,16 +2144,21 @@
         stockItems = StorageShield.load('stock', []);
         cashMovements = StorageShield.load('cash', []);
         workshopSettings = Object.assign({}, workshopSettings, StorageShield.load('settings', {}));
-        licenseInfo = StorageShield.load('license', { type: 'DEMO', key: '' });
+        licenseInfo = StorageShield.load('license', { type: 'DEMO', key: '', expiresAt: 0 });
         
-        // Cargar base local de telemetría si ya fuimos admin
         var rawTel = localStorage.getItem(TELEMETRY_STORAGE_KEY);
         if (rawTel) { try { masterTelemetryDB = JSON.parse(rawTel) || {}; } catch(e) {} }
 
-        // Validación de auto-reparación para PRO
-        if (licenseInfo.key && isLicenseValidForWorkshop(currentWorkshopId, licenseInfo.key)) {
-          licenseInfo.type = 'LIFETIME';
-          StorageShield.save('license', licenseInfo);
+        // Validación de auto-reparación para licencias válidas
+        if (licenseInfo.key) {
+          var verified = verifyLicenseKey(currentWorkshopId, licenseInfo.key);
+          if (verified) {
+            licenseInfo.type = verified.type;
+            if (!licenseInfo.expiresAt && verified.type === 'SEM6') {
+              licenseInfo.expiresAt = Date.now() + (verified.days * 24 * 3600 * 1000);
+            }
+            StorageShield.save('license', licenseInfo);
+          }
         }
 
         $('appHeaderTitle').textContent = workshopSettings.name;
@@ -2047,7 +2178,7 @@
         window.updateCashBalanceUI();
         window.updateLicenseUI();
 
-        // AVISO VISUAL Y SONORO SOLO SI SE MODIFICÓ LA VERSIÓN DEL CÓDIGO
+        // CONTROL DE VERSIÓN DEL CÓDIGO
         var lastInstalledVersion = localStorage.getItem(VERSION_STORAGE_KEY);
         if (lastInstalledVersion && lastInstalledVersion !== APP_CODE_VERSION) {
           window.triggerAppUpdatingAlert();
@@ -2066,23 +2197,20 @@
             // Suscripción al canal de pings generales
             mqttClient.subscribe('openline/v4/global/telemetry/ping', { qos: 0 });
 
-            // Si el admin ya estaba desbloqueado, suscribirse a la telemetría
             if (isAdminModeUnlocked) {
               mqttClient.subscribe('openline/v4/global/telemetry/heartbeat', { qos: 1 });
             }
 
-            // Emitir latido inicial
             emitTelemetryHeartbeat();
           });
 
-          // Latido continuo cada 45 segundos
+          // Latido periódico cada 45 segundos
           setInterval(emitTelemetryHeartbeat, 45000);
 
           mqttClient.on('message', function(topic, message) {
             try {
               var payload = JSON.parse(message.toString());
 
-              // RECEPCIÓN DE TELEMETRÍA (SOLO PARA ADMIN)
               if (topic === 'openline/v4/global/telemetry/heartbeat') {
                 if (payload && payload.wsId) {
                   masterTelemetryDB[payload.wsId] = payload;
@@ -2092,7 +2220,6 @@
                 return;
               }
 
-              // RESPUESTA AL PING DEL ADMIN
               if (topic === 'openline/v4/global/telemetry/ping') {
                 if (payload && payload.pingFrom !== myDeviceId) {
                   emitTelemetryHeartbeat();
@@ -2100,16 +2227,18 @@
                 return;
               }
 
-              // SINCRONIZACIÓN ORDINARIA ENTRE SUCURSALES DEL TALLER
               if (payload && payload.senderId !== myDeviceId) {
-                // Sincronización de Licencia PRO
-                if (payload.license && payload.license.type === 'LIFETIME' && isLicenseValidForWorkshop(currentWorkshopId, payload.license.key)) {
-                  licenseInfo = payload.license;
-                  StorageShield.save('license', licenseInfo);
-                  window.updateLicenseUI();
+                // Sincronización de Licencia
+                if (payload.license && payload.license.key) {
+                  var v = verifyLicenseKey(currentWorkshopId, payload.license.key);
+                  if (v) {
+                    licenseInfo = payload.license;
+                    StorageShield.save('license', licenseInfo);
+                    window.updateLicenseUI();
+                  }
                 }
 
-                // Filtro anti-sobreescritura
+                // Sincronización anti-sobreescritura
                 if (payload.repairs && Array.isArray(payload.repairs)) {
                   if (payload.repairs.length > 0 || repairs.length === 0) {
                     repairs = payload.repairs;
