@@ -75,7 +75,6 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen">
 
-  <!-- AVISO DE ACTUALIZACIÓN DE CÓDIGO -->
   <div id="appUpdatingBanner" class="fixed top-4 inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 z-[10002] hidden items-center justify-between gap-3 bg-indigo-950/95 border-2 border-indigo-500 text-white px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-2xl transition-all duration-300 pointer-events-auto max-w-md">
     <div class="flex items-center gap-3 min-w-0">
       <div class="w-9 h-9 rounded-xl bg-indigo-600/30 border border-indigo-400 flex items-center justify-center shrink-0">
@@ -86,7 +85,7 @@
           <span>Sistema Actualizado</span>
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
         </h4>
-        <p class="text-[10px] text-indigo-200 mt-0.5">Visibilidad de cámara y optimización táctil instalada.</p>
+        <p class="text-[10px] text-indigo-200 mt-0.5">Diseño POS móvil y Cámara optimizada instalados.</p>
       </div>
     </div>
     <button type="button" onclick="window.dismissUpdateBanner()" class="w-7 h-7 rounded-lg bg-indigo-900/80 hover:bg-indigo-800 text-indigo-300 flex items-center justify-center shrink-0">
@@ -220,7 +219,7 @@
   <!-- MODALES DE LA APLICACIÓN                                                            -->
   <!-- =================================================================================== -->
 
-  <!-- MODAL: SELECCION DE SUCURSAL INICIAL -->
+  <!-- MODAL: SELECCION DE SUCURSAL INICIAL (BLOQUEANTE) -->
   <div id="startupBranchModal" class="app-modal" style="z-index: 100000; background-color: rgba(0,0,0,0.98);">
     <div class="bg-zinc-900 border border-zinc-800 rounded-3xl w-full max-w-sm p-6 space-y-5 text-xs text-zinc-300 shadow-2xl">
       <div class="text-center space-y-2">
@@ -231,99 +230,6 @@
       <div id="startupBranchList" class="space-y-2 max-h-48 overflow-y-auto no-scrollbar"></div>
       <div class="pt-3 border-t border-zinc-800 text-center">
           <span class="text-[10px] text-zinc-500">Puedes crear más sucursales desde los Ajustes (Admin).</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: NUEVO INGRESO -->
-  <div id="newRepairModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[92vh] flex flex-col shadow-2xl text-xs">
-      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800 bg-zinc-900">
-        <h2 class="text-sm font-bold text-white flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-iosBlue"></span>Nuevo Ingreso</h2>
-        <button type="button" onclick="window.closeModal('newRepairModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
-      </div>
-      
-      <div class="overflow-y-auto p-4 space-y-3 flex-1 pb-safe">
-        <div class="space-y-1.5">
-          <label class="font-bold text-zinc-300 uppercase text-[9px]">1. Datos del Cliente</label>
-          <input type="text" id="inpClientName" placeholder="Nombre y Apellido *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-          <div class="flex gap-2">
-            <select id="inpClientCountryCode" class="bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-2 text-white font-bold w-[110px] shrink-0"><option value="549">🇦🇷 +54 9</option><option value="55">🇧🇷 +55</option></select>
-            <input type="tel" id="inpClientPhone" placeholder="Número celular *" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
-          </div>
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="font-bold text-zinc-300 uppercase text-[9px]">2. Dispositivo</label>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            <select id="inpDeviceType" class="bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-2 text-white col-span-2 sm:col-span-1"><option value="Celular">Celular</option><option value="Tablet">Tablet</option><option value="Notebook">Notebook</option></select>
-            <input type="text" id="inpDeviceBrand" placeholder="Marca *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-            <input type="text" id="inpDeviceModel" placeholder="Modelo *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-          </div>
-        </div>
-
-        <div class="space-y-2 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
-          <div class="flex items-center justify-between">
-            <label class="font-bold text-zinc-300 uppercase text-[9px] block">3. Clave / Seguridad</label>
-            <div class="flex items-center gap-1 bg-zinc-800 p-0.5 rounded-lg text-[10px]">
-              <button type="button" onclick="window.setUnlockType('pin')" id="btnUnlockPin" class="px-2 py-0.5 rounded bg-iosBlue text-white font-medium transition">PIN</button>
-              <button type="button" onclick="window.setUnlockType('pattern')" id="btnUnlockPattern" class="px-2 py-0.5 rounded text-zinc-400 transition">Patrón</button>
-              <button type="button" onclick="window.setUnlockType('none')" id="btnUnlockNone" class="px-2 py-0.5 rounded text-zinc-400 transition">Sin Clave</button>
-            </div>
-          </div>
-          <div id="unlockViewPin"><input type="text" id="inpUnlockPin" placeholder="Ej: 1234" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-center font-mono tracking-widest"></div>
-          
-          <div id="unlockViewPattern" class="hidden text-center space-y-1">
-            <canvas id="patternCanvas" width="220" height="220" class="bg-black border border-zinc-800 rounded-2xl mx-auto touch-none"></canvas>
-            <div class="text-[10px] text-zinc-400 mt-1">
-              <span id="patternStatusLabel">Dibuja el patrón en los puntos</span> • 
-              <button type="button" onclick="window.resetPatternCanvas()" class="text-rose-400 underline font-bold">Borrar trazo</button>
-            </div>
-          </div>
-          <div id="unlockViewNone" class="hidden py-1 text-center text-[11px] text-zinc-500">Sin clave / Dispositivo apagado.</div>
-        </div>
-
-        <div class="space-y-2 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
-          <div class="flex items-center justify-between">
-            <label class="font-bold text-zinc-300 uppercase text-[9px] block">4. Registro Fotográfico</label>
-            <span id="photoCountBadge" class="text-[10px] text-zinc-500">0 fotos</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <label class="flex-1 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center gap-1.5 shadow cursor-pointer transition active:scale-95">
-              <i class="ph-bold ph-camera text-iosBlue text-base"></i> Cámara
-              <input type="file" accept="image/*" capture="environment" onchange="window.handleNewPhotoUpload(this)" class="hidden">
-            </label>
-            <label class="flex-1 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center gap-1.5 shadow cursor-pointer transition active:scale-95">
-              <i class="ph-bold ph-image text-emerald-400 text-base"></i> Galería
-              <input type="file" accept="image/*" multiple onchange="window.handleNewPhotoUpload(this)" class="hidden">
-            </label>
-          </div>
-          <div id="newPhotosGrid" class="flex gap-2 overflow-x-auto py-1 no-scrollbar min-h-[60px]"></div>
-        </div>
-
-        <div class="space-y-2.5 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
-          <label class="font-bold text-zinc-300 uppercase text-[9px] block">5. Falla y Presupuesto</label>
-          <textarea id="inpDeviceFault" rows="2" placeholder="Falla informada por el cliente..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white"></textarea>
-          <div class="grid grid-cols-2 gap-2">
-            <div><label class="text-[9px] text-zinc-400 block mb-0.5">Ppto Inicial ($)</label><input type="number" id="inpDeviceBudget" oninput="window.calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></div>
-            <div><label class="text-[9px] text-zinc-400 block mb-0.5">Seña ($)</label><input type="number" id="inpDeviceAdvance" oninput="window.calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold"></div>
-          </div>
-          <div class="grid grid-cols-2 gap-2 pt-1">
-            <div>
-              <label class="text-[9px] text-zinc-400 block mb-0.5 font-bold">Estado Inicial Taller</label>
-              <select id="inpNewInitialStatus" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white font-bold">
-                <option value="WAITING">En Recepción</option>
-                <option value="IN_PROGRESS">Pasa a Taller</option>
-              </select>
-            </div>
-          </div>
-          <div class="flex justify-between items-center text-xs pt-2 border-t border-zinc-800/80">
-            <span class="text-zinc-400 font-bold uppercase">Resta pagar:</span>
-            <span id="newCalculatedBalance" class="font-mono font-bold text-amber-400 text-sm">$0</span>
-          </div>
-        </div>
-
-        <button type="button" onclick="window.guardarIngresoDirecto()" class="w-full py-3 rounded-xl bg-iosBlue text-white font-bold text-sm shadow active:scale-95 transition mt-2">Guardar Ingreso</button>
       </div>
     </div>
   </div>
@@ -360,15 +266,22 @@
   <!-- MODAL: VENTAS POS (MOSTRADOR) -->
   <div id="salesModal" class="app-modal">
     <div class="bg-zinc-900 sm:border border-amber-600/70 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-4xl flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-shopping-cart-simple text-amber-400 text-xl"></i><h3 class="text-sm font-bold text-white">Vender Mostrador (<span id="posModalBranchTag">Central</span>)</h3></div><button type="button" onclick="window.closeModal('salesModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
-      <div class="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
-        <div class="flex-1 flex flex-col border-b md:border-b-0 md:border-r border-zinc-800 p-3.5 space-y-3 overflow-hidden">
+      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800">
+          <div class="flex items-center gap-2"><i class="ph-bold ph-shopping-cart-simple text-amber-400 text-xl"></i><h3 class="text-sm font-bold text-white">Vender Mostrador (<span id="posModalBranchTag">Central</span>)</h3></div>
+          <button type="button" onclick="window.closeModal('salesModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
+      </div>
+      
+      <div class="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 relative">
+        <!-- PANTALLA IZQUIERDA: CATÁLOGO Y ESCÁNER -->
+        <div id="posLeftPanel" class="flex-1 flex flex-col border-b md:border-b-0 md:border-r border-zinc-800 p-3.5 space-y-3 overflow-hidden">
           
           <div class="flex gap-2 shrink-0">
             <input type="text" id="posSearchProduct" oninput="window.renderPosCatalog()" placeholder="Buscar repuesto en esta sucursal..." class="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-            <button type="button" onclick="window.togglePosCam()" class="px-3 py-2 bg-purple-900 text-purple-200 rounded-xl font-bold flex items-center gap-1"><i class="ph-bold ph-camera"></i> Escanear</button>
+            <button type="button" onclick="window.togglePosCam()" class="px-3 py-2 bg-purple-900 text-purple-200 rounded-xl font-bold flex items-center gap-1 shadow active:scale-95"><i class="ph-bold ph-camera"></i> Escanear</button>
+            <button type="button" onclick="window.toggleMobileCart()" class="md:hidden px-3 py-2 bg-amber-600 text-white rounded-xl font-bold flex items-center gap-1 shadow active:scale-95"><i class="ph-bold ph-shopping-cart"></i> <span id="mobileCartItemCount">0</span></button>
           </div>
           
+          <!-- VENTA MANUAL SIN STOCK -->
           <div class="flex gap-2 shrink-0 bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 shadow-sm items-center">
              <i class="ph-bold ph-tag text-zinc-500"></i>
              <input type="text" id="posManualName" placeholder="Art. Manual (Funda, etc)..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-2 py-1.5 text-white text-xs">
@@ -376,15 +289,22 @@
              <button type="button" onclick="window.addManualPosItem()" class="bg-indigo-600 text-white rounded-lg px-2.5 py-1.5 font-bold text-xs shadow active:scale-95 transition whitespace-nowrap">+ Agregar</button>
           </div>
 
-          <div id="posScannerBox" class="hidden p-3 bg-zinc-950 rounded-xl border border-purple-800 space-y-2 flex flex-col shrink-0">
+          <!-- ESCÁNER DE CÁMARA (Oculta el catálogo cuando está activo) -->
+          <div id="posScannerBox" class="hidden p-3 bg-zinc-950 rounded-xl border border-purple-800 space-y-2 flex flex-col flex-1 min-h-0">
               <button type="button" onclick="window.stopPosCam()" class="text-rose-400 font-bold self-end bg-rose-950/30 px-3 py-1 rounded-lg">Cerrar Cámara</button>
-              <div id="pos-qr-reader" class="w-full bg-black rounded-xl overflow-hidden" style="min-height: 250px;"></div>
+              <div id="pos-qr-reader" class="w-full h-full bg-black rounded-xl overflow-hidden flex-1"></div>
           </div>
           
-          <div id="posCatalogContainer" class="flex-1 overflow-y-auto"><div id="posCatalogGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div></div>
+          <div id="posCatalogGrid" class="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-2 content-start"></div>
         </div>
-        <div class="w-full md:w-[320px] flex flex-col bg-zinc-950/60 p-3.5 space-y-3 shrink-0 overflow-y-auto pb-safe">
-          <div class="flex items-center justify-between border-b border-zinc-800 pb-1.5"><span class="font-bold text-white uppercase text-xs">Carrito</span><button type="button" onclick="window.clearPosCart()" class="text-[10px] text-rose-400">Vaciar</button></div>
+
+        <!-- PANTALLA DERECHA: CARRITO -->
+        <div id="posRightPanel" class="hidden md:flex w-full md:w-[320px] flex-col bg-zinc-950/60 p-3.5 space-y-3 shrink-0 overflow-y-auto pb-safe">
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-1.5">
+            <button type="button" onclick="window.toggleMobileCart()" class="md:hidden text-[10px] text-zinc-400 bg-zinc-800 px-2 py-1 rounded flex items-center gap-1 active:scale-95"><i class="ph-bold ph-arrow-left"></i> Volver</button>
+            <span class="font-bold text-white uppercase text-xs">Carrito</span>
+            <button type="button" onclick="window.clearPosCart()" class="text-[10px] text-rose-400">Vaciar</button>
+          </div>
           <div id="posCartContainer" class="flex-1 space-y-1.5 overflow-y-auto min-h-[100px]"></div>
           <div class="space-y-2 pt-2 border-t border-zinc-800">
             <select id="posPaymentMethod" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-medium"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia / Mercado Pago</option><option value="Tarjeta">Tarjeta</option></select>
@@ -424,6 +344,7 @@
          </button>
       </div>
 
+      <!-- CONF CONTRASEÑA ADMIN -->
       <div id="adminPinConfigSection" class="p-3 bg-zinc-950 rounded-2xl border border-amber-600/50 space-y-2 hidden">
         <div id="setupPinBox">
           <span class="text-[10px] font-bold text-amber-400 uppercase block">🔑 Configurar Clave de Administrador:</span>
@@ -627,10 +548,7 @@
             <span class="text-[9px] font-bold text-indigo-300 uppercase">Generar Licencia de Activación:</span>
             <div class="grid grid-cols-3 gap-1.5">
               <input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="col-span-2 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono text-xs">
-              <select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold">
-                <option value="SEM6" selected>6 Meses</option>
-                <option value="LIFETIME">Vitalicio</option>
-              </select>
+              <select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold"><option value="SEM6" selected>6 Meses</option><option value="LIFETIME">Vitalicio</option></select>
             </div>
             <button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow">Emitir Clave Segura</button>
             <div id="genResultBox" class="hidden p-2.5 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800">
@@ -712,7 +630,14 @@
     window.openTeamModal = function() { window.openModal('teamModal'); };
     window.openLicenseModal = function() { window.openModal('licenseModal'); };
     window.openInstallModal = function() { window.openModal('installModal'); };
-    window.openSalesModal = function() { try{ window.renderPosCatalog(); }catch(e){console.error(e);} window.openModal('salesModal'); };
+    window.openSalesModal = function() { 
+        try{ 
+            window.renderPosCatalog(); 
+            var rp = $('posRightPanel'); var lp = $('posLeftPanel');
+            if(rp && lp) { rp.style.display = ''; lp.style.display = ''; } 
+        }catch(e){console.error(e);} 
+        window.openModal('salesModal'); 
+    };
     window.openStockModal = function() { try{ window.renderStockList(); }catch(e){console.error(e);} window.openModal('stockModal'); };
     window.openCashModal = function() { try{ window.updateCashBalanceUI(); }catch(e){console.error(e);} window.openModal('cashModal'); };
     window.openVentasHistoryModal = function() { try{ window.setVentasPeriod('HOY'); }catch(e){console.error(e);} window.openModal('ventasModal'); };
@@ -751,6 +676,7 @@
     
     var currentFilter = 'ALL';
     var currentBranchFilter = localBranch;
+    var currentCashBranch = localBranch;
     var currentVentasPeriod = 'HOY';
     var selectedRepairId = null;
 
@@ -777,6 +703,7 @@
         }
         
         window.setBranchFilter(b);
+        currentCashBranch = b;
         window.updateCashBalanceUI();
         window.renderBranchTabs();
         window.showToast("Sucursal Vinculada", "Operando en: " + b);
@@ -915,8 +842,11 @@
         workshopSettings.subtitle = $('cfgWorkshopSubtitle').value;
         if($('cfgAdminPhone')) workshopSettings.adminPhone = $('cfgAdminPhone').value.replace(/[^0-9]/g, '');
         
-        StorageShield.save('settings', workshopSettings);
+        var rawBranches = $('cfgBranchesListInput') ? $('cfgBranchesListInput').value : '';
+        var bArray = rawBranches.split(',').map(function(b){return b.trim();}).filter(function(b){return b;});
+        if(bArray.length > 0) workshopSettings.branches = bArray;
         
+        StorageShield.save('settings', workshopSettings);
         if($('appHeaderTitle')) $('appHeaderTitle').textContent = workshopSettings.name;
         if($('appHeaderSubtitle')) $('appHeaderSubtitle').textContent = workshopSettings.subtitle;
         
@@ -1026,16 +956,29 @@
         if($('headerDefaultIcon')) $('headerDefaultIcon').classList.remove('hidden');
     };
 
-    // --- CÁMARAS (QR / BARCODE) (FIX UI OVERLAP) ---
+    // --- CÁMARAS (QR / BARCODE) Y CAMBIO DE VISTA ---
     var posScanner = null;
     var stockScanner = null;
+
+    window.toggleMobileCart = function() {
+        var rp = $('posRightPanel');
+        var lp = $('posLeftPanel');
+        if(!rp || !lp) return;
+        if(rp.style.display === 'flex') {
+            rp.style.display = '';
+            lp.style.display = '';
+        } else {
+            rp.style.display = 'flex';
+            lp.style.display = 'none';
+        }
+    };
 
     window.togglePosCam = function() {
       var box = $('posScannerBox');
       var catalogContainer = $('posCatalogGrid');
       if (box.classList.contains('hidden')) {
         box.classList.remove('hidden');
-        if(catalogContainer) catalogContainer.style.display = 'none'; // Hide catalog completely to make room for camera
+        if(catalogContainer) catalogContainer.style.display = 'none'; 
         if (!posScanner) posScanner = new Html5Qrcode("pos-qr-reader");
         posScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: {width: 250, height: 250} }, function(decodedText) {
             window.addPosItemByCode(decodedText);
@@ -1046,7 +989,7 @@
 
     window.stopPosCam = function() { 
         $('posScannerBox').classList.add('hidden'); 
-        if($('posCatalogGrid')) $('posCatalogGrid').style.display = 'grid'; // Restore catalog
+        if($('posCatalogGrid')) $('posCatalogGrid').style.display = 'grid'; 
         if (posScanner) { try { posScanner.stop().catch(function(e){}); } catch(e){} } 
     };
 
@@ -1055,7 +998,7 @@
       var listContainer = $('stockListWrapper');
       if (box.classList.contains('hidden')) {
         box.classList.remove('hidden');
-        if(listContainer) listContainer.style.display = 'none'; // Hide list to make room for camera
+        if(listContainer) listContainer.style.display = 'none'; 
         if (!stockScanner) stockScanner = new Html5Qrcode("qr-reader");
         stockScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: {width: 250, height: 250} }, function(decodedText) {
             if($('stkCode')) $('stkCode').value = decodedText;
@@ -1295,7 +1238,7 @@
             cashClosures.unshift(closure);
             StorageShield.save('cashClosures', cashClosures);
 
-            // Eliminar los movimientos que pertenecen a esta caja para reiniciarla
+            // Eliminar SOLO los movimientos de esta caja para reiniciarla localmente
             cashMovements = cashMovements.filter(function(c) { return c.branch !== localBranch; });
             StorageShield.save('cash', cashMovements);
             
@@ -1509,149 +1452,6 @@
         });
     };
 
-    // --- PATRÓN ANDROID VISUAL (OPTIMIZADO PARA TOUCH) ---
-    var currentPhotos = [];
-    var activeUnlockType = 'pin';
-    var patternCtx = null;
-    var isDrawingPattern = false;
-    var selectedPatternSequence = [];
-    var patternNodes = [];
-
-    window.setUnlockType = function(type) {
-      activeUnlockType = type;
-      ['btnUnlockPin', 'btnUnlockPattern', 'btnUnlockNone'].forEach(function(id) { if($(id)) $(id).className = 'px-2 py-0.5 rounded text-zinc-400 transition'; });
-      if($('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1))) $('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1)).className = 'px-2 py-0.5 rounded bg-iosBlue text-white font-medium transition';
-      
-      if($('unlockViewPin')) $('unlockViewPin').style.display = type === 'pin' ? 'block' : 'none';
-      if($('unlockViewPattern')) $('unlockViewPattern').style.display = type === 'pattern' ? 'block' : 'none';
-      if($('unlockViewNone')) $('unlockViewNone').style.display = type === 'none' ? 'block' : 'none';
-      
-      if(type === 'pattern') setTimeout(window.initPatternCanvas, 100);
-    };
-
-    window.initPatternCanvas = function() {
-      var canvas = $('patternCanvas');
-      if(!canvas) return;
-      patternCtx = canvas.getContext('2d');
-      window.resetPatternCanvas();
-      
-      var getPos = function(e) {
-          var rect = canvas.getBoundingClientRect();
-          var cx = e.touches ? e.touches[0].clientX : e.clientX;
-          var cy = e.touches ? e.touches[0].clientY : e.clientY;
-          return { x: cx - rect.left, y: cy - rect.top };
-      };
-      
-      var checkHit = function(p) {
-          patternNodes.forEach(function(n) {
-              if(Math.hypot(n.x - p.x, n.y - p.y) < 25 && !selectedPatternSequence.includes(n.id)) {
-                  selectedPatternSequence.push(n.id);
-              }
-          });
-      };
-      
-      var redraw = function(px, py) {
-          patternCtx.clearRect(0,0,canvas.width,canvas.height);
-          if(selectedPatternSequence.length > 0) {
-              patternCtx.beginPath();
-              patternCtx.strokeStyle = '#007AFF'; patternCtx.lineWidth = 4;
-              var start = patternNodes[selectedPatternSequence[0]-1];
-              patternCtx.moveTo(start.x, start.y);
-              for(var k=1; k<selectedPatternSequence.length; k++) {
-                  var n = patternNodes[selectedPatternSequence[k]-1];
-                  patternCtx.lineTo(n.x, n.y);
-              }
-              if(isDrawingPattern && px !== undefined) patternCtx.lineTo(px, py);
-              patternCtx.stroke();
-          }
-          patternNodes.forEach(function(n) {
-              patternCtx.beginPath();
-              patternCtx.arc(n.x, n.y, selectedPatternSequence.includes(n.id) ? 12 : 8, 0, Math.PI*2);
-              patternCtx.fillStyle = selectedPatternSequence.includes(n.id) ? '#007AFF' : '#52525b';
-              patternCtx.fill();
-          });
-      };
-
-      var handleStart = function(e) {
-         isDrawingPattern = true; selectedPatternSequence = [];
-         if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Trazando...'; $('patternStatusLabel').className = 'text-amber-400 font-bold'; }
-         var p = getPos(e); checkHit(p); redraw(p.x, p.y);
-      };
-      var handleMove = function(e) {
-         if(!isDrawingPattern) return;
-         var p = getPos(e); checkHit(p); redraw(p.x, p.y);
-      };
-      var handleEnd = function(e) {
-         if(!isDrawingPattern) return;
-         isDrawingPattern = false; redraw();
-         if($('patternStatusLabel')) { 
-             $('patternStatusLabel').textContent = selectedPatternSequence.length > 0 ? 'Patrón registrado' : 'Dibuja el patrón'; 
-             $('patternStatusLabel').className = selectedPatternSequence.length > 0 ? 'text-emerald-400 font-bold' : 'text-zinc-400 mt-1'; 
-         }
-      };
-      
-      // Eliminamos e.preventDefault() absoluto para no romper el scroll general
-      canvas.onmousedown = handleStart; canvas.onmousemove = handleMove; canvas.onmouseup = handleEnd; canvas.onmouseleave = handleEnd;
-      canvas.addEventListener('touchstart', function(e){ if(e.target === canvas) e.preventDefault(); handleStart(e); }, {passive: false});
-      canvas.addEventListener('touchmove', function(e){ if(e.target === canvas) e.preventDefault(); handleMove(e); }, {passive: false});
-      canvas.addEventListener('touchend', function(e){ if(e.target === canvas) e.preventDefault(); handleEnd(e); }, {passive: false});
-    };
-    
-    window.resetPatternCanvas = function() {
-      if(!patternCtx) return;
-      var canvas = $('patternCanvas');
-      patternNodes = [];
-      for(var i=0; i<3; i++) { for(var j=0; j<3; j++) { patternNodes.push({x: 40 + j*70, y: 40 + i*70, id: i*3 + j + 1}); } }
-      selectedPatternSequence = []; isDrawingPattern = false;
-      patternCtx.clearRect(0,0,canvas.width, canvas.height);
-      patternNodes.forEach(function(n) {
-          patternCtx.beginPath(); patternCtx.arc(n.x, n.y, 8, 0, Math.PI*2);
-          patternCtx.fillStyle = '#52525b'; patternCtx.fill();
-      });
-      if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Dibuja el patrón en los puntos'; $('patternStatusLabel').className = 'text-zinc-400 mt-1'; }
-    };
-
-    window.handleNewPhotoUpload = function(input) {
-        if (input.files && input.files[0]) {
-            Array.from(input.files).forEach(function(file) {
-                var reader = new FileReader();
-                reader.onload = function(e) { 
-                    var img = new Image();
-                    img.onload = function() {
-                        var canvas = document.createElement('canvas');
-                        var ctx = canvas.getContext('2d');
-                        var MAX_DIM = 600; 
-                        var w = img.width, h = img.height;
-                        if (w > h) { if (w > MAX_DIM) { h *= MAX_DIM / w; w = MAX_DIM; } } 
-                        else { if (h > MAX_DIM) { w *= MAX_DIM / h; h = MAX_DIM; } }
-                        canvas.width = w; canvas.height = h;
-                        ctx.drawImage(img, 0, 0, w, h);
-                        currentPhotos.push(canvas.toDataURL("image/jpeg", 0.6));
-                        window.renderNewPhotos();
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-    };
-    window.renderNewPhotos = function() {
-        if($('photoCountBadge')) $('photoCountBadge').textContent = currentPhotos.length + ' fotos';
-        if($('newPhotosGrid')) {
-            $('newPhotosGrid').innerHTML = currentPhotos.map(function(src, i) {
-                return '<div class="relative w-14 h-14 shrink-0 rounded-lg overflow-hidden border border-zinc-700"><img src="'+src+'" class="w-full h-full object-cover"><button type="button" onclick="window.removePhoto('+i+')" class="absolute top-0 right-0 bg-red-600 text-white rounded-bl-lg w-5 h-5 flex items-center justify-center text-[10px]"><i class="ph-bold ph-x"></i></button></div>';
-            }).join('');
-        }
-    };
-    window.removePhoto = function(i) { currentPhotos.splice(i,1); window.renderNewPhotos(); };
-    window.calcBalance = function(type) {
-        if(type === 'new') {
-            var total = parseFloat($('inpDeviceBudget').value) || 0;
-            var advance = parseFloat($('inpDeviceAdvance').value) || 0;
-            if($('newCalculatedBalance')) $('newCalculatedBalance').textContent = '$' + (total - advance);
-        }
-    };
-
     // --- PANEL MAESTRO DE LICENCIAS Y TELEMETRÍA ---
     function createLicenseHash(workshopCode, type, days) {
       var d = (type === 'SEM6') ? (days || 180) : 99999;
@@ -1710,7 +1510,9 @@
         var duration = verified.days || 180;
         var licenseInfo = { type: verified.type, key: k, expiresAt: (verified.type === 'LIFETIME') ? 9999999999999 : (Date.now() + (duration * 24 * 3600 * 1000)) };
         StorageShield.save('license', licenseInfo, true);
-        window.updateLicenseUI();
+        
+        $('headerLicenseText').textContent = 'VITALICIO';
+        $('headerLicenseBtn').className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
         window.closeModal('licenseModal');
         window.showToast('Activado', 'Licencia PRO habilitada correctamente.');
       } else { window.showToast('Inválido', 'Clave no válida para este taller.'); }
