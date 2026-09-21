@@ -85,7 +85,7 @@
           <span>Sistema Actualizado</span>
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
         </h4>
-        <p class="text-[10px] text-indigo-200 mt-0.5">Control avanzado Multi-Sucursal configurado.</p>
+        <p class="text-[10px] text-indigo-200 mt-0.5">Gestor de sucursales avanzado y cámara mejorada.</p>
       </div>
     </div>
     <button type="button" onclick="window.dismissUpdateBanner()" class="w-7 h-7 rounded-lg bg-indigo-900/80 hover:bg-indigo-800 text-indigo-300 flex items-center justify-center shrink-0">
@@ -148,7 +148,7 @@
           <i class="ph-bold ph-barcode text-base text-purple-400"></i><span>Stock</span>
         </button>
         <button type="button" onclick="window.openCashModal()" class="py-2 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] sm:text-xs font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition">
-          <i class="ph-bold ph-currency-dollar-simple text-base text-emerald-400"></i><span>Caja (<span id="btnLabelCajaLocal">Central</span>)</span>
+          <i class="ph-bold ph-currency-dollar-simple text-base text-emerald-400"></i><span>Caja</span>
         </button>
       </div>
     </div>
@@ -211,7 +211,7 @@
   <!-- LEYENDA (TICKER) FOOTER -->
   <div class="ticker-wrap pb-safe">
     <div class="ticker text-[10px] font-bold text-zinc-500 tracking-widest uppercase">
-      🚀 Desarrollado por OpenLine • Industria Argentina 🇦🇷 • Sincronización en Tiempo Real • Software para Talleres 🚀 Desarrollado por OpenLine • Industria Argentina 🇦🇷
+      🚀 DESARROLLADO POR OPENLINE • INDUSTRIA ARGENTINA 🇦🇷 • SINCRONIZACIÓN EN TIEMPO REAL • SOFTWARE PARA TALLERES PROFESIONALES 🚀 DESARROLLADO POR OPENLINE • INDUSTRIA ARGENTINA 🇦🇷
     </div>
   </div>
 
@@ -275,6 +275,7 @@
             <button type="button" onclick="window.togglePosCam()" class="px-3 py-2 bg-purple-900 text-purple-200 rounded-xl font-bold flex items-center gap-1"><i class="ph-bold ph-camera"></i> Escanear</button>
           </div>
           
+          <!-- VENTA MANUAL SIN STOCK -->
           <div class="flex gap-2 shrink-0 bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 shadow-sm items-center">
              <i class="ph-bold ph-tag text-zinc-500"></i>
              <input type="text" id="posManualName" placeholder="Art. Manual (Funda, etc)..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-2 py-1.5 text-white text-xs">
@@ -283,6 +284,7 @@
           </div>
 
           <div id="posScannerBox" class="hidden p-2 bg-zinc-950 rounded-xl border border-purple-800 space-y-1"><button type="button" onclick="window.stopPosCam()" class="text-rose-400 font-bold w-full text-right py-1">Cerrar Cámara</button><div id="pos-qr-reader" class="w-full rounded-xl min-h-[180px] bg-black"></div></div>
+          
           <div class="flex-1 overflow-y-auto"><div id="posCatalogGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div></div>
         </div>
         <div class="w-full md:w-[320px] flex flex-col bg-zinc-950/60 p-3.5 space-y-3 shrink-0 overflow-y-auto pb-safe">
@@ -319,6 +321,7 @@
         <div id="usersListGrid" class="grid grid-cols-2 gap-2"></div>
       </div>
       
+      <!-- BOTON VINCULAR NUEVA SUCURSAL/EQUIPO -->
       <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 mt-2">
          <span class="text-[10px] font-bold text-zinc-300 uppercase block">🔗 Red del Taller:</span>
          <button type="button" onclick="window.closeModal('switchUserModal'); window.openTeamModal();" class="w-full py-2 bg-indigo-900/50 hover:bg-indigo-800 border border-indigo-700 text-indigo-300 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition">
@@ -351,26 +354,39 @@
     </div>
   </div>
 
-  <!-- MODAL: AJUSTES -->
+  <!-- MODAL: AJUSTES CON GESTOR DE SUCURSALES -->
   <div id="settingsModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3 shadow-2xl text-xs text-zinc-300 pb-safe">
-      <div class="flex items-center justify-between pb-1"><div class="flex items-center gap-1.5"><i class="ph-bold ph-gear text-lg text-zinc-300"></i><h3 class="font-bold text-white text-sm">Ajustes Taller</h3></div><button type="button" onclick="window.closeModal('settingsModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
-      <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 text-center">
-        <div class="flex items-center justify-center gap-3">
-          <div id="settingsLogoPreview" class="w-12 h-12 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden shrink-0"></div>
-          <div class="space-y-1 text-left">
-            <label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 text-white font-bold rounded-xl"><i class="ph-bold ph-upload-simple"></i> Logo<input type="file" accept="image/*" onchange="window.handleLogoUpload(this)" class="hidden"></label>
-            <button type="button" onclick="window.removeLogo()" class="block text-rose-400">Quitar</button>
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3 shadow-2xl text-xs text-zinc-300 pb-safe max-h-[92vh] flex flex-col">
+      <div class="flex items-center justify-between pb-1 shrink-0"><div class="flex items-center gap-1.5"><i class="ph-bold ph-gear text-lg text-zinc-300"></i><h3 class="font-bold text-white text-sm">Ajustes Taller</h3></div><button type="button" onclick="window.closeModal('settingsModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+      
+      <div class="overflow-y-auto space-y-3 flex-1">
+          <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 text-center">
+            <div class="flex items-center justify-center gap-3">
+              <div id="settingsLogoPreview" class="w-12 h-12 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden shrink-0"></div>
+              <div class="space-y-1 text-left">
+                <label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 text-white font-bold rounded-xl"><i class="ph-bold ph-upload-simple"></i> Logo<input type="file" accept="image/*" onchange="window.handleLogoUpload(this)" class="hidden"></label>
+                <button type="button" onclick="window.removeLogo()" class="block text-rose-400">Quitar</button>
+              </div>
+            </div>
           </div>
-        </div>
+          
+          <div class="space-y-2">
+            <input type="text" id="cfgWorkshopName" placeholder="Nombre Comercial" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
+            <input type="text" id="cfgWorkshopSubtitle" placeholder="Subtítulo" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+            <input type="tel" id="cfgAdminPhone" placeholder="WhatsApp Admin (Para recibir cierres)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+          </div>
+
+          <!-- GESTOR DE SUCURSALES -->
+          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2">
+            <span class="text-[10px] font-bold text-zinc-300 uppercase block">📍 Sucursales (Ubicaciones):</span>
+            <div id="settingsBranchesList" class="space-y-1.5 max-h-32 overflow-y-auto no-scrollbar"></div>
+            <div class="flex gap-1.5 pt-1 border-t border-zinc-800/80">
+              <input type="text" id="inpNewConfigBranch" placeholder="Nueva Sucursal..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
+              <button type="button" onclick="window.addConfigBranch()" class="px-3 py-2 bg-iosBlue text-white font-bold rounded-xl text-xs">+ Añadir</button>
+            </div>
+          </div>
       </div>
-      <div class="space-y-2">
-        <input type="text" id="cfgWorkshopName" placeholder="Nombre Comercial" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
-        <input type="text" id="cfgWorkshopSubtitle" placeholder="Subtítulo" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-        <input type="text" id="cfgBranchesListInput" placeholder="Sucursales (ej: Casa Central, Norte)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-        <input type="tel" id="cfgAdminPhone" placeholder="WhatsApp Admin (Para recibir cierres)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
-      </div>
-      <button type="button" onclick="window.saveSettings()" class="w-full py-2.5 bg-iosBlue text-white font-bold rounded-xl shadow">Guardar Cambios</button>
+      <button type="button" onclick="window.saveSettings()" class="w-full py-2.5 bg-iosBlue text-white font-bold rounded-xl shadow shrink-0 mt-2">Guardar Ajustes</button>
     </div>
   </div>
 
@@ -549,7 +565,7 @@
   <!-- SISTEMA PRINCIPAL JAVASCRIPT BLINDADO                                              -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v12.0.0'; 
+    var APP_CODE_VERSION = 'v12.1.0'; 
 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
@@ -587,7 +603,18 @@
       } else { alert(title + "\n" + msg); }
     };
 
-    window.openNewRepairModal = function() { window.openModal('newRepairModal'); };
+    window.openNewRepairModal = function() { 
+        try {
+            window.renderBranchTabs();
+            window.resetPatternCanvas();
+            ['inpClientName','inpClientPhone','inpDeviceBrand','inpDeviceModel','inpDeviceFault','inpDeviceBudget','inpDeviceAdvance','inpDeviceSerial','inpUnlockPin'].forEach(function(el){ if($(el)) $(el).value=''; });
+            window.setUnlockType('pin');
+            currentPhotos = []; window.renderNewPhotos();
+            if($('newCalculatedBalance')) $('newCalculatedBalance').textContent = '$0';
+        } catch(e) { console.error(e); }
+        window.openModal('newRepairModal'); 
+    };
+    
     window.openTeamModal = function() { window.openModal('teamModal'); };
     window.openLicenseModal = function() { window.openModal('licenseModal'); };
     window.openInstallModal = function() { window.openModal('installModal'); };
@@ -630,10 +657,11 @@
     
     var currentFilter = 'ALL';
     var currentBranchFilter = localBranch;
+    var currentCashBranch = localBranch;
     var currentVentasPeriod = 'HOY';
     var selectedRepairId = null;
 
-    // --- MANEJO DE SUCURSALES (Filtros Globales y Cajas Independientes) ---
+    // --- MANEJO DE SUCURSALES ---
     window.checkLocalBranch = function() {
         if (!localStorage.getItem(LOCAL_BRANCH_KEY) || !(workshopSettings.branches || []).includes(localBranch)) {
             var html = (workshopSettings.branches || ['Central']).map(function(b) {
@@ -656,6 +684,7 @@
         }
         
         window.setBranchFilter(b);
+        currentCashBranch = b;
         window.updateCashBalanceUI();
         window.renderBranchTabs();
         window.showToast("Sucursal Vinculada", "Operando en: " + b);
@@ -673,12 +702,15 @@
             if($('currentBranchDisplayTag')) $('currentBranchDisplayTag').textContent = currentBranchFilter === 'ALL' ? 'Todas' : currentBranchFilter;
         }
 
-        // Títulos bloqueados a la sucursal local
         if($('cashModalTitleBranch')) $('cashModalTitleBranch').textContent = localBranch;
         if($('posModalBranchTag')) $('posModalBranchTag').textContent = localBranch;
         if($('userModalBranchTag')) $('userModalBranchTag').textContent = localBranch;
         if($('btnLabelCajaLocal')) $('btnLabelCajaLocal').textContent = localBranch;
         if($('headerCashBranchTag')) $('headerCashBranchTag').textContent = localBranch;
+
+        var opts = branches.map(function(b) { return '<option value="'+b+'">'+b+'</option>'; }).join('');
+        if($('cshBranch')) $('cshBranch').innerHTML = opts;
+        if($('stkBranch')) $('stkBranch').innerHTML = opts;
 
         if($('newBranchOptionsList')) {
             $('newBranchOptionsList').innerHTML = branches.map(function(b) {
@@ -770,6 +802,7 @@
         });
     };
 
+    // --- CONFIGURACIÓN DE APP CON GESTOR DE SUCURSALES ---
     window.openSettingsModal = function() {
         if($('cfgWorkshopName')) $('cfgWorkshopName').value = workshopSettings.name || '';
         if($('cfgWorkshopSubtitle')) $('cfgWorkshopSubtitle').value = workshopSettings.subtitle || '';
@@ -781,6 +814,7 @@
         } else if($('settingsLogoPreview')) {
             $('settingsLogoPreview').innerHTML = '<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>';
         }
+        window.renderConfigBranches();
         window.openModal('settingsModal');
     };
 
@@ -789,10 +823,6 @@
         workshopSettings.subtitle = $('cfgWorkshopSubtitle').value;
         if($('cfgAdminPhone')) workshopSettings.adminPhone = $('cfgAdminPhone').value.replace(/[^0-9]/g, '');
         
-        var rawBranches = $('cfgBranchesListInput') ? $('cfgBranchesListInput').value : '';
-        var bArray = rawBranches.split(',').map(function(b){return b.trim();}).filter(function(b){return b;});
-        if(bArray.length > 0) workshopSettings.branches = bArray;
-        
         StorageShield.save('settings', workshopSettings);
         if($('appHeaderTitle')) $('appHeaderTitle').textContent = workshopSettings.name;
         if($('appHeaderSubtitle')) $('appHeaderSubtitle').textContent = workshopSettings.subtitle;
@@ -800,6 +830,86 @@
         window.renderBranchTabs();
         window.showToast("Guardado", "Ajustes actualizados");
         window.closeModal('settingsModal');
+    };
+
+    window.renderConfigBranches = function() {
+        var c = $('settingsBranchesList');
+        if(!c) return;
+        var branches = workshopSettings.branches || ['Central'];
+        c.innerHTML = branches.map(function(b, idx) {
+            return '<div class="flex items-center justify-between p-2 bg-zinc-800 rounded-xl border border-zinc-700">' +
+                   '<span class="text-xs font-bold text-white">'+b+'</span>' +
+                   '<div class="flex gap-1">' +
+                   '<button type="button" onclick="window.editConfigBranch('+idx+')" class="w-6 h-6 rounded bg-zinc-700 text-zinc-300 flex items-center justify-center"><i class="ph-bold ph-pencil-simple"></i></button>' +
+                   (branches.length > 1 ? '<button type="button" onclick="window.deleteConfigBranch('+idx+')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center"><i class="ph-bold ph-trash"></i></button>' : '') +
+                   '</div></div>';
+        }).join('');
+    };
+
+    window.addConfigBranch = function() {
+        var val = $('inpNewConfigBranch').value.trim();
+        if(!val) return;
+        if(!workshopSettings.branches) workshopSettings.branches = ['Central'];
+        if(workshopSettings.branches.includes(val)) { window.showToast('Aviso', 'La sucursal ya existe'); return; }
+        workshopSettings.branches.push(val);
+        StorageShield.save('settings', workshopSettings);
+        $('inpNewConfigBranch').value = '';
+        window.renderConfigBranches();
+        window.renderBranchTabs();
+    };
+
+    window.editConfigBranch = function(idx) {
+        var oldVal = workshopSettings.branches[idx];
+        var newVal = prompt("Editar nombre de sucursal:", oldVal);
+        if(newVal !== null && newVal.trim() !== '') {
+            newVal = newVal.trim();
+            if(workshopSettings.branches.includes(newVal) && newVal !== oldVal) {
+                window.showToast('Aviso', 'El nombre ya está en uso'); return;
+            }
+            window.migrateBranchName(oldVal, newVal);
+            workshopSettings.branches[idx] = newVal;
+            StorageShield.save('settings', workshopSettings);
+            window.renderConfigBranches();
+            window.renderBranchTabs();
+            window.showToast('Actualizado', 'Sucursal editada correctamente');
+        }
+    };
+
+    window.deleteConfigBranch = function(idx) {
+        if(workshopSettings.branches.length <= 1) return;
+        if(confirm("¿Seguro que deseas eliminar esta sucursal? Su caja local se ocultará.")) {
+            workshopSettings.branches.splice(idx, 1);
+            StorageShield.save('settings', workshopSettings);
+            window.renderConfigBranches();
+            window.renderBranchTabs();
+        }
+    };
+
+    window.migrateBranchName = function(oldName, newName) {
+        var changed = false;
+        repairs.forEach(function(r) { if(r.branch === oldName) { r.branch = newName; changed = true; }});
+        if(changed) StorageShield.save('repairs', repairs);
+        changed = false;
+        stockItems.forEach(function(s) { if(s.branch === oldName) { s.branch = newName; changed = true; }});
+        if(changed) StorageShield.save('stock', stockItems);
+        changed = false;
+        sales.forEach(function(s) { if(s.branch === oldName) { s.branch = newName; changed = true; }});
+        if(changed) StorageShield.save('sales', sales);
+        changed = false;
+        cashMovements.forEach(function(c) { if(c.branch === oldName) { c.branch = newName; changed = true; }});
+        if(changed) StorageShield.save('cash', cashMovements);
+        changed = false;
+        cashClosures.forEach(function(c) { if(c.branch === oldName) { c.branch = newName; changed = true; }});
+        if(changed) StorageShield.save('cashClosures', cashClosures);
+        
+        if(localBranch === oldName) { window.setLocalBranch(newName); }
+        if(currentBranchFilter === oldName) { currentBranchFilter = newName; }
+        if(currentCashBranch === oldName) { currentCashBranch = newName; }
+        
+        if(workshopSettings.usersByBranch && workshopSettings.usersByBranch[oldName]) {
+            workshopSettings.usersByBranch[newName] = workshopSettings.usersByBranch[oldName];
+            delete workshopSettings.usersByBranch[oldName];
+        }
     };
 
     window.handleLogoUpload = function(input) {
@@ -830,21 +940,29 @@
 
     window.togglePosCam = function() {
       var box = $('posScannerBox');
+      var grid = $('posCatalogGrid');
       if (box.classList.contains('hidden')) {
         box.classList.remove('hidden');
+        if(grid) grid.classList.add('hidden'); 
         if (!posScanner) posScanner = new Html5Qrcode("pos-qr-reader");
         posScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: {width: 250, height: 250} }, function(decodedText) {
-            window.addPosItemByCode(decodedText);
+            window.addPosItemByCode(decodedText, localBranch);
             window.showToast("Producto Escaneado", decodedText);
         }).catch(function(err){ console.log(err); });
       } else { window.stopPosCam(); }
     };
-    window.stopPosCam = function() { $('posScannerBox').classList.add('hidden'); if (posScanner) { try { posScanner.stop().catch(function(e){}); } catch(e){} } };
+    window.stopPosCam = function() { 
+        $('posScannerBox').classList.add('hidden'); 
+        if($('posCatalogGrid')) $('posCatalogGrid').classList.remove('hidden');
+        if (posScanner) { try { posScanner.stop().catch(function(e){}); } catch(e){} } 
+    };
 
     window.toggleStockCam = function() {
       var box = $('scannerContainer');
+      var grid = $('stockListContainer');
       if (box.classList.contains('hidden')) {
         box.classList.remove('hidden');
+        if(grid) grid.style.display = 'none';
         if (!stockScanner) stockScanner = new Html5Qrcode("qr-reader");
         stockScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: {width: 250, height: 250} }, function(decodedText) {
             if($('stkCode')) $('stkCode').value = decodedText;
@@ -853,9 +971,13 @@
         }).catch(function(err){ console.log(err); });
       } else { window.stopStockCam(); }
     };
-    window.stopStockCam = function() { $('scannerContainer').classList.add('hidden'); if (stockScanner) { try { stockScanner.stop().catch(function(e){}); } catch(e){} } };
+    window.stopStockCam = function() { 
+        $('scannerContainer').classList.add('hidden'); 
+        if($('stockListContainer')) $('stockListContainer').style.display = 'block';
+        if (stockScanner) { try { stockScanner.stop().catch(function(e){}); } catch(e){} } 
+    };
 
-    // --- LOGICA DE USUARIOS POR SUCURSAL Y PIN ADMIN ---
+    // --- LOGICA DE USUARIOS Y PIN ADMIN ---
     window.openSwitchUserModal = function() {
       var grid = $('usersListGrid');
       if(!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {};
@@ -941,7 +1063,7 @@
       else if (entered !== null) { window.showToast("Error", "Clave incorrecta."); }
     };
 
-    // --- MÓDULO DE CAJA (LOCAL A LA SUCURSAL) ---
+    // --- MÓDULO DE CAJA (LOCAL) ---
     window.showCashIncome = function() { $('cshType').value = 'INCOME'; $('cashFormTitle').textContent = 'Registrar Ingreso'; $('cashMovementForm').classList.remove('hidden'); };
     window.showCashExpense = function() { $('cshType').value = 'EXPENSE'; $('cashFormTitle').textContent = 'Registrar Egreso'; $('cashMovementForm').classList.remove('hidden'); };
     window.hideCashForm = function() { $('cashMovementForm').classList.add('hidden'); };
@@ -964,7 +1086,7 @@
        var html = '<div style="width:230px;margin:auto;font-family:monospace;line-height:1.25;color:#000;text-align:center;">' +
                   '<div style="border-bottom:1px dashed #000;padding-bottom:4px;margin-bottom:4px;">' +
                   '<b style="font-size:12px;">' + workshopSettings.name.toUpperCase() + '</b><br>' +
-                  '<b style="font-size:10px;">COMPROBANTE CAJA ('+m.branch+')</b><br>' +
+                  '<b style="font-size:10px;">COMPROBANTE CAJA ('+(m.branch||'Central')+')</b><br>' +
                   '<span style="font-size:9px;">' + new Date(m.date).toLocaleString('es-AR') + '</span><br>' +
                   '<span style="font-size:9px;">TICKET #' + m.id + '</span></div>' +
                   '<div style="text-align:left;font-size:10px;margin-bottom:6px;">' +
@@ -1017,10 +1139,10 @@
     };
 
     window.printCashCierre = function(cierreId) {
-        var inc = 0, exp = 0, net = 0, date = Date.now();
+        var inc = 0, exp = 0, net = 0, date = Date.now(), b = localBranch;
         if (cierreId) {
             var c = cashClosures.find(function(x){ return x.id === cierreId; });
-            if(c) { inc = c.inc; exp = c.exp; net = c.net; date = c.date; } else return;
+            if(c) { inc = c.inc; exp = c.exp; net = c.net; date = c.date; b = c.branch || localBranch; } else return;
         } else {
             inc = parseFloat($('cashTotalIncome').textContent.replace(/[^0-9.-]+/g,"")) || 0;
             exp = parseFloat($('cashTotalExpense').textContent.replace(/[^0-9.-]+/g,"")) || 0;
@@ -1030,7 +1152,7 @@
         var html = '<div style="width:230px;margin:auto;font-family:monospace;line-height:1.25;color:#000;text-align:center;">' +
                   '<div style="border-bottom:1px dashed #000;padding-bottom:4px;margin-bottom:4px;">' +
                   '<b style="font-size:12px;">' + workshopSettings.name.toUpperCase() + '</b><br>' +
-                  '<b style="font-size:10px;">REPORTE CAJA ('+localBranch+')</b><br>' +
+                  '<b style="font-size:10px;">REPORTE CAJA ('+b+')</b><br>' +
                   '<span style="font-size:9px;">' + new Date(date).toLocaleString('es-AR') + '</span></div>' +
                   '<div style="text-align:left;font-size:10px;margin-bottom:6px;">' +
                   '<b>Ingresos:</b> $' + inc + '<br>' +
@@ -1043,10 +1165,10 @@
     };
 
     window.sendCashCierreWA = function(cierreId) {
-        var inc = 0, exp = 0, net = 0, date = Date.now();
+        var inc = 0, exp = 0, net = 0, date = Date.now(), b = localBranch;
         if (cierreId) {
             var c = cashClosures.find(function(x){ return x.id === cierreId; });
-            if(c) { inc = c.inc; exp = c.exp; net = c.net; date = c.date; } else return;
+            if(c) { inc = c.inc; exp = c.exp; net = c.net; date = c.date; b = c.branch || localBranch; } else return;
         } else {
             inc = parseFloat($('cashTotalIncome').textContent.replace(/[^0-9.-]+/g,"")) || 0;
             exp = parseFloat($('cashTotalExpense').textContent.replace(/[^0-9.-]+/g,"")) || 0;
@@ -1062,7 +1184,7 @@
                 phone = workshopSettings.adminPhone;
             } else return;
         }
-        var msg = `*${workshopSettings.name.toUpperCase()} - CIERRE CAJA (${localBranch})*\n📅 Fecha: ${new Date(date).toLocaleString('es-AR')}\n\n🟢 Ingresos: $${inc}\n🔴 Egresos: $${exp}\n\n💰 *SALDO FINAL: $${net}*`;
+        var msg = `*${workshopSettings.name.toUpperCase()} - CIERRE CAJA (${b})*\n📅 Fecha: ${new Date(date).toLocaleString('es-AR')}\n\n🟢 Ingresos: $${inc}\n🔴 Egresos: $${exp}\n\n💰 *SALDO FINAL: $${net}*`;
         window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
     };
 
@@ -1078,7 +1200,6 @@
             cashClosures.unshift(closure);
             StorageShield.save('cashClosures', cashClosures);
 
-            // Eliminar SOLO los movimientos de esta caja para reiniciarla localmente
             cashMovements = cashMovements.filter(function(c) { return c.branch !== localBranch; });
             StorageShield.save('cash', cashMovements);
             
@@ -1268,7 +1389,7 @@
             </div>
         </div>`;
         $('printArea').innerHTML = html;
-        $('printArea').style.display = 'block'; $('printArea').classList.remove('hidden');
+        $('printArea').style.display = 'block';$('printArea').classList.remove('hidden');
         window.print(); setTimeout(function(){ $('printArea').classList.add('hidden'); }, 500);
     };
 
@@ -1278,7 +1399,7 @@
         r.status = newStatus;
         StorageShield.save('repairs', repairs);
         window.showToast("Estado Actualizado", "El equipo pasó a: " + newStatus);
-        if($('dtlOperationalStatusBadge')) $('dtlOperationalStatusBadge').textContent = newStatus;
+        if($('dtlOperationalStatusBadge'))$('dtlOperationalStatusBadge').textContent = newStatus;
         window.renderRepairsList(); window.updateCounters();
     };
 
@@ -1292,7 +1413,7 @@
         });
     };
 
-    // --- CANVAS DEL PATRÓN ---
+    // --- PATRÓN ANDROID VISUAL (OPTIMIZADO PARA TOUCH) ---
     var currentPhotos = [];
     var activeUnlockType = 'pin';
     var patternCtx = null;
@@ -1302,12 +1423,12 @@
 
     window.setUnlockType = function(type) {
       activeUnlockType = type;
-      ['btnUnlockPin', 'btnUnlockPattern', 'btnUnlockNone'].forEach(function(id) { if($(id)) $(id).className = 'px-2 py-0.5 rounded text-zinc-400 transition'; });
-      if($('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1))) $('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1)).className = 'px-2 py-0.5 rounded bg-iosBlue text-white font-medium transition';
+      ['btnUnlockPin', 'btnUnlockPattern', 'btnUnlockNone'].forEach(function(id) { if($(id))$(id).className = 'px-2 py-0.5 rounded text-zinc-400 transition'; });
+      if($('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1)))$('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1)).className = 'px-2 py-0.5 rounded bg-iosBlue text-white font-medium transition';
       
-      if($('unlockViewPin')) $('unlockViewPin').style.display = type === 'pin' ? 'block' : 'none';
-      if($('unlockViewPattern')) $('unlockViewPattern').style.display = type === 'pattern' ? 'block' : 'none';
-      if($('unlockViewNone')) $('unlockViewNone').style.display = type === 'none' ? 'block' : 'none';
+      if($('unlockViewPin'))$('unlockViewPin').style.display = type === 'pin' ? 'block' : 'none';
+      if($('unlockViewPattern'))$('unlockViewPattern').style.display = type === 'pattern' ? 'block' : 'none';
+      if($('unlockViewNone'))$('unlockViewNone').style.display = type === 'none' ? 'block' : 'none';
       
       if(type === 'pattern') setTimeout(window.initPatternCanvas, 100);
     };
@@ -1357,7 +1478,7 @@
 
       var handleStart = function(e) {
          isDrawingPattern = true; selectedPatternSequence = [];
-         if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Trazando...'; $('patternStatusLabel').className = 'text-amber-400 font-bold'; }
+         if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Trazando...';$('patternStatusLabel').className = 'text-amber-400 font-bold'; }
          var p = getPos(e); checkHit(p); redraw(p.x, p.y);
       };
       var handleMove = function(e) {
@@ -1367,16 +1488,14 @@
       var handleEnd = function(e) {
          if(!isDrawingPattern) return;
          isDrawingPattern = false; redraw();
-         if($('patternStatusLabel')) { 
-             $('patternStatusLabel').textContent = selectedPatternSequence.length > 0 ? 'Patrón registrado' : 'Dibuja el patrón'; 
+         if($('patternStatusLabel')) {$('patternStatusLabel').textContent = selectedPatternSequence.length > 0 ? 'Patrón registrado' : 'Dibuja el patrón'; 
              $('patternStatusLabel').className = selectedPatternSequence.length > 0 ? 'text-emerald-400 font-bold' : 'text-zinc-400 mt-1'; 
          }
       };
       
+      // Eliminamos passive:false para evitar warnings y bloqueos en iOS modernos
       canvas.onmousedown = handleStart; canvas.onmousemove = handleMove; canvas.onmouseup = handleEnd; canvas.onmouseleave = handleEnd;
-      canvas.addEventListener('touchstart', function(e){ e.preventDefault(); handleStart(e); }, {passive: false});
-      canvas.addEventListener('touchmove', function(e){ e.preventDefault(); handleMove(e); }, {passive: false});
-      canvas.addEventListener('touchend', function(e){ e.preventDefault(); handleEnd(e); }, {passive: false});
+      canvas.ontouchstart = handleStart; canvas.ontouchmove = handleMove; canvas.ontouchend = handleEnd;
     };
     
     window.resetPatternCanvas = function() {
@@ -1390,228 +1509,14 @@
           patternCtx.beginPath(); patternCtx.arc(n.x, n.y, 8, 0, Math.PI*2);
           patternCtx.fillStyle = '#52525b'; patternCtx.fill();
       });
-      if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Dibuja el patrón en los puntos'; $('patternStatusLabel').className = 'text-zinc-400 mt-1'; }
+      if($('patternStatusLabel')) {$('patternStatusLabel').textContent = 'Dibuja el patrón en los puntos'; $('patternStatusLabel').className = 'text-zinc-400 mt-1'; }
     };
-
-    window.handleNewPhotoUpload = function(input) {
-        if (input.files && input.files[0]) {
-            Array.from(input.files).forEach(function(file) {
-                var reader = new FileReader();
-                reader.onload = function(e) { 
-                    var img = new Image();
-                    img.onload = function() {
-                        var canvas = document.createElement('canvas');
-                        var ctx = canvas.getContext('2d');
-                        var MAX_DIM = 600; 
-                        var w = img.width, h = img.height;
-                        if (w > h) { if (w > MAX_DIM) { h *= MAX_DIM / w; w = MAX_DIM; } } 
-                        else { if (h > MAX_DIM) { w *= MAX_DIM / h; h = MAX_DIM; } }
-                        canvas.width = w; canvas.height = h;
-                        ctx.drawImage(img, 0, 0, w, h);
-                        currentPhotos.push(canvas.toDataURL("image/jpeg", 0.6));
-                        window.renderNewPhotos();
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-    };
-    window.renderNewPhotos = function() {
-        if($('photoCountBadge')) $('photoCountBadge').textContent = currentPhotos.length + ' fotos';
-        if($('newPhotosGrid')) {
-            $('newPhotosGrid').innerHTML = currentPhotos.map(function(src, i) {
-                return '<div class="relative w-14 h-14 shrink-0 rounded-lg overflow-hidden border border-zinc-700"><img src="'+src+'" class="w-full h-full object-cover"><button type="button" onclick="window.removePhoto('+i+')" class="absolute top-0 right-0 bg-red-600 text-white rounded-bl-lg w-5 h-5 flex items-center justify-center text-[10px]"><i class="ph-bold ph-x"></i></button></div>';
-            }).join('');
-        }
-    };
-    window.removePhoto = function(i) { currentPhotos.splice(i,1); window.renderNewPhotos(); };
-    window.calcBalance = function(type) {
-        if(type === 'new') {
-            var total = parseFloat($('inpDeviceBudget').value) || 0;
-            var advance = parseFloat($('inpDeviceAdvance').value) || 0;
-            if($('newCalculatedBalance')) $('newCalculatedBalance').textContent = '$' + (total - advance);
-        }
-    };
-
-    window.guardarIngresoDirecto = function() {
-        var id = 'OL-' + Math.floor(1000 + Math.random() * 9000);
-        var r = {
-            id: id, branch: localBranch, clientName: $('inpClientName').value, clientPhone: $('inpClientCountryCode').value + $('inpClientPhone').value,
-            deviceType: $('inpDeviceType').value, deviceBrand: $('inpDeviceBrand').value, deviceModel: $('inpDeviceModel').value,
-            deviceSerial: $('inpDeviceSerial').value, unlockType: activeUnlockType, unlockPin: $('inpUnlockPin').value,
-            photos: currentPhotos.slice(), fault: $('inpDeviceFault').value, budget: parseFloat($('inpDeviceBudget').value) || 0,
-            advance: parseFloat($('inpDeviceAdvance').value) || 0, status: 'WAITING',
-            createdAt: Date.now(), createdBy: activeUser
-        };
-        if(!r.clientName || !r.deviceBrand || !r.deviceModel) { window.showToast("Error", "Completa los campos obligatorios (*)"); return; }
-        repairs.unshift(r); 
-        StorageShield.save('repairs', repairs);
-        window.closeModal('newRepairModal');
-        window.showToast("Éxito", "Orden creada: " + id);
-        
-        currentPhotos = []; window.renderNewPhotos(); window.resetPatternCanvas();
-        ['inpClientName','inpClientPhone','inpDeviceBrand','inpDeviceModel','inpDeviceFault','inpDeviceBudget','inpDeviceAdvance','inpDeviceSerial','inpUnlockPin'].forEach(function(el){ if($(el)) $(el).value=''; });
-        window.renderRepairsList(); window.updateCounters();
-    };
-
-    // --- PANEL MAESTRO DE LICENCIAS Y TELEMETRÍA ---
-    function createLicenseHash(workshopCode, type, days) {
-      var d = (type === 'SEM6') ? (days || 180) : 99999;
-      var str = workshopCode + '_' + type + '_' + d + '_OPENLINE_SECURE_2026';
-      var hash = 0;
-      for (var i = 0; i < str.length; i++) { hash = ((hash << 5) - hash) + str.charCodeAt(i); hash |= 0; }
-      var hex = Math.abs(hash).toString(16).toUpperCase();
-      while (hex.length < 6) hex = '0' + hex;
-      return (type === 'SEM6') ? ('OL-SEM6-' + d + '-' + hex.substring(0, 6)) : ('OL-LIFETIME-' + hex.substring(0, 6));
-    }
-
-    window.secretTap = function() {
-        var pin = prompt('🔑 Panel Maestro de Activación\nIngrese su PIN Secreto:');
-        if (pin === '8408') {
-          isAdminModeUnlocked = true;
-          $('masterAdminUnlockedView').classList.remove('hidden');
-          $('genTargetWorkshopCode').value = currentWorkshopId;
-          
-          if (mqttClient && mqttClient.connected) {
-              mqttClient.subscribe('openline/v4/global/telemetry/#', { qos: 1 });
-              window.requestTelemetryBroadcast();
-          }
-          window.renderTelemetryDashboard();
-          window.showToast("Acceso Concedido", "Panel maestro activo.");
-        }
-    };
-
-    window.emitKey = function() {
-      var code = $('genTargetWorkshopCode').value.trim().toUpperCase(); if (!code) return;
-      var type = $('genLicTypeSelect').value || 'SEM6';
-      var key = createLicenseHash(code, type, 180);
-      $('genGeneratedKey').textContent = key;
-      $('genResultBox').classList.remove('hidden');
-    };
-
-    window.copyKey = function() {
-        navigator.clipboard.writeText($('genGeneratedKey').textContent);
-        window.showToast('Copiado', 'Clave copiada al portapapeles.');
-    };
-
-    window.applyKey = function() {
-      var k = $('inpActivationKey').value.trim().toUpperCase(); if (!k) return;
-      var clean = k.trim().toUpperCase();
-      var verified = null;
-      if (clean === 'OL-MASTER-PERMANENT' || clean.indexOf('OL-LIFETIME') === 0 || clean.indexOf('OL-PRO') === 0) {
-        verified = { type: 'LIFETIME', days: 99999 };
-      } else if (clean === createLicenseHash(currentWorkshopId.toUpperCase(), 'LIFETIME')) {
-        verified = { type: 'LIFETIME', days: 99999 };
-      } else if (clean.indexOf('OL-SEM6-') === 0) {
-        var parts = clean.split('-');
-        var days = parseInt(parts[2], 10) || 180;
-        if (clean === createLicenseHash(currentWorkshopId.toUpperCase(), 'SEM6', days)) verified = { type: 'SEM6', days: days };
-      }
-
-      if (verified) {
-        var duration = verified.days || 180;
-        var licenseInfo = { type: verified.type, key: k, expiresAt: (verified.type === 'LIFETIME') ? 9999999999999 : (Date.now() + (duration * 24 * 3600 * 1000)) };
-        StorageShield.save('license', licenseInfo, true);
-        window.updateLicenseUI();
-        window.closeModal('licenseModal');
-        window.showToast('Activado', 'Licencia PRO habilitada correctamente.');
-      } else { window.showToast('Inválido', 'Clave no válida para este taller.'); }
-    };
-
-    window.requestTelemetryBroadcast = function() {
-        if(mqttClient && mqttClient.connected) {
-            mqttClient.publish('openline/v4/global/telemetry/ping', JSON.stringify({ pingFrom: myDeviceId, timestamp: Date.now() }));
-            window.showToast("Sondeando", "Consultando red...");
-        }
-    };
-
-    window.renderTelemetryDashboard = function() {
-        var container = $('telemetryWorkshopsList');
-        if (!container) return;
-
-        var devicesArray = Object.keys(masterTelemetryDB).map(function(k) { return masterTelemetryDB[k]; });
-        var now = Date.now();
-        var workshopsMap = {};
-        var onlineUsersCount = 0;
-
-        devicesArray.forEach(function(d) {
-            var diffSec = Math.floor((now - (d.time || 0)) / 1000);
-            var isOnline = diffSec < 150;
-            
-            if (!workshopsMap[d.wsId]) {
-                workshopsMap[d.wsId] = { wsId: d.wsId, name: d.name, lic: d.lic, repCount: d.repCount, users: [], isOnline: false, lastSeen: d.time || 0 };
-            }
-            if (isOnline) {
-                workshopsMap[d.wsId].isOnline = true;
-                onlineUsersCount++;
-                if (d.user) workshopsMap[d.wsId].users.push(d.user);
-            }
-            if((d.time || 0) > workshopsMap[d.wsId].lastSeen) {
-                workshopsMap[d.wsId].lastSeen = d.time;
-                workshopsMap[d.wsId].name = d.name;
-                workshopsMap[d.wsId].repCount = d.repCount;
-                workshopsMap[d.wsId].lic = d.lic;
-            }
-        });
-
-        var wsArray = Object.keys(workshopsMap).map(function(k) { return workshopsMap[k]; });
-        wsArray.sort(function(a, b) { return b.lastSeen - a.lastSeen; });
-
-        var onlineWsCount = 0, demoWsCount = 0, proWsCount = 0;
-
-        var html = wsArray.map(function(w) {
-            if (w.isOnline) onlineWsCount++;
-            var isPro = (w.lic && w.lic.indexOf('PRO') >= 0) || (w.lic && w.lic.indexOf('VITALICIO') >= 0);
-            if (isPro) proWsCount++; else demoWsCount++;
-
-            var diffSec = Math.floor((now - w.lastSeen) / 1000);
-            var timeLabel = w.isOnline ? '🟢 En Línea' : (diffSec < 3600 ? ('Hace ' + Math.floor(diffSec/60) + 'm') : ('Hace ' + Math.floor(diffSec/3600) + 'h'));
-            var isCurrent = w.wsId === currentWorkshopId;
-            var usersText = w.isOnline && w.users.length > 0 ? ('👤 ' + [...new Set(w.users)].join(', ')) : 'Inactivo';
-
-            return '<div class="p-2.5 bg-zinc-900 border ' + (w.isOnline ? 'border-emerald-700/60 bg-emerald-950/10' : 'border-zinc-800') + ' rounded-xl flex items-center justify-between gap-2">' +
-                     '<div class="min-w-0 flex-1">' +
-                       '<div class="flex items-center gap-1.5 flex-wrap"><span class="font-mono text-xs font-bold text-white">' + w.wsId + '</span>' +
-                         (isCurrent ? '<span class="text-[8px] bg-indigo-900 text-indigo-200 px-1.5 py-0.2 rounded font-bold">TU TALLER</span>' : '') +
-                         '<span class="text-[9px] px-1.5 py-0.2 rounded font-bold ' + (isPro ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800') + '">' + (w.lic || 'DEMO') + '</span></div>' +
-                       '<div class="text-[10px] text-zinc-400 mt-0.5 truncate"><b>' + (w.name || 'Sin Nombre') + '</b> • ' + (w.repCount || 0) + ' órdenes</div>' +
-                       '<div class="text-[9px] text-iosBlue mt-0.5">' + usersText + '</div>' +
-                     '</div>' +
-                     '<div class="text-right shrink-0 flex flex-col items-end gap-1"><span class="text-[9px] font-bold ' + (w.isOnline ? 'text-emerald-400 font-mono' : 'text-zinc-500') + '">' + timeLabel + '</span>' +
-                       '<button type="button" onclick="$(\'genTargetWorkshopCode\').value=\'' + w.wsId + '\'; window.emitKey();" class="px-2 py-0.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded text-[9px]">Emitir Clave</button>' +
-                     '</div></div>';
-        }).join('');
-
-        if (wsArray.length === 0) { html = '<div class="p-4 text-center text-zinc-500 text-[10px]">Esperando reporte de la red... Presiona "Sondear Red".</div>'; }
-
-        container.innerHTML = html;
-        if($('telTotalWorkshops')) $('telTotalWorkshops').textContent = wsArray.length;
-        if($('telOnlineWorkshops')) $('telOnlineWorkshops').textContent = onlineWsCount;
-        if($('telOnlineUsers')) $('telOnlineUsers').textContent = onlineUsersCount;
-        if($('telDemoWorkshops')) $('telDemoWorkshops').textContent = demoWsCount;
-        if($('telProWorkshops')) $('telProWorkshops').textContent = proWsCount;
-    };
-
-    function emitTelemetryHeartbeat() {
-        if (mqttClient && mqttClient.connected) {
-            try {
-                var licInfo = StorageShield.load('license', null);
-                var licLabel = (licInfo && (licInfo.type === 'LIFETIME' || licInfo.type === 'PRO' || licInfo.type === 'VITALICIO')) ? 'PRO Vitalicio' : 'DEMO';
-                var payload = {
-                    wsId: currentWorkshopId, devId: myDeviceId, user: activeUser, name: workshopSettings.name || 'Sin Nombre',
-                    lic: licLabel, repCount: repairs.length, time: Date.now(), ver: APP_CODE_VERSION
-                };
-                mqttClient.publish('openline/v4/global/telemetry/heartbeat', JSON.stringify(payload));
-            } catch(e) {}
-        }
-    }
 
     // --- RECEPTOR MQTT MULTI-DISPOSITIVO Y SINCRONIZACIÓN ---
     if (typeof mqtt !== 'undefined') {
         mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'opl_' + myDeviceId, clean: true, reconnectPeriod: 3000 });
         mqttClient.on('connect', function() {
-            if($('livePulseDot')) $('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
+            if($('livePulseDot'))$('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
             mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', { qos: 1 });
             mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/request-sync', { qos: 0 });
             mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', { qos: 0 });
@@ -1687,6 +1592,7 @@
         });
     }
 
+    // --- ALERTA DE ACTUALIZACIÓN CON SONIDO ---
     var audioCtx = null;
     function playAudioNotification() {
       try {
@@ -1728,10 +1634,10 @@
       
       window.checkLocalBranch();
 
-      if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
-      if($('appHeaderTitle')) $('appHeaderTitle').textContent = workshopSettings.name;
-      if($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
-      if($('modalWorkshopCodeDisplay')) $('modalWorkshopCodeDisplay').textContent = currentWorkshopId;
+      if($('headerActiveUserDisplay'))$('headerActiveUserDisplay').textContent = activeUser;
+      if($('appHeaderTitle'))$('appHeaderTitle').textContent = workshopSettings.name;
+      if($('headerWorkshopCode'))$('headerWorkshopCode').textContent = currentWorkshopId;
+      if($('modalWorkshopCodeDisplay'))$('modalWorkshopCodeDisplay').textContent = currentWorkshopId;
       
       var licInfo = StorageShield.load('license', null);
       if(!licInfo || !window.isRecognizedProLicense(licInfo, currentWorkshopId)) {
@@ -1754,6 +1660,8 @@
       window.updateLicenseUI();
 
       window.renderRepairsList(); window.updateCounters();
+      window.updateCashBalanceUI(); window.renderCashClosures();
+      window.updateOnlineUsersUI();
       
       try {
           var savedVersion = localStorage.getItem(VERSION_STORAGE_KEY);
