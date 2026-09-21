@@ -80,7 +80,7 @@
           <span>Esta aplicación se ha actualizado</span>
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
         </h4>
-        <p class="text-[10px] text-indigo-200 mt-0.5">Reportes de caja e informes técnicos añadidos.</p>
+        <p class="text-[10px] text-indigo-200 mt-0.5">Permisos de cierre de caja actualizados.</p>
       </div>
     </div>
     <button type="button" onclick="window.dismissUpdateBanner()" class="w-7 h-7 rounded-lg bg-indigo-900/80 hover:bg-indigo-800 text-indigo-300 flex items-center justify-center shrink-0">
@@ -367,6 +367,15 @@
             <div><label class="text-[9px] text-zinc-400 block mb-0.5">Ppto Inicial ($)</label><input type="number" id="inpDeviceBudget" oninput="window.calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></div>
             <div><label class="text-[9px] text-zinc-400 block mb-0.5">Seña ($)</label><input type="number" id="inpDeviceAdvance" oninput="window.calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold"></div>
           </div>
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <div>
+              <label class="text-[9px] text-zinc-400 block mb-0.5 font-bold">Estado Inicial Taller</label>
+              <select id="inpNewInitialStatus" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white font-bold">
+                <option value="WAITING">En Recepción</option>
+                <option value="IN_PROGRESS">Pasa a Taller</option>
+              </select>
+            </div>
+          </div>
           <div class="flex justify-between items-center text-xs pt-2 border-t border-zinc-800/80">
             <span class="text-zinc-400 font-bold uppercase">Resta pagar:</span>
             <span id="newCalculatedBalance" class="font-mono font-bold text-amber-400 text-sm">$0</span>
@@ -581,6 +590,56 @@
     </div>
   </div>
 
+  <!-- MODAL: LICENCIAS & PANEL DE TELEMETRÍA MAESTRO -->
+  <div id="licenseModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg p-4 space-y-3.5 pb-safe shadow-2xl text-xs text-zinc-300 max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+      
+      <div class="overflow-y-auto space-y-3.5 flex-1 pr-1">
+        <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center">
+          <span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia:</span>
+          <div id="licenseStatusText" onclick="window.secretTap()" class="font-mono text-base font-black text-amber-400 py-1 cursor-pointer select-none">DEMO</div>
+          <span id="licenseDetailCountdown" class="text-[11px] text-zinc-400 font-mono block mt-0.5">Versión de prueba</span>
+          <span class="text-[9px] text-zinc-600 block mt-1">Toca 5 veces sobre el estado para acceder al Modo Maestro</span>
+        </div>
+
+        <!-- PANEL DE TELEMETRÍA MAESTRO -->
+        <div id="masterAdminUnlockedView" class="hidden p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3">
+          <div class="flex items-center justify-between border-b border-indigo-900 pb-2">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide">Panel Maestro Creador</span>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <span class="text-[9px] font-bold text-indigo-300 uppercase">Generar Licencia de Activación:</span>
+            <div class="grid grid-cols-3 gap-1.5">
+              <input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="col-span-2 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono text-xs">
+              <select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold">
+                <option value="SEM6" selected>6 Meses</option>
+                <option value="LIFETIME">Vitalicio</option>
+              </select>
+            </div>
+            <button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow">Emitir Clave Segura</button>
+            <div id="genResultBox" class="hidden p-2.5 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800">
+              <span id="genGeneratedKey" class="font-mono text-emerald-400 font-bold text-xs"></span>
+              <button type="button" onclick="window.copyKey()" class="px-2.5 py-1 bg-zinc-800 rounded text-[10px] text-white font-bold">Copiar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-1.5 pt-1">
+          <label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar o Renovar Licencia:</label>
+          <div class="flex gap-1.5">
+            <input type="text" id="inpActivationKey" placeholder="Pega tu clave aquí..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs">
+            <button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs">Activar</button>
+          </div>
+        </div>
+      </div>
+      <button type="button" onclick="window.closeModal('licenseModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1 shrink-0">Cerrar</button>
+    </div>
+  </div>
+
   <div id="toastContainer" class="fixed top-safe left-0 right-0 z-[10000] flex flex-col items-center gap-2 pointer-events-none mt-2 px-4"></div>
   <div id="printArea" class="hidden"></div>
 
@@ -588,7 +647,7 @@
   <!-- SISTEMA PRINCIPAL JAVASCRIPT BLINDADO                                              -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v10.2.0'; // ACTUALIZADO PARA FORZAR EL POPUP
+    var APP_CODE_VERSION = 'v10.3.0'; // ACTUALIZADO PARA FORZAR EL POPUP
 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
@@ -660,6 +719,53 @@
     var currentFilter = 'ALL';
     var currentVentasPeriod = 'HOY';
     var selectedRepairId = null;
+
+    // --- CONFIGURACIÓN DE APP ---
+    window.openSettingsModal = function() {
+        if($('cfgWorkshopName')) $('cfgWorkshopName').value = workshopSettings.name || '';
+        if($('cfgWorkshopSubtitle')) $('cfgWorkshopSubtitle').value = workshopSettings.subtitle || '';
+        
+        if(workshopSettings.logo && $('settingsLogoPreview')) {
+            $('settingsLogoPreview').innerHTML = '<img src="'+workshopSettings.logo+'" class="w-full h-full object-cover">';
+        } else if($('settingsLogoPreview')) {
+            $('settingsLogoPreview').innerHTML = '<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>';
+        }
+        window.openModal('settingsModal');
+    };
+
+    window.saveSettings = function() {
+        workshopSettings.name = $('cfgWorkshopName').value;
+        workshopSettings.subtitle = $('cfgWorkshopSubtitle').value;
+        StorageShield.save('settings', workshopSettings);
+        
+        if($('appHeaderTitle')) $('appHeaderTitle').textContent = workshopSettings.name;
+        if($('appHeaderSubtitle')) $('appHeaderSubtitle').textContent = workshopSettings.subtitle;
+        
+        window.showToast("Guardado", "Ajustes actualizados");
+        window.closeModal('settingsModal');
+    };
+
+    window.handleLogoUpload = function(input) {
+        if(input.files && input.files[0]) {
+            var r = new FileReader();
+            r.onload = function(e) {
+                workshopSettings.logo = e.target.result;
+                $('settingsLogoPreview').innerHTML = '<img src="'+e.target.result+'" class="w-full h-full object-cover">';
+                if($('headerCustomLogo')) {
+                    $('headerCustomLogo').src = e.target.result;
+                    $('headerCustomLogo').classList.remove('hidden');
+                    if($('headerDefaultIcon')) $('headerDefaultIcon').classList.add('hidden');
+                }
+            };
+            r.readAsDataURL(input.files[0]);
+        }
+    };
+    window.removeLogo = function() {
+        workshopSettings.logo = '';
+        $('settingsLogoPreview').innerHTML = '<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>';
+        if($('headerCustomLogo')) $('headerCustomLogo').classList.add('hidden');
+        if($('headerDefaultIcon')) $('headerDefaultIcon').classList.remove('hidden');
+    };
 
     // --- CÁMARAS (QR / BARCODE) ---
     var posScanner = null;
@@ -777,7 +883,7 @@
       else if (entered !== null) { window.showToast("Error", "Clave de Admin incorrecta."); }
     };
 
-    // --- MÓDULO DE CAJA (COMPLETO CON CIERRE DIARIO Y TICKETS) ---
+    // --- MÓDULO DE CAJA (COMPLETO CON CIERRE DIARIO LIBERADO Y TICKETS) ---
     window.showCashIncome = function() { $('cshType').value = 'INCOME'; $('cashFormTitle').textContent = 'Registrar Ingreso'; $('cashMovementForm').classList.remove('hidden'); };
     window.showCashExpense = function() { $('cshType').value = 'EXPENSE'; $('cashFormTitle').textContent = 'Registrar Egreso'; $('cashMovementForm').classList.remove('hidden'); };
     window.hideCashForm = function() { $('cashMovementForm').classList.add('hidden'); };
@@ -865,13 +971,13 @@
     };
 
     window.cerrarCajaRestablecer = function() {
-        if(activeUser !== 'Admin') { window.showToast('Acceso Denegado', 'Solo el Administrador puede cerrar la caja.'); return; }
-        window.requestAdminPinAuth("Cerrar la caja y archivar los movimientos actuales", function() {
-            cashMovements = []; // En un SaaS real se enviaría al backend. Aquí lo limpiamos para iniciar el día.
+        var confirmar = confirm("¿Confirmas el Cierre de Caja?\nEsto enviará a cero los movimientos diarios para iniciar un nuevo turno.");
+        if (confirmar) {
+            cashMovements = [];
             StorageShield.save('cash', cashMovements);
             window.updateCashBalanceUI();
             window.showToast("Caja Cerrada", "La caja se ha restablecido a $0.");
-        });
+        }
     };
 
     // --- REPARACIONES E INFORMES TÉCNICOS ---
@@ -977,7 +1083,7 @@
         r.repairDetails = $('editRepairDetails').value;
         StorageShield.save('repairs', repairs);
         window.closeModal('editRepairModal');
-        window.openDetailModal(r.id); // Refresh
+        window.openDetailModal(r.id); 
         window.renderRepairsList();
         window.showToast("Guardado", "La orden se actualizó correctamente.");
     };
@@ -1016,7 +1122,7 @@
             </div>
         </div>`;
         $('printArea').innerHTML = html;
-        $('printArea').style.display = 'block'; $('printArea').classList.remove('hidden');
+        $('printArea').style.display = 'block';$('printArea').classList.remove('hidden');
         window.print(); setTimeout(function(){ $('printArea').classList.add('hidden'); }, 500);
     };
 
@@ -1026,7 +1132,7 @@
         r.status = newStatus;
         StorageShield.save('repairs', repairs);
         window.showToast("Estado Actualizado", "El equipo pasó a: " + newStatus);
-        if($('dtlOperationalStatusBadge')) $('dtlOperationalStatusBadge').textContent = newStatus;
+        if($('dtlOperationalStatusBadge'))$('dtlOperationalStatusBadge').textContent = newStatus;
         window.renderRepairsList(); window.updateCounters();
     };
 
@@ -1049,12 +1155,12 @@
 
     window.setUnlockType = function(type) {
       activeUnlockType = type;
-      ['btnUnlockPin', 'btnUnlockPattern', 'btnUnlockNone'].forEach(function(id) { if($(id)) $(id).className = 'px-2 py-0.5 rounded text-zinc-400 transition'; });
-      if($('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1))) $('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1)).className = 'px-2 py-0.5 rounded bg-iosBlue text-white font-medium transition';
+      ['btnUnlockPin', 'btnUnlockPattern', 'btnUnlockNone'].forEach(function(id) { if($(id))$(id).className = 'px-2 py-0.5 rounded text-zinc-400 transition'; });
+      if($('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1)))$('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1)).className = 'px-2 py-0.5 rounded bg-iosBlue text-white font-medium transition';
       
-      if($('unlockViewPin')) $('unlockViewPin').style.display = type === 'pin' ? 'block' : 'none';
-      if($('unlockViewPattern')) $('unlockViewPattern').style.display = type === 'pattern' ? 'block' : 'none';
-      if($('unlockViewNone')) $('unlockViewNone').style.display = type === 'none' ? 'block' : 'none';
+      if($('unlockViewPin'))$('unlockViewPin').style.display = type === 'pin' ? 'block' : 'none';
+      if($('unlockViewPattern'))$('unlockViewPattern').style.display = type === 'pattern' ? 'block' : 'none';
+      if($('unlockViewNone'))$('unlockViewNone').style.display = type === 'none' ? 'block' : 'none';
       
       if(type === 'pattern') setTimeout(window.initPatternCanvas, 100);
     };
@@ -1104,7 +1210,7 @@
 
       var handleStart = function(e) {
          e.preventDefault(); isDrawingPattern = true; selectedPatternSequence = [];
-         if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Trazando...'; $('patternStatusLabel').className = 'text-amber-400 font-bold'; }
+         if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Trazando...';$('patternStatusLabel').className = 'text-amber-400 font-bold'; }
          var p = getPos(e); checkHit(p); redraw(p.x, p.y);
       };
       var handleMove = function(e) {
@@ -1114,8 +1220,7 @@
       var handleEnd = function(e) {
          e.preventDefault(); if(!isDrawingPattern) return;
          isDrawingPattern = false; redraw();
-         if($('patternStatusLabel')) { 
-             $('patternStatusLabel').textContent = selectedPatternSequence.length > 0 ? 'Patrón registrado' : 'Dibuja el patrón'; 
+         if($('patternStatusLabel')) {$('patternStatusLabel').textContent = selectedPatternSequence.length > 0 ? 'Patrón registrado' : 'Dibuja el patrón'; 
              $('patternStatusLabel').className = selectedPatternSequence.length > 0 ? 'text-emerald-400 font-bold' : 'text-zinc-400 mt-1'; 
          }
       };
@@ -1136,15 +1241,15 @@
           patternCtx.beginPath(); patternCtx.arc(n.x, n.y, 8, 0, Math.PI*2);
           patternCtx.fillStyle = '#52525b'; patternCtx.fill();
       });
-      if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Dibuja el patrón en los puntos'; $('patternStatusLabel').className = 'text-zinc-400 mt-1'; }
+      if($('patternStatusLabel')) {$('patternStatusLabel').textContent = 'Dibuja el patrón en los puntos'; $('patternStatusLabel').className = 'text-zinc-400 mt-1'; }
     };
 
     window.guardarIngresoDirecto = function() {
         var id = 'OL-' + Math.floor(1000 + Math.random() * 9000);
         var r = {
-            id: id, clientName: $('inpClientName').value, clientPhone: $('inpClientCountryCode').value + $('inpClientPhone').value,
-            deviceType: $('inpDeviceType').value, deviceBrand: $('inpDeviceBrand').value, deviceModel: $('inpDeviceModel').value,
-            deviceSerial: $('inpDeviceSerial').value, unlockType: activeUnlockType, unlockPin: $('inpUnlockPin').value,
+            id: id, clientName: $('inpClientName').value, clientPhone: $('inpClientCountryCode').value +$('inpClientPhone').value,
+            deviceType: $('inpDeviceType').value, deviceBrand: $('inpDeviceBrand').value, deviceModel:$('inpDeviceModel').value,
+            deviceSerial: $('inpDeviceSerial').value, unlockType: activeUnlockType, unlockPin:$('inpUnlockPin').value,
             photos: currentPhotos.slice(), fault: $('inpDeviceFault').value, budget: parseFloat($('inpDeviceBudget').value) || 0,
             advance: parseFloat($('inpDeviceAdvance').value) || 0, status: 'WAITING',
             createdAt: Date.now(), createdBy: activeUser
@@ -1156,284 +1261,8 @@
         window.showToast("Éxito", "Orden creada: " + id);
         
         currentPhotos = []; window.renderNewPhotos();
-        ['inpClientName','inpClientPhone','inpDeviceBrand','inpDeviceModel','inpDeviceFault','inpDeviceBudget','inpDeviceAdvance','inpDeviceSerial','inpUnlockPin'].forEach(function(el){ if($(el)) $(el).value=''; });
+        ['inpClientName','inpClientPhone','inpDeviceBrand','inpDeviceModel','inpDeviceFault','inpDeviceBudget','inpDeviceAdvance','inpDeviceSerial','inpUnlockPin'].forEach(function(el){ if($(el))$(el).value=''; });
         window.renderRepairsList(); window.updateCounters();
-    };
-
-    // --- LOGICA DE STOCK Y EDICIÓN DE PRECIOS ---
-    window.toggleStockForm = function() {
-      var form = $('newStockFormContainer');
-      if(form) form.style.display = form.style.display === 'block' ? 'none' : 'block';
-    };
-    window.autoBarcode = function() {
-      if($('stkCode')) $('stkCode').value = Math.floor(100000000000 + Math.random() * 900000000000).toString();
-    };
-    window.saveStockItem = function() {
-      var code = $('stkCode').value.trim() || Math.floor(100000000000 + Math.random() * 900000000000).toString();
-      var name = $('stkName').value.trim();
-      var cat = $('stkCategory').value;
-      var qty = parseInt($('stkQuantity').value) || 1;
-      var price = parseFloat($('stkSalePrice').value) || 0;
-      
-      if(!name) { window.showToast('Error', 'Ingrese nombre del repuesto'); return; }
-      
-      var existing = stockItems.find(function(i) { return i.code === code; });
-      if(existing) { existing.qty += qty; existing.price = price; } 
-      else { stockItems.push({ code: code, name: name, category: cat, qty: qty, price: price }); }
-      
-      StorageShield.save('stock', stockItems);
-      window.showToast('Guardado', 'Stock actualizado');
-      $('stkName').value = ''; $('stkCode').value = ''; $('stkSalePrice').value = '';
-      window.renderStockList();
-    };
-
-    window.updateStockQty = function(code, delta) {
-      var st = stockItems.find(function(i) { return i.code === code; });
-      if(st) {
-         st.qty += delta;
-         if(st.qty < 0) st.qty = 0;
-         StorageShield.save('stock', stockItems);
-         window.renderStockList();
-      }
-    };
-
-    window.deleteStockItem = function(code) {
-      if(activeUser !== 'Admin') { window.showToast('Denegado', 'Solo Admin puede eliminar'); return; }
-      window.requestAdminPinAuth("Eliminar producto del inventario", function() {
-          stockItems = stockItems.filter(function(i){ return i.code !== code; });
-          StorageShield.save('stock', stockItems);
-          window.renderStockList();
-          window.showToast("Eliminado", "Producto removido exitosamente.");
-      });
-    };
-
-    window.editStockPrice = function(code) {
-      if(activeUser !== 'Admin') { window.showToast('Denegado', 'Solo Admin puede editar precios.'); return; }
-      window.requestAdminPinAuth("Modificar precio del producto", function() {
-          var st = stockItems.find(function(i) { return i.code === code; });
-          if(!st) return;
-          var newPrice = prompt("Ingrese el nuevo precio para " + st.name + ":", st.price);
-          if(newPrice !== null && !isNaN(parseFloat(newPrice))) {
-              st.price = parseFloat(newPrice);
-              StorageShield.save('stock', stockItems);
-              window.renderStockList();
-              window.showToast("Actualizado", "Precio modificado correctamente.");
-          }
-      });
-    };
-
-    window.renderStockList = function() {
-      var container = $('stockListContainer');
-      if(!container) return;
-      var term = ($('stkSearchInput') ? $('stkSearchInput').value.toLowerCase() : '');
-      var filtered = stockItems.filter(function(i) { return i.name.toLowerCase().includes(term) || i.code.includes(term); });
-      var isAdmin = (activeUser === 'Admin');
-
-      if(filtered.length === 0) { container.innerHTML = '<div class="text-center p-4 text-zinc-500">No hay repuestos.</div>'; return; }
-      container.innerHTML = filtered.map(function(i) {
-          var editPriceHtml = isAdmin ? '<button type="button" onclick="window.editStockPrice(\''+i.code+'\')" class="ml-1 text-zinc-400 hover:text-amber-400"><i class="ph-bold ph-pencil-simple"></i></button>' : '';
-          return '<div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl flex flex-col gap-1.5 mb-1.5 shadow-sm">' +
-                 '<div class="flex justify-between items-start">' +
-                    '<div class="flex-1 min-w-0 pr-2"><div class="font-bold text-white text-xs truncate">' + i.name + '</div><div class="text-[10px] text-zinc-500 font-mono">' + i.code + '</div></div>' +
-                    '<div class="flex items-center"><span class="text-emerald-400 font-bold text-sm">$' + i.price + '</span>' + editPriceHtml + '</div>' +
-                 '</div>' +
-                 '<div class="flex justify-between items-center pt-1 border-t border-zinc-800/80">' +
-                    '<span class="text-[10px] text-zinc-400 uppercase font-bold">Stock Actual</span>' +
-                    '<div class="flex items-center gap-1.5">' +
-                      '<button type="button" onclick="window.updateStockQty(\''+i.code+'\', -1)" class="w-6 h-6 rounded bg-zinc-800 text-white flex justify-center items-center active:scale-95"><i class="ph-bold ph-minus"></i></button>' +
-                      '<span class="text-sm font-bold w-6 text-center text-amber-400">' + i.qty + '</span>' +
-                      '<button type="button" onclick="window.updateStockQty(\''+i.code+'\', 1)" class="w-6 h-6 rounded bg-zinc-800 text-white flex justify-center items-center active:scale-95"><i class="ph-bold ph-plus"></i></button>' +
-                      '<button type="button" onclick="window.deleteStockItem(\''+i.code+'\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex justify-center items-center ml-2 active:scale-95"><i class="ph-bold ph-trash"></i></button>' +
-                    '</div>' +
-                 '</div></div>';
-      }).join('');
-    };
-
-    // --- POS VENTAS LOGIC Y TICKETS ---
-    var posCart = [];
-    window.renderPosCatalog = function() {
-       var grid = $('posCatalogGrid');
-       if(!grid) return;
-       var term = $('posSearchProduct') ? $('posSearchProduct').value.toLowerCase().trim() : '';
-       var filtered = stockItems.filter(function(i) { return i.qty > 0 && (i.name.toLowerCase().includes(term) || i.code.includes(term)); });
-       
-       if(filtered.length === 0) { grid.innerHTML = '<div class="col-span-2 text-zinc-500 text-center p-4">Busque repuesto o agregue manual</div>'; return; }
-       grid.innerHTML = filtered.map(function(i) {
-          return '<button type="button" onclick="window.addPosItemByCode(\''+i.code+'\')" class="p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-left hover:border-amber-500 active:scale-95 transition">' +
-                 '<div class="font-bold text-white text-[10px] leading-tight mb-1 line-clamp-2">'+i.name+'</div>' +
-                 '<div class="flex justify-between items-end"><span class="text-amber-400 font-bold text-xs">$'+i.price+'</span><span class="text-[9px] text-zinc-500">Stock: '+i.qty+'</span></div></button>';
-       }).join('');
-    };
-
-    window.addManualPosItem = function() {
-       var name = $('posManualName').value.trim();
-       var price = parseFloat($('posManualPrice').value) || 0;
-       if(!name || price <= 0) { window.showToast('Aviso', 'Ingrese nombre y precio manual'); return; }
-       
-       var code = 'MANUAL-' + Date.now();
-       posCart.push({ code: code, name: name, price: price, qty: 1 });
-       $('posManualName').value = ''; $('posManualPrice').value = '';
-       window.renderPosCart();
-       window.showToast("Agregado", "Artículo manual en carrito.");
-    };
-
-    window.addPosItemByCode = function(code) {
-       var st = stockItems.find(function(i) { return i.code === code; });
-       if(!st || st.qty <= 0) return;
-       var cartItem = posCart.find(function(c) { return c.code === code; });
-       if(cartItem) {
-           if(cartItem.qty < st.qty) cartItem.qty++;
-           else window.showToast("Límite", "No hay más stock disponible de este repuesto.");
-       } else { posCart.push({ code: st.code, name: st.name, price: st.price, qty: 1 }); }
-       window.renderPosCart();
-    };
-
-    window.renderPosCart = function() {
-       var container = $('posCartContainer');
-       var total = 0;
-       if(posCart.length === 0) {
-           container.innerHTML = '<div class="text-center text-zinc-600 text-[10px] p-4">Carrito vacío</div>';
-           if($('posTotalAmount')) $('posTotalAmount').textContent = '$0'; return;
-       }
-       container.innerHTML = posCart.map(function(c, idx) {
-           total += (c.price * c.qty);
-           var isManual = c.code.indexOf('MANUAL') === 0;
-           return '<div class="flex justify-between items-center p-2 bg-zinc-900 rounded-xl border border-zinc-800">' +
-                  '<div class="text-[10px] text-white flex-1 min-w-0"><div class="font-bold truncate pr-2">'+c.name+'</div><div class="text-amber-400">$'+c.price+' x '+c.qty+'</div></div>' +
-                  '<div class="flex gap-1 items-center">' +
-                    '<button type="button" onclick="window.removePosItem('+idx+')" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center"><i class="ph-bold ph-minus"></i></button>' +
-                    '<span class="text-xs font-bold w-4 text-center text-white">'+c.qty+'</span>' +
-                    '<button type="button" onclick="'+(isManual?'window.addManualPosItemQty('+idx+')':'window.addPosItemByCode(\''+c.code+'\')')+'" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center"><i class="ph-bold ph-plus"></i></button>' +
-                    '<button type="button" onclick="window.deletePosItemRow('+idx+')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex justify-center items-center ml-1"><i class="ph-bold ph-trash"></i></button>' +
-                  '</div></div>';
-       }).join('');
-       if($('posTotalAmount')) $('posTotalAmount').textContent = '$' + total.toLocaleString();
-    };
-
-    window.addManualPosItemQty = function(idx) {
-        posCart[idx].qty++;
-        window.renderPosCart();
-    };
-
-    window.removePosItem = function(idx) {
-       if(posCart[idx].qty > 1) posCart[idx].qty--; else posCart.splice(idx, 1);
-       window.renderPosCart();
-    };
-    
-    window.deletePosItemRow = function(idx) {
-       posCart.splice(idx, 1);
-       window.renderPosCart();
-    };
-    
-    window.clearPosCart = function() { posCart = []; window.renderPosCart(); };
-
-    window.completePosSale = function() {
-       if(posCart.length === 0) return;
-       var total = 0;
-       posCart.forEach(function(c) {
-           total += (c.price * c.qty);
-           if(c.code.indexOf('MANUAL') !== 0) {
-               var st = stockItems.find(function(i) { return i.code === c.code; });
-               if(st) st.qty -= c.qty; // Restar del stock si no es manual
-           }
-       });
-       var saleId = 'VTA-' + Math.floor(10000 + Math.random() * 90000);
-       var method = $('posPaymentMethod') ? $('posPaymentMethod').value : 'Efectivo';
-       var custName = $('posCustomerName') ? $('posCustomerName').value.trim() : '';
-
-       var newSale = { id: saleId, timestamp: Date.now(), total: total, paymentMethod: method, items: JSON.parse(JSON.stringify(posCart)), soldBy: activeUser, customerName: custName };
-       sales.unshift(newSale);
-       StorageShield.save('sales', sales); StorageShield.save('stock', stockItems);
-       window.clearPosCart(); window.renderPosCatalog(); window.closeModal('salesModal');
-       window.showToast("Venta Exitosa", "Se registró la venta y se generó el ticket.");
-       
-       window.openSaleTicketModal(saleId);
-    };
-
-    window.setVentasPeriod = function(period) {
-      currentVentasPeriod = period;
-      ['Hoy', 'Semana', 'Mes', 'Todas'].forEach(function(p) {
-        var btn = $('btnPeriod' + p);
-        if (btn) btn.className = (p.toUpperCase() === period) ? 'px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold text-xs shrink-0 shadow' : 'px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs shrink-0';
-      });
-      window.renderVentasList();
-    };
-
-    window.renderVentasList = function() {
-      var container = $('ventasListContainer');
-      if(!container) return;
-      var isAdmin = (activeUser === 'Admin'); 
-      var term = ($('ventasSearchInput') ? $('ventasSearchInput').value.toLowerCase().trim() : '');
-      var filtered = sales.filter(function(s) { return (s.id && s.id.toLowerCase().includes(term)) || (s.customerName && s.customerName.toLowerCase().includes(term)); });
-
-      if (filtered.length === 0) { container.innerHTML = '<div class="p-6 text-center text-zinc-500">No hay ventas registradas.</div>'; return; }
-
-      container.innerHTML = filtered.map(function(s) {
-        var itemsText = (s.items || []).map(function(it) { return it.qty + 'x ' + it.name; }).join(', ');
-        var deleteBtnHtml = isAdmin ? '<button type="button" onclick="window.deleteSaleAction(\'' + s.id + '\')" class="px-2 py-1 bg-rose-950 hover:bg-rose-900 text-rose-300 rounded-lg font-bold flex items-center gap-1"><i class="ph-bold ph-trash"></i> Eliminar</button>' : '';
-        return '<div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2">' +
-                 '<div class="flex items-center justify-between"><div class="flex items-center gap-1.5 flex-wrap"><span class="font-mono text-xs font-bold text-amber-400">' + s.id + '</span><span class="text-[9px] px-1.5 py-0.2 rounded font-bold bg-zinc-800 text-zinc-300">' + (s.paymentMethod || 'Efectivo') + '</span></div><b class="font-mono text-sm font-black text-white">$' + (parseFloat(s.total)||0).toLocaleString() + '</b></div>' +
-                 '<div class="text-[11px] text-zinc-300"><span>' + itemsText + '</span></div>' +
-                 '<div class="flex items-center justify-between text-[10px] text-zinc-500 pt-1 border-t border-zinc-800/80"><span>Vendedor: <b>' + (s.soldBy || 'Admin') + '</b></span><div class="flex items-center gap-1"><button type="button" onclick="window.openSaleTicketModal(\'' + s.id + '\')" class="px-2 py-1 bg-zinc-800 text-zinc-200 rounded-lg font-bold flex items-center gap-1 shadow"><i class="ph-bold ph-receipt"></i> Ticket</button>' + deleteBtnHtml + '</div></div></div>';
-      }).join('');
-    };
-
-    window.deleteSaleAction = function(saleId) {
-      if(activeUser !== 'Admin') { window.showToast("Acceso Denegado", "Solo el Administrador puede eliminar ventas."); return; }
-      window.requestAdminPinAuth("Anular venta " + saleId + " y reponer stock al inventario", function() {
-        var saleIndex = sales.findIndex(function(s) { return s.id === saleId; });
-        if (saleIndex < 0) return;
-        var targetSale = sales[saleIndex];
-        if (targetSale.items && Array.isArray(targetSale.items)) {
-          targetSale.items.forEach(function(it) {
-            if(it.code.indexOf('MANUAL') !== 0) {
-               var stItem = stockItems.find(function(si) { return si.code === it.code; });
-               if (stItem) stItem.qty += (it.qty || 1);
-            }
-          });
-          StorageShield.save('stock', stockItems); window.renderStockList();
-        }
-        sales.splice(saleIndex, 1); StorageShield.save('sales', sales);
-        window.renderVentasList(); window.showToast("Venta Anulada", "Stock repuesto correctamente.");
-      });
-    };
-
-    var selectedSaleForTicket = null;
-    window.openSaleTicketModal = function(saleId) {
-      var s = sales.find(function(x) { return x.id === saleId; });
-      if (!s) return;
-      selectedSaleForTicket = s;
-      var itemsHtml = (s.items || []).map(function(it) { return '<div style="display:flex;justify-content:space-between;"><span>' + it.qty + 'x ' + it.name + '</span><span>$' + (it.qty*it.price).toLocaleString() + '</span></div>'; }).join('');
-
-      var html = '<div style="width:230px;margin:auto;font-family:monospace;line-height:1.25;color:#000;">' +
-                   '<div style="text-align:center;border-bottom:1px dashed #000;padding-bottom:4px;margin-bottom:4px;"><b style="font-size:12px;">' + workshopSettings.name.toUpperCase() + '</b><br><b style="font-size:12px;display:inline-block;margin-top:2px;">#' + s.id + '</b></div>' +
-                   '<div style="font-size:9px;margin-bottom:4px;">Fecha: ' + new Date(s.timestamp || Date.now()).toLocaleDateString('es-AR') + '<br>Atendido por: ' + (s.soldBy || 'Admin') + '</div>' +
-                   '<div style="border-top:1px dashed #000;border-bottom:1px dashed #000;padding:4px 0;font-size:9px;">' + itemsHtml + '</div>' +
-                   '<div style="display:flex;justify-content:space-between;font-weight:bold;font-size:11px;margin-top:4px;"><span>TOTAL:</span><span>$' + (parseFloat(s.total)||0).toLocaleString() + '</span></div>' +
-                   '<div style="font-size:8px;text-align:center;margin-top:6px;">Pago: ' + (s.paymentMethod || 'Efectivo') + '<br>¡Muchas gracias por su compra!</div></div>';
-
-      if($('saleTicketPreviewBox')) $('saleTicketPreviewBox').innerHTML = html;
-      if($('printArea')) $('printArea').innerHTML = html;
-      window.openModal('saleTicketModal');
-    };
-
-    window.executePrintSaleTicket = function() {
-      if($('printArea')) {
-         $('printArea').style.display = 'block'; $('printArea').classList.remove('hidden');
-         window.print();
-         setTimeout(function(){ $('printArea').classList.add('hidden'); }, 500);
-      }
-    };
-
-    window.sendSaleTicketWA = function() {
-      if (!selectedSaleForTicket) return;
-      var s = selectedSaleForTicket;
-      var phone = prompt("Ingrese el WhatsApp del cliente con código de país (ej: 5493624123456):");
-      if (!phone) return;
-      var cleanPhone = phone.replace(/[^0-9]/g, '');
-      var itemsList = (s.items || []).map(function(it) { return '• ' + it.qty + 'x ' + it.name + ' ($' + (it.qty*it.price).toLocaleString() + ')'; }).join('\n');
-      var msg = '*' + workshopSettings.name.toUpperCase() + ' - TICKET DE VENTA* 🧾\n\n🔖 *Ticket:* #' + s.id + '\n🧑‍💼 *Atendido por:* ' + (s.soldBy || 'Admin') + '\n\n📦 *Detalle:*\n' + itemsList + '\n\n💰 *TOTAL:* *$' + (parseFloat(s.total)||0).toLocaleString() + '*\n💳 *Pago:* ' + (s.paymentMethod || 'Efectivo') + '\n\n¡Gracias por su compra!';
-      window.open('https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
     };
 
     // --- PANEL MAESTRO DE LICENCIAS Y TELEMETRÍA ---
@@ -1450,8 +1279,7 @@
     window.secretTap = function() {
         var pin = prompt('🔑 Panel Maestro de Activación\nIngrese su PIN Secreto:');
         if (pin === '8408') {
-          $('masterAdminUnlockedView').classList.remove('hidden');
-          $('genTargetWorkshopCode').value = currentWorkshopId;
+          $('masterAdminUnlockedView').classList.remove('hidden');$('genTargetWorkshopCode').value = currentWorkshopId;
           window.showToast("Acceso Concedido", "Panel maestro activo.");
         }
     };
@@ -1488,8 +1316,7 @@
         var licenseInfo = { type: verified.type, key: k, expiresAt: (verified.type === 'LIFETIME') ? 9999999999999 : (Date.now() + (duration * 24 * 3600 * 1000)) };
         StorageShield.save('license', licenseInfo, true);
         
-        $('headerLicenseText').textContent = 'VITALICIO';
-        $('headerLicenseBtn').className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
+        $('headerLicenseText').textContent = 'VITALICIO';$('headerLicenseBtn').className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
         window.closeModal('licenseModal');
         window.showToast('Activado', 'Licencia PRO habilitada correctamente.');
       } else { window.showToast('Inválido', 'Clave no válida para este taller.'); }
@@ -1528,9 +1355,9 @@
 
     // --- INICIALIZACIÓN DE LA APLICACIÓN ---
     document.addEventListener('DOMContentLoaded', function() {
-      if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
-      if($('appHeaderTitle')) $('appHeaderTitle').textContent = workshopSettings.name;
-      if($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
+      if($('headerActiveUserDisplay'))$('headerActiveUserDisplay').textContent = activeUser;
+      if($('appHeaderTitle'))$('appHeaderTitle').textContent = workshopSettings.name;
+      if($('headerWorkshopCode'))$('headerWorkshopCode').textContent = currentWorkshopId;
       
       var licInfo = StorageShield.load('license', null);
       if(!licInfo) {
@@ -1547,8 +1374,7 @@
       }
       if($('headerLicenseText')) {
          if(licInfo.type === 'LIFETIME' || licInfo.type === 'PRO' || licInfo.type === 'VITALICIO') {
-             $('headerLicenseText').textContent = 'VITALICIO';
-             $('headerLicenseBtn').className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
+             $('headerLicenseText').textContent = 'VITALICIO';$('headerLicenseBtn').className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
          } else { $('headerLicenseText').textContent = 'DEMO'; }
       }
 
