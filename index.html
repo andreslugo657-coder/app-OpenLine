@@ -9,13 +9,26 @@
   <meta name="theme-color" content="#09090b">
   <title>OpenLine - Gestión de Taller Profesional</title>
 
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = { theme: { extend: { colors: { iosBlue: '#007AFF', iosGreen: '#34C759', iosOrange: '#FF9500', iosRed: '#FF3B30', iosPurple: '#AF52DE' } } } };
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            iosBlue: '#007AFF', iosGreen: '#34C759', iosOrange: '#FF9500',
+            iosRed: '#FF3B30', iosPurple: '#AF52DE'
+          }
+        }
+      }
+    };
   </script>
 
+  <!-- Phosphor Icons -->
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+
+  <!-- Bibliotecas externas -->
   <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
@@ -23,29 +36,56 @@
     body { min-height: 100vh; min-height: 100dvh; -webkit-tap-highlight-color: transparent; }
     .pt-safe { padding-top: max(env(safe-area-inset-top), 14px); }
     .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 20px); }
+    
     input, select, textarea { font-size: 16px !important; }
     button, select, input, textarea, a { touch-action: manipulation; cursor: pointer; }
+    
     ::-webkit-scrollbar { display: none; width: 0; height: 0; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    .app-modal { display: none; position: fixed; inset: 0; z-index: 9999; background-color: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px); align-items: flex-end; justify-content: center; }
+
+    /* Modales nativos seguros */
+    .app-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background-color: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      align-items: flex-end;
+      justify-content: center;
+    }
     @media (min-width: 640px) { .app-modal { align-items: center; } }
     .app-modal.active { display: flex !important; }
+
     #qr-reader, #pos-qr-reader { border: none !important; }
     #qr-reader video, #pos-qr-reader video { border-radius: 1rem; object-fit: cover; }
-    @media print { body * { visibility: hidden !important; } #printArea, #printArea * { visibility: visible !important; } #printArea { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; display: block !important; background: white !important; color: black !important; } }
+
+    @media print {
+      body * { visibility: hidden !important; }
+      #printArea, #printArea * { visibility: visible !important; }
+      #printArea { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; display: block !important; background: white !important; color: black !important; }
+    }
   </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen">
 
   <div id="appUpdatingBanner" class="fixed top-4 inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 z-[10002] hidden items-center justify-between gap-3 bg-indigo-950/95 border-2 border-indigo-500 text-white px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-2xl transition-all duration-300 pointer-events-auto max-w-md">
     <div class="flex items-center gap-3 min-w-0">
-      <div class="w-9 h-9 rounded-xl bg-indigo-600/30 border border-indigo-400 flex items-center justify-center shrink-0"><i class="ph-bold ph-arrows-clockwise text-indigo-300 text-xl animate-spin"></i></div>
+      <div class="w-9 h-9 rounded-xl bg-indigo-600/30 border border-indigo-400 flex items-center justify-center shrink-0">
+        <i class="ph-bold ph-arrows-clockwise text-indigo-300 text-xl animate-spin"></i>
+      </div>
       <div class="min-w-0">
-        <h4 class="text-xs font-bold text-white tracking-wide flex items-center gap-1.5"><span>Esta aplicación se ha actualizado</span><span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span></h4>
-        <p class="text-[10px] text-indigo-200 mt-0.5">Sincronización en la nube y módulos restaurados.</p>
+        <h4 class="text-xs font-bold text-white tracking-wide flex items-center gap-1.5">
+          <span>Esta aplicación se ha actualizado</span>
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        </h4>
+        <p class="text-[10px] text-indigo-200 mt-0.5">Mejoras de dibujo de patrón y stock instaladas.</p>
       </div>
     </div>
-    <button type="button" onclick="window.dismissUpdateBanner()" class="w-7 h-7 rounded-lg bg-indigo-900/80 text-indigo-300 flex items-center justify-center"><i class="ph-bold ph-x text-xs"></i></button>
+    <button type="button" onclick="window.dismissUpdateBanner()" class="w-7 h-7 rounded-lg bg-indigo-900/80 hover:bg-indigo-800 text-indigo-300 flex items-center justify-center shrink-0">
+      <i class="ph-bold ph-x text-xs"></i>
+    </button>
   </div>
 
   <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
@@ -53,14 +93,14 @@
       <div class="flex items-center gap-3 min-w-0">
         <div id="headerLogoContainer" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center overflow-hidden shadow shrink-0">
           <i id="headerDefaultIcon" class="ph-bold ph-wrench text-white text-xl"></i>
-          <img id="headerCustomLogo" src="" class="w-full h-full object-cover hidden">
+          <img id="headerCustomLogo" src="" alt="Logo" class="w-full h-full object-cover hidden">
         </div>
         <div class="min-w-0 flex flex-col">
           <div class="flex items-center gap-1.5 flex-wrap">
             <h1 id="appHeaderTitle" class="text-sm font-bold text-white tracking-tight truncate">OpenLine</h1>
             <button type="button" onclick="window.openTeamModal()" class="text-[10px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-2 py-0.5 rounded-full flex items-center gap-1 active:opacity-75 transition">
-              <span id="livePulseDot" class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-              <span id="headerWorkshopCode">Cargando...</span>
+              <span id="livePulseDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span id="headerWorkshopCode">TALLER-XXXX</span>
             </button>
             <button type="button" id="headerLicenseBtn" onclick="window.openLicenseModal()" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition">
               <i class="ph-bold ph-shield-check"></i> <span id="headerLicenseText">DEMO</span>
@@ -81,6 +121,7 @@
       </div>
     </div>
 
+    <!-- Botonera de Acciones -->
     <div class="px-4 pb-2.5 max-w-5xl mx-auto w-full">
       <div class="grid grid-cols-5 gap-1.5 sm:gap-2 text-center">
         <button type="button" onclick="window.openNewRepairModal()" class="py-2 px-1 rounded-xl bg-iosBlue text-white text-[10px] sm:text-xs font-bold shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition">
@@ -92,7 +133,7 @@
         <button type="button" onclick="window.openVentasHistoryModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-indigo-900 to-blue-900 border border-indigo-700/60 text-indigo-200 text-[10px] sm:text-xs font-bold shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition">
           <i class="ph-bold ph-receipt text-base text-indigo-400"></i><span>Ventas</span>
         </button>
-        <button type="button" onclick="window.openStockModal()" class="py-2 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] sm:text-xs font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+        <button type="button" onclick="window.openStockModal()" class="py-2 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] sm:text-xs font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition relative">
           <i class="ph-bold ph-barcode text-base text-purple-400"></i><span>Stock</span>
         </button>
         <button type="button" onclick="window.openCashModal()" class="py-2 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] sm:text-xs font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition">
@@ -103,9 +144,21 @@
   </header>
 
   <main class="flex-1 w-full max-w-5xl mx-auto px-4 py-3.5 space-y-3.5 pb-safe overflow-y-auto">
+    <div id="branchFilterContainer" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-2.5 shadow-sm space-y-1.5">
+      <div class="flex items-center justify-between px-1">
+        <span class="text-[10px] font-bold uppercase text-zinc-400 flex items-center gap-1.5">
+          <i class="ph-bold ph-map-pin text-rose-400 text-xs"></i> Sucursal activa:
+        </span>
+        <span id="currentBranchDisplayTag" class="text-xs font-mono text-zinc-300">Todas</span>
+      </div>
+      <div id="branchTabsButtonsList" class="flex gap-1.5 overflow-x-auto no-scrollbar text-xs font-medium pb-0.5"></div>
+    </div>
+
     <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
       <button type="button" onclick="window.openCashModal()" class="w-full text-center bg-gradient-to-br from-zinc-900 to-emerald-950/40 border border-emerald-900/40 rounded-2xl p-2.5 shadow-sm active:scale-95 transition">
-        <span class="text-[10px] text-emerald-400 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-wallet"></i> Saldo Caja</span>
+        <span class="text-[10px] text-emerald-400 font-bold flex items-center justify-center gap-1">
+          <i class="ph-bold ph-wallet"></i> Saldo Caja (<span id="headerCashBranchTag">Todas</span>)
+        </span>
         <span id="headerCashBalance" class="text-base font-extrabold text-emerald-300 font-mono mt-0.5 block">$0</span>
       </button>
       <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-2.5 text-center shadow-sm">
@@ -140,7 +193,7 @@
     <div id="repairsList" class="space-y-2.5 pb-8"></div>
     <div id="emptyState" class="hidden text-center py-14 px-4">
       <div class="w-12 h-12 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto mb-2 text-zinc-600"><i class="ph-bold ph-clipboard-text text-2xl"></i></div>
-      <h3 class="text-xs font-semibold text-zinc-400">No hay órdenes aquí</h3>
+      <h3 class="text-xs font-semibold text-zinc-400">No hay órdenes en esta vista</h3>
     </div>
   </main>
 
@@ -152,8 +205,18 @@
   <div id="ventasModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-indigo-700/80 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-3xl flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800 shrink-0">
-        <div class="flex items-center gap-2"><div class="w-8 h-8 rounded-xl bg-indigo-950 border border-indigo-700 flex items-center justify-center text-indigo-400"><i class="ph-bold ph-receipt text-lg"></i></div><h3 class="font-bold text-white text-sm">Historial de Ventas</h3></div>
-        <button type="button" onclick="window.closeModal('ventasModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-indigo-950 border border-indigo-700 flex items-center justify-center text-indigo-400">
+            <i class="ph-bold ph-receipt text-lg"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-white text-sm">Historial de Ventas</h3>
+            <span class="text-[10px] text-zinc-400" id="ventasBranchIndicatorTag">Sucursal: Todas</span>
+          </div>
+        </div>
+        <button type="button" onclick="window.closeModal('ventasModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white">
+          <i class="ph-bold ph-x text-sm"></i>
+        </button>
       </div>
 
       <div class="p-4 overflow-y-auto space-y-3.5 flex-1 pb-safe">
@@ -177,10 +240,10 @@
     </div>
   </div>
 
-  <!-- MODAL: PREVIEW DE TICKET -->
+  <!-- MODAL: PREVIEW DE TICKET DE VENTA -->
   <div id="saleTicketModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300">
-      <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Comprobante</h3><button type="button" onclick="window.closeModal('saleTicketModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Comprobante de Venta</h3><button type="button" onclick="window.closeModal('saleTicketModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div id="saleTicketPreviewBox" class="p-3 bg-white text-black rounded-xl overflow-hidden font-mono text-[11px] leading-snug"></div>
       <div class="grid grid-cols-2 gap-2 pt-1">
         <button type="button" onclick="window.sendSaleTicketWA()" class="py-2.5 bg-emerald-600 text-white font-bold rounded-xl flex items-center justify-center gap-1 shadow"><i class="ph-bold ph-whatsapp-logo text-base"></i> WhatsApp</button>
@@ -189,12 +252,16 @@
     </div>
   </div>
 
-  <!-- MODAL: CAMBIAR USUARIO -->
+  <!-- MODAL: CAMBIAR USUARIO ACTIVO / PERSONAL -->
   <div id="switchUserModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3.5 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Operar como Usuario</h3><button type="button" onclick="window.closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
-      <div class="space-y-1.5"><label class="text-[10px] text-zinc-400 uppercase font-bold block">Seleccionar quién está operando:</label><div id="usersListGrid" class="grid grid-cols-2 gap-2"></div></div>
+      <div class="space-y-1.5">
+        <label class="text-[10px] text-zinc-400 uppercase font-bold block">Seleccionar quién está operando:</label>
+        <div id="usersListGrid" class="grid grid-cols-2 gap-2"></div>
+      </div>
       
+      <!-- CONF CONTRASEÑA ADMIN (Ocultable y Recuperable) -->
       <div id="adminPinConfigSection" class="p-3 bg-zinc-950 rounded-2xl border border-amber-600/50 space-y-2 hidden">
         <div id="setupPinBox">
           <span class="text-[10px] font-bold text-amber-400 uppercase block">🔑 Configurar Clave de Administrador:</span>
@@ -204,7 +271,9 @@
           </div>
         </div>
         <div id="recoveryPinBox" class="hidden text-center space-y-1.5 py-1">
-          <span class="text-[10px] font-bold text-emerald-400 uppercase flex justify-center items-center gap-1"><i class="ph-bold ph-shield-check text-base"></i> Clave Configurada y Protegida</span>
+          <span class="text-[10px] font-bold text-emerald-400 uppercase flex justify-center items-center gap-1">
+            <i class="ph-bold ph-shield-check text-base"></i> Clave Configurada y Protegida
+          </span>
           <button type="button" onclick="window.recoverAdminPin()" class="text-xs text-amber-400 underline font-bold mt-1">¿Olvidaste la contraseña?</button>
         </div>
       </div>
@@ -223,7 +292,7 @@
   <!-- MODAL: AJUSTES -->
   <div id="settingsModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3 shadow-2xl text-xs text-zinc-300 pb-safe">
-      <div class="flex items-center justify-between pb-1"><div class="flex items-center gap-1.5"><i class="ph-bold ph-gear text-lg text-zinc-300"></i><h3 class="font-bold text-white text-sm">Ajustes</h3></div><button type="button" onclick="window.closeModal('settingsModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="flex items-center justify-between pb-1"><div class="flex items-center gap-1.5"><i class="ph-bold ph-gear text-lg text-zinc-300"></i><h3 class="font-bold text-white text-sm">Ajustes Taller</h3></div><button type="button" onclick="window.closeModal('settingsModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 text-center">
         <div class="flex items-center justify-center gap-3">
           <div id="settingsLogoPreview" class="w-12 h-12 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden shrink-0"></div>
@@ -236,6 +305,7 @@
       <div class="space-y-2">
         <input type="text" id="cfgWorkshopName" placeholder="Nombre Comercial" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
         <input type="text" id="cfgWorkshopSubtitle" placeholder="Subtítulo" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+        <input type="text" id="cfgBranchesListInput" placeholder="Sucursales (ej: Resistencia, Goya)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white">
       </div>
       <button type="button" onclick="window.saveSettings()" class="w-full py-2.5 bg-iosBlue text-white font-bold rounded-xl shadow">Guardar Cambios</button>
     </div>
@@ -268,6 +338,7 @@
           </div>
         </div>
 
+        <!-- Clave / Patrón Android con Dibujo Trazado -->
         <div class="space-y-2 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
           <div class="flex items-center justify-between">
             <label class="font-bold text-zinc-300 uppercase text-[9px] block">3. Clave / Seguridad</label>
@@ -278,16 +349,54 @@
             </div>
           </div>
           <div id="unlockViewPin"><input type="text" id="inpUnlockPin" placeholder="Ej: 1234" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-center font-mono tracking-widest"></div>
-          <div id="unlockViewPattern" class="hidden text-center space-y-1"><canvas id="patternCanvas" width="220" height="220" class="bg-black border border-zinc-800 rounded-2xl mx-auto touch-none"></canvas><div class="text-[10px] text-zinc-400 mt-1"><button type="button" onclick="window.resetPatternCanvas()" class="text-rose-400 underline font-bold">Borrar trazo</button></div></div>
+          
+          <div id="unlockViewPattern" class="hidden text-center space-y-1">
+            <canvas id="patternCanvas" width="220" height="220" class="bg-black border border-zinc-800 rounded-2xl mx-auto touch-none"></canvas>
+            <div class="text-[10px] text-zinc-400 mt-1">
+              <span id="patternStatusLabel">Dibuja el patrón en los puntos</span> • 
+              <button type="button" onclick="window.resetPatternCanvas()" class="text-rose-400 underline font-bold">Borrar trazo</button>
+            </div>
+          </div>
           <div id="unlockViewNone" class="hidden py-1 text-center text-[11px] text-zinc-500">Sin clave / Dispositivo apagado.</div>
         </div>
 
+        <div class="space-y-2 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
+          <div class="flex items-center justify-between">
+            <label class="font-bold text-zinc-300 uppercase text-[9px] block">4. Registro Fotográfico</label>
+            <span id="photoCountBadge" class="text-[10px] text-zinc-500">0 fotos</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="flex-1 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center gap-1.5 shadow active:scale-95 transition cursor-pointer">
+              <i class="ph-bold ph-camera text-iosBlue text-base"></i> Cámara
+              <input type="file" accept="image/*" capture="environment" onchange="window.handleNewPhotoUpload(this)" class="hidden">
+            </label>
+            <label class="flex-1 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center gap-1.5 shadow active:scale-95 transition cursor-pointer">
+              <i class="ph-bold ph-image text-emerald-400 text-base"></i> Galería
+              <input type="file" accept="image/*" multiple onchange="window.handleNewPhotoUpload(this)" class="hidden">
+            </label>
+          </div>
+          <div id="newPhotosGrid" class="flex gap-2 overflow-x-auto py-1 no-scrollbar min-h-[60px]"></div>
+        </div>
+
         <div class="space-y-2.5 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
-          <label class="font-bold text-zinc-300 uppercase text-[9px] block">4. Falla y Presupuesto</label>
+          <label class="font-bold text-zinc-300 uppercase text-[9px] block">5. Falla y Presupuesto</label>
           <textarea id="inpDeviceFault" rows="2" placeholder="Falla informada por el cliente..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white"></textarea>
           <div class="grid grid-cols-2 gap-2">
             <div><label class="text-[9px] text-zinc-400 block mb-0.5">Ppto Inicial ($)</label><input type="number" id="inpDeviceBudget" oninput="window.calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></div>
             <div><label class="text-[9px] text-zinc-400 block mb-0.5">Seña ($)</label><input type="number" id="inpDeviceAdvance" oninput="window.calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold"></div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <div>
+              <label class="text-[9px] text-zinc-400 block mb-0.5 font-bold">Estado Inicial Taller</label>
+              <select id="inpNewInitialStatus" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white font-bold">
+                <option value="WAITING">En Recepción</option>
+                <option value="IN_PROGRESS">Pasa a Taller</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex justify-between items-center text-xs pt-2 border-t border-zinc-800/80">
+            <span class="text-zinc-400 font-bold uppercase">Resta pagar:</span>
+            <span id="newCalculatedBalance" class="font-mono font-bold text-amber-400 text-sm">$0</span>
           </div>
         </div>
 
@@ -296,7 +405,7 @@
     </div>
   </div>
 
-  <!-- MODAL: DETALLES DE ORDEN CON ESTADOS Y PRESUPUESTO -->
+  <!-- MODAL: DETALLES DE ORDEN -->
   <div id="detailModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[92vh] flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800 bg-zinc-900">
@@ -310,7 +419,7 @@
           <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
             <span class="text-[9px] text-zinc-500 uppercase block mb-0.5">Falla Reportada:</span><p id="dtlDeviceFault" class="text-zinc-200 text-xs leading-relaxed"></p>
           </div>
-
+          
           <!-- BLOQUE DE ESTADOS OPERATIVOS -->
           <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
             <div class="flex items-center justify-between">
@@ -354,7 +463,7 @@
           <!-- VENTA MANUAL SIN STOCK -->
           <div class="flex gap-2 shrink-0 bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 shadow-sm items-center">
              <i class="ph-bold ph-tag text-zinc-500"></i>
-             <input type="text" id="posManualName" placeholder="Art. Manual..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-2 py-1.5 text-white text-xs">
+             <input type="text" id="posManualName" placeholder="Art. Manual (Funda, etc)..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-2 py-1.5 text-white text-xs">
              <input type="number" id="posManualPrice" placeholder="$ Precio" class="w-20 bg-zinc-900 border border-zinc-700 rounded-lg px-2 py-1.5 text-white text-xs font-mono">
              <button type="button" onclick="window.addManualPosItem()" class="bg-indigo-600 text-white rounded-lg px-2.5 py-1.5 font-bold text-xs shadow active:scale-95 transition whitespace-nowrap">+ Agregar</button>
           </div>
@@ -500,7 +609,7 @@
   <!-- SISTEMA PRINCIPAL JAVASCRIPT BLINDADO                                              -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v10.0.0'; // ACTUALIZADO PARA FORZAR EL POPUP
+    var APP_CODE_VERSION = 'v10.1.0'; // ACTUALIZADO PARA FORZAR EL POPUP
 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
@@ -544,7 +653,7 @@
       getKey: function(entity) { return 'openline_vault_' + currentWorkshopId + '_' + entity; },
       save: function(entity, data, skipMqtt) { 
           localStorage.setItem(this.getKey(entity), JSON.stringify(data)); 
-          if(!skipMqtt) window.publishMQTT();
+          if(!skipMqtt && window.publishMQTT) window.publishMQTT();
       },
       load: function(entity, defaultVal) {
         var saved = localStorage.getItem(this.getKey(entity));
@@ -556,12 +665,8 @@
     window.publishMQTT = function() {
         if(mqttClient && mqttClient.connected) {
             var payload = {
-                senderId: myDeviceId,
-                repairs: repairs,
-                stockItems: stockItems,
-                sales: sales,
-                cashMovements: cashMovements,
-                settings: workshopSettings
+                senderId: myDeviceId, repairs: repairs, stockItems: stockItems,
+                sales: sales, cashMovements: cashMovements, settings: workshopSettings
             };
             mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', JSON.stringify(payload), {retain: true});
         }
@@ -823,7 +928,7 @@
                     return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl mb-1.5">' +
                            '<div><div class="font-bold text-xs text-white">'+c.concept+'</div><div class="text-[9px] text-zinc-500">'+c.method+' • '+c.user+'</div></div>' +
                            '<div class="flex items-center gap-2"><span class="font-mono text-sm font-bold '+(isInc?'text-emerald-400':'text-rose-400')+'">'+(isInc?'+':'-')+'$'+c.amount+'</span>' +
-                           '<button type="button" onclick="window.printCashTicket(\''+c.id+'\')" class="p-1.5 bg-zinc-800 rounded-lg text-zinc-300"><i class="ph-bold ph-printer"></i></button></div></div>';
+                           '<button type="button" onclick="window.printCashTicket(\''+c.id+'\')" class="p-1.5 bg-zinc-800 rounded-lg text-zinc-300 shadow"><i class="ph-bold ph-printer"></i></button></div></div>';
                 }).join('');
             }
         }
@@ -894,6 +999,7 @@
     var patternCtx = null;
     var isDrawingPattern = false;
     var selectedPatternSequence = [];
+    var patternNodes = [];
 
     window.handleNewPhotoUpload = function(input) {
         if (input.files && input.files[0]) {
@@ -998,29 +1104,82 @@
       if(!canvas) return;
       patternCtx = canvas.getContext('2d');
       window.resetPatternCanvas();
+      
+      var getPos = function(e) {
+          var rect = canvas.getBoundingClientRect();
+          var cx = e.touches ? e.touches[0].clientX : e.clientX;
+          var cy = e.touches ? e.touches[0].clientY : e.clientY;
+          return { x: cx - rect.left, y: cy - rect.top };
+      };
+      
+      var checkHit = function(p) {
+          patternNodes.forEach(function(n) {
+              if(Math.hypot(n.x - p.x, n.y - p.y) < 25 && !selectedPatternSequence.includes(n.id)) {
+                  selectedPatternSequence.push(n.id);
+              }
+          });
+      };
+      
+      var redraw = function(px, py) {
+          patternCtx.clearRect(0,0,canvas.width,canvas.height);
+          if(selectedPatternSequence.length > 0) {
+              patternCtx.beginPath();
+              patternCtx.strokeStyle = '#007AFF'; patternCtx.lineWidth = 4;
+              var start = patternNodes[selectedPatternSequence[0]-1];
+              patternCtx.moveTo(start.x, start.y);
+              for(var k=1; k<selectedPatternSequence.length; k++) {
+                  var n = patternNodes[selectedPatternSequence[k]-1];
+                  patternCtx.lineTo(n.x, n.y);
+              }
+              if(isDrawingPattern && px !== undefined) patternCtx.lineTo(px, py);
+              patternCtx.stroke();
+          }
+          patternNodes.forEach(function(n) {
+              patternCtx.beginPath();
+              patternCtx.arc(n.x, n.y, selectedPatternSequence.includes(n.id) ? 12 : 8, 0, Math.PI*2);
+              patternCtx.fillStyle = selectedPatternSequence.includes(n.id) ? '#007AFF' : '#52525b';
+              patternCtx.fill();
+          });
+      };
+
       var handleStart = function(e) {
-         e.preventDefault(); isDrawingPattern = true; selectedPatternSequence = [1];
+         e.preventDefault(); isDrawingPattern = true; selectedPatternSequence = [];
          if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Trazando...'; $('patternStatusLabel').className = 'text-amber-400 font-bold'; }
+         var p = getPos(e); checkHit(p); redraw(p.x, p.y);
+      };
+      var handleMove = function(e) {
+         e.preventDefault(); if(!isDrawingPattern) return;
+         var p = getPos(e); checkHit(p); redraw(p.x, p.y);
       };
       var handleEnd = function(e) {
-         if(!isDrawingPattern) return;
-         isDrawingPattern = false; selectedPatternSequence = [1,2,5,8,9];
-         if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Patrón guardado exitosamente'; $('patternStatusLabel').className = 'text-emerald-400 font-bold'; }
+         e.preventDefault(); if(!isDrawingPattern) return;
+         isDrawingPattern = false; redraw();
+         if($('patternStatusLabel')) { 
+             $('patternStatusLabel').textContent = selectedPatternSequence.length > 0 ? 'Patrón registrado' : 'Dibuja el patrón'; 
+             $('patternStatusLabel').className = selectedPatternSequence.length > 0 ? 'text-emerald-400 font-bold' : 'text-zinc-400 mt-1'; 
+         }
       };
+      
       canvas.ontouchstart = handleStart; canvas.onmousedown = handleStart;
+      canvas.ontouchmove = handleMove; canvas.onmousemove = handleMove;
       canvas.ontouchend = handleEnd; canvas.onmouseup = handleEnd; canvas.onmouseleave = handleEnd;
     };
+    
     window.resetPatternCanvas = function() {
       if(!patternCtx) return;
       var canvas = $('patternCanvas');
+      patternNodes = [];
+      for(var i=0; i<3; i++) { for(var j=0; j<3; j++) { patternNodes.push({x: 40 + j*70, y: 40 + i*70, id: i*3 + j + 1}); } }
+      selectedPatternSequence = []; isDrawingPattern = false;
       patternCtx.clearRect(0,0,canvas.width, canvas.height);
-      patternCtx.fillStyle = '#52525b';
-      for(var i=0; i<3; i++) { for(var j=0; j<3; j++) { patternCtx.beginPath(); patternCtx.arc(40 + j*70, 40 + i*70, 8, 0, Math.PI*2); patternCtx.fill(); } }
-      selectedPatternSequence = [];
+      patternNodes.forEach(function(n) {
+          patternCtx.beginPath(); patternCtx.arc(n.x, n.y, 8, 0, Math.PI*2);
+          patternCtx.fillStyle = '#52525b'; patternCtx.fill();
+      });
       if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Dibuja el patrón en los puntos'; $('patternStatusLabel').className = 'text-zinc-400 mt-1'; }
     };
 
-    // --- LOGICA DE STOCK ---
+    // --- LOGICA DE STOCK Y EDICIÓN DE PRECIOS ---
     window.toggleStockForm = function() {
       var form = $('newStockFormContainer');
       if(form) form.style.display = form.style.display === 'block' ? 'none' : 'block';
@@ -1045,10 +1204,12 @@
       $('stkName').value = ''; $('stkCode').value = ''; $('stkSalePrice').value = '';
       window.renderStockList();
     };
+    
     window.updateStockQty = function(code, delta) {
       var st = stockItems.find(function(i) { return i.code === code; });
       if(st) { st.qty += delta; if(st.qty < 0) st.qty = 0; StorageShield.save('stock', stockItems); window.renderStockList(); }
     };
+    
     window.deleteStockItem = function(code) {
       if(activeUser !== 'Admin') { window.showToast('Denegado', 'Solo Admin puede eliminar'); return; }
       window.requestAdminPinAuth("Eliminar producto", function() {
@@ -1056,21 +1217,45 @@
           StorageShield.save('stock', stockItems); window.renderStockList(); window.showToast("Eliminado", "Producto removido.");
       });
     };
+    
+    window.editStockPrice = function(code) {
+      if(activeUser !== 'Admin') { window.showToast('Denegado', 'Solo Admin puede editar precios.'); return; }
+      window.requestAdminPinAuth("Modificar precio del producto", function() {
+          var st = stockItems.find(function(i) { return i.code === code; });
+          if(!st) return;
+          var newPrice = prompt("Ingrese el nuevo precio para " + st.name + ":", st.price);
+          if(newPrice !== null && !isNaN(parseFloat(newPrice))) {
+              st.price = parseFloat(newPrice);
+              StorageShield.save('stock', stockItems);
+              window.renderStockList();
+              window.showToast("Actualizado", "Precio modificado correctamente.");
+          }
+      });
+    };
+
     window.renderStockList = function() {
       var container = $('stockListContainer');
       if(!container) return;
       var term = ($('stkSearchInput') ? $('stkSearchInput').value.toLowerCase() : '');
       var filtered = stockItems.filter(function(i) { return i.name.toLowerCase().includes(term) || i.code.includes(term); });
-      
+      var isAdmin = (activeUser === 'Admin');
+
       if(filtered.length === 0) { container.innerHTML = '<div class="text-center p-4 text-zinc-500">No hay repuestos.</div>'; return; }
       container.innerHTML = filtered.map(function(i) {
-          return '<div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl flex justify-between items-center mb-1.5">' +
-                 '<div class="flex-1"><div class="font-bold text-white text-xs truncate">' + i.name + '</div><div class="text-[10px] text-zinc-500 font-mono">' + i.code + ' • $' + i.price + '</div></div>' +
-                 '<div class="flex items-center gap-1.5">' +
-                    '<button type="button" onclick="window.updateStockQty(\''+i.code+'\', -1)" class="w-6 h-6 rounded bg-zinc-800 text-white flex justify-center items-center"><i class="ph-bold ph-minus"></i></button>' +
-                    '<span class="text-xs font-bold w-4 text-center text-amber-400">' + i.qty + '</span>' +
-                    '<button type="button" onclick="window.updateStockQty(\''+i.code+'\', 1)" class="w-6 h-6 rounded bg-zinc-800 text-white flex justify-center items-center"><i class="ph-bold ph-plus"></i></button>' +
-                    '<button type="button" onclick="window.deleteStockItem(\''+i.code+'\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex justify-center items-center ml-1"><i class="ph-bold ph-trash"></i></button>' +
+          var editPriceHtml = isAdmin ? '<button type="button" onclick="window.editStockPrice(\''+i.code+'\')" class="ml-1 text-zinc-400 hover:text-amber-400"><i class="ph-bold ph-pencil-simple"></i></button>' : '';
+          return '<div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl flex flex-col gap-1.5 mb-1.5 shadow-sm">' +
+                 '<div class="flex justify-between items-start">' +
+                    '<div class="flex-1 min-w-0 pr-2"><div class="font-bold text-white text-xs truncate">' + i.name + '</div><div class="text-[10px] text-zinc-500 font-mono">' + i.code + '</div></div>' +
+                    '<div class="flex items-center"><span class="text-emerald-400 font-bold text-sm">$' + i.price + '</span>' + editPriceHtml + '</div>' +
+                 '</div>' +
+                 '<div class="flex justify-between items-center pt-1 border-t border-zinc-800/80">' +
+                    '<span class="text-[10px] text-zinc-400 uppercase font-bold">Stock Actual</span>' +
+                    '<div class="flex items-center gap-1.5">' +
+                      '<button type="button" onclick="window.updateStockQty(\''+i.code+'\', -1)" class="w-6 h-6 rounded bg-zinc-800 text-white flex justify-center items-center active:scale-95"><i class="ph-bold ph-minus"></i></button>' +
+                      '<span class="text-sm font-bold w-6 text-center text-amber-400">' + i.qty + '</span>' +
+                      '<button type="button" onclick="window.updateStockQty(\''+i.code+'\', 1)" class="w-6 h-6 rounded bg-zinc-800 text-white flex justify-center items-center active:scale-95"><i class="ph-bold ph-plus"></i></button>' +
+                      '<button type="button" onclick="window.deleteStockItem(\''+i.code+'\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex justify-center items-center ml-2 active:scale-95"><i class="ph-bold ph-trash"></i></button>' +
+                    '</div>' +
                  '</div></div>';
       }).join('');
     };
@@ -1146,7 +1331,7 @@
            total += (c.price * c.qty);
            if(c.code.indexOf('MANUAL') !== 0) {
                var st = stockItems.find(function(i) { return i.code === c.code; });
-               if(st) st.qty -= c.qty; // Restar del stock si no es manual
+               if(st) st.qty -= c.qty; 
            }
        });
        var saleId = 'VTA-' + Math.floor(10000 + Math.random() * 90000);
@@ -1295,7 +1480,7 @@
       if (verified) {
         var duration = verified.days || 180;
         var licenseInfo = { type: verified.type, key: k, expiresAt: (verified.type === 'LIFETIME') ? 9999999999999 : (Date.now() + (duration * 24 * 3600 * 1000)) };
-        StorageShield.save('license', licenseInfo);
+        StorageShield.save('license', licenseInfo, true);
         
         $('headerLicenseText').textContent = 'VITALICIO';
         $('headerLicenseBtn').className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
@@ -1303,29 +1488,6 @@
         window.showToast('Activado', 'Licencia PRO habilitada correctamente.');
       } else { window.showToast('Inválido', 'Clave no válida para este taller.'); }
     };
-
-    // --- SINCRONIZACIÓN EN LA NUBE (MQTT) ---
-    if (typeof mqtt !== 'undefined') {
-        mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'opl_' + myDeviceId, clean: true, reconnectPeriod: 3000 });
-        
-        mqttClient.on('connect', function() {
-            if($('livePulseDot')) $('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
-            mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', { qos: 1 });
-        });
-
-        mqttClient.on('message', function(topic, message) {
-            try {
-                var payload = JSON.parse(message.toString());
-                if (topic.includes('/sync') && payload && payload.senderId !== myDeviceId) {
-                    if(payload.repairs && payload.repairs.length > 0) { repairs = payload.repairs; localStorage.setItem(StorageShield.getKey('repairs'), JSON.stringify(repairs)); window.renderRepairsList(); window.updateCounters(); }
-                    if(payload.stockItems && payload.stockItems.length > 0) { stockItems = payload.stockItems; localStorage.setItem(StorageShield.getKey('stock'), JSON.stringify(stockItems)); window.renderStockList(); }
-                    if(payload.sales && payload.sales.length > 0) { sales = payload.sales; localStorage.setItem(StorageShield.getKey('sales'), JSON.stringify(sales)); window.renderVentasList(); }
-                    if(payload.cashMovements && payload.cashMovements.length > 0) { cashMovements = payload.cashMovements; localStorage.setItem(StorageShield.getKey('cash'), JSON.stringify(cashMovements)); window.updateCashBalanceUI(); }
-                    if(payload.settings) { workshopSettings = Object.assign({}, workshopSettings, payload.settings); localStorage.setItem(StorageShield.getKey('settings'), JSON.stringify(workshopSettings)); window.renderBranchSelectors(); }
-                }
-            } catch(e) {}
-        });
-    }
 
     // --- ALERTA DE ACTUALIZACIÓN CON SONIDO ---
     var audioCtx = null;
@@ -1363,7 +1525,6 @@
       if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
       if($('appHeaderTitle')) $('appHeaderTitle').textContent = workshopSettings.name;
       if($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
-      if($('modalWorkshopCodeDisplay')) $('modalWorkshopCodeDisplay').textContent = currentWorkshopId;
       
       var licInfo = StorageShield.load('license', null);
       if(!licInfo) {
