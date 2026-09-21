@@ -68,7 +68,7 @@
     }
   </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen" ontouchstart="">
+<body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen">
 
   <div id="appUpdatingBanner" class="fixed top-4 inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 z-[10002] hidden items-center justify-between gap-3 bg-indigo-950/95 border-2 border-indigo-500 text-white px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-2xl transition-all duration-300 pointer-events-auto max-w-md">
     <div class="flex items-center gap-3 min-w-0">
@@ -77,10 +77,10 @@
       </div>
       <div class="min-w-0">
         <h4 class="text-xs font-bold text-white tracking-wide flex items-center gap-1.5">
-          <span>Esta aplicación se ha actualizado</span>
+          <span>Sistema Auto-Reparado</span>
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
         </h4>
-        <p class="text-[10px] text-indigo-200 mt-0.5">Módulos táctiles y fotográficos restaurados.</p>
+        <p class="text-[10px] text-indigo-200 mt-0.5">El módulo de caja ha sido restaurado exitosamente.</p>
       </div>
     </div>
     <button type="button" onclick="window.dismissUpdateBanner()" class="w-7 h-7 rounded-lg bg-indigo-900/80 hover:bg-indigo-800 text-indigo-300 flex items-center justify-center shrink-0">
@@ -358,39 +358,12 @@
           <div id="unlockViewNone" class="hidden py-1 text-center text-[11px] text-zinc-500">Sin clave / Dispositivo apagado.</div>
         </div>
 
-        <div class="space-y-2 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
-          <div class="flex items-center justify-between">
-            <label class="font-bold text-zinc-300 uppercase text-[9px] block">4. Registro Fotográfico</label>
-            <span id="photoCountBadge" class="text-[10px] text-zinc-500">0 fotos</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <label class="flex-1 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center gap-1.5 shadow active:scale-95 transition cursor-pointer">
-              <i class="ph-bold ph-camera text-iosBlue text-base"></i> Cámara
-              <input type="file" accept="image/*" capture="environment" onchange="window.handleNewPhotoUpload(this)" class="hidden">
-            </label>
-            <label class="flex-1 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center gap-1.5 shadow active:scale-95 transition cursor-pointer">
-              <i class="ph-bold ph-image text-emerald-400 text-base"></i> Galería
-              <input type="file" accept="image/*" multiple onchange="window.handleNewPhotoUpload(this)" class="hidden">
-            </label>
-          </div>
-          <div id="newPhotosGrid" class="flex gap-2 overflow-x-auto py-1 no-scrollbar min-h-[60px]"></div>
-        </div>
-
         <div class="space-y-2.5 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
-          <label class="font-bold text-zinc-300 uppercase text-[9px] block">5. Falla y Presupuesto</label>
+          <label class="font-bold text-zinc-300 uppercase text-[9px] block">4. Falla y Presupuesto</label>
           <textarea id="inpDeviceFault" rows="2" placeholder="Falla informada por el cliente..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white"></textarea>
           <div class="grid grid-cols-2 gap-2">
             <div><label class="text-[9px] text-zinc-400 block mb-0.5">Ppto Inicial ($)</label><input type="number" id="inpDeviceBudget" oninput="window.calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></div>
             <div><label class="text-[9px] text-zinc-400 block mb-0.5">Seña ($)</label><input type="number" id="inpDeviceAdvance" oninput="window.calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold"></div>
-          </div>
-          <div class="grid grid-cols-2 gap-2 pt-1">
-            <div>
-              <label class="text-[9px] text-zinc-400 block mb-0.5 font-bold">Estado Inicial Taller</label>
-              <select id="inpNewInitialStatus" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white font-bold">
-                <option value="WAITING">En Recepción</option>
-                <option value="IN_PROGRESS">Pasa a Taller</option>
-              </select>
-            </div>
           </div>
           <div class="flex justify-between items-center text-xs pt-2 border-t border-zinc-800/80">
             <span class="text-zinc-400 font-bold uppercase">Resta pagar:</span>
@@ -398,7 +371,7 @@
           </div>
         </div>
 
-        <button type="button" onclick="window.guardarIngresoDirecto()" class="w-full py-3 rounded-xl bg-iosBlue text-white font-bold text-sm shadow active:scale-95 transition mt-2">Guardar Ingreso</button>
+        <button type="button" onclick="window.guardarIngresoDirecto()" class="w-full py-3 rounded-xl bg-iosBlue text-white font-bold text-sm shadow active:scale-95 transition mt-2">Guardar Ingreso e Imprimir</button>
       </div>
     </div>
   </div>
@@ -464,6 +437,14 @@
             </div>
           </div>
           
+          <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl flex items-center justify-between">
+            <div><span class="text-[10px] text-zinc-400 uppercase font-bold block">Cobro de Reparación</span><span class="text-xs text-zinc-300">Ingresar saldo a caja local</span></div>
+            <button type="button" onclick="window.chargeRepairToCash()" class="py-1.5 px-3 rounded-xl bg-emerald-950 border border-emerald-600/70 text-emerald-300 font-bold text-xs flex items-center gap-1 active:scale-95 transition">
+              <i class="ph-bold ph-wallet text-sm"></i> Cobrar a Caja
+            </button>
+          </div>
+
+          <!-- BLOQUE DE ESTADOS OPERATIVOS -->
           <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
             <div class="flex items-center justify-between">
               <span class="text-[10px] text-zinc-400 font-bold uppercase">Estado Operativo:</span>
@@ -477,6 +458,7 @@
             </div>
           </div>
 
+          <!-- BLOQUE DE PRESUPUESTO -->
           <div class="grid grid-cols-3 gap-1.5 text-center mt-2">
             <div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-zinc-500 block font-bold">TOTAL ($)</span><b class="text-white font-mono text-xs" id="dtlBudgetTotal">$0</b></div>
             <div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-emerald-400 block font-bold">SEÑA ($)</span><b class="text-emerald-400 font-mono text-xs" id="dtlAdvancePaid">$0</b></div>
@@ -502,6 +484,7 @@
             <button type="button" onclick="window.togglePosCam()" class="px-3 py-2 bg-purple-900 text-purple-200 rounded-xl font-bold flex items-center gap-1"><i class="ph-bold ph-camera"></i> Escanear</button>
           </div>
           
+          <!-- VENTA MANUAL SIN STOCK -->
           <div class="flex gap-2 shrink-0 bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 shadow-sm items-center">
              <i class="ph-bold ph-tag text-zinc-500"></i>
              <input type="text" id="posManualName" placeholder="Art. Manual (Funda, etc)..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-2 py-1.5 text-white text-xs">
@@ -558,7 +541,52 @@
     </div>
   </div>
 
-  <!-- MODAL: LICENCIAS & PANEL MAESTRO -->
+  <!-- MODAL: CAJA COMPLETA Y CIERRE DIARIO -->
+  <div id="cashModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-2xl flex flex-col shadow-2xl text-xs text-zinc-300">
+      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800">
+        <div class="flex items-center gap-2"><i class="ph-bold ph-currency-dollar-simple text-emerald-400 text-xl"></i><h3 class="font-bold text-white text-sm">Caja General</h3></div>
+        <button type="button" onclick="window.closeModal('cashModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button>
+      </div>
+      <div class="p-4 overflow-y-auto space-y-3 flex-1 pb-safe">
+        <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-emerald-400 font-bold block">Ingresos</span><span id="cashTotalIncome" class="text-sm font-bold text-emerald-400 font-mono mt-0.5 block">$0</span></div>
+            <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-rose-400 font-bold block">Egresos</span><span id="cashTotalExpense" class="text-sm font-bold text-rose-400 font-mono mt-0.5 block">$0</span></div>
+            <div class="p-2.5 bg-gradient-to-b from-zinc-900 to-indigo-950 border border-indigo-700/60 rounded-xl"><span class="text-[9px] text-indigo-300 font-bold block">Saldo Final</span><span id="cashNetBalance" class="text-sm font-bold text-white font-mono mt-0.5 block">$0</span></div>
+        </div>
+        
+        <div class="flex gap-2">
+            <button type="button" onclick="window.showCashIncome()" class="flex-1 py-2 rounded-xl bg-emerald-950 border border-emerald-600/70 text-emerald-200 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-arrow-down-left text-base"></i> + Ingreso</button>
+            <button type="button" onclick="window.showCashExpense()" class="flex-1 py-2 rounded-xl bg-rose-950 border border-rose-600/70 text-rose-200 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-arrow-up-right text-base"></i> - Salida</button>
+        </div>
+        
+        <div id="cashMovementForm" class="hidden p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2">
+            <div class="flex items-center justify-between"><span id="cashFormTitle" class="font-bold text-white text-xs">Registrar</span><button type="button" onclick="window.hideCashForm()"><i class="ph-bold ph-x"></i></button></div>
+            <input type="hidden" id="cshType" value="INCOME">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <input type="number" id="cshAmount" placeholder="Monto ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-mono font-bold">
+                <select id="cshMethod" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia</option><option value="Tarjeta">Tarjeta</option></select>
+            </div>
+            <input type="text" id="cshConcept" placeholder="Concepto (ej: Pago repuesto...)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+            <button type="button" onclick="window.saveCashMovement()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow">Guardar en Caja</button>
+        </div>
+        
+        <!-- CIERRE DIARIO -->
+        <div class="pt-2 border-t border-zinc-800 space-y-2">
+           <span class="text-[10px] font-bold text-zinc-400 uppercase block">Opciones de Cierre de Caja:</span>
+           <div class="grid grid-cols-3 gap-1.5">
+             <button type="button" onclick="window.sendCashCierreWA()" class="py-2.5 rounded-xl bg-emerald-950 border border-emerald-800 text-emerald-400 font-bold flex items-center justify-center gap-1 shadow"><i class="ph-bold ph-whatsapp-logo"></i> WhatsApp</button>
+             <button type="button" onclick="window.printCashCierre()" class="py-2.5 rounded-xl bg-zinc-800 border border-zinc-700 text-zinc-300 font-bold flex items-center justify-center gap-1 shadow"><i class="ph-bold ph-printer"></i> Imprimir</button>
+             <button type="button" onclick="window.cerrarCajaRestablecer()" class="py-2.5 rounded-xl bg-rose-950 border border-rose-800 text-rose-300 font-bold flex items-center justify-center gap-1 shadow"><i class="ph-bold ph-lock-key"></i> Cerrar Caja</button>
+           </div>
+        </div>
+
+        <div id="cashListContainer" class="space-y-1.5 max-h-[35vh] overflow-y-auto mt-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LICENCIAS & PANEL DE TELEMETRÍA MAESTRO -->
   <div id="licenseModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg p-4 space-y-3.5 pb-safe shadow-2xl text-xs text-zinc-300 max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -571,15 +599,22 @@
           <span class="text-[9px] text-zinc-600 block mt-1">Toca 5 veces sobre el estado para acceder al Modo Maestro</span>
         </div>
 
+        <!-- PANEL DE TELEMETRÍA MAESTRO -->
         <div id="masterAdminUnlockedView" class="hidden p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3">
           <div class="flex items-center justify-between border-b border-indigo-900 pb-2">
-            <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide">Panel Maestro Creador</span></div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide">Panel Maestro Creador</span>
+            </div>
           </div>
           <div class="space-y-2">
             <span class="text-[9px] font-bold text-indigo-300 uppercase">Generar Licencia de Activación:</span>
             <div class="grid grid-cols-3 gap-1.5">
               <input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="col-span-2 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono text-xs">
-              <select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold"><option value="SEM6" selected>6 Meses</option><option value="LIFETIME">Vitalicio</option></select>
+              <select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold">
+                <option value="SEM6" selected>6 Meses</option>
+                <option value="LIFETIME">Vitalicio</option>
+              </select>
             </div>
             <button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow">Emitir Clave Segura</button>
             <div id="genResultBox" class="hidden p-2.5 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800">
@@ -608,7 +643,7 @@
   <!-- SISTEMA PRINCIPAL JAVASCRIPT BLINDADO                                              -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v10.4.0';
+    var APP_CODE_VERSION = 'v10.5.0'; // ACTUALIZADO PARA FORZAR EL POPUP
 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
@@ -862,6 +897,8 @@
         var amt = parseFloat($('cshAmount').value);
         var concept = $('cshConcept').value.trim();
         if(!amt || !concept) { window.showToast('Error', 'Completa monto y concepto'); return; }
+        
+        if (!Array.isArray(cashMovements)) cashMovements = [];
         cashMovements.unshift({
             id: 'CSH-'+Date.now(), type: $('cshType').value, amount: amt, concept: concept, method: $('cshMethod').value,
             date: Date.now(), user: activeUser
@@ -894,26 +931,35 @@
     };
 
     window.updateCashBalanceUI = function() {
-        var inc = 0, exp = 0;
-        cashMovements.forEach(function(c) { if(c.type === 'INCOME') inc += c.amount; else exp += c.amount; });
-        if($('cashTotalIncome')) $('cashTotalIncome').textContent = '$'+inc.toLocaleString();
-        if($('cashTotalExpense')) $('cashTotalExpense').textContent = '$'+exp.toLocaleString();
-        if($('cashNetBalance')) $('cashNetBalance').textContent = '$'+(inc-exp).toLocaleString();
-        if($('headerCashBalance')) $('headerCashBalance').textContent = '$'+(inc-exp).toLocaleString();
+        try {
+            if (!Array.isArray(cashMovements)) cashMovements = [];
+            var inc = 0, exp = 0;
+            cashMovements.forEach(function(c) { 
+                if(c && c.type === 'INCOME') inc += (parseFloat(c.amount) || 0); 
+                else if (c) exp += (parseFloat(c.amount) || 0); 
+            });
+            if($('cashTotalIncome')) $('cashTotalIncome').textContent = '$'+inc.toLocaleString();
+            if($('cashTotalExpense')) $('cashTotalExpense').textContent = '$'+exp.toLocaleString();
+            if($('cashNetBalance')) $('cashNetBalance').textContent = '$'+(inc-exp).toLocaleString();
+            if($('headerCashBalance')) $('headerCashBalance').textContent = '$'+(inc-exp).toLocaleString();
 
-        var container = $('cashListContainer');
-        if(container) {
-            if(cashMovements.length===0) { container.innerHTML = '<div class="text-center text-zinc-500 p-4">No hay movimientos</div>'; }
-            else {
-                container.innerHTML = cashMovements.map(function(c) {
-                    var isInc = c.type === 'INCOME';
-                    return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl mb-1.5">' +
-                           '<div><div class="font-bold text-xs text-white">'+c.concept+'</div><div class="text-[9px] text-zinc-500">'+c.method+' • '+c.user+'</div></div>' +
-                           '<div class="flex items-center gap-2"><span class="font-mono text-sm font-bold '+(isInc?'text-emerald-400':'text-rose-400')+'">'+(isInc?'+':'-')+'$'+c.amount+'</span>' +
-                           '<button type="button" onclick="window.printCashTicket(\''+c.id+'\')" class="p-1.5 bg-zinc-800 rounded-lg text-zinc-300 shadow"><i class="ph-bold ph-printer"></i></button></div></div>';
-                }).join('');
+            var container = $('cashListContainer');
+            if(container) {
+                if(cashMovements.length === 0) { 
+                    container.innerHTML = '<div class="text-center text-zinc-500 p-4">No hay movimientos</div>'; 
+                } else {
+                    container.innerHTML = cashMovements.map(function(c) {
+                        if(!c) return '';
+                        var isInc = c.type === 'INCOME';
+                        var amount = parseFloat(c.amount) || 0;
+                        return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl mb-1.5">' +
+                               '<div><div class="font-bold text-xs text-white">'+(c.concept || 'Movimiento')+'</div><div class="text-[9px] text-zinc-500">'+(c.method || 'Efectivo')+' • '+(c.user || 'Admin')+'</div></div>' +
+                               '<div class="flex items-center gap-2"><span class="font-mono text-sm font-bold '+(isInc?'text-emerald-400':'text-rose-400')+'">'+(isInc?'+':'-')+'$'+amount.toLocaleString()+'</span>' +
+                               '<button type="button" onclick="window.printCashTicket(\''+c.id+'\')" class="p-1.5 bg-zinc-800 rounded-lg text-zinc-300 shadow"><i class="ph-bold ph-printer"></i></button></div></div>';
+                    }).join('');
+                }
             }
-        }
+        } catch(e) { console.error("Error actualizando caja", e); cashMovements = []; }
     };
 
     // Funciones de Cierre de Caja
@@ -949,6 +995,24 @@
             window.showToast("Caja Cerrada", "La caja se ha restablecido a $0.");
         }
     };
+    
+    // Función para cobrar directamente la reparación a la caja
+    window.chargeRepairToCash = function() {
+        var r = repairs.find(function(x) { return x.id === selectedRepairId; });
+        if(!r) return;
+        var amountToCharge = (parseFloat(r.budget) || 0) - (parseFloat(r.advance) || 0);
+        if(amountToCharge <= 0) {
+            window.showToast("Aviso", "No hay saldo pendiente de cobro para esta orden.");
+            return;
+        }
+        if($('cshAmount')) $('cshAmount').value = amountToCharge;
+        if($('cshConcept')) $('cshConcept').value = "Cobro Reparación #" + r.id;
+        if($('cshType')) $('cshType').value = 'INCOME';
+        if($('cashFormTitle')) $('cashFormTitle').textContent = 'Cobrar Orden ' + r.id;
+        if($('cashMovementForm')) $('cashMovementForm').classList.remove('hidden');
+        window.closeModal('detailModal');
+        window.openCashModal();
+    };
 
     // --- REPARACIONES E INFORMES TÉCNICOS ---
     window.handleSearch = function() {
@@ -973,32 +1037,37 @@
     window.renderRepairsList = function() {
         var container = $('repairsList');
         if(!container) return;
-        var term = ($('searchInput') ? $('searchInput').value.toLowerCase().trim() : '');
-        var filtered = repairs.filter(function(r) {
-            var matchStatus = currentFilter === 'ALL' || r.status === currentFilter;
-            var matchSearch = !term || r.id.toLowerCase().includes(term) || r.clientName.toLowerCase().includes(term) || r.deviceBrand.toLowerCase().includes(term) || r.deviceModel.toLowerCase().includes(term) || (r.deviceSerial && r.deviceSerial.toLowerCase().includes(term));
-            return matchStatus && matchSearch;
-        });
+        try {
+            if (!Array.isArray(repairs)) repairs = [];
+            var term = ($('searchInput') ? $('searchInput').value.toLowerCase().trim() : '');
+            var filtered = repairs.filter(function(r) {
+                if(!r) return false;
+                var matchStatus = currentFilter === 'ALL' || r.status === currentFilter;
+                var matchSearch = !term || (r.id && r.id.toLowerCase().includes(term)) || (r.clientName && r.clientName.toLowerCase().includes(term)) || (r.deviceBrand && r.deviceBrand.toLowerCase().includes(term)) || (r.deviceModel && r.deviceModel.toLowerCase().includes(term));
+                return matchStatus && matchSearch;
+            });
 
-        if(filtered.length === 0) {
-            $('emptyState').classList.remove('hidden'); container.innerHTML = '';
-        } else {
-            $('emptyState').classList.add('hidden');
-            container.innerHTML = filtered.map(function(r) {
-                var stColor = 'text-zinc-300';
-                if(r.status === 'READY') stColor = 'text-emerald-400';
-                if(r.status === 'IN_PROGRESS') stColor = 'text-amber-400';
-                return '<div onclick="window.openDetailModal(\''+r.id+'\')" class="bg-zinc-900 border border-zinc-800 p-3 rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.98] transition cursor-pointer">' +
-                       '<div><div class="flex items-center gap-1.5"><span class="font-mono text-xs font-bold text-iosBlue">'+r.id+'</span><span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-zinc-800 '+stColor+'">'+r.status+'</span></div>' +
-                       '<h4 class="text-sm font-bold text-white mt-0.5">'+r.deviceBrand+' '+r.deviceModel+'</h4><div class="text-[10px] text-zinc-400 mt-0.5">'+r.clientName+'</div></div>' +
-                       '<i class="ph-bold ph-caret-right text-zinc-600 text-lg"></i></div>';
-            }).join('');
-        }
+            if(filtered.length === 0) {
+                $('emptyState').classList.remove('hidden'); container.innerHTML = '';
+            } else {
+                $('emptyState').classList.add('hidden');
+                container.innerHTML = filtered.map(function(r) {
+                    var stColor = 'text-zinc-300';
+                    if(r.status === 'READY') stColor = 'text-emerald-400';
+                    if(r.status === 'IN_PROGRESS') stColor = 'text-amber-400';
+                    return '<div onclick="window.openDetailModal(\''+r.id+'\')" class="bg-zinc-900 border border-zinc-800 p-3 rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.98] transition cursor-pointer">' +
+                           '<div><div class="flex items-center gap-1.5"><span class="font-mono text-xs font-bold text-iosBlue">'+r.id+'</span><span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-zinc-800 '+stColor+'">'+r.status+'</span></div>' +
+                           '<h4 class="text-sm font-bold text-white mt-0.5">'+r.deviceBrand+' '+r.deviceModel+'</h4><div class="text-[10px] text-zinc-400 mt-0.5">'+r.clientName+'</div></div>' +
+                           '<i class="ph-bold ph-caret-right text-zinc-600 text-lg"></i></div>';
+                }).join('');
+            }
+        } catch(e) { console.error("Error en ordenes", e); repairs = []; }
     };
 
     window.updateCounters = function() {
         var wait=0, prog=0, trans=0, ready=0;
         repairs.forEach(function(r) {
+            if(!r) return;
             if(r.status === 'WAITING') wait++;
             if(r.status === 'IN_PROGRESS') prog++;
             if(r.status === 'IN_TRANSIT') trans++;
@@ -1304,28 +1373,31 @@
     window.renderStockList = function() {
       var container = $('stockListContainer');
       if(!container) return;
-      var term = ($('stkSearchInput') ? $('stkSearchInput').value.toLowerCase() : '');
-      var filtered = stockItems.filter(function(i) { return i.name.toLowerCase().includes(term) || i.code.includes(term); });
-      var isAdmin = (activeUser === 'Admin');
+      try {
+          if(!Array.isArray(stockItems)) stockItems = [];
+          var term = ($('stkSearchInput') ? $('stkSearchInput').value.toLowerCase() : '');
+          var filtered = stockItems.filter(function(i) { return i && (i.name.toLowerCase().includes(term) || i.code.includes(term)); });
+          var isAdmin = (activeUser === 'Admin');
 
-      if(filtered.length === 0) { container.innerHTML = '<div class="text-center p-4 text-zinc-500">No hay repuestos.</div>'; return; }
-      container.innerHTML = filtered.map(function(i) {
-          var editPriceHtml = isAdmin ? '<button type="button" onclick="window.editStockPrice(\''+i.code+'\')" class="ml-1 text-zinc-400 hover:text-amber-400"><i class="ph-bold ph-pencil-simple"></i></button>' : '';
-          return '<div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl flex flex-col gap-1.5 mb-1.5 shadow-sm">' +
-                 '<div class="flex justify-between items-start">' +
-                    '<div class="flex-1 min-w-0 pr-2"><div class="font-bold text-white text-xs truncate">' + i.name + '</div><div class="text-[10px] text-zinc-500 font-mono">' + i.code + '</div></div>' +
-                    '<div class="flex items-center"><span class="text-emerald-400 font-bold text-sm">$' + i.price + '</span>' + editPriceHtml + '</div>' +
-                 '</div>' +
-                 '<div class="flex justify-between items-center pt-1 border-t border-zinc-800/80">' +
-                    '<span class="text-[10px] text-zinc-400 uppercase font-bold">Stock Actual</span>' +
-                    '<div class="flex items-center gap-1.5">' +
-                      '<button type="button" onclick="window.updateStockQty(\''+i.code+'\', -1)" class="w-6 h-6 rounded bg-zinc-800 text-white flex justify-center items-center active:scale-95"><i class="ph-bold ph-minus"></i></button>' +
-                      '<span class="text-sm font-bold w-6 text-center text-amber-400">' + i.qty + '</span>' +
-                      '<button type="button" onclick="window.updateStockQty(\''+i.code+'\', 1)" class="w-6 h-6 rounded bg-zinc-800 text-white flex justify-center items-center active:scale-95"><i class="ph-bold ph-plus"></i></button>' +
-                      '<button type="button" onclick="window.deleteStockItem(\''+i.code+'\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex justify-center items-center ml-2 active:scale-95"><i class="ph-bold ph-trash"></i></button>' +
-                    '</div>' +
-                 '</div></div>';
-      }).join('');
+          if(filtered.length === 0) { container.innerHTML = '<div class="text-center p-4 text-zinc-500">No hay repuestos.</div>'; return; }
+          container.innerHTML = filtered.map(function(i) {
+              var editPriceHtml = isAdmin ? '<button type="button" onclick="window.editStockPrice(\''+i.code+'\')" class="ml-1 text-zinc-400 hover:text-amber-400"><i class="ph-bold ph-pencil-simple"></i></button>' : '';
+              return '<div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl flex flex-col gap-1.5 mb-1.5 shadow-sm">' +
+                     '<div class="flex justify-between items-start">' +
+                        '<div class="flex-1 min-w-0 pr-2"><div class="font-bold text-white text-xs truncate">' + i.name + '</div><div class="text-[10px] text-zinc-500 font-mono">' + i.code + '</div></div>' +
+                        '<div class="flex items-center"><span class="text-emerald-400 font-bold text-sm">$' + i.price + '</span>' + editPriceHtml + '</div>' +
+                     '</div>' +
+                     '<div class="flex justify-between items-center pt-1 border-t border-zinc-800/80">' +
+                        '<span class="text-[10px] text-zinc-400 uppercase font-bold">Stock Actual</span>' +
+                        '<div class="flex items-center gap-1.5">' +
+                          '<button type="button" onclick="window.updateStockQty(\''+i.code+'\', -1)" class="w-6 h-6 rounded bg-zinc-800 text-white flex justify-center items-center active:scale-95"><i class="ph-bold ph-minus"></i></button>' +
+                          '<span class="text-sm font-bold w-6 text-center text-amber-400">' + i.qty + '</span>' +
+                          '<button type="button" onclick="window.updateStockQty(\''+i.code+'\', 1)" class="w-6 h-6 rounded bg-zinc-800 text-white flex justify-center items-center active:scale-95"><i class="ph-bold ph-plus"></i></button>' +
+                          '<button type="button" onclick="window.deleteStockItem(\''+i.code+'\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex justify-center items-center ml-2 active:scale-95"><i class="ph-bold ph-trash"></i></button>' +
+                        '</div>' +
+                     '</div></div>';
+          }).join('');
+      } catch(e) { console.error("Error stock list", e); stockItems = []; }
     };
 
     // --- POS VENTAS LOGIC Y TICKETS ---
@@ -1424,7 +1496,7 @@
        sales.unshift(newSale);
        StorageShield.save('sales', sales); StorageShield.save('stock', stockItems);
        window.clearPosCart(); window.renderPosCatalog(); window.closeModal('salesModal');
-       window.showToast("Venta Exitosa", "Se registró la venta.");
+       window.showToast("Venta Exitosa", "Se registró la venta y se generó el ticket.");
        
        window.openSaleTicketModal(saleId);
     };
@@ -1441,20 +1513,23 @@
     window.renderVentasList = function() {
       var container = $('ventasListContainer');
       if(!container) return;
-      var isAdmin = (activeUser === 'Admin'); 
-      var term = ($('ventasSearchInput') ? $('ventasSearchInput').value.toLowerCase().trim() : '');
-      var filtered = sales.filter(function(s) { return (s.id && s.id.toLowerCase().includes(term)) || (s.customerName && s.customerName.toLowerCase().includes(term)); });
+      try {
+          if(!Array.isArray(sales)) sales = [];
+          var isAdmin = (activeUser === 'Admin'); 
+          var term = ($('ventasSearchInput') ? $('ventasSearchInput').value.toLowerCase().trim() : '');
+          var filtered = sales.filter(function(s) { return s && ((s.id && s.id.toLowerCase().includes(term)) || (s.customerName && s.customerName.toLowerCase().includes(term))); });
 
-      if (filtered.length === 0) { container.innerHTML = '<div class="p-6 text-center text-zinc-500">No hay ventas registradas.</div>'; return; }
+          if (filtered.length === 0) { container.innerHTML = '<div class="p-6 text-center text-zinc-500">No hay ventas registradas.</div>'; return; }
 
-      container.innerHTML = filtered.map(function(s) {
-        var itemsText = (s.items || []).map(function(it) { return it.qty + 'x ' + it.name; }).join(', ');
-        var deleteBtnHtml = isAdmin ? '<button type="button" onclick="window.deleteSaleAction(\'' + s.id + '\')" class="px-2 py-1 bg-rose-950 hover:bg-rose-900 text-rose-300 rounded-lg font-bold flex items-center gap-1"><i class="ph-bold ph-trash"></i> Eliminar</button>' : '';
-        return '<div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2">' +
-                 '<div class="flex items-center justify-between"><div class="flex items-center gap-1.5 flex-wrap"><span class="font-mono text-xs font-bold text-amber-400">' + s.id + '</span><span class="text-[9px] px-1.5 py-0.2 rounded font-bold bg-zinc-800 text-zinc-300">' + (s.paymentMethod || 'Efectivo') + '</span></div><b class="font-mono text-sm font-black text-white">$' + (parseFloat(s.total)||0).toLocaleString() + '</b></div>' +
-                 '<div class="text-[11px] text-zinc-300"><span>' + itemsText + '</span></div>' +
-                 '<div class="flex items-center justify-between text-[10px] text-zinc-500 pt-1 border-t border-zinc-800/80"><span>Vendedor: <b>' + (s.soldBy || 'Admin') + '</b></span><div class="flex items-center gap-1"><button type="button" onclick="window.openSaleTicketModal(\'' + s.id + '\')" class="px-2 py-1 bg-zinc-800 text-zinc-200 rounded-lg font-bold flex items-center gap-1 shadow"><i class="ph-bold ph-receipt"></i> Ticket</button>' + deleteBtnHtml + '</div></div></div>';
-      }).join('');
+          container.innerHTML = filtered.map(function(s) {
+            var itemsText = (s.items || []).map(function(it) { return it.qty + 'x ' + it.name; }).join(', ');
+            var deleteBtnHtml = isAdmin ? '<button type="button" onclick="window.deleteSaleAction(\'' + s.id + '\')" class="px-2 py-1 bg-rose-950 hover:bg-rose-900 text-rose-300 rounded-lg font-bold flex items-center gap-1"><i class="ph-bold ph-trash"></i> Eliminar</button>' : '';
+            return '<div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2">' +
+                     '<div class="flex items-center justify-between"><div class="flex items-center gap-1.5 flex-wrap"><span class="font-mono text-xs font-bold text-amber-400">' + s.id + '</span><span class="text-[9px] px-1.5 py-0.2 rounded font-bold bg-zinc-800 text-zinc-300">' + (s.paymentMethod || 'Efectivo') + '</span></div><b class="font-mono text-sm font-black text-white">$' + (parseFloat(s.total)||0).toLocaleString() + '</b></div>' +
+                     '<div class="text-[11px] text-zinc-300"><span>' + itemsText + '</span></div>' +
+                     '<div class="flex items-center justify-between text-[10px] text-zinc-500 pt-1 border-t border-zinc-800/80"><span>Vendedor: <b>' + (s.soldBy || 'Admin') + '</b></span><div class="flex items-center gap-1"><button type="button" onclick="window.openSaleTicketModal(\'' + s.id + '\')" class="px-2 py-1 bg-zinc-800 text-zinc-200 rounded-lg font-bold flex items-center gap-1 shadow"><i class="ph-bold ph-receipt"></i> Ticket</button>' + deleteBtnHtml + '</div></div></div>';
+          }).join('');
+      } catch(e) { console.error("Error en ventas", e); sales = []; }
     };
 
     window.deleteSaleAction = function(saleId) {
@@ -1634,7 +1709,6 @@
       }
 
       window.renderRepairsList(); window.updateCounters();
-      window.renderBranchSelectors();
       
       try {
           var savedVersion = localStorage.getItem(VERSION_STORAGE_KEY);
