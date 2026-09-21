@@ -80,7 +80,7 @@
           <span>Sistema Actualizado</span>
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
         </h4>
-        <p class="text-[10px] text-indigo-200 mt-0.5">Sincronización de Licencias y Compresión de Fotos activada.</p>
+        <p class="text-[10px] text-indigo-200 mt-0.5">Usuarios en línea y sincronización de sucursales.</p>
       </div>
     </div>
     <button type="button" onclick="window.dismissUpdateBanner()" class="w-7 h-7 rounded-lg bg-indigo-900/80 hover:bg-indigo-800 text-indigo-300 flex items-center justify-center shrink-0">
@@ -236,10 +236,12 @@
       <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-shopping-cart-simple text-amber-400 text-xl"></i><h3 class="text-sm font-bold text-white">Ventas (POS)</h3></div><button type="button" onclick="window.closeModal('salesModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
         <div class="flex-1 flex flex-col border-b md:border-b-0 md:border-r border-zinc-800 p-3.5 space-y-3 overflow-hidden">
+          
           <div class="flex gap-2 shrink-0">
             <input type="text" id="posSearchProduct" oninput="window.renderPosCatalog()" placeholder="Buscar repuesto..." class="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white">
             <button type="button" onclick="window.togglePosCam()" class="px-3 py-2 bg-purple-900 text-purple-200 rounded-xl font-bold flex items-center gap-1"><i class="ph-bold ph-camera"></i> Escanear</button>
           </div>
+          
           <!-- VENTA MANUAL SIN STOCK -->
           <div class="flex gap-2 shrink-0 bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 shadow-sm items-center">
              <i class="ph-bold ph-tag text-zinc-500"></i>
@@ -247,6 +249,7 @@
              <input type="number" id="posManualPrice" placeholder="$ Precio" class="w-20 bg-zinc-900 border border-zinc-700 rounded-lg px-2 py-1.5 text-white text-xs font-mono">
              <button type="button" onclick="window.addManualPosItem()" class="bg-indigo-600 text-white rounded-lg px-2.5 py-1.5 font-bold text-xs shadow active:scale-95 transition whitespace-nowrap">+ Agregar</button>
           </div>
+
           <div id="posScannerBox" class="hidden p-2 bg-zinc-950 rounded-xl border border-purple-800 space-y-1"><button type="button" onclick="window.stopPosCam()" class="text-rose-400 font-bold w-full text-right py-1">Cerrar Cámara</button><div id="pos-qr-reader" class="w-full rounded-xl min-h-[180px] bg-black"></div></div>
           <div class="flex-1 overflow-y-auto"><div id="posCatalogGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div></div>
         </div>
@@ -263,7 +266,7 @@
     </div>
   </div>
 
-  <!-- MODAL: PREVIEW DE TICKET -->
+  <!-- MODAL: PREVIEW DE TICKET DE VENTA -->
   <div id="saleTicketModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Comprobante de Venta</h3><button type="button" onclick="window.closeModal('saleTicketModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -275,7 +278,7 @@
     </div>
   </div>
 
-  <!-- MODAL: CAMBIAR USUARIO -->
+  <!-- MODAL: CAMBIAR USUARIO ACTIVO / PERSONAL -->
   <div id="switchUserModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3.5 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Operar como Usuario</h3><button type="button" onclick="window.closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -284,6 +287,7 @@
         <div id="usersListGrid" class="grid grid-cols-2 gap-2"></div>
       </div>
       
+      <!-- CONF CONTRASEÑA ADMIN -->
       <div id="adminPinConfigSection" class="p-3 bg-zinc-950 rounded-2xl border border-amber-600/50 space-y-2 hidden">
         <div id="setupPinBox">
           <span class="text-[10px] font-bold text-amber-400 uppercase block">🔑 Configurar Clave de Administrador:</span>
@@ -293,7 +297,9 @@
           </div>
         </div>
         <div id="recoveryPinBox" class="hidden text-center space-y-1.5 py-1">
-          <span class="text-[10px] font-bold text-emerald-400 uppercase flex justify-center items-center gap-1"><i class="ph-bold ph-shield-check text-base"></i> Clave Configurada y Protegida</span>
+          <span class="text-[10px] font-bold text-emerald-400 uppercase flex justify-center items-center gap-1">
+            <i class="ph-bold ph-shield-check text-base"></i> Clave Configurada y Protegida
+          </span>
           <button type="button" onclick="window.recoverAdminPin()" class="text-xs text-amber-400 underline font-bold mt-1">¿Olvidaste la contraseña?</button>
         </div>
       </div>
@@ -325,188 +331,10 @@
       <div class="space-y-2">
         <input type="text" id="cfgWorkshopName" placeholder="Nombre Comercial" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
         <input type="text" id="cfgWorkshopSubtitle" placeholder="Subtítulo" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-        <input type="text" id="cfgBranchesListInput" placeholder="Sucursales (ej: Resistencia, Goya)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-        <input type="tel" id="cfgAdminPhone" placeholder="WhatsApp Admin (Para Cierres)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+        <input type="text" id="cfgBranchesListInput" placeholder="Sucursales (ej: Central, Goya)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+        <input type="tel" id="cfgAdminPhone" placeholder="WhatsApp Admin (Para recibir cierres)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
       </div>
       <button type="button" onclick="window.saveSettings()" class="w-full py-2.5 bg-iosBlue text-white font-bold rounded-xl shadow">Guardar Cambios</button>
-    </div>
-  </div>
-
-  <!-- MODAL: NUEVO INGRESO -->
-  <div id="newRepairModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[92vh] flex flex-col shadow-2xl text-xs">
-      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800 bg-zinc-900">
-        <h2 class="text-sm font-bold text-white flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-iosBlue"></span>Nuevo Ingreso</h2>
-        <button type="button" onclick="window.closeModal('newRepairModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
-      </div>
-      
-      <div class="overflow-y-auto p-4 space-y-3 flex-1 pb-safe">
-        <div class="space-y-1.5">
-          <label class="font-bold text-zinc-300 uppercase text-[9px]">1. Datos del Cliente</label>
-          <input type="text" id="inpClientName" placeholder="Nombre y Apellido *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-          <div class="flex gap-2">
-            <select id="inpClientCountryCode" class="bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-2 text-white font-bold w-[110px] shrink-0"><option value="549">🇦🇷 +54 9</option><option value="55">🇧🇷 +55</option></select>
-            <input type="tel" id="inpClientPhone" placeholder="Número celular *" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
-          </div>
-        </div>
-
-        <div class="space-y-1.5">
-          <label class="font-bold text-zinc-300 uppercase text-[9px]">2. Dispositivo</label>
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            <select id="inpDeviceType" class="bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-2 text-white col-span-2 sm:col-span-1"><option value="Celular">Celular</option><option value="Tablet">Tablet</option><option value="Notebook">Notebook</option></select>
-            <input type="text" id="inpDeviceBrand" placeholder="Marca *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-            <input type="text" id="inpDeviceModel" placeholder="Modelo *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-          </div>
-        </div>
-
-        <div class="space-y-2 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
-          <div class="flex items-center justify-between">
-            <label class="font-bold text-zinc-300 uppercase text-[9px] block">3. Clave / Seguridad</label>
-            <div class="flex items-center gap-1 bg-zinc-800 p-0.5 rounded-lg text-[10px]">
-              <button type="button" onclick="window.setUnlockType('pin')" id="btnUnlockPin" class="px-2 py-0.5 rounded bg-iosBlue text-white font-medium transition">PIN</button>
-              <button type="button" onclick="window.setUnlockType('pattern')" id="btnUnlockPattern" class="px-2 py-0.5 rounded text-zinc-400 transition">Patrón</button>
-              <button type="button" onclick="window.setUnlockType('none')" id="btnUnlockNone" class="px-2 py-0.5 rounded text-zinc-400 transition">Sin Clave</button>
-            </div>
-          </div>
-          <div id="unlockViewPin"><input type="text" id="inpUnlockPin" placeholder="Ej: 1234" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-center font-mono tracking-widest"></div>
-          
-          <div id="unlockViewPattern" class="hidden text-center space-y-1">
-            <canvas id="patternCanvas" width="220" height="220" class="bg-black border border-zinc-800 rounded-2xl mx-auto touch-none"></canvas>
-            <div class="text-[10px] text-zinc-400 mt-1">
-              <span id="patternStatusLabel">Dibuja el patrón en los puntos</span> • 
-              <button type="button" onclick="window.resetPatternCanvas()" class="text-rose-400 underline font-bold">Borrar trazo</button>
-            </div>
-          </div>
-          <div id="unlockViewNone" class="hidden py-1 text-center text-[11px] text-zinc-500">Sin clave / Dispositivo apagado.</div>
-        </div>
-
-        <div class="space-y-2 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
-          <div class="flex items-center justify-between">
-            <label class="font-bold text-zinc-300 uppercase text-[9px] block">4. Registro Fotográfico</label>
-            <span id="photoCountBadge" class="text-[10px] text-zinc-500">0 fotos</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <label class="flex-1 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center gap-1.5 shadow active:scale-95 transition cursor-pointer">
-              <i class="ph-bold ph-camera text-iosBlue text-base"></i> Cámara
-              <input type="file" accept="image/*" capture="environment" onchange="window.handleNewPhotoUpload(this)" class="hidden">
-            </label>
-            <label class="flex-1 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center gap-1.5 shadow active:scale-95 transition cursor-pointer">
-              <i class="ph-bold ph-image text-emerald-400 text-base"></i> Galería
-              <input type="file" accept="image/*" multiple onchange="window.handleNewPhotoUpload(this)" class="hidden">
-            </label>
-          </div>
-          <div id="newPhotosGrid" class="flex gap-2 overflow-x-auto py-1 no-scrollbar min-h-[60px]"></div>
-        </div>
-
-        <div class="space-y-2.5 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
-          <label class="font-bold text-zinc-300 uppercase text-[9px] block">5. Falla y Presupuesto</label>
-          <textarea id="inpDeviceFault" rows="2" placeholder="Falla informada por el cliente..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white"></textarea>
-          <div class="grid grid-cols-2 gap-2">
-            <div><label class="text-[9px] text-zinc-400 block mb-0.5">Ppto Inicial ($)</label><input type="number" id="inpDeviceBudget" oninput="window.calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></div>
-            <div><label class="text-[9px] text-zinc-400 block mb-0.5">Seña ($)</label><input type="number" id="inpDeviceAdvance" oninput="window.calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold"></div>
-          </div>
-          <div class="flex justify-between items-center text-xs pt-2 border-t border-zinc-800/80">
-            <span class="text-zinc-400 font-bold uppercase">Resta pagar:</span>
-            <span id="newCalculatedBalance" class="font-mono font-bold text-amber-400 text-sm">$0</span>
-          </div>
-        </div>
-
-        <button type="button" onclick="window.guardarIngresoDirecto()" class="w-full py-3 rounded-xl bg-iosBlue text-white font-bold text-sm shadow active:scale-95 transition mt-2">Guardar Ingreso</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: EDITAR ORDEN -->
-  <div id="editRepairModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg max-h-[92vh] flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800 bg-zinc-900">
-        <h3 class="text-sm font-bold text-white">Editar Diagnóstico y Orden</h3>
-        <button type="button" onclick="window.closeModal('editRepairModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
-      </div>
-      <form onsubmit="window.saveEditedRepair(event)" class="overflow-y-auto p-4 space-y-3 flex-1 pb-safe">
-        <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Cliente</label><input type="text" id="editClientName" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white"></div>
-        <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Equipo</label>
-            <div class="grid grid-cols-2 gap-2">
-                <input type="text" id="editDeviceBrand" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white">
-                <input type="text" id="editDeviceModel" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white">
-            </div>
-        </div>
-        <div class="space-y-1">
-          <label class="font-bold text-zinc-400 text-[10px]">Diagnóstico / Falla</label>
-          <textarea id="editDeviceFault" rows="2" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"></textarea>
-        </div>
-        <div class="space-y-1">
-          <label class="font-bold text-zinc-400 text-[10px]">Reparación / Trabajo Realizado</label>
-          <textarea id="editRepairDetails" rows="3" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"></textarea>
-        </div>
-        <div class="grid grid-cols-2 gap-2 pt-2">
-          <button type="button" onclick="window.closeModal('editRepairModal')" class="py-2.5 bg-zinc-800 text-white font-bold rounded-xl">Cancelar</button>
-          <button type="submit" class="py-2.5 bg-iosBlue text-white font-bold rounded-xl">Guardar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL: DETALLES DE ORDEN -->
-  <div id="detailModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[92vh] flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800 bg-zinc-900">
-        <div><div class="flex items-center gap-1.5"><span id="dtlOrderId" class="text-xs font-mono font-bold text-iosBlue">#OL-0000</span></div><h3 id="dtlDeviceTitle" class="text-sm font-bold text-white mt-0.5">Dispositivo</h3></div>
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="window.openEditRepairModal()" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-[10px] border border-zinc-700 flex items-center gap-1 active:scale-95 transition"><i class="ph-bold ph-pencil-simple text-amber-400"></i> Editar</button>
-          <button type="button" onclick="window.closeModal('detailModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
-        </div>
-      </div>
-      <div class="overflow-y-auto p-4 space-y-3.5 flex-1 pb-safe">
-          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
-            <span class="text-[9px] text-zinc-500 uppercase block mb-0.5">Cliente:</span><b class="text-white text-sm" id="dtlClientName"></b><div class="text-zinc-400 font-mono text-xs mt-0.5" id="dtlClientPhone"></div>
-          </div>
-          
-          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
-            <div>
-              <span class="text-[9px] text-zinc-500 uppercase block mb-0.5">Diagnóstico / Falla:</span>
-              <p id="dtlDeviceFault" class="text-zinc-200 text-xs leading-relaxed"></p>
-            </div>
-            <div id="dtlRepairDetailsBox" class="pt-2 border-t border-zinc-800/80">
-              <span class="text-[9px] text-indigo-400 uppercase font-bold block mb-0.5">Reparación Realizada:</span>
-              <p id="dtlRepairDetailsText" class="text-zinc-200 text-xs whitespace-pre-line leading-relaxed"></p>
-            </div>
-            <div class="grid grid-cols-2 gap-2 pt-2">
-              <button type="button" onclick="window.sendTechnicalReportWA()" class="py-2 rounded-xl bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold text-[10px] flex items-center justify-center gap-1 shadow"><i class="ph-bold ph-whatsapp-logo text-sm"></i> WhatsApp Informe</button>
-              <button type="button" onclick="window.printTechnicalReport()" class="py-2 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold text-[10px] flex items-center justify-center gap-1 shadow"><i class="ph-bold ph-printer text-sm"></i> Imprimir Informe</button>
-            </div>
-          </div>
-          
-          <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl flex items-center justify-between">
-            <div><span class="text-[10px] text-zinc-400 uppercase font-bold block">Cobro de Reparación</span><span class="text-xs text-zinc-300">Ingresar saldo a caja local</span></div>
-            <button type="button" onclick="window.chargeRepairToCash()" class="py-1.5 px-3 rounded-xl bg-emerald-950 border border-emerald-600/70 text-emerald-300 font-bold text-xs flex items-center gap-1 active:scale-95 transition">
-              <i class="ph-bold ph-wallet text-sm"></i> Cobrar a Caja
-            </button>
-          </div>
-
-          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
-            <div class="flex items-center justify-between">
-              <span class="text-[10px] text-zinc-400 font-bold uppercase">Estado Operativo:</span>
-              <span id="dtlOperationalStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-950 text-amber-300">Espera</span>
-            </div>
-            <div class="grid grid-cols-4 gap-1.5">
-              <button type="button" onclick="window.updateDeviceOperationalStatus('WAITING')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-clock text-amber-400 text-base mb-1 block"></i> Espera</button>
-              <button type="button" onclick="window.updateDeviceOperationalStatus('IN_PROGRESS')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-wrench text-iosBlue text-base mb-1 block"></i> Taller</button>
-              <button type="button" onclick="window.updateDeviceOperationalStatus('IN_TRANSIT')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-truck text-indigo-400 text-base mb-1 block"></i> Viaje</button>
-              <button type="button" onclick="window.updateDeviceOperationalStatus('READY')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-check-circle text-emerald-400 text-base mb-1 block"></i> Listo</button>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-3 gap-1.5 text-center mt-2">
-            <div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-zinc-500 block font-bold">TOTAL ($)</span><b class="text-white font-mono text-xs" id="dtlBudgetTotal">$0</b></div>
-            <div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-emerald-400 block font-bold">SEÑA ($)</span><b class="text-emerald-400 font-mono text-xs" id="dtlAdvancePaid">$0</b></div>
-            <div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-amber-400 block font-bold">RESTA ($)</span><b class="text-amber-400 font-mono text-xs" id="dtlBalanceDue">$0</b></div>
-          </div>
-
-          <button type="button" onclick="window.deleteCurrentRepair()" class="w-full py-2.5 mt-4 bg-rose-950 text-rose-300 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 transition">
-            <i class="ph-bold ph-trash text-base"></i> Eliminar Orden Permanentemente
-          </button>
-      </div>
     </div>
   </div>
 
@@ -573,7 +401,6 @@
             <button type="button" onclick="window.saveCashMovement()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow">Guardar en Caja</button>
         </div>
         
-        <!-- CIERRE DIARIO -->
         <div class="pt-2 border-t border-zinc-800 space-y-2">
            <span class="text-[10px] font-bold text-zinc-400 uppercase block">Opciones de Cierre de Caja:</span>
            <div class="grid grid-cols-3 gap-1.5">
@@ -585,12 +412,27 @@
 
         <div id="cashListContainer" class="space-y-1.5 max-h-[25vh] overflow-y-auto mt-2"></div>
         
-        <!-- HISTORIAL DE CIERRES -->
         <div class="pt-2 border-t border-zinc-800 mt-2 space-y-2">
             <span class="text-[10px] font-bold text-zinc-400 uppercase block">Historial de Cierres Diarios:</span>
             <div id="cashClosuresList" class="space-y-1.5 max-h-[20vh] overflow-y-auto"></div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EQUIPO Y VINCULACIÓN -->
+  <div id="teamModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300">
+      <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Equipo & Sincronización</h3><button type="button" onclick="window.closeModal('teamModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800"><span class="text-[10px] text-zinc-400 block mb-0.5">Código Taller (Este dispositivo):</span><div id="modalWorkshopCodeDisplay" class="font-mono text-base font-bold text-white">TALLER-XXXX</div></div>
+      <div class="space-y-1">
+          <label class="text-[10px] text-zinc-400 block font-bold">Vincular a otro Taller (Sincronizar red):</label>
+          <div class="flex gap-1.5">
+            <input type="text" id="inpJoinWorkshopCode" placeholder="Ej: TALLER-8291" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase">
+            <button type="button" onclick="window.joinWorkshop()" class="px-3.5 py-2 rounded-xl bg-indigo-600 text-white font-bold">Unirme</button>
+          </div>
+      </div>
+      <button type="button" onclick="window.closeModal('teamModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1">Cerrar</button>
     </div>
   </div>
 
@@ -607,22 +449,32 @@
           <span class="text-[9px] text-zinc-600 block mt-1">Toca 5 veces sobre el estado para acceder al Modo Maestro</span>
         </div>
 
-        <!-- PANEL DE TELEMETRÍA MAESTRO -->
         <div id="masterAdminUnlockedView" class="hidden p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3">
           <div class="flex items-center justify-between border-b border-indigo-900 pb-2">
             <div class="flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               <span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide">Panel Maestro Creador</span>
             </div>
+            <button type="button" onclick="window.requestTelemetryBroadcast()" class="text-[9px] bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1"><i class="ph-bold ph-arrows-clockwise"></i> Sondear Red</button>
           </div>
-          <div class="space-y-2">
+          
+          <div class="grid grid-cols-5 gap-1.5 text-center">
+            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-zinc-400 uppercase block font-bold">Talleres</span><b class="text-white text-xs font-mono" id="telTotalWorkshops">0</b></div>
+            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-emerald-400 uppercase block font-bold">En Línea</span><b class="text-emerald-400 text-xs font-mono" id="telOnlineWorkshops">0</b></div>
+            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-iosBlue uppercase block font-bold">Usuarios</span><b class="text-iosBlue text-xs font-mono" id="telOnlineUsers">0</b></div>
+            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-amber-400 uppercase block font-bold">DEMO</span><b class="text-amber-400 text-xs font-mono" id="telDemoWorkshops">0</b></div>
+            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-indigo-400 uppercase block font-bold">PRO</span><b class="text-indigo-400 text-xs font-mono" id="telProWorkshops">0</b></div>
+          </div>
+          <div class="space-y-1.5">
+            <span class="text-[9px] text-zinc-400 uppercase font-bold block">Conexiones Activas en la Red:</span>
+            <div id="telemetryWorkshopsList" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
+          </div>
+          
+          <div class="space-y-2 pt-2 border-t border-indigo-900/50">
             <span class="text-[9px] font-bold text-indigo-300 uppercase">Generar Licencia de Activación:</span>
             <div class="grid grid-cols-3 gap-1.5">
               <input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="col-span-2 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono text-xs">
-              <select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold">
-                <option value="SEM6" selected>6 Meses</option>
-                <option value="LIFETIME">Vitalicio</option>
-              </select>
+              <select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold"><option value="SEM6" selected>6 Meses</option><option value="LIFETIME">Vitalicio</option></select>
             </div>
             <button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow">Emitir Clave Segura</button>
             <div id="genResultBox" class="hidden p-2.5 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800">
@@ -651,12 +503,13 @@
   <!-- SISTEMA PRINCIPAL JAVASCRIPT BLINDADO                                              -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v10.8.0'; 
+    var APP_CODE_VERSION = 'v10.9.0'; 
 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var VERSION_STORAGE_KEY = 'openline_code_installed_version';
     var ACTIVE_USER_KEY = 'openline_current_active_user';
+    var TELEMETRY_STORAGE_KEY = 'openline_telemetry_master_db';
 
     var myDeviceId = 'dev_fallback';
     var currentWorkshopId = 'TALLER-FALLBACK';
@@ -666,13 +519,12 @@
         localStorage.setItem(DEVICE_ID_KEY, myDeviceId);
         currentWorkshopId = localStorage.getItem(WORKSHOP_ID_KEY) || ('TALLER-' + Math.floor(1000 + Math.random() * 9000));
         localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
-    } catch(e) { console.warn("Storage bloqueado por navegador", e); }
+    } catch(e) { console.warn("Storage bloqueado", e); }
 
     function $(id) { return document.getElementById(id); }
 
     window.openModal = function(id) { var el = $(id); if (el) el.classList.add('active'); };
     window.closeModal = function(id) { var el = $(id); if (el) el.classList.remove('active'); };
-    
     window.showToast = function(title, msg) {
       var tc = $('toastContainer');
       if(tc) {
@@ -694,6 +546,9 @@
     window.openVentasHistoryModal = function() { window.setVentasPeriod('HOY'); window.openModal('ventasModal'); };
 
     var mqttClient = null;
+    var masterTelemetryDB = {};
+    var isAdminModeUnlocked = false;
+
     var StorageShield = {
       getKey: function(entity) { return 'openline_vault_' + currentWorkshopId + '_' + entity; },
       save: function(entity, data, skipMqtt) { 
@@ -709,54 +564,6 @@
       }
     };
 
-    // LICENCIA ROBUSTA
-    window.isRecognizedProLicense = function(lic, wsCode) {
-      if (!lic) return false;
-      if (lic === true || lic === 'PRO' || lic === 'LIFETIME' || lic === 'VITALICIO') return true;
-      if (typeof lic === 'string') {
-        var up = lic.toUpperCase();
-        if (up.includes('PRO') || up.includes('LIFETIME') || up.includes('VITALICIO')) return true;
-        try { lic = JSON.parse(lic); } catch(e) { return false; }
-      }
-      if (typeof lic === 'object') {
-        if (lic.isPro || lic.lifetime || lic.vitalicio) return true;
-        var t = (lic.type || '').toUpperCase();
-        if (t === 'LIFETIME' || t === 'PRO' || t === 'VITALICIO') return true;
-        if (t === 'SEM6') {
-          if (lic.expiresAt && Date.now() > lic.expiresAt) return false; 
-          return true;
-        }
-      }
-      return false;
-    };
-
-    window.updateLicenseUI = function() {
-        var licInfo = StorageShield.load('license', null);
-        if(!licInfo) return;
-        var txt = $('headerLicenseText');
-        var btn = $('headerLicenseBtn');
-        if(txt && btn) {
-            if(licInfo.type === 'LIFETIME' || licInfo.type === 'PRO' || licInfo.type === 'VITALICIO') {
-                txt.textContent = 'VITALICIO';
-                btn.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
-            } else {
-                txt.textContent = 'DEMO';
-                btn.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition';
-            }
-        }
-    };
-
-    window.publishMQTT = function() {
-        if(mqttClient && mqttClient.connected) {
-            var lic = StorageShield.load('license', null);
-            var payload = {
-                senderId: myDeviceId, repairs: repairs, stockItems: stockItems,
-                sales: sales, cashMovements: cashMovements, cashClosures: cashClosures, settings: workshopSettings, license: lic
-            };
-            mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', JSON.stringify(payload), {retain: true});
-        }
-    };
-
     var repairs = StorageShield.load('repairs', []);
     var stockItems = StorageShield.load('stock', []);
     var cashMovements = StorageShield.load('cash', []);
@@ -768,6 +575,21 @@
     var currentFilter = 'ALL';
     var currentVentasPeriod = 'HOY';
     var selectedRepairId = null;
+
+    window.joinWorkshop = function() {
+        var code = $('inpJoinWorkshopCode').value.trim().toUpperCase();
+        if(!code || !code.startsWith('TALLER-')) {
+            window.showToast("Error", "El código debe ser formato TALLER-XXXX"); return;
+        }
+        window.requestAdminPinAuth("Vincular a otro Taller (Reemplazará los datos actuales)", function() {
+            var confirmar = confirm("ADVERTENCIA: Vas a vincular este dispositivo al " + code + ".\nEsto reemplazará la información local por la de la nube de ese taller.\n\n¿Deseas continuar?");
+            if(confirmar) {
+                localStorage.setItem(WORKSHOP_ID_KEY, code);
+                window.showToast("Vinculando...", "El sistema se reiniciará en 2 segundos.");
+                setTimeout(function() { window.location.reload(); }, 2000);
+            }
+        });
+    };
 
     window.openSettingsModal = function() {
         if($('cfgWorkshopName')) $('cfgWorkshopName').value = workshopSettings.name || '';
@@ -790,7 +612,6 @@
         
         if($('appHeaderTitle')) $('appHeaderTitle').textContent = workshopSettings.name;
         if($('appHeaderSubtitle')) $('appHeaderSubtitle').textContent = workshopSettings.subtitle;
-        
         window.showToast("Guardado", "Ajustes actualizados");
         window.closeModal('settingsModal');
     };
@@ -817,36 +638,6 @@
         if($('headerDefaultIcon')) $('headerDefaultIcon').classList.remove('hidden');
     };
 
-    var posScanner = null;
-    var stockScanner = null;
-
-    window.togglePosCam = function() {
-      var box = $('posScannerBox');
-      if (box.classList.contains('hidden')) {
-        box.classList.remove('hidden');
-        if (!posScanner) posScanner = new Html5Qrcode("pos-qr-reader");
-        posScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: {width: 250, height: 250} }, function(decodedText) {
-            window.addPosItemByCode(decodedText);
-            window.showToast("Producto Escaneado", decodedText);
-        }).catch(function(err){ console.log(err); });
-      } else { window.stopPosCam(); }
-    };
-    window.stopPosCam = function() { $('posScannerBox').classList.add('hidden'); if (posScanner) { try { posScanner.stop().catch(function(e){}); } catch(e){} } };
-
-    window.toggleStockCam = function() {
-      var box = $('scannerContainer');
-      if (box.classList.contains('hidden')) {
-        box.classList.remove('hidden');
-        if (!stockScanner) stockScanner = new Html5Qrcode("qr-reader");
-        stockScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: {width: 250, height: 250} }, function(decodedText) {
-            if($('stkCode')) $('stkCode').value = decodedText;
-            window.showToast("Código Capturado", decodedText);
-            window.stopStockCam();
-        }).catch(function(err){ console.log(err); });
-      } else { window.stopStockCam(); }
-    };
-    window.stopStockCam = function() { $('scannerContainer').classList.add('hidden'); if (stockScanner) { try { stockScanner.stop().catch(function(e){}); } catch(e){} } };
-
     window.openSwitchUserModal = function() {
       var grid = $('usersListGrid');
       var list = workshopSettings.users || ['Admin'];
@@ -871,9 +662,7 @@
                  $('setupPinBox').classList.remove('hidden');
                  $('recoveryPinBox').classList.add('hidden');
              }
-         } else {
-             adminSect.classList.add('hidden');
-         }
+         } else { adminSect.classList.add('hidden'); }
       }
       window.openModal('switchUserModal');
     };
@@ -883,7 +672,7 @@
       try { localStorage.setItem(ACTIVE_USER_KEY, activeUser); } catch(e){}
       if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
       window.closeModal('switchUserModal');
-      window.showToast("Usuario Activo", "Operando como: " + activeUser);
+      window.showToast("Usuario", "Operando como: " + activeUser);
     };
 
     window.addNewStaffMember = function() {
@@ -894,7 +683,7 @@
         StorageShield.save('settings', workshopSettings);
         $('inpNewStaffName').value = '';
         window.openSwitchUserModal();
-        window.showToast("Personal Agregado", name + " habilitado.");
+        window.showToast("Personal", name + " habilitado.");
       }
     };
 
@@ -904,7 +693,7 @@
        workshopSettings.adminPin = newPin;
        StorageShield.save('settings', workshopSettings);
        $('inpNewAdminPin').value = '';
-       window.showToast("Seguridad", "Clave Maestra configurada y protegida.");
+       window.showToast("Seguridad", "Clave Maestra protegida.");
        window.openSwitchUserModal(); 
     };
 
@@ -914,23 +703,22 @@
        var pin = workshopSettings.adminPin || '1234';
        var msg = "🔐 Tu Clave Maestra de Admin en OpenLine es: " + pin;
        if(method.toUpperCase() === 'W') {
-           var phone = workshopSettings.adminPhone || prompt("Ingresa tu número de WhatsApp con código de país (Ej: 5491123456789):");
+           var phone = workshopSettings.adminPhone || prompt("Ingresa tu número de WhatsApp (Ej: 5491123456789):");
            if(phone) window.open('https://wa.me/' + phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg), '_blank');
        } else if(method.toUpperCase() === 'M') {
            var email = prompt("Ingresa tu correo electrónico:");
            if(email) window.location.href = 'mailto:' + email + '?subject=Recuperación Clave OpenLine&body=' + encodeURIComponent(msg);
-       } else {
-           window.showToast("Error", "Opción no válida.");
-       }
+       } else { window.showToast("Error", "Opción no válida."); }
     };
 
     window.requestAdminPinAuth = function(actionDesc, onSuccessCallback) {
       var correctPin = (workshopSettings.adminPin || '1234').trim();
-      var entered = prompt("🔒 ACCIÓN PROTEGIDA POR ADMINISTRADOR\n" + (actionDesc || "Autorización requerida") + "\n\nIngrese la Clave Maestra:");
+      var entered = prompt("🔒 ACCIÓN PROTEGIDA\n" + (actionDesc || "Autorización requerida") + "\n\nIngrese Clave Maestra:");
       if (entered === correctPin) { onSuccessCallback(); } 
-      else if (entered !== null) { window.showToast("Error", "Clave de Admin incorrecta."); }
+      else if (entered !== null) { window.showToast("Error", "Clave incorrecta."); }
     };
 
+    // --- MÓDULO DE CAJA ---
     window.showCashIncome = function() { $('cshType').value = 'INCOME'; $('cashFormTitle').textContent = 'Registrar Ingreso'; $('cashMovementForm').classList.remove('hidden'); };
     window.showCashExpense = function() { $('cshType').value = 'EXPENSE'; $('cashFormTitle').textContent = 'Registrar Egreso'; $('cashMovementForm').classList.remove('hidden'); };
     window.hideCashForm = function() { $('cashMovementForm').classList.add('hidden'); };
@@ -941,10 +729,7 @@
         if(!amt || !concept) { window.showToast('Error', 'Completa monto y concepto'); return; }
         
         if (!Array.isArray(cashMovements)) cashMovements = [];
-        cashMovements.unshift({
-            id: 'CSH-'+Date.now(), type: $('cshType').value, amount: amt, concept: concept, method: $('cshMethod').value,
-            date: Date.now(), user: activeUser
-        });
+        cashMovements.unshift({ id: 'CSH-'+Date.now(), type: $('cshType').value, amount: amt, concept: concept, method: $('cshMethod').value, date: Date.now(), user: activeUser });
         StorageShield.save('cash', cashMovements);
         window.hideCashForm(); $('cshAmount').value = ''; $('cshConcept').value = '';
         window.updateCashBalanceUI(); window.showToast('Caja', 'Movimiento registrado');
@@ -967,8 +752,7 @@
                   '<div style="border-top:1px dashed #000;padding-top:4px;">' +
                   '<b style="font-size:12px;">TOTAL: $' + m.amount + '</b></div></div>';
        
-       $('printArea').innerHTML = html;
-       $('printArea').style.display = 'block'; $('printArea').classList.remove('hidden');
+       $('printArea').innerHTML = html; $('printArea').style.display = 'block'; $('printArea').classList.remove('hidden');
        window.print(); setTimeout(function(){ $('printArea').classList.add('hidden'); }, 500);
     };
 
@@ -996,8 +780,7 @@
                 } else {
                     container.innerHTML = cashMovements.map(function(c) {
                         if(!c) return '';
-                        var isInc = c.type === 'INCOME';
-                        var amount = parseFloat(c.amount) || 0;
+                        var isInc = c.type === 'INCOME'; var amount = parseFloat(c.amount) || 0;
                         return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl mb-1.5">' +
                                '<div><div class="font-bold text-xs text-white">'+(c.concept || 'Movimiento')+'</div><div class="text-[9px] text-zinc-500">'+(c.method || 'Efectivo')+' • '+(c.user || 'Admin')+'</div></div>' +
                                '<div class="flex items-center gap-2"><span class="font-mono text-sm font-bold '+(isInc?'text-emerald-400':'text-rose-400')+'">'+(isInc?'+':'-')+'$'+amount.toLocaleString()+'</span>' +
@@ -1060,7 +843,7 @@
     };
 
     window.cerrarCajaRestablecer = function() {
-        var confirmar = confirm("¿Confirmas el Cierre de Caja?\nEsto archivará los movimientos en el historial y dejará la caja en $0.");
+        var confirmar = confirm("¿Confirmas el Cierre de Caja?\nEsto archivará los movimientos en el historial y dejará la caja en $0 para el próximo turno.");
         if (confirmar) {
             var inc = parseFloat($('cashTotalIncome').textContent.replace(/[^0-9.-]+/g,"")) || 0;
             var exp = parseFloat($('cashTotalExpense').textContent.replace(/[^0-9.-]+/g,"")) || 0;
@@ -1083,8 +866,7 @@
         var container = $('cashClosuresList');
         if(!container) return;
         if(!Array.isArray(cashClosures) || cashClosures.length === 0) {
-            container.innerHTML = '<div class="text-center text-zinc-500 p-4 text-[10px]">No hay cierres previos</div>';
-            return;
+            container.innerHTML = '<div class="text-center text-zinc-500 p-4 text-[10px]">No hay cierres previos</div>'; return;
         }
         container.innerHTML = cashClosures.map(function(c) {
             var dt = new Date(c.date).toLocaleDateString('es-AR') + ' ' + new Date(c.date).toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'});
@@ -1102,19 +884,16 @@
         var r = repairs.find(function(x) { return x.id === selectedRepairId; });
         if(!r) return;
         var amountToCharge = (parseFloat(r.budget) || 0) - (parseFloat(r.advance) || 0);
-        if(amountToCharge <= 0) {
-            window.showToast("Aviso", "No hay saldo pendiente de cobro.");
-            return;
-        }
+        if(amountToCharge <= 0) { window.showToast("Aviso", "No hay saldo pendiente de cobro."); return; }
         if($('cshAmount')) $('cshAmount').value = amountToCharge;
         if($('cshConcept')) $('cshConcept').value = "Cobro Reparación #" + r.id;
         if($('cshType')) $('cshType').value = 'INCOME';
         if($('cashFormTitle')) $('cashFormTitle').textContent = 'Cobrar Orden ' + r.id;
         if($('cashMovementForm')) $('cashMovementForm').classList.remove('hidden');
-        window.closeModal('detailModal');
-        window.openCashModal();
+        window.closeModal('detailModal'); window.openCashModal();
     };
 
+    // --- REPARACIONES E INFORMES ---
     window.handleSearch = function() {
         var val = $('searchInput') ? $('searchInput').value.trim() : '';
         if($('clearSearchBtn')) { $('clearSearchBtn').classList[val ? 'remove' : 'add']('hidden'); }
@@ -1260,7 +1039,7 @@
             </div>
         </div>`;
         $('printArea').innerHTML = html;
-        $('printArea').style.display = 'block';$('printArea').classList.remove('hidden');
+        $('printArea').style.display = 'block'; $('printArea').classList.remove('hidden');
         window.print(); setTimeout(function(){ $('printArea').classList.add('hidden'); }, 500);
     };
 
@@ -1270,7 +1049,7 @@
         r.status = newStatus;
         StorageShield.save('repairs', repairs);
         window.showToast("Estado Actualizado", "El equipo pasó a: " + newStatus);
-        if($('dtlOperationalStatusBadge'))$('dtlOperationalStatusBadge').textContent = newStatus;
+        if($('dtlOperationalStatusBadge')) $('dtlOperationalStatusBadge').textContent = newStatus;
         window.renderRepairsList(); window.updateCounters();
     };
 
@@ -1284,7 +1063,6 @@
         });
     };
 
-    // COMPRESIÓN DE FOTOS E INGRESO
     var currentPhotos = [];
     var activeUnlockType = 'pin';
     var patternCtx = null;
@@ -1294,12 +1072,12 @@
 
     window.setUnlockType = function(type) {
       activeUnlockType = type;
-      ['btnUnlockPin', 'btnUnlockPattern', 'btnUnlockNone'].forEach(function(id) { if($(id))$(id).className = 'px-2 py-0.5 rounded text-zinc-400 transition'; });
-      if($('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1)))$('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1)).className = 'px-2 py-0.5 rounded bg-iosBlue text-white font-medium transition';
+      ['btnUnlockPin', 'btnUnlockPattern', 'btnUnlockNone'].forEach(function(id) { if($(id)) $(id).className = 'px-2 py-0.5 rounded text-zinc-400 transition'; });
+      if($('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1))) $('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1)).className = 'px-2 py-0.5 rounded bg-iosBlue text-white font-medium transition';
       
-      if($('unlockViewPin'))$('unlockViewPin').style.display = type === 'pin' ? 'block' : 'none';
-      if($('unlockViewPattern'))$('unlockViewPattern').style.display = type === 'pattern' ? 'block' : 'none';
-      if($('unlockViewNone'))$('unlockViewNone').style.display = type === 'none' ? 'block' : 'none';
+      if($('unlockViewPin')) $('unlockViewPin').style.display = type === 'pin' ? 'block' : 'none';
+      if($('unlockViewPattern')) $('unlockViewPattern').style.display = type === 'pattern' ? 'block' : 'none';
+      if($('unlockViewNone')) $('unlockViewNone').style.display = type === 'none' ? 'block' : 'none';
       
       if(type === 'pattern') setTimeout(window.initPatternCanvas, 100);
     };
@@ -1350,7 +1128,7 @@
       var handleStart = function(e) {
          if(e.type === 'touchstart') e.preventDefault(); 
          isDrawingPattern = true; selectedPatternSequence = [];
-         if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Trazando...';$('patternStatusLabel').className = 'text-amber-400 font-bold'; }
+         if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Trazando...'; $('patternStatusLabel').className = 'text-amber-400 font-bold'; }
          var p = getPos(e); checkHit(p); redraw(p.x, p.y);
       };
       var handleMove = function(e) {
@@ -1362,7 +1140,8 @@
          if(e.type === 'touchend') e.preventDefault(); 
          if(!isDrawingPattern) return;
          isDrawingPattern = false; redraw();
-         if($('patternStatusLabel')) {$('patternStatusLabel').textContent = selectedPatternSequence.length > 0 ? 'Patrón registrado' : 'Dibuja el patrón'; 
+         if($('patternStatusLabel')) { 
+             $('patternStatusLabel').textContent = selectedPatternSequence.length > 0 ? 'Patrón registrado' : 'Dibuja el patrón'; 
              $('patternStatusLabel').className = selectedPatternSequence.length > 0 ? 'text-emerald-400 font-bold' : 'text-zinc-400 mt-1'; 
          }
       };
@@ -1383,7 +1162,7 @@
           patternCtx.beginPath(); patternCtx.arc(n.x, n.y, 8, 0, Math.PI*2);
           patternCtx.fillStyle = '#52525b'; patternCtx.fill();
       });
-      if($('patternStatusLabel')) {$('patternStatusLabel').textContent = 'Dibuja el patrón en los puntos'; $('patternStatusLabel').className = 'text-zinc-400 mt-1'; }
+      if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Dibuja el patrón en los puntos'; $('patternStatusLabel').className = 'text-zinc-400 mt-1'; }
     };
 
     window.handleNewPhotoUpload = function(input) {
@@ -1411,8 +1190,9 @@
         }
     };
     window.renderNewPhotos = function() {
-        if($('photoCountBadge'))$('photoCountBadge').textContent = currentPhotos.length + ' fotos';
-        if($('newPhotosGrid')) {$('newPhotosGrid').innerHTML = currentPhotos.map(function(src, i) {
+        if($('photoCountBadge')) $('photoCountBadge').textContent = currentPhotos.length + ' fotos';
+        if($('newPhotosGrid')) {
+            $('newPhotosGrid').innerHTML = currentPhotos.map(function(src, i) {
                 return '<div class="relative w-14 h-14 shrink-0 rounded-lg overflow-hidden border border-zinc-700"><img src="'+src+'" class="w-full h-full object-cover"><button type="button" onclick="window.removePhoto('+i+')" class="absolute top-0 right-0 bg-red-600 text-white rounded-bl-lg w-5 h-5 flex items-center justify-center text-[10px]"><i class="ph-bold ph-x"></i></button></div>';
             }).join('');
         }
@@ -1429,9 +1209,9 @@
     window.guardarIngresoDirecto = function() {
         var id = 'OL-' + Math.floor(1000 + Math.random() * 9000);
         var r = {
-            id: id, clientName: $('inpClientName').value, clientPhone: $('inpClientCountryCode').value +$('inpClientPhone').value,
-            deviceType: $('inpDeviceType').value, deviceBrand: $('inpDeviceBrand').value, deviceModel:$('inpDeviceModel').value,
-            deviceSerial: $('inpDeviceSerial').value, unlockType: activeUnlockType, unlockPin:$('inpUnlockPin').value,
+            id: id, clientName: $('inpClientName').value, clientPhone: $('inpClientCountryCode').value + $('inpClientPhone').value,
+            deviceType: $('inpDeviceType').value, deviceBrand: $('inpDeviceBrand').value, deviceModel: $('inpDeviceModel').value,
+            deviceSerial: $('inpDeviceSerial').value, unlockType: activeUnlockType, unlockPin: $('inpUnlockPin').value,
             photos: currentPhotos.slice(), fault: $('inpDeviceFault').value, budget: parseFloat($('inpDeviceBudget').value) || 0,
             advance: parseFloat($('inpDeviceAdvance').value) || 0, status: 'WAITING',
             createdAt: Date.now(), createdBy: activeUser
@@ -1443,21 +1223,192 @@
         window.showToast("Éxito", "Orden creada: " + id);
         
         currentPhotos = []; window.renderNewPhotos(); window.resetPatternCanvas();
-        ['inpClientName','inpClientPhone','inpDeviceBrand','inpDeviceModel','inpDeviceFault','inpDeviceBudget','inpDeviceAdvance','inpDeviceSerial','inpUnlockPin'].forEach(function(el){ if($(el))$(el).value=''; });
+        ['inpClientName','inpClientPhone','inpDeviceBrand','inpDeviceModel','inpDeviceFault','inpDeviceBudget','inpDeviceAdvance','inpDeviceSerial','inpUnlockPin'].forEach(function(el){ if($(el)) $(el).value=''; });
         window.renderRepairsList(); window.updateCounters();
     };
+
+    // --- PANEL MAESTRO DE LICENCIAS Y TELEMETRÍA (ACTUALIZADO CON USUARIOS) ---
+    function createLicenseHash(workshopCode, type, days) {
+      var d = (type === 'SEM6') ? (days || 180) : 99999;
+      var str = workshopCode + '_' + type + '_' + d + '_OPENLINE_SECURE_2026';
+      var hash = 0;
+      for (var i = 0; i < str.length; i++) { hash = ((hash << 5) - hash) + str.charCodeAt(i); hash |= 0; }
+      var hex = Math.abs(hash).toString(16).toUpperCase();
+      while (hex.length < 6) hex = '0' + hex;
+      return (type === 'SEM6') ? ('OL-SEM6-' + d + '-' + hex.substring(0, 6)) : ('OL-LIFETIME-' + hex.substring(0, 6));
+    }
+
+    window.secretTap = function() {
+        var pin = prompt('🔑 Panel Maestro de Activación\nIngrese su PIN Secreto:');
+        if (pin === '8408') {
+          isAdminModeUnlocked = true;
+          $('masterAdminUnlockedView').classList.remove('hidden');
+          $('genTargetWorkshopCode').value = currentWorkshopId;
+          
+          if (mqttClient && mqttClient.connected) {
+              mqttClient.subscribe('openline/v4/global/telemetry/#', { qos: 1 });
+              window.requestTelemetryBroadcast();
+          }
+          window.renderTelemetryDashboard();
+          window.showToast("Acceso Concedido", "Panel maestro activo.");
+        }
+    };
+
+    window.emitKey = function() {
+      var code = $('genTargetWorkshopCode').value.trim().toUpperCase(); if (!code) return;
+      var type = $('genLicTypeSelect').value || 'SEM6';
+      var key = createLicenseHash(code, type, 180);
+      $('genGeneratedKey').textContent = key;
+      $('genResultBox').classList.remove('hidden');
+    };
+
+    window.copyKey = function() {
+        navigator.clipboard.writeText($('genGeneratedKey').textContent);
+        window.showToast('Copiado', 'Clave copiada al portapapeles.');
+    };
+
+    window.applyKey = function() {
+      var k = $('inpActivationKey').value.trim().toUpperCase(); if (!k) return;
+      var clean = k.trim().toUpperCase();
+      var verified = null;
+      if (clean === 'OL-MASTER-PERMANENT' || clean.indexOf('OL-LIFETIME') === 0 || clean.indexOf('OL-PRO') === 0) {
+        verified = { type: 'LIFETIME', days: 99999 };
+      } else if (clean === createLicenseHash(currentWorkshopId.toUpperCase(), 'LIFETIME')) {
+        verified = { type: 'LIFETIME', days: 99999 };
+      } else if (clean.indexOf('OL-SEM6-') === 0) {
+        var parts = clean.split('-');
+        var days = parseInt(parts[2], 10) || 180;
+        if (clean === createLicenseHash(currentWorkshopId.toUpperCase(), 'SEM6', days)) verified = { type: 'SEM6', days: days };
+      }
+
+      if (verified) {
+        var duration = verified.days || 180;
+        var licenseInfo = { type: verified.type, key: k, expiresAt: (verified.type === 'LIFETIME') ? 9999999999999 : (Date.now() + (duration * 24 * 3600 * 1000)) };
+        StorageShield.save('license', licenseInfo, true);
+        
+        $('headerLicenseText').textContent = 'VITALICIO';
+        $('headerLicenseBtn').className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
+        window.closeModal('licenseModal');
+        window.showToast('Activado', 'Licencia PRO habilitada correctamente.');
+      } else { window.showToast('Inválido', 'Clave no válida para este taller.'); }
+    };
+
+    window.requestTelemetryBroadcast = function() {
+        if(mqttClient && mqttClient.connected) {
+            mqttClient.publish('openline/v4/global/telemetry/ping', JSON.stringify({ pingFrom: myDeviceId, timestamp: Date.now() }));
+            window.showToast("Sondeando", "Consultando red...");
+        }
+    };
+
+    window.renderTelemetryDashboard = function() {
+        var container = $('telemetryWorkshopsList');
+        if (!container) return;
+
+        var devicesArray = Object.keys(masterTelemetryDB).map(function(k) { return masterTelemetryDB[k]; });
+        var now = Date.now();
+        var workshopsMap = {};
+        var onlineUsersCount = 0;
+
+        devicesArray.forEach(function(d) {
+            var diffSec = Math.floor((now - (d.time || 0)) / 1000);
+            var isOnline = diffSec < 150;
+            
+            if (!workshopsMap[d.wsId]) {
+                workshopsMap[d.wsId] = { wsId: d.wsId, name: d.name, lic: d.lic, repCount: d.repCount, users: [], isOnline: false, lastSeen: d.time || 0 };
+            }
+            if (isOnline) {
+                workshopsMap[d.wsId].isOnline = true;
+                onlineUsersCount++;
+                if (d.user) workshopsMap[d.wsId].users.push(d.user);
+            }
+            if((d.time || 0) > workshopsMap[d.wsId].lastSeen) {
+                workshopsMap[d.wsId].lastSeen = d.time;
+                workshopsMap[d.wsId].name = d.name;
+                workshopsMap[d.wsId].repCount = d.repCount;
+                workshopsMap[d.wsId].lic = d.lic;
+            }
+        });
+
+        var wsArray = Object.keys(workshopsMap).map(function(k) { return workshopsMap[k]; });
+        wsArray.sort(function(a, b) { return b.lastSeen - a.lastSeen; });
+
+        var onlineWsCount = 0, demoWsCount = 0, proWsCount = 0;
+
+        var html = wsArray.map(function(w) {
+            if (w.isOnline) onlineWsCount++;
+            var isPro = (w.lic && w.lic.indexOf('PRO') >= 0) || (w.lic && w.lic.indexOf('VITALICIO') >= 0);
+            if (isPro) proWsCount++; else demoWsCount++;
+
+            var diffSec = Math.floor((now - w.lastSeen) / 1000);
+            var timeLabel = w.isOnline ? '🟢 En Línea' : (diffSec < 3600 ? ('Hace ' + Math.floor(diffSec/60) + 'm') : ('Hace ' + Math.floor(diffSec/3600) + 'h'));
+            var isCurrent = w.wsId === currentWorkshopId;
+            var usersText = w.isOnline && w.users.length > 0 ? ('👤 ' + [...new Set(w.users)].join(', ')) : 'Inactivo';
+
+            return '<div class="p-2.5 bg-zinc-900 border ' + (w.isOnline ? 'border-emerald-700/60 bg-emerald-950/10' : 'border-zinc-800') + ' rounded-xl flex items-center justify-between gap-2">' +
+                     '<div class="min-w-0 flex-1">' +
+                       '<div class="flex items-center gap-1.5 flex-wrap"><span class="font-mono text-xs font-bold text-white">' + w.wsId + '</span>' +
+                         (isCurrent ? '<span class="text-[8px] bg-indigo-900 text-indigo-200 px-1.5 py-0.2 rounded font-bold">TU TALLER</span>' : '') +
+                         '<span class="text-[9px] px-1.5 py-0.2 rounded font-bold ' + (isPro ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800') + '">' + (w.lic || 'DEMO') + '</span></div>' +
+                       '<div class="text-[10px] text-zinc-400 mt-0.5 truncate"><b>' + (w.name || 'Sin Nombre') + '</b> • ' + (w.repCount || 0) + ' órdenes</div>' +
+                       '<div class="text-[9px] text-iosBlue mt-0.5">' + usersText + '</div>' +
+                     '</div>' +
+                     '<div class="text-right shrink-0 flex flex-col items-end gap-1"><span class="text-[9px] font-bold ' + (w.isOnline ? 'text-emerald-400 font-mono' : 'text-zinc-500') + '">' + timeLabel + '</span>' +
+                       '<button type="button" onclick="$(\'genTargetWorkshopCode\').value=\'' + w.wsId + '\'; window.emitKey();" class="px-2 py-0.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded text-[9px]">Emitir Clave</button>' +
+                     '</div></div>';
+        }).join('');
+
+        if (wsArray.length === 0) { html = '<div class="p-4 text-center text-zinc-500 text-[10px]">Esperando reporte de la red... Presiona "Sondear Red".</div>'; }
+
+        container.innerHTML = html;
+        if($('telTotalWorkshops')) $('telTotalWorkshops').textContent = wsArray.length;
+        if($('telOnlineWorkshops')) $('telOnlineWorkshops').textContent = onlineWsCount;
+        if($('telOnlineUsers')) $('telOnlineUsers').textContent = onlineUsersCount;
+        if($('telDemoWorkshops')) $('telDemoWorkshops').textContent = demoWsCount;
+        if($('telProWorkshops')) $('telProWorkshops').textContent = proWsCount;
+    };
+
+    function emitTelemetryHeartbeat() {
+        if (mqttClient && mqttClient.connected) {
+            try {
+                var licInfo = StorageShield.load('license', null);
+                var licLabel = (licInfo && (licInfo.type === 'LIFETIME' || licInfo.type === 'PRO')) ? 'PRO Vitalicio' : 'DEMO';
+                var payload = {
+                    wsId: currentWorkshopId, devId: myDeviceId, user: activeUser, name: workshopSettings.name || 'Sin Nombre',
+                    lic: licLabel, repCount: repairs.length, time: Date.now(), ver: APP_CODE_VERSION
+                };
+                mqttClient.publish('openline/v4/global/telemetry/heartbeat', JSON.stringify(payload));
+            } catch(e) {}
+        }
+    }
 
     // --- RECEPTOR MQTT MULTI-DISPOSITIVO ---
     if (typeof mqtt !== 'undefined') {
         mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'opl_' + myDeviceId, clean: true, reconnectPeriod: 3000 });
         mqttClient.on('connect', function() {
-            if($('livePulseDot'))$('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
+            if($('livePulseDot')) $('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
             mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', { qos: 1 });
+            mqttClient.subscribe('openline/v4/global/telemetry/ping', { qos: 0 });
+            emitTelemetryHeartbeat();
         });
 
         mqttClient.on('message', function(topic, message) {
             try {
                 var payload = JSON.parse(message.toString());
+                
+                if (topic === 'openline/v4/global/telemetry/heartbeat') {
+                    if (payload && payload.devId && payload.wsId) {
+                        masterTelemetryDB[payload.devId] = payload;
+                        localStorage.setItem(TELEMETRY_STORAGE_KEY, JSON.stringify(masterTelemetryDB));
+                        if (isAdminModeUnlocked) window.renderTelemetryDashboard();
+                    }
+                    return;
+                }
+
+                if (topic === 'openline/v4/global/telemetry/ping') {
+                    if (payload && payload.pingFrom !== myDeviceId) { emitTelemetryHeartbeat(); }
+                    return;
+                }
+
                 if (topic.includes('/sync') && payload && payload.senderId !== myDeviceId) {
                     if(payload.repairs) { repairs = payload.repairs; localStorage.setItem(StorageShield.getKey('repairs'), JSON.stringify(repairs)); window.renderRepairsList(); window.updateCounters(); }
                     if(payload.stockItems) { stockItems = payload.stockItems; localStorage.setItem(StorageShield.getKey('stock'), JSON.stringify(stockItems)); window.renderStockList(); }
@@ -1467,19 +1418,55 @@
                     if(payload.settings) { workshopSettings = Object.assign({}, workshopSettings, payload.settings); localStorage.setItem(StorageShield.getKey('settings'), JSON.stringify(workshopSettings)); window.renderBranchSelectors(); }
                     
                     if(payload.license && window.isRecognizedProLicense(payload.license, currentWorkshopId)) {
-                        StorageShield.save('license', payload.license, true);
-                        window.updateLicenseUI();
+                        var licInfo = { type: 'LIFETIME', key: 'SYNCED-PRO', expiresAt: 9999999999999 };
+                        StorageShield.save('license', licInfo, true);
+                        if($('headerLicenseText')) {
+                            $('headerLicenseText').textContent = 'VITALICIO';
+                            $('headerLicenseBtn').className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
+                        }
                     }
                 }
             } catch(e) {}
         });
+        setInterval(emitTelemetryHeartbeat, 45000);
     }
 
-    // --- INICIALIZACIÓN ---
+    // --- ALERTA DE ACTUALIZACIÓN CON SONIDO ---
+    var audioCtx = null;
+    function playAudioNotification() {
+      try {
+        var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!audioCtx && AudioContextClass) audioCtx = new AudioContextClass();
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume().then(function() {
+             var now = audioCtx.currentTime;
+             var osc = audioCtx.createOscillator(); var gain = audioCtx.createGain();
+             osc.type = 'sine'; osc.frequency.setValueAtTime(800, now);
+             gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+             osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now); osc.stop(now + 0.5);
+          });
+        }
+      } catch(e) {}
+    }
+    window.triggerAppUpdatingAlert = function() {
+      playAudioNotification();
+      var banner = $('appUpdatingBanner');
+      if (banner) {
+        banner.classList.remove('hidden'); banner.classList.add('flex');
+        setTimeout(function() { window.dismissUpdateBanner(); }, 6000);
+      }
+    };
+    window.dismissUpdateBanner = function() {
+      var banner = $('appUpdatingBanner');
+      if (banner) { banner.classList.add('hidden'); banner.classList.remove('flex'); }
+    };
+
+    // --- INICIALIZACIÓN DE LA APLICACIÓN ---
     document.addEventListener('DOMContentLoaded', function() {
-      if($('headerActiveUserDisplay'))$('headerActiveUserDisplay').textContent = activeUser;
-      if($('appHeaderTitle'))$('appHeaderTitle').textContent = workshopSettings.name;
-      if($('headerWorkshopCode'))$('headerWorkshopCode').textContent = currentWorkshopId;
+      if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
+      if($('appHeaderTitle')) $('appHeaderTitle').textContent = workshopSettings.name;
+      if($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
       
       var licInfo = StorageShield.load('license', null);
       if(!licInfo) {
@@ -1496,10 +1483,15 @@
          } else { licInfo = { type: 'DEMO', key: '', expiresAt: 0 }; }
          StorageShield.save('license', licInfo, true);
       }
-      window.updateLicenseUI();
+      if($('headerLicenseText')) {
+         if(licInfo.type === 'LIFETIME' || licInfo.type === 'PRO' || licInfo.type === 'VITALICIO') {
+             $('headerLicenseText').textContent = 'VITALICIO';
+             $('headerLicenseBtn').className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
+         } else { $('headerLicenseText').textContent = 'DEMO'; }
+      }
 
       window.renderRepairsList(); window.updateCounters();
-      window.updateCashBalanceUI();
+      window.updateCashBalanceUI(); window.renderCashClosures();
       
       try {
           var savedVersion = localStorage.getItem(VERSION_STORAGE_KEY);
