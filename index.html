@@ -77,10 +77,10 @@
       </div>
       <div class="min-w-0">
         <h4 class="text-xs font-bold text-white tracking-wide flex items-center gap-1.5">
-          <span>Sistema Auto-Reparado</span>
+          <span>Esta aplicación se ha actualizado</span>
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
         </h4>
-        <p class="text-[10px] text-indigo-200 mt-0.5">El módulo de caja ha sido restaurado exitosamente.</p>
+        <p class="text-[10px] text-indigo-200 mt-0.5">Correcciones de métricas y fotografía instaladas.</p>
       </div>
     </div>
     <button type="button" onclick="window.dismissUpdateBanner()" class="w-7 h-7 rounded-lg bg-indigo-900/80 hover:bg-indigo-800 text-indigo-300 flex items-center justify-center shrink-0">
@@ -337,6 +337,7 @@
           </div>
         </div>
 
+        <!-- Clave / Patrón Android con Dibujo Trazado -->
         <div class="space-y-2 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
           <div class="flex items-center justify-between">
             <label class="font-bold text-zinc-300 uppercase text-[9px] block">3. Clave / Seguridad</label>
@@ -358,12 +359,39 @@
           <div id="unlockViewNone" class="hidden py-1 text-center text-[11px] text-zinc-500">Sin clave / Dispositivo apagado.</div>
         </div>
 
+        <div class="space-y-2 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
+          <div class="flex items-center justify-between">
+            <label class="font-bold text-zinc-300 uppercase text-[9px] block">4. Registro Fotográfico</label>
+            <span id="photoCountBadge" class="text-[10px] text-zinc-500">0 fotos</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="flex-1 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center gap-1.5 shadow active:scale-95 transition cursor-pointer">
+              <i class="ph-bold ph-camera text-iosBlue text-base"></i> Cámara
+              <input type="file" accept="image/*" capture="environment" onchange="window.handleNewPhotoUpload(this)" class="hidden">
+            </label>
+            <label class="flex-1 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center gap-1.5 shadow active:scale-95 transition cursor-pointer">
+              <i class="ph-bold ph-image text-emerald-400 text-base"></i> Galería
+              <input type="file" accept="image/*" multiple onchange="window.handleNewPhotoUpload(this)" class="hidden">
+            </label>
+          </div>
+          <div id="newPhotosGrid" class="flex gap-2 overflow-x-auto py-1 no-scrollbar min-h-[60px]"></div>
+        </div>
+
         <div class="space-y-2.5 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
-          <label class="font-bold text-zinc-300 uppercase text-[9px] block">4. Falla y Presupuesto</label>
+          <label class="font-bold text-zinc-300 uppercase text-[9px] block">5. Falla y Presupuesto</label>
           <textarea id="inpDeviceFault" rows="2" placeholder="Falla informada por el cliente..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white"></textarea>
           <div class="grid grid-cols-2 gap-2">
             <div><label class="text-[9px] text-zinc-400 block mb-0.5">Ppto Inicial ($)</label><input type="number" id="inpDeviceBudget" oninput="window.calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></div>
             <div><label class="text-[9px] text-zinc-400 block mb-0.5">Seña ($)</label><input type="number" id="inpDeviceAdvance" oninput="window.calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold"></div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <div>
+              <label class="text-[9px] text-zinc-400 block mb-0.5 font-bold">Estado Inicial Taller</label>
+              <select id="inpNewInitialStatus" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white font-bold">
+                <option value="WAITING">En Recepción</option>
+                <option value="IN_PROGRESS">Pasa a Taller</option>
+              </select>
+            </div>
           </div>
           <div class="flex justify-between items-center text-xs pt-2 border-t border-zinc-800/80">
             <span class="text-zinc-400 font-bold uppercase">Resta pagar:</span>
@@ -444,7 +472,6 @@
             </button>
           </div>
 
-          <!-- BLOQUE DE ESTADOS OPERATIVOS -->
           <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
             <div class="flex items-center justify-between">
               <span class="text-[10px] text-zinc-400 font-bold uppercase">Estado Operativo:</span>
@@ -458,7 +485,6 @@
             </div>
           </div>
 
-          <!-- BLOQUE DE PRESUPUESTO -->
           <div class="grid grid-cols-3 gap-1.5 text-center mt-2">
             <div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-zinc-500 block font-bold">TOTAL ($)</span><b class="text-white font-mono text-xs" id="dtlBudgetTotal">$0</b></div>
             <div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-emerald-400 block font-bold">SEÑA ($)</span><b class="text-emerald-400 font-mono text-xs" id="dtlAdvancePaid">$0</b></div>
@@ -484,7 +510,6 @@
             <button type="button" onclick="window.togglePosCam()" class="px-3 py-2 bg-purple-900 text-purple-200 rounded-xl font-bold flex items-center gap-1"><i class="ph-bold ph-camera"></i> Escanear</button>
           </div>
           
-          <!-- VENTA MANUAL SIN STOCK -->
           <div class="flex gap-2 shrink-0 bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 shadow-sm items-center">
              <i class="ph-bold ph-tag text-zinc-500"></i>
              <input type="text" id="posManualName" placeholder="Art. Manual (Funda, etc)..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-2 py-1.5 text-white text-xs">
@@ -550,8 +575,8 @@
       </div>
       <div class="p-4 overflow-y-auto space-y-3 flex-1 pb-safe">
         <div class="grid grid-cols-3 gap-2 text-center">
-            <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-emerald-400 font-bold block">Ingresos</span><span id="cashTotalIncome" class="text-sm font-bold text-emerald-400 font-mono mt-0.5 block">$0</span></div>
-            <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-rose-400 font-bold block">Egresos</span><span id="cashTotalExpense" class="text-sm font-bold text-rose-400 font-mono mt-0.5 block">$0</span></div>
+            <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-emerald-400 font-bold block">Ingresos Hoy</span><span id="cashTotalIncome" class="text-sm font-bold text-emerald-400 font-mono mt-0.5 block">$0</span></div>
+            <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-rose-400 font-bold block">Egresos Hoy</span><span id="cashTotalExpense" class="text-sm font-bold text-rose-400 font-mono mt-0.5 block">$0</span></div>
             <div class="p-2.5 bg-gradient-to-b from-zinc-900 to-indigo-950 border border-indigo-700/60 rounded-xl"><span class="text-[9px] text-indigo-300 font-bold block">Saldo Final</span><span id="cashNetBalance" class="text-sm font-bold text-white font-mono mt-0.5 block">$0</span></div>
         </div>
         
@@ -571,7 +596,6 @@
             <button type="button" onclick="window.saveCashMovement()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow">Guardar en Caja</button>
         </div>
         
-        <!-- CIERRE DIARIO -->
         <div class="pt-2 border-t border-zinc-800 space-y-2">
            <span class="text-[10px] font-bold text-zinc-400 uppercase block">Opciones de Cierre de Caja:</span>
            <div class="grid grid-cols-3 gap-1.5">
@@ -599,7 +623,6 @@
           <span class="text-[9px] text-zinc-600 block mt-1">Toca 5 veces sobre el estado para acceder al Modo Maestro</span>
         </div>
 
-        <!-- PANEL DE TELEMETRÍA MAESTRO -->
         <div id="masterAdminUnlockedView" class="hidden p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3">
           <div class="flex items-center justify-between border-b border-indigo-900 pb-2">
             <div class="flex items-center gap-1.5">
@@ -643,7 +666,7 @@
   <!-- SISTEMA PRINCIPAL JAVASCRIPT BLINDADO                                              -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v10.5.0'; // ACTUALIZADO PARA FORZAR EL POPUP
+    var APP_CODE_VERSION = 'v10.6.0'; 
 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
@@ -653,7 +676,6 @@
     var myDeviceId = 'dev_fallback';
     var currentWorkshopId = 'TALLER-FALLBACK';
     
-    // BLINDAJE DE ALMACENAMIENTO LOCAL (Evita crashes en iOS Safari)
     try {
         myDeviceId = localStorage.getItem(DEVICE_ID_KEY) || ('dev_' + Math.random().toString(36).substring(2, 9));
         localStorage.setItem(DEVICE_ID_KEY, myDeviceId);
@@ -663,7 +685,6 @@
 
     function $(id) { return document.getElementById(id); }
 
-    // --- FIX GLOBAL DE MODALES Y ALERTAS ---
     window.openModal = function(id) { var el = $(id); if (el) el.classList.add('active'); };
     window.closeModal = function(id) { var el = $(id); if (el) el.classList.remove('active'); };
     
@@ -687,7 +708,6 @@
     window.openCashModal = function() { window.updateCashBalanceUI(); window.openModal('cashModal'); };
     window.openVentasHistoryModal = function() { window.setVentasPeriod('HOY'); window.openModal('ventasModal'); };
 
-    // --- BÓVEDA DE DATOS Y SINCRONIZACIÓN EN LA NUBE (MQTT) ---
     var mqttClient = null;
     var StorageShield = {
       getKey: function(entity) { return 'openline_vault_' + currentWorkshopId + '_' + entity; },
@@ -725,7 +745,6 @@
     var currentVentasPeriod = 'HOY';
     var selectedRepairId = null;
 
-    // --- CONFIGURACIÓN DE APP ---
     window.openSettingsModal = function() {
         if($('cfgWorkshopName')) $('cfgWorkshopName').value = workshopSettings.name || '';
         if($('cfgWorkshopSubtitle')) $('cfgWorkshopSubtitle').value = workshopSettings.subtitle || '';
@@ -772,7 +791,6 @@
         if($('headerDefaultIcon')) $('headerDefaultIcon').classList.remove('hidden');
     };
 
-    // --- CÁMARAS (QR / BARCODE) ---
     var posScanner = null;
     var stockScanner = null;
 
@@ -803,7 +821,6 @@
     };
     window.stopStockCam = function() { $('scannerContainer').classList.add('hidden'); if (stockScanner) { try { stockScanner.stop().catch(function(e){}); } catch(e){} } };
 
-    // --- LOGICA DE USUARIOS Y PIN ADMIN ---
     window.openSwitchUserModal = function() {
       var grid = $('usersListGrid');
       var list = workshopSettings.users || ['Admin'];
@@ -888,7 +905,6 @@
       else if (entered !== null) { window.showToast("Error", "Clave de Admin incorrecta."); }
     };
 
-    // --- MÓDULO DE CAJA (COMPLETO CON CIERRE DIARIO LIBERADO Y TICKETS) ---
     window.showCashIncome = function() { $('cshType').value = 'INCOME'; $('cashFormTitle').textContent = 'Registrar Ingreso'; $('cashMovementForm').classList.remove('hidden'); };
     window.showCashExpense = function() { $('cshType').value = 'EXPENSE'; $('cashFormTitle').textContent = 'Registrar Egreso'; $('cashMovementForm').classList.remove('hidden'); };
     window.hideCashForm = function() { $('cashMovementForm').classList.add('hidden'); };
@@ -934,9 +950,14 @@
         try {
             if (!Array.isArray(cashMovements)) cashMovements = [];
             var inc = 0, exp = 0;
+            
+            var startOfToday = new Date().setHours(0,0,0,0);
+            
             cashMovements.forEach(function(c) { 
-                if(c && c.type === 'INCOME') inc += (parseFloat(c.amount) || 0); 
-                else if (c) exp += (parseFloat(c.amount) || 0); 
+                if(c.date >= startOfToday) {
+                    if(c && c.type === 'INCOME') inc += (parseFloat(c.amount) || 0); 
+                    else if (c) exp += (parseFloat(c.amount) || 0); 
+                }
             });
             if($('cashTotalIncome')) $('cashTotalIncome').textContent = '$'+inc.toLocaleString();
             if($('cashTotalExpense')) $('cashTotalExpense').textContent = '$'+exp.toLocaleString();
@@ -962,7 +983,6 @@
         } catch(e) { console.error("Error actualizando caja", e); cashMovements = []; }
     };
 
-    // Funciones de Cierre de Caja
     window.printCashCierre = function() {
         var html = '<div style="width:230px;margin:auto;font-family:monospace;line-height:1.25;color:#000;text-align:center;">' +
                   '<div style="border-bottom:1px dashed #000;padding-bottom:4px;margin-bottom:4px;">' +
@@ -970,10 +990,10 @@
                   '<b style="font-size:10px;">REPORTE DE CAJA DIARIO</b><br>' +
                   '<span style="font-size:9px;">' + new Date().toLocaleString('es-AR') + '</span></div>' +
                   '<div style="text-align:left;font-size:10px;margin-bottom:6px;">' +
-                  '<b>Ingresos Totales:</b> ' + $('cashTotalIncome').textContent + '<br>' +
-                  '<b>Egresos Totales:</b> ' + $('cashTotalExpense').textContent + '<br>' +
+                  '<b>Ingresos (Hoy):</b> ' + $('cashTotalIncome').textContent + '<br>' +
+                  '<b>Egresos (Hoy):</b> ' + $('cashTotalExpense').textContent + '<br>' +
                   '</div><div style="border-top:1px dashed #000;padding-top:4px;">' +
-                  '<b style="font-size:12px;">SALDO FINAL: ' + $('cashNetBalance').textContent + '</b></div></div>';
+                  '<b style="font-size:12px;">SALDO DEL DÍA: ' + $('cashNetBalance').textContent + '</b></div></div>';
         $('printArea').innerHTML = html;
         $('printArea').style.display = 'block'; $('printArea').classList.remove('hidden');
         window.print(); setTimeout(function(){ $('printArea').classList.add('hidden'); }, 500);
@@ -982,12 +1002,12 @@
     window.sendCashCierreWA = function() {
         var phone = prompt("Ingrese número de WhatsApp:");
         if (!phone) return;
-        var msg = `*${workshopSettings.name.toUpperCase()} - CIERRE DE CAJA*\n📅 Fecha: ${new Date().toLocaleString('es-AR')}\n\n🟢 Ingresos: ${$('cashTotalIncome').textContent}\n🔴 Egresos: ${$('cashTotalExpense').textContent}\n\n💰 *SALDO FINAL: ${$('cashNetBalance').textContent}*`;
+        var msg = `*${workshopSettings.name.toUpperCase()} - CIERRE DE CAJA*\n📅 Fecha: ${new Date().toLocaleString('es-AR')}\n\n🟢 Ingresos (Hoy): ${$('cashTotalIncome').textContent}\n🔴 Egresos (Hoy): ${$('cashTotalExpense').textContent}\n\n💰 *SALDO DEL DÍA: ${$('cashNetBalance').textContent}*`;
         window.open('https://wa.me/' + phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg), '_blank');
     };
 
     window.cerrarCajaRestablecer = function() {
-        var confirmar = confirm("¿Confirmas el Cierre de Caja?\nEsto enviará a cero los movimientos diarios para iniciar un nuevo turno.");
+        var confirmar = confirm("¿Confirmas el Cierre de Caja?\nEsto archivará y limpiará los movimientos para iniciar un nuevo día.");
         if (confirmar) {
             cashMovements = [];
             StorageShield.save('cash', cashMovements);
@@ -996,13 +1016,12 @@
         }
     };
     
-    // Función para cobrar directamente la reparación a la caja
     window.chargeRepairToCash = function() {
         var r = repairs.find(function(x) { return x.id === selectedRepairId; });
         if(!r) return;
         var amountToCharge = (parseFloat(r.budget) || 0) - (parseFloat(r.advance) || 0);
         if(amountToCharge <= 0) {
-            window.showToast("Aviso", "No hay saldo pendiente de cobro para esta orden.");
+            window.showToast("Aviso", "No hay saldo pendiente de cobro.");
             return;
         }
         if($('cshAmount')) $('cshAmount').value = amountToCharge;
@@ -1014,7 +1033,6 @@
         window.openCashModal();
     };
 
-    // --- REPARACIONES E INFORMES TÉCNICOS ---
     window.handleSearch = function() {
         var val = $('searchInput') ? $('searchInput').value.trim() : '';
         if($('clearSearchBtn')) { $('clearSearchBtn').classList[val ? 'remove' : 'add']('hidden'); }
@@ -1090,7 +1108,6 @@
         
         if($('dtlDeviceFault')) $('dtlDeviceFault').textContent = r.fault || 'Sin descripción previa';
         if($('dtlRepairDetailsText')) $('dtlRepairDetailsText').textContent = r.repairDetails || 'Ningún trabajo detallado aún.';
-        if($('dtlRepairDetailsBox')) $('dtlRepairDetailsBox').style.display = 'block';
 
         if($('dtlOperationalStatusBadge')) $('dtlOperationalStatusBadge').textContent = r.status;
         if($('dtlBudgetTotal')) $('dtlBudgetTotal').textContent = '$' + (r.budget || 0);
@@ -1308,7 +1325,32 @@
         window.renderRepairsList(); window.updateCounters();
     };
 
-    // --- LOGICA DE STOCK Y EDICIÓN DE PRECIOS ---
+    window.handleNewPhotoUpload = function(input) {
+        if (input.files && input.files[0]) {
+            Array.from(input.files).forEach(function(file) {
+                var reader = new FileReader();
+                reader.onload = function(e) { currentPhotos.push(e.target.result); window.renderNewPhotos(); };
+                reader.readAsDataURL(file);
+            });
+        }
+    };
+    window.renderNewPhotos = function() {
+        if($('photoCountBadge')) $('photoCountBadge').textContent = currentPhotos.length + ' fotos';
+        if($('newPhotosGrid')) {
+            $('newPhotosGrid').innerHTML = currentPhotos.map(function(src, i) {
+                return '<div class="relative w-14 h-14 shrink-0 rounded-lg overflow-hidden border border-zinc-700"><img src="'+src+'" class="w-full h-full object-cover"><button type="button" onclick="window.removePhoto('+i+')" class="absolute top-0 right-0 bg-red-600 text-white rounded-bl-lg w-5 h-5 flex items-center justify-center text-[10px]"><i class="ph-bold ph-x"></i></button></div>';
+            }).join('');
+        }
+    };
+    window.removePhoto = function(i) { currentPhotos.splice(i,1); window.renderNewPhotos(); };
+    window.calcBalance = function(type) {
+        if(type === 'new') {
+            var total = parseFloat($('inpDeviceBudget').value) || 0;
+            var advance = parseFloat($('inpDeviceAdvance').value) || 0;
+            if($('newCalculatedBalance')) $('newCalculatedBalance').textContent = '$' + (total - advance);
+        }
+    };
+
     window.toggleStockForm = function() {
       var form = $('newStockFormContainer');
       if(form) form.style.display = form.style.display === 'block' ? 'none' : 'block';
@@ -1400,7 +1442,6 @@
       } catch(e) { console.error("Error stock list", e); stockItems = []; }
     };
 
-    // --- POS VENTAS LOGIC Y TICKETS ---
     var posCart = [];
     window.renderPosCatalog = function() {
        var grid = $('posCatalogGrid');
@@ -1503,11 +1544,28 @@
 
     window.setVentasPeriod = function(period) {
       currentVentasPeriod = period;
+      window.renderVentasList();
+      
       ['Hoy', 'Semana', 'Mes', 'Todas'].forEach(function(p) {
         var btn = $('btnPeriod' + p);
         if (btn) btn.className = (p.toUpperCase() === period) ? 'px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold text-xs shrink-0 shadow' : 'px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs shrink-0';
       });
-      window.renderVentasList();
+    };
+
+    window.filterSalesByPeriod = function(salesArr, period) {
+      var now = new Date();
+      var startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+      var sevenDaysAgo = Date.now() - (7 * 24 * 3600 * 1000);
+      var thirtyDaysAgo = Date.now() - (30 * 24 * 3600 * 1000);
+
+      return salesArr.filter(function(s) {
+        if(!s) return false;
+        var saleTime = s.timestamp || new Date(s.date).getTime() || 0;
+        if (period === 'HOY') return saleTime >= startOfToday;
+        if (period === 'SEMANA') return saleTime >= sevenDaysAgo;
+        if (period === 'MES') return saleTime >= thirtyDaysAgo;
+        return true;
+      });
     };
 
     window.renderVentasList = function() {
@@ -1517,7 +1575,24 @@
           if(!Array.isArray(sales)) sales = [];
           var isAdmin = (activeUser === 'Admin'); 
           var term = ($('ventasSearchInput') ? $('ventasSearchInput').value.toLowerCase().trim() : '');
-          var filtered = sales.filter(function(s) { return s && ((s.id && s.id.toLowerCase().includes(term)) || (s.customerName && s.customerName.toLowerCase().includes(term))); });
+          
+          var periodSales = window.filterSalesByPeriod(sales, currentVentasPeriod);
+          var filtered = periodSales.filter(function(s) { return s && ((s.id && s.id.toLowerCase().includes(term)) || (s.customerName && s.customerName.toLowerCase().includes(term))); });
+
+          var totalFacturado = 0, totalEfectivo = 0, totalTransf = 0, totalTarjeta = 0;
+          periodSales.forEach(function(s) {
+              var amt = parseFloat(s.total) || 0;
+              totalFacturado += amt;
+              var m = (s.paymentMethod || '').toLowerCase();
+              if (m.includes('efectivo')) totalEfectivo += amt;
+              else if (m.includes('transf') || m.includes('mp')) totalTransf += amt;
+              else totalTarjeta += amt;
+          });
+
+          if($('vtaTotalFacturado')) $('vtaTotalFacturado').textContent = '$' + totalFacturado.toLocaleString();
+          if($('vtaTotalEfectivo')) $('vtaTotalEfectivo').textContent = '$' + totalEfectivo.toLocaleString();
+          if($('vtaTotalTransferencia')) $('vtaTotalTransferencia').textContent = '$' + totalTransf.toLocaleString();
+          if($('vtaTotalTarjeta')) $('vtaTotalTarjeta').textContent = '$' + totalTarjeta.toLocaleString();
 
           if (filtered.length === 0) { container.innerHTML = '<div class="p-6 text-center text-zinc-500">No hay ventas registradas.</div>'; return; }
 
@@ -1534,7 +1609,7 @@
 
     window.deleteSaleAction = function(saleId) {
       if(activeUser !== 'Admin') { window.showToast("Acceso Denegado", "Solo Admin puede eliminar ventas."); return; }
-      window.requestAdminPinAuth("Anular venta " + saleId + " y reponer stock al inventario", function() {
+      window.requestAdminPinAuth("Anular venta " + saleId + " y reponer stock", function() {
         var saleIndex = sales.findIndex(function(s) { return s.id === saleId; });
         if (saleIndex < 0) return;
         var targetSale = sales[saleIndex];
@@ -1548,7 +1623,7 @@
           StorageShield.save('stock', stockItems); window.renderStockList();
         }
         sales.splice(saleIndex, 1); StorageShield.save('sales', sales);
-        window.renderVentasList(); window.showToast("Venta Anulada", "Stock repuesto correctamente.");
+        window.renderVentasList(); window.showToast("Venta Anulada", "Stock repuesto.");
       });
     };
 
@@ -1590,7 +1665,6 @@
       window.open('https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
     };
 
-    // --- PANEL MAESTRO DE LICENCIAS Y TELEMETRÍA ---
     function createLicenseHash(workshopCode, type, days) {
       var d = (type === 'SEM6') ? (days || 180) : 99999;
       var str = workshopCode + '_' + type + '_' + d + '_OPENLINE_SECURE_2026';
@@ -1649,7 +1723,6 @@
       } else { window.showToast('Inválido', 'Clave no válida para este taller.'); }
     };
 
-    // --- ALERTA DE ACTUALIZACIÓN CON SONIDO ---
     var audioCtx = null;
     function playAudioNotification() {
       try {
@@ -1680,7 +1753,6 @@
       if (banner) { banner.classList.add('hidden'); banner.classList.remove('flex'); }
     };
 
-    // --- INICIALIZACIÓN DE LA APLICACIÓN ---
     document.addEventListener('DOMContentLoaded', function() {
       if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
       if($('appHeaderTitle')) $('appHeaderTitle').textContent = workshopSettings.name;
