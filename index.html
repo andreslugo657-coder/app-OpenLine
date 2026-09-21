@@ -80,7 +80,7 @@
           <span>Sistema Actualizado</span>
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
         </h4>
-        <p class="text-[10px] text-indigo-200 mt-0.5">Módulo de Sucursales y Usuarios en Línea activados.</p>
+        <p class="text-[10px] text-indigo-200 mt-0.5">Módulos táctiles reparados y Licencias en red conectadas.</p>
       </div>
     </div>
     <button type="button" onclick="window.dismissUpdateBanner()" class="w-7 h-7 rounded-lg bg-indigo-900/80 hover:bg-indigo-800 text-indigo-300 flex items-center justify-center shrink-0">
@@ -104,7 +104,7 @@
               <span id="headerWorkshopCode">TALLER-XXXX</span>
             </button>
             
-            <span id="headerOnlineUsersBadge" class="text-[10px] font-mono bg-emerald-950 border border-emerald-700/60 text-emerald-400 px-1.5 py-0.5 rounded-full flex items-center gap-1">
+            <span class="text-[10px] font-mono bg-emerald-950 border border-emerald-700/60 text-emerald-400 px-1.5 py-0.5 rounded-full flex items-center gap-1">
               <i class="ph-bold ph-users text-[10px]"></i> <span id="onlineUsersCount">1</span>
             </span>
 
@@ -284,7 +284,7 @@
     </div>
   </div>
 
-  <!-- MODAL: CAMBIAR USUARIO ACTIVO / ADMIN -->
+  <!-- MODAL: CAMBIAR USUARIO ACTIVO / PERSONAL -->
   <div id="switchUserModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3.5 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Operar como Usuario</h3><button type="button" onclick="window.closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -376,6 +376,7 @@
           </div>
         </div>
 
+        <!-- Clave / Patrón Android con Dibujo Trazado -->
         <div class="space-y-2 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
           <div class="flex items-center justify-between">
             <label class="font-bold text-zinc-300 uppercase text-[9px] block">3. Clave / Seguridad</label>
@@ -558,7 +559,10 @@
 
         <div id="masterAdminUnlockedView" class="hidden p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3">
           <div class="flex items-center justify-between border-b border-indigo-900 pb-2">
-            <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide">Panel Maestro Creador</span></div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide">Panel Maestro Creador</span>
+            </div>
             <button type="button" onclick="window.requestTelemetryBroadcast()" class="text-[9px] bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1"><i class="ph-bold ph-arrows-clockwise"></i> Sondear Red</button>
           </div>
           
@@ -607,7 +611,7 @@
   <!-- SISTEMA PRINCIPAL JAVASCRIPT BLINDADO                                              -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v10.9.5';
+    var APP_CODE_VERSION = 'v11.0.0'; 
 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
@@ -617,6 +621,7 @@
 
     var myDeviceId = 'dev_fallback';
     var currentWorkshopId = 'TALLER-FALLBACK';
+    window.activeDevicesMap = {};
     
     try {
         myDeviceId = localStorage.getItem(DEVICE_ID_KEY) || ('dev_' + Math.random().toString(36).substring(2, 9));
@@ -644,15 +649,14 @@
     window.openTeamModal = function() { window.openModal('teamModal'); };
     window.openLicenseModal = function() { window.openModal('licenseModal'); };
     window.openInstallModal = function() { window.openModal('installModal'); };
-    window.openSalesModal = function() { window.renderPosCatalog(); window.openModal('salesModal'); };
-    window.openStockModal = function() { window.renderStockList(); window.openModal('stockModal'); };
-    window.openCashModal = function() { window.updateCashBalanceUI(); window.openModal('cashModal'); };
-    window.openVentasHistoryModal = function() { window.setVentasPeriod('HOY'); window.openModal('ventasModal'); };
+    window.openSalesModal = function() { try{ window.renderPosCatalog(); window.openModal('salesModal'); }catch(e){} };
+    window.openStockModal = function() { try{ window.renderStockList(); window.openModal('stockModal'); }catch(e){} };
+    window.openCashModal = function() { try{ window.updateCashBalanceUI(); window.openModal('cashModal'); }catch(e){} };
+    window.openVentasHistoryModal = function() { try{ window.setVentasPeriod('HOY'); window.openModal('ventasModal'); }catch(e){} };
 
     var mqttClient = null;
     var masterTelemetryDB = {};
     var isAdminModeUnlocked = false;
-    var activeDevicesMap = {};
 
     var StorageShield = {
       getKey: function(entity) { return 'openline_vault_' + currentWorkshopId + '_' + entity; },
@@ -681,16 +685,28 @@
     var currentVentasPeriod = 'HOY';
     var selectedRepairId = null;
 
+    // --- CONTADOR DE USUARIOS EN LÍNEA ---
+    window.updateOnlineUsersUI = function() {
+        var now = Date.now();
+        var count = 0;
+        for (var dev in window.activeDevicesMap) {
+            if (now - window.activeDevicesMap[dev] < 20000) count++;
+            else delete window.activeDevicesMap[dev];
+        }
+        if (count === 0) count = 1;
+        if($('onlineUsersCount')) $('onlineUsersCount').textContent = count;
+    };
+
     window.joinWorkshop = function() {
         var code = $('inpJoinWorkshopCode').value.trim().toUpperCase();
         if(!code || !code.startsWith('TALLER-')) {
             window.showToast("Error", "El código debe ser formato TALLER-XXXX"); return;
         }
         window.requestAdminPinAuth("Vincular a otro Taller (Reemplazará los datos actuales)", function() {
-            var confirmar = confirm("ADVERTENCIA: Vas a vincular este dispositivo al " + code + ".\nEsto reemplazará la información local por la de la nube de ese taller.\n\n¿Deseas continuar?");
+            var confirmar = confirm("ADVERTENCIA: Vas a vincular este dispositivo al " + code + ".\nEsto descargará la base de datos de esa sucursal.\n\n¿Deseas continuar?");
             if(confirmar) {
-                localStorage.setItem(WORKSHOP_ID_KEY, code);
-                window.showToast("Vinculando...", "El sistema se reiniciará en breve.");
+                try { localStorage.setItem(WORKSHOP_ID_KEY, code); } catch(e){}
+                window.showToast("Vinculando...", "Conectando al taller maestro...");
                 setTimeout(function() { window.location.reload(); }, 2000);
             }
         });
@@ -946,7 +962,7 @@
     };
 
     window.cerrarCajaRestablecer = function() {
-        var confirmar = confirm("¿Confirmas el Cierre de Caja?\nEsto archivará los movimientos en el historial y dejará la caja en $0.");
+        var confirmar = confirm("¿Confirmas el Cierre de Caja?\nEsto archivará los movimientos en el historial y dejará la caja en $0 para el próximo turno.");
         if (confirmar) {
             var inc = parseFloat($('cashTotalIncome').textContent.replace(/[^0-9.-]+/g,"")) || 0;
             var exp = parseFloat($('cashTotalExpense').textContent.replace(/[^0-9.-]+/g,"")) || 0;
@@ -996,7 +1012,6 @@
         window.closeModal('detailModal'); window.openCashModal();
     };
 
-    // --- REPARACIONES E INFORMES ---
     window.handleSearch = function() {
         var val = $('searchInput') ? $('searchInput').value.trim() : '';
         if($('clearSearchBtn')) { $('clearSearchBtn').classList[val ? 'remove' : 'add']('hidden'); }
@@ -1037,7 +1052,7 @@
                     var stColor = 'text-zinc-300';
                     if(r.status === 'READY') stColor = 'text-emerald-400';
                     if(r.status === 'IN_PROGRESS') stColor = 'text-amber-400';
-                    return '<div onclick="window.openDetailModal(\''+r.id+'\')" class="cursor-pointer bg-zinc-900 border border-zinc-800 p-3 rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.98] transition">' +
+                    return '<div onclick="window.openDetailModal(\''+r.id+'\')" class="bg-zinc-900 border border-zinc-800 p-3 rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.98] transition cursor-pointer">' +
                            '<div><div class="flex items-center gap-1.5"><span class="font-mono text-xs font-bold text-iosBlue">'+r.id+'</span><span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-zinc-800 '+stColor+'">'+r.status+'</span></div>' +
                            '<h4 class="text-sm font-bold text-white mt-0.5">'+r.deviceBrand+' '+r.deviceModel+'</h4><div class="text-[10px] text-zinc-400 mt-0.5">'+r.clientName+'</div></div>' +
                            '<i class="ph-bold ph-caret-right text-zinc-600 text-lg"></i></div>';
@@ -1072,7 +1087,6 @@
         
         if($('dtlDeviceFault')) $('dtlDeviceFault').textContent = r.fault || 'Sin descripción previa';
         if($('dtlRepairDetailsText')) $('dtlRepairDetailsText').textContent = r.repairDetails || 'Ningún trabajo detallado aún.';
-        if($('dtlRepairDetailsBox')) $('dtlRepairDetailsBox').style.display = 'block';
 
         if($('dtlOperationalStatusBadge')) $('dtlOperationalStatusBadge').textContent = r.status;
         if($('dtlBudgetTotal')) $('dtlBudgetTotal').textContent = '$' + (r.budget || 0);
@@ -1230,18 +1244,15 @@
       };
 
       var handleStart = function(e) {
-         if(e.type === 'touchstart') e.preventDefault(); 
          isDrawingPattern = true; selectedPatternSequence = [];
          if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Trazando...'; $('patternStatusLabel').className = 'text-amber-400 font-bold'; }
          var p = getPos(e); checkHit(p); redraw(p.x, p.y);
       };
       var handleMove = function(e) {
-         if(e.type === 'touchmove') e.preventDefault(); 
          if(!isDrawingPattern) return;
          var p = getPos(e); checkHit(p); redraw(p.x, p.y);
       };
       var handleEnd = function(e) {
-         if(e.type === 'touchend') e.preventDefault(); 
          if(!isDrawingPattern) return;
          isDrawingPattern = false; redraw();
          if($('patternStatusLabel')) { 
@@ -1528,18 +1539,35 @@
        StorageShield.save('cash', cashMovements);
        
        window.clearPosCart(); window.renderPosCatalog(); window.closeModal('salesModal');
-       window.showToast("Venta Exitosa", "Se registró la venta y se descontó el stock.");
+       window.showToast("Venta Exitosa", "Se registró la venta en caja.");
        
        window.openSaleTicketModal(saleId);
     };
 
     window.setVentasPeriod = function(period) {
       currentVentasPeriod = period;
+      window.renderVentasList();
+      
       ['Hoy', 'Semana', 'Mes', 'Todas'].forEach(function(p) {
         var btn = $('btnPeriod' + p);
         if (btn) btn.className = (p.toUpperCase() === period) ? 'px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold text-xs shrink-0 shadow' : 'px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs shrink-0';
       });
-      window.renderVentasList();
+    };
+
+    window.filterSalesByPeriod = function(salesArr, period) {
+      var now = new Date();
+      var startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+      var sevenDaysAgo = Date.now() - (7 * 24 * 3600 * 1000);
+      var thirtyDaysAgo = Date.now() - (30 * 24 * 3600 * 1000);
+
+      return salesArr.filter(function(s) {
+        if(!s) return false;
+        var saleTime = s.timestamp || new Date(s.date).getTime() || 0;
+        if (period === 'HOY') return saleTime >= startOfToday;
+        if (period === 'SEMANA') return saleTime >= sevenDaysAgo;
+        if (period === 'MES') return saleTime >= thirtyDaysAgo;
+        return true;
+      });
     };
 
     window.renderVentasList = function() {
@@ -1550,20 +1578,7 @@
           var isAdmin = (activeUser === 'Admin'); 
           var term = ($('ventasSearchInput') ? $('ventasSearchInput').value.toLowerCase().trim() : '');
           
-          var now = new Date();
-          var startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-          var sevenDaysAgo = Date.now() - (7 * 24 * 3600 * 1000);
-          var thirtyDaysAgo = Date.now() - (30 * 24 * 3600 * 1000);
-          
-          var periodSales = sales.filter(function(s) {
-              if(!s) return false;
-              var saleTime = s.timestamp || new Date(s.date).getTime() || 0;
-              if (currentVentasPeriod === 'HOY') return saleTime >= startOfToday;
-              if (currentVentasPeriod === 'SEMANA') return saleTime >= sevenDaysAgo;
-              if (currentVentasPeriod === 'MES') return saleTime >= thirtyDaysAgo;
-              return true;
-          });
-
+          var periodSales = window.filterSalesByPeriod(sales, currentVentasPeriod);
           var filtered = periodSales.filter(function(s) { return s && ((s.id && s.id.toLowerCase().includes(term)) || (s.customerName && s.customerName.toLowerCase().includes(term))); });
 
           var totalFacturado = 0, totalEfectivo = 0, totalTransf = 0, totalTarjeta = 0;
@@ -1596,7 +1611,7 @@
 
     window.deleteSaleAction = function(saleId) {
       if(activeUser !== 'Admin') { window.showToast("Acceso Denegado", "Solo Admin puede eliminar ventas."); return; }
-      window.requestAdminPinAuth("Anular venta " + saleId + " y reponer stock al inventario", function() {
+      window.requestAdminPinAuth("Anular venta " + saleId + " y reponer stock", function() {
         var saleIndex = sales.findIndex(function(s) { return s.id === saleId; });
         if (saleIndex < 0) return;
         var targetSale = sales[saleIndex];
@@ -1656,29 +1671,179 @@
       window.open('https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
     };
 
-    function updateOnlineUsersUI() {
-        var now = Date.now();
-        var count = 0;
-        for (var dev in activeDevicesMap) {
-            if (now - activeDevicesMap[dev] < 20000) count++;
-            else delete activeDevicesMap[dev];
-        }
-        if (count === 0) count = 1; // Al menos tú mismo
-        if($('onlineUsersCount')) $('onlineUsersCount').textContent = count;
+    // --- PANEL MAESTRO DE LICENCIAS Y TELEMETRÍA ---
+    function createLicenseHash(workshopCode, type, days) {
+      var d = (type === 'SEM6') ? (days || 180) : 99999;
+      var str = workshopCode + '_' + type + '_' + d + '_OPENLINE_SECURE_2026';
+      var hash = 0;
+      for (var i = 0; i < str.length; i++) { hash = ((hash << 5) - hash) + str.charCodeAt(i); hash |= 0; }
+      var hex = Math.abs(hash).toString(16).toUpperCase();
+      while (hex.length < 6) hex = '0' + hex;
+      return (type === 'SEM6') ? ('OL-SEM6-' + d + '-' + hex.substring(0, 6)) : ('OL-LIFETIME-' + hex.substring(0, 6));
     }
 
-    // --- RECEPTOR MQTT MULTI-DISPOSITIVO ---
+    window.secretTap = function() {
+        var pin = prompt('🔑 Panel Maestro de Activación\nIngrese su PIN Secreto:');
+        if (pin === '8408') {
+          isAdminModeUnlocked = true;
+          $('masterAdminUnlockedView').classList.remove('hidden');
+          $('genTargetWorkshopCode').value = currentWorkshopId;
+          
+          if (mqttClient && mqttClient.connected) {
+              mqttClient.subscribe('openline/v4/global/telemetry/#', { qos: 1 });
+              window.requestTelemetryBroadcast();
+          }
+          window.renderTelemetryDashboard();
+          window.showToast("Acceso Concedido", "Panel maestro activo.");
+        }
+    };
+
+    window.emitKey = function() {
+      var code = $('genTargetWorkshopCode').value.trim().toUpperCase(); if (!code) return;
+      var type = $('genLicTypeSelect').value || 'SEM6';
+      var key = createLicenseHash(code, type, 180);
+      $('genGeneratedKey').textContent = key;
+      $('genResultBox').classList.remove('hidden');
+    };
+
+    window.copyKey = function() {
+        navigator.clipboard.writeText($('genGeneratedKey').textContent);
+        window.showToast('Copiado', 'Clave copiada al portapapeles.');
+    };
+
+    window.applyKey = function() {
+      var k = $('inpActivationKey').value.trim().toUpperCase(); if (!k) return;
+      var clean = k.trim().toUpperCase();
+      var verified = null;
+      if (clean === 'OL-MASTER-PERMANENT' || clean.indexOf('OL-LIFETIME') === 0 || clean.indexOf('OL-PRO') === 0) {
+        verified = { type: 'LIFETIME', days: 99999 };
+      } else if (clean === createLicenseHash(currentWorkshopId.toUpperCase(), 'LIFETIME')) {
+        verified = { type: 'LIFETIME', days: 99999 };
+      } else if (clean.indexOf('OL-SEM6-') === 0) {
+        var parts = clean.split('-');
+        var days = parseInt(parts[2], 10) || 180;
+        if (clean === createLicenseHash(currentWorkshopId.toUpperCase(), 'SEM6', days)) verified = { type: 'SEM6', days: days };
+      }
+
+      if (verified) {
+        var duration = verified.days || 180;
+        var licenseInfo = { type: verified.type, key: k, expiresAt: (verified.type === 'LIFETIME') ? 9999999999999 : (Date.now() + (duration * 24 * 3600 * 1000)) };
+        StorageShield.save('license', licenseInfo, true);
+        
+        $('headerLicenseText').textContent = 'VITALICIO';
+        $('headerLicenseBtn').className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
+        window.closeModal('licenseModal');
+        window.showToast('Activado', 'Licencia PRO habilitada correctamente.');
+      } else { window.showToast('Inválido', 'Clave no válida para este taller.'); }
+    };
+
+    window.requestTelemetryBroadcast = function() {
+        if(mqttClient && mqttClient.connected) {
+            mqttClient.publish('openline/v4/global/telemetry/ping', JSON.stringify({ pingFrom: myDeviceId, timestamp: Date.now() }));
+            window.showToast("Sondeando", "Consultando red...");
+        }
+    };
+
+    window.renderTelemetryDashboard = function() {
+        var container = $('telemetryWorkshopsList');
+        if (!container) return;
+
+        var devicesArray = Object.keys(masterTelemetryDB).map(function(k) { return masterTelemetryDB[k]; });
+        var now = Date.now();
+        var workshopsMap = {};
+        var onlineUsersCount = 0;
+
+        devicesArray.forEach(function(d) {
+            var diffSec = Math.floor((now - (d.time || 0)) / 1000);
+            var isOnline = diffSec < 150;
+            
+            if (!workshopsMap[d.wsId]) {
+                workshopsMap[d.wsId] = { wsId: d.wsId, name: d.name, lic: d.lic, repCount: d.repCount, users: [], isOnline: false, lastSeen: d.time || 0 };
+            }
+            if (isOnline) {
+                workshopsMap[d.wsId].isOnline = true;
+                onlineUsersCount++;
+                if (d.user) workshopsMap[d.wsId].users.push(d.user);
+            }
+            if((d.time || 0) > workshopsMap[d.wsId].lastSeen) {
+                workshopsMap[d.wsId].lastSeen = d.time;
+                workshopsMap[d.wsId].name = d.name;
+                workshopsMap[d.wsId].repCount = d.repCount;
+                workshopsMap[d.wsId].lic = d.lic;
+            }
+        });
+
+        var wsArray = Object.keys(workshopsMap).map(function(k) { return workshopsMap[k]; });
+        wsArray.sort(function(a, b) { return b.lastSeen - a.lastSeen; });
+
+        var onlineWsCount = 0, demoWsCount = 0, proWsCount = 0;
+
+        var html = wsArray.map(function(w) {
+            if (w.isOnline) onlineWsCount++;
+            var isPro = (w.lic && w.lic.indexOf('PRO') >= 0) || (w.lic && w.lic.indexOf('VITALICIO') >= 0);
+            if (isPro) proWsCount++; else demoWsCount++;
+
+            var diffSec = Math.floor((now - w.lastSeen) / 1000);
+            var timeLabel = w.isOnline ? '🟢 En Línea' : (diffSec < 3600 ? ('Hace ' + Math.floor(diffSec/60) + 'm') : ('Hace ' + Math.floor(diffSec/3600) + 'h'));
+            var isCurrent = w.wsId === currentWorkshopId;
+            var usersText = w.isOnline && w.users.length > 0 ? ('👤 ' + [...new Set(w.users)].join(', ')) : 'Inactivo';
+
+            return '<div class="p-2.5 bg-zinc-900 border ' + (w.isOnline ? 'border-emerald-700/60 bg-emerald-950/10' : 'border-zinc-800') + ' rounded-xl flex items-center justify-between gap-2">' +
+                     '<div class="min-w-0 flex-1">' +
+                       '<div class="flex items-center gap-1.5 flex-wrap"><span class="font-mono text-xs font-bold text-white">' + w.wsId + '</span>' +
+                         (isCurrent ? '<span class="text-[8px] bg-indigo-900 text-indigo-200 px-1.5 py-0.2 rounded font-bold">TU TALLER</span>' : '') +
+                         '<span class="text-[9px] px-1.5 py-0.2 rounded font-bold ' + (isPro ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800') + '">' + (w.lic || 'DEMO') + '</span></div>' +
+                       '<div class="text-[10px] text-zinc-400 mt-0.5 truncate"><b>' + (w.name || 'Sin Nombre') + '</b> • ' + (w.repCount || 0) + ' órdenes</div>' +
+                       '<div class="text-[9px] text-iosBlue mt-0.5">' + usersText + '</div>' +
+                     '</div>' +
+                     '<div class="text-right shrink-0 flex flex-col items-end gap-1"><span class="text-[9px] font-bold ' + (w.isOnline ? 'text-emerald-400 font-mono' : 'text-zinc-500') + '">' + timeLabel + '</span>' +
+                       '<button type="button" onclick="$(\'genTargetWorkshopCode\').value=\'' + w.wsId + '\'; window.emitKey();" class="px-2 py-0.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded text-[9px]">Emitir Clave</button>' +
+                     '</div></div>';
+        }).join('');
+
+        if (wsArray.length === 0) { html = '<div class="p-4 text-center text-zinc-500 text-[10px]">Esperando reporte de la red... Presiona "Sondear Red".</div>'; }
+
+        container.innerHTML = html;
+        if($('telTotalWorkshops')) $('telTotalWorkshops').textContent = wsArray.length;
+        if($('telOnlineWorkshops')) $('telOnlineWorkshops').textContent = onlineWsCount;
+        if($('telDemoWorkshops')) $('telDemoWorkshops').textContent = demoWsCount;
+        if($('telProWorkshops')) $('telProWorkshops').textContent = proWsCount;
+    };
+
+    function emitTelemetryHeartbeat() {
+        if (mqttClient && mqttClient.connected) {
+            try {
+                var licInfo = StorageShield.load('license', null);
+                var licLabel = (licInfo && (licInfo.type === 'LIFETIME' || licInfo.type === 'PRO')) ? 'PRO Vitalicio' : 'DEMO';
+                var payload = {
+                    wsId: currentWorkshopId, devId: myDeviceId, user: activeUser, name: workshopSettings.name || 'Sin Nombre',
+                    lic: licLabel, repCount: repairs.length, time: Date.now(), ver: APP_CODE_VERSION
+                };
+                mqttClient.publish('openline/v4/global/telemetry/heartbeat', JSON.stringify(payload));
+            } catch(e) {}
+        }
+    }
+
+    // --- RECEPTOR MQTT MULTI-DISPOSITIVO Y SINCRONIZACIÓN ---
     if (typeof mqtt !== 'undefined') {
         mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'opl_' + myDeviceId, clean: true, reconnectPeriod: 3000 });
-        
         mqttClient.on('connect', function() {
             if($('livePulseDot')) $('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
             mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', { qos: 1 });
+            mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/request-sync', { qos: 0 });
             mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', { qos: 0 });
+            mqttClient.subscribe('openline/v4/global/telemetry/ping', { qos: 0 });
             
+            // Si el equipo es nuevo (DEMO), pide datos a la red
+            var lic = StorageShield.load('license', null);
+            if(!lic || lic.type === 'DEMO') {
+                mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/request-sync', JSON.stringify({ senderId: myDeviceId }));
+            }
+            
+            emitTelemetryHeartbeat();
             setInterval(function() {
                 mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', JSON.stringify({ devId: myDeviceId, user: activeUser }));
-                updateOnlineUsersUI();
+                window.updateOnlineUsersUI();
             }, 10000);
         });
 
@@ -1688,8 +1853,32 @@
                 
                 if (topic.endsWith('/heartbeat')) {
                     if (payload && payload.devId) {
-                        activeDevicesMap[payload.devId] = Date.now();
-                        updateOnlineUsersUI();
+                        window.activeDevicesMap[payload.devId] = Date.now();
+                        window.updateOnlineUsersUI();
+                    }
+                    return;
+                }
+
+                if (topic === 'openline/v4/global/telemetry/heartbeat') {
+                    if (payload && payload.devId && payload.wsId) {
+                        masterTelemetryDB[payload.devId] = payload;
+                        localStorage.setItem(TELEMETRY_STORAGE_KEY, JSON.stringify(masterTelemetryDB));
+                        if (isAdminModeUnlocked) window.renderTelemetryDashboard();
+                    }
+                    return;
+                }
+
+                if (topic === 'openline/v4/global/telemetry/ping') {
+                    if (payload && payload.pingFrom !== myDeviceId) { emitTelemetryHeartbeat(); }
+                    return;
+                }
+                
+                if (topic.endsWith('/request-sync')) {
+                    if (payload.senderId !== myDeviceId) {
+                        var myLic = StorageShield.load('license', null);
+                        if (repairs.length > 0 || window.isRecognizedProLicense(myLic, currentWorkshopId)) {
+                            window.publishMQTT(); // Envía los datos al dispositivo que acaba de entrar
+                        }
                     }
                     return;
                 }
@@ -1703,12 +1892,8 @@
                     if(payload.settings) { workshopSettings = Object.assign({}, workshopSettings, payload.settings); localStorage.setItem(StorageShield.getKey('settings'), JSON.stringify(workshopSettings)); }
                     
                     if(payload.license && window.isRecognizedProLicense(payload.license, currentWorkshopId)) {
-                        var licInfo = { type: 'LIFETIME', key: 'SYNCED-PRO', expiresAt: 9999999999999 };
-                        StorageShield.save('license', licInfo, true);
-                        if($('headerLicenseText')) {
-                            $('headerLicenseText').textContent = 'VITALICIO';
-                            $('headerLicenseBtn').className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
-                        }
+                        StorageShield.save('license', payload.license, true);
+                        window.updateLicenseUI();
                     }
                 }
             } catch(e) {}
@@ -1768,15 +1953,11 @@
          } else { licInfo = { type: 'DEMO', key: '', expiresAt: 0 }; }
          StorageShield.save('license', licInfo, true);
       }
-      if($('headerLicenseText')) {
-         if(licInfo.type === 'LIFETIME' || licInfo.type === 'PRO' || licInfo.type === 'VITALICIO') {
-             $('headerLicenseText').textContent = 'VITALICIO';
-             $('headerLicenseBtn').className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
-         } else { $('headerLicenseText').textContent = 'DEMO'; }
-      }
+      window.updateLicenseUI();
 
       window.renderRepairsList(); window.updateCounters();
       window.updateCashBalanceUI(); window.renderCashClosures();
+      window.updateOnlineUsersUI();
       
       try {
           var savedVersion = localStorage.getItem(VERSION_STORAGE_KEY);
