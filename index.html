@@ -88,10 +88,10 @@
       </div>
       <div class="min-w-0">
         <h4 class="text-[11px] font-bold text-white tracking-wide flex items-center gap-1">
-          <span>Sistema Actualizado</span>
+          <span>Sistema Actualizado y Blindado</span>
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
         </h4>
-        <p class="text-[9px] text-indigo-200">Formulario de stock rediseñado y limpio en iPhone.</p>
+        <p class="text-[9px] text-indigo-200">Duplicados eliminados. Módulos táctiles y cámara reparados.</p>
       </div>
     </div>
     <button type="button" onclick="window.dismissUpdateBanner()" class="w-6 h-6 rounded-md bg-indigo-900/80 text-indigo-300 flex items-center justify-center shrink-0">
@@ -99,7 +99,6 @@
     </button>
   </div>
 
-  <!-- ENCABEZADO -->
   <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
     <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full">
       <div class="flex items-center gap-2 min-w-0">
@@ -161,7 +160,6 @@
     </div>
   </header>
 
-  <!-- CUERPO PRINCIPAL -->
   <main class="flex-1 w-full max-w-5xl mx-auto px-3 py-2 space-y-2 pb-safe overflow-y-auto">
     <div id="branchFilterContainer" class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 shadow-sm space-y-1">
       <div class="flex items-center justify-between px-1">
@@ -231,7 +229,7 @@
   </div>
 
   <!-- =================================================================================== -->
-  <!-- MODALES DE LA APLICACIÓN (CUIDADOSAMENTE ÚNICOS Y SIN REPETIR)                      -->
+  <!-- MODALES DE LA APLICACIÓN (CADA UNO DECLARADO EXACTAMENTE UNA SOLA VEZ)              -->
   <!-- =================================================================================== -->
 
   <!-- 1. MODAL: SUCURSAL INICIAL -->
@@ -330,11 +328,10 @@
     </div>
   </div>
 
-  <!-- 3. MODAL: CONTROL DE STOCK REDISEÑADO CON PESTAÑAS (CORRIGE EL ERROR DE SUPERPOSICIÓN) -->
+  <!-- 3. MODAL: CONTROL DE STOCK (REDISEÑADO CON PESTAÑAS DEDICADAS) -->
   <div id="stockModal" class="app-modal">
     <div class="bg-zinc-900 sm:border border-purple-800 sm:rounded-3xl w-full max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
       
-      <!-- CABECERA -->
       <div class="p-3 border-b border-zinc-800 shrink-0 space-y-2">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
@@ -346,7 +343,6 @@
           </button>
         </div>
 
-        <!-- PESTAÑAS DEDICADAS DE STOCK -->
         <div class="grid grid-cols-3 gap-1 p-1 bg-zinc-950 rounded-xl border border-zinc-800">
           <button type="button" id="stockTabListBtn" onclick="window.switchStockTab('LIST')" class="py-1.5 rounded-lg font-bold text-xs transition bg-purple-700 text-white shadow flex items-center justify-center gap-1">
             <i class="ph-bold ph-list-dashes"></i> Inventario
@@ -362,12 +358,12 @@
 
       <div class="flex-1 overflow-hidden relative flex flex-col p-3 min-h-0">
         
-        <!-- PESTAÑA A: INVENTARIO + % SUBA -->
+        <!-- PESTAÑA A: INVENTARIO + BOTÓN DE SUBA MASIVA -->
         <div id="stockViewList" class="flex-1 flex flex-col space-y-2.5 overflow-hidden min-h-0">
           <div class="flex gap-2 shrink-0">
             <div class="relative flex-1">
               <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i>
-              <input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo de todas las sucursales..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-2 text-xs text-white">
+              <input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-2 text-xs text-white">
             </div>
             <button type="button" onclick="window.bulkIncreasePrices()" class="px-3 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs flex items-center gap-1 shrink-0 shadow active:scale-95 transition">
               <i class="ph-bold ph-trend-up"></i> % Suba
@@ -376,9 +372,9 @@
           <div id="stockListContainer" class="space-y-1.5 overflow-y-auto flex-1 pb-4 min-h-[260px]"></div>
         </div>
 
-        <!-- PESTAÑA B: CARGA DE PRODUCTO (LIMPIA Y DE ANCHO COMPLETO) -->
+        <!-- PESTAÑA B: CARGA DE PRODUCTO (LIMPIA, ORDENADA Y ESPACIOSA) -->
         <div id="stockViewForm" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6 min-h-0">
-          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
+          <div class="p-3.5 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
             <span class="text-xs font-bold text-purple-300 uppercase block flex items-center gap-1.5">
               <i class="ph-bold ph-tag"></i> Datos del Repuesto
             </span>
@@ -392,13 +388,13 @@
             </div>
 
             <div class="space-y-1">
-              <label class="text-[10px] text-zinc-400 font-bold block">Nombre del Repuesto / Accesorio *</label>
-              <input type="text" id="stkName" placeholder="Ej: Módulo Pantalla iPhone 13 Original" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
+              <label class="text-[10px] text-zinc-400 font-bold block">Nombre del Repuesto *</label>
+              <input type="text" id="stkName" placeholder="Ej: Módulo Pantalla iPhone 13" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
             </div>
 
             <div class="grid grid-cols-2 gap-2">
               <div class="space-y-1">
-                <label class="text-[10px] text-zinc-400 font-bold block">Sucursal de Destino:</label>
+                <label class="text-[10px] text-zinc-400 font-bold block">Sucursal:</label>
                 <select id="stkBranch" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-2 text-white text-xs font-medium"></select>
               </div>
               <div class="space-y-1">
@@ -414,7 +410,7 @@
 
             <div class="grid grid-cols-3 gap-2">
               <div class="space-y-1">
-                <label class="text-[10px] text-zinc-400 font-bold block">Cantidad Inicial:</label>
+                <label class="text-[10px] text-zinc-400 font-bold block">Cantidad:</label>
                 <input type="number" id="stkQuantity" value="1" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-bold text-xs text-center">
               </div>
               <div class="space-y-1">
@@ -438,7 +434,7 @@
           <div class="p-3 bg-zinc-950 border border-purple-800/80 rounded-2xl space-y-2">
             <div class="flex items-center justify-between">
               <span class="text-[11px] font-bold text-purple-300 uppercase flex items-center gap-1">
-                <i class="ph-bold ph-barcode text-sm"></i> Lector de Códigos de Barras / QR
+                <i class="ph-bold ph-barcode text-sm"></i> Lector QR / Códigos de Barra
               </span>
               <button type="button" id="btnToggleStockScanner" onclick="window.toggleStockCam()" class="px-3 py-1.5 bg-purple-900 text-purple-200 rounded-xl font-bold text-xs flex items-center gap-1 active:scale-95">
                 <i class="ph-bold ph-camera"></i> Iniciar Cámara
@@ -456,7 +452,7 @@
     </div>
   </div>
 
-  <!-- 4. MODAL: VENTAS POS (CATÁLOGO GLOBAL + CÁMARA DESPEJADA) -->
+  <!-- 4. MODAL: VENTAS POS (MOSTRADOR) -->
   <div id="salesModal" class="app-modal">
     <div class="bg-zinc-900 sm:border border-amber-600/70 sm:rounded-3xl w-full max-w-4xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
       
@@ -564,7 +560,7 @@
             </div>
 
             <button type="button" onclick="window.completePosSale()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-xs shadow active:scale-95 transition">
-              Cobrar Venta a Caja de <span id="posBtnBranchName">Central</span>
+              Cobrar Venta a Caja
             </button>
           </div>
         </div>
@@ -702,7 +698,7 @@
             </div>
             <div class="grid grid-cols-2 gap-2 pt-2">
               <button type="button" onclick="window.sendTechnicalReportWA()" class="py-2 rounded-xl bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-whatsapp-logo text-sm"></i> WhatsApp Informe</button>
-              <button type="button" onclick="window.printTechnicalReport()" class="py-2 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-printer text-sm"></i> Imprimir Informe</button>
+              <button type="button" onclick="window.printTechnicalReport()" class="py-2 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-printer text-sm"></i> Imprimir</button>
             </div>
           </div>
 
@@ -925,19 +921,11 @@
               <input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="col-span-2 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono text-xs">
               <select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold"><option value="SEM6">6 Meses</option><option value="LIFETIME" selected>Vitalicio</option></select>
             </div>
-            <button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow">Emitir Clave Segura</button>
+            <button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow active:scale-95">Emitir Clave Segura</button>
             <div id="genResultBox" class="hidden p-2.5 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800">
               <span id="genGeneratedKey" class="font-mono text-emerald-400 font-bold text-xs"></span>
               <button type="button" onclick="window.copyKey()" class="px-2.5 py-1 bg-zinc-800 rounded text-[10px] text-white font-bold">Copiar</button>
             </div>
-          </div>
-        </div>
-
-        <div class="space-y-1.5 pt-1">
-          <label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar o Renovar Licencia:</label>
-          <div class="flex gap-1.5">
-            <input type="text" id="inpActivationKey" placeholder="Pega tu clave aquí..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs">
-            <button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs active:scale-95">Activar</button>
           </div>
         </div>
       </div>
@@ -949,10 +937,10 @@
   <div id="printArea" class="hidden"></div>
 
   <!-- =================================================================================== -->
-  <!-- SISTEMA JAVASCRIPT BLINDADO Y SINCRONIZADO                                         -->
+  <!-- SISTEMA JAVASCRIPT BLINDADO, SINCRONIZADO Y PURGADO DE DUPLICADOS                   -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v16.1.0'; 
+    var APP_CODE_VERSION = 'v17.0.0'; 
 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
@@ -964,6 +952,7 @@
     var myDeviceId = 'dev_' + Math.random().toString(36).substring(2, 9);
     var currentWorkshopId = 'TALLER-' + Math.floor(1000 + Math.random() * 9000);
     var localBranch = 'Central';
+    var currentCashBranch = 'Central';
     window.activeDevicesMap = {};
     
     try {
@@ -974,7 +963,7 @@
         else currentWorkshopId = localStorage.getItem(WORKSHOP_ID_KEY);
 
         var storedBranch = localStorage.getItem(LOCAL_BRANCH_KEY);
-        if(storedBranch) localBranch = storedBranch;
+        if(storedBranch) { localBranch = storedBranch; currentCashBranch = storedBranch; }
     } catch(e) {}
 
     function $(id) { return document.getElementById(id); }
@@ -999,20 +988,41 @@
       } catch(e) { alert(title + "\n" + msg); }
     };
 
+    // --- BÓVEDA LOCAL BLINDADA ---
+    var StorageShield = {
+      getKey: function(entity) { return 'openline_vault_' + currentWorkshopId + '_' + entity; },
+      save: function(entity, data, skipMqtt) { 
+        try { localStorage.setItem(this.getKey(entity), typeof data === 'string' ? data : JSON.stringify(data)); } catch(e){}
+        if(!skipMqtt && window.publishMQTT) window.publishMQTT();
+      },
+      load: function(entity, defaultVal) {
+        try {
+          var saved = localStorage.getItem(this.getKey(entity));
+          if (saved) { try { return JSON.parse(saved); } catch(e){ return saved; } }
+        } catch(e){}
+        return defaultVal;
+      }
+    };
+
+    var repairs = StorageShield.load('repairs', []); if(!Array.isArray(repairs)) repairs = [];
+    var stockItems = StorageShield.load('stock', []); if(!Array.isArray(stockItems)) stockItems = [];
+    var cashMovements = StorageShield.load('cash', []); if(!Array.isArray(cashMovements)) cashMovements = [];
+    var cashClosures = StorageShield.load('cashClosures', []); if(!Array.isArray(cashClosures)) cashClosures = [];
+    var sales = StorageShield.load('sales', []); if(!Array.isArray(sales)) sales = [];
+    
+    var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPin: '1234', adminPhone: '', branches: ['Central'], usersByBranch: {} }, StorageShield.load('settings', {}));
+    var activeUser = 'Admin'; try { activeUser = localStorage.getItem(ACTIVE_USER_KEY) || 'Admin'; } catch(e){}
+    var currentFilter = 'ALL';
+    var currentBranchFilter = localBranch;
+    var currentVentasPeriod = 'HOY';
+    var selectedRepairId = null;
+
     // --- PESTAÑAS CONTROL DE STOCK (REDISEÑO TOTAL) ---
     var currentStockTab = 'LIST';
     window.switchStockTab = function(tab) {
       currentStockTab = tab;
-      var views = {
-        'LIST': $('stockViewList'),
-        'FORM': $('stockViewForm'),
-        'SCANNER': $('stockViewScanner')
-      };
-      var btns = {
-        'LIST': $('stockTabListBtn'),
-        'FORM': $('stockTabFormBtn'),
-        'SCANNER': $('stockTabScannerBtn')
-      };
+      var views = { 'LIST': $('stockViewList'), 'FORM': $('stockViewForm'), 'SCANNER': $('stockViewScanner') };
+      var btns = { 'LIST': $('stockTabListBtn'), 'FORM': $('stockTabFormBtn'), 'SCANNER': $('stockTabScannerBtn') };
 
       for (var k in views) {
         if (views[k]) {
@@ -1045,62 +1055,132 @@
       }, 50); 
     };
 
-    // --- RECEPTOR MQTT CON MERGE ADITIVO ---
-    function mergeById(localArr, remoteArr) {
-      if (!Array.isArray(remoteArr)) return localArr || [];
-      if (!Array.isArray(localArr)) localArr = [];
-      var map = {};
-      localArr.forEach(function(item) { if (item && item.id) map[item.id] = item; });
-      remoteArr.forEach(function(item) { if (item && item.id) map[item.id] = Object.assign({}, map[item.id] || {}, item); });
-      return Object.values(map).sort(function(a, b) { return (b.date || b.timestamp || b.createdAt || 0) - (a.date || a.timestamp || a.createdAt || 0); });
-    }
-
-    window.publishMQTT = function() {
-      if(mqttClient && mqttClient.connected) {
-        var lic = StorageShield.load('license', null);
-        var payload = { senderId: myDeviceId, repairs: repairs, stockItems: stockItems, sales: sales, cashMovements: cashMovements, cashClosures: cashClosures, settings: workshopSettings, license: lic };
-        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', JSON.stringify(payload), {retain: true});
-      }
+    window.toggleStockCam = function() {
+      var box = $('stockScannerContainer'); var btn = $('btnToggleStockScanner');
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden'); box.classList.add('flex');
+        if (btn) btn.innerHTML = '<i class="ph-bold ph-stop"></i> Detener';
+        setTimeout(function() {
+          try {
+            if (stockScanner) { stockScanner.clear(); stockScanner = null; }
+            stockScanner = new Html5Qrcode("stock-qr-reader");
+            var config = { fps: 15, qrbox: function(w, h) { var m = Math.min(w, h); var edge = Math.floor(m * 0.75); return { width: edge, height: edge }; } };
+            stockScanner.start({ facingMode: "environment" }, config, function(decodedText) {
+                if($('stkCode')) $('stkCode').value = decodedText;
+                window.showToast("Código Detectado", decodedText);
+                window.stopStockCam();
+                window.switchStockTab('FORM');
+                if (navigator.vibrate) navigator.vibrate(80);
+            }).catch(function(err){ 
+                stockScanner.start({ facingMode: "user" }, config, function(text) {
+                  if($('stkCode')) $('stkCode').value = text;
+                  window.showToast("Código Detectado", text);
+                  window.stopStockCam();
+                  window.switchStockTab('FORM');
+                }).catch(function(e) { window.showToast("Error", "Cámara bloqueada o sin permisos."); window.stopStockCam(); });
+            });
+          } catch(e) { window.showToast("Error", "Cámara no soportada."); window.stopStockCam(); }
+        }, 300);
+      } else { window.stopStockCam(); }
     };
 
-    if (typeof mqtt !== 'undefined') {
-      mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'opl_' + myDeviceId, clean: true, reconnectPeriod: 3000 });
-      mqttClient.on('connect', function() {
-        if($('livePulseDot')) $('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
-        mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', { qos: 1 });
-        mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', { qos: 0 });
-        
-        setInterval(function() {
-          mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', JSON.stringify({ devId: myDeviceId }));
-          var now = Date.now(); var count = 0;
-          for (var d in window.activeDevicesMap) { if (now - window.activeDevicesMap[d] < 22000) count++; else delete window.activeDevicesMap[d]; }
-          if($('onlineUsersCount')) $('onlineUsersCount').textContent = Math.max(1, count);
-        }, 10000);
-      });
+    window.stopStockCam = function() { 
+      var box = $('stockScannerContainer'); var btn = $('btnToggleStockScanner');
+      if(box) { box.classList.add('hidden'); box.classList.remove('flex'); }
+      if (btn) btn.innerHTML = '<i class="ph-bold ph-camera"></i> Iniciar Cámara';
+      if (stockScanner) { try { stockScanner.stop().catch(function(){}); stockScanner.clear(); stockScanner=null;} catch(e){} } 
+    };
 
-      mqttClient.on('message', function(topic, message) {
-        try {
-          var payload = JSON.parse(message.toString());
-          if (topic.endsWith('/heartbeat')) {
-            if (payload && payload.devId) window.activeDevicesMap[payload.devId] = Date.now(); return;
-          }
-          if (topic.includes('/sync') && payload && payload.senderId !== myDeviceId) {
-            if(payload.repairs && Array.isArray(payload.repairs)) { repairs = mergeById(repairs, payload.repairs); StorageShield.save('repairs', repairs, true); window.renderRepairsList(); window.updateCounters(); }
-            if(payload.cashMovements && Array.isArray(payload.cashMovements)) { cashMovements = mergeById(cashMovements, payload.cashMovements); StorageShield.save('cash', cashMovements, true); window.updateCashBalanceUI(); }
-            if(payload.cashClosures && Array.isArray(payload.cashClosures)) { cashClosures = mergeById(cashClosures, payload.cashClosures); StorageShield.save('cashClosures', cashClosures, true); window.renderCashClosures(); }
-            if(payload.sales && Array.isArray(payload.sales)) { sales = mergeById(sales, payload.sales); StorageShield.save('sales', sales, true); window.renderVentasList(); }
-            if(payload.stockItems && Array.isArray(payload.stockItems)) {
-              var stockMap = {};
-              stockItems.forEach(function(s){ stockMap[s.code + '_' + (s.branch || 'Central')] = s; });
-              payload.stockItems.forEach(function(s){ stockMap[s.code + '_' + (s.branch || 'Central')] = s; });
-              stockItems = Object.values(stockMap); StorageShield.save('stock', stockItems, true); window.renderStockList();
-            }
-          }
-        } catch(e) {}
-      });
-    }
+    window.saveStockItem = function() {
+      var code = $('stkCode').value.trim() || Math.floor(100000000000 + Math.random() * 900000000000).toString();
+      var name = $('stkName').value.trim(); var branch = $('stkBranch') ? $('stkBranch').value : localBranch;
+      var cat = $('stkCategory').value; var qty = parseInt($('stkQuantity').value) || 1; var price = parseFloat($('stkSalePrice').value) || 0; var cost = parseFloat($('stkCostPrice').value) || 0;
+      
+      if(!name) { window.showToast('Error', 'Ingrese nombre del repuesto'); return; }
+      var existing = stockItems.find(function(i) { return String(i.code) === String(code) && i.branch === branch; });
+      if(existing) { existing.qty += qty; existing.price = price; existing.cost = cost; } 
+      else { stockItems.push({ code: code, name: name, category: cat, qty: qty, price: price, cost: cost, branch: branch }); }
+      
+      StorageShield.save('stock', stockItems); 
+      window.showToast('Guardado', 'Repuesto guardado en ' + branch);
+      $('stkName').value = ''; $('stkCode').value = ''; $('stkSalePrice').value = ''; $('stkCostPrice').value = '';
+      window.switchStockTab('LIST');
+    };
 
-    // --- BOOT MAESTRO BLINDADO ---
+    window.bulkIncreasePrices = function() {
+      if(activeUser !== 'Admin') { window.showToast('Denegado', 'Solo Admin edita precios masivos.'); return; }
+      window.requestAdminPinAuth("Aumento Masivo de Precios", function() {
+        var pct = prompt("Ingresa el porcentaje de aumento (ej: 10 para 10%):\nAplica al stock de " + localBranch);
+        if(pct !== null) {
+          var p = parseFloat(pct);
+          if(!isNaN(p) && p > 0) {
+            var count = 0;
+            stockItems.forEach(function(i) {
+              if(i.branch === localBranch) { i.price = Math.round(i.price * (1 + (p / 100))); count++; }
+            });
+            StorageShield.save('stock', stockItems); window.renderStockList();
+            window.showToast("Actualizado", "Precios subieron " + p + "% en " + count + " repuestos.");
+          } else { window.showToast("Error", "Porcentaje no válido"); }
+        }
+      });
+    };
+
+    window.updateStockQty = function(code, branch, delta) {
+      var st = stockItems.find(function(i) { return String(i.code) === String(code) && i.branch === branch; });
+      if(st) { st.qty += delta; if(st.qty < 0) st.qty = 0; StorageShield.save('stock', stockItems); window.renderStockList(); }
+    };
+
+    window.deleteStockItem = function(code, branch) {
+      if(activeUser !== 'Admin') { window.showToast('Denegado', 'Solo Admin puede eliminar'); return; }
+      window.requestAdminPinAuth("Eliminar producto", function() {
+          stockItems = stockItems.filter(function(i){ return !(String(i.code) === String(code) && i.branch === branch); });
+          StorageShield.save('stock', stockItems); window.renderStockList(); window.showToast("Eliminado", "Producto removido.");
+      });
+    };
+
+    window.editStockPrice = function(code, branch) {
+      if(activeUser !== 'Admin') { window.showToast('Denegado', 'Solo Admin edita precios.'); return; }
+      window.requestAdminPinAuth("Modificar precio", function() {
+          var st = stockItems.find(function(i) { return String(i.code) === String(code) && i.branch === branch; });
+          if(!st) return;
+          var newPrice = prompt("Nuevo precio para " + st.name + ":", st.price);
+          if(newPrice !== null && !isNaN(parseFloat(newPrice))) {
+              st.price = parseFloat(newPrice); StorageShield.save('stock', stockItems); window.renderStockList(); window.showToast("Actualizado", "Precio modificado.");
+          }
+      });
+    };
+
+    window.renderStockList = function() {
+      var container = $('stockListContainer');
+      if(!container) return;
+      var term = ($('stkSearchInput') ? $('stkSearchInput').value.toLowerCase() : '');
+      var filtered = stockItems.filter(function(i) { return i && (i.name.toLowerCase().includes(term) || String(i.code).includes(term)); });
+      var isAdmin = (activeUser === 'Admin');
+
+      if(filtered.length === 0) { container.innerHTML = '<div class="text-center p-8 text-zinc-500">No hay repuestos registrados en el inventario.</div>'; return; }
+      container.innerHTML = filtered.map(function(i) {
+        var editPriceHtml = isAdmin ? '<button type="button" onclick="window.editStockPrice(\''+i.code+'\', \''+i.branch+'\')" class="ml-1 text-zinc-400 hover:text-amber-400"><i class="ph-bold ph-pencil-simple"></i></button>' : '';
+        var qtyClass = 'text-emerald-400';
+        if (i.qty <= 0) qtyClass = 'text-rose-500 animate-pulse'; else if (i.qty <= 3) qtyClass = 'text-amber-500';
+
+        return '<div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl flex flex-col gap-1 mb-1.5 shadow-sm">' +
+               '<div class="flex justify-between items-start">' +
+                  '<div class="flex-1 min-w-0 pr-2"><div class="font-bold text-white text-xs truncate">' + i.name + '</div><div class="text-[10px] text-zinc-500 font-mono">' + i.code + '</div></div>' +
+                  '<div class="flex items-center"><span class="text-emerald-400 font-bold text-xs">$' + i.price.toLocaleString() + '</span>' + editPriceHtml + '</div>' +
+               '</div>' +
+               '<div class="flex justify-between items-center pt-1 border-t border-zinc-800/80">' +
+                  '<div><span class="text-[9px] px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-300 font-bold"><i class="ph-bold ph-map-pin text-rose-400"></i> ' + (i.branch || 'Central') + '</span></div>' +
+                  '<div class="flex items-center gap-1">' +
+                    '<button type="button" onclick="window.updateStockQty(\''+i.code+'\', \''+i.branch+'\', -1)" class="w-6 h-6 rounded bg-zinc-800 text-white flex justify-center items-center active:scale-95"><i class="ph-bold ph-minus"></i></button>' +
+                    '<span class="text-xs font-bold w-5 text-center ' + qtyClass + '">' + i.qty + '</span>' +
+                    '<button type="button" onclick="window.updateStockQty(\''+i.code+'\', \''+i.branch+'\', 1)" class="w-6 h-6 rounded bg-zinc-800 text-white flex justify-center items-center active:scale-95"><i class="ph-bold ph-plus"></i></button>' +
+                    '<button type="button" onclick="window.deleteStockItem(\''+i.code+'\', \''+i.branch+'\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex justify-center items-center ml-2 active:scale-95"><i class="ph-bold ph-trash"></i></button>' +
+                  '</div>' +
+               '</div></div>';
+      }).join('');
+    };
+
+    // --- INITIAL BOOT ---
     document.addEventListener('DOMContentLoaded', function() {
       try {
           window.checkLocalBranch();
@@ -1109,13 +1189,13 @@
           if($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
           if($('modalWorkshopCodeDisplay')) $('modalWorkshopCodeDisplay').textContent = currentWorkshopId;
           
-          // BLINDAJE DE LICENCIA VITALICIO DEFINITIVO
           localStorage.setItem(PERMANENT_LICENSE_KEY, 'TRUE');
           StorageShield.save('license', { type: 'LIFETIME', key: 'PRO-VITALICIO-AUTOSHIELD', expiresAt: 9999999999999 }, true);
           window.updateLicenseUI();
 
           window.renderBranchTabs();
-          window.renderRepairsList(); window.updateCounters();
+          window.renderRepairsList(); 
+          window.updateCounters();
           window.updateCashBalanceUI();
           
           var savedVersion = localStorage.getItem(VERSION_STORAGE_KEY);
@@ -1127,7 +1207,7 @@
                   setTimeout(function() { banner.classList.add('hidden'); banner.classList.remove('flex'); }, 5000);
               }
           }
-      } catch (criticalError) { console.error("Boot fallback:", criticalError); }
+      } catch (e) { console.error("Boot seguro interceptó:", e); }
     });
 
   </script>
