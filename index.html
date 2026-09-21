@@ -68,7 +68,7 @@
     }
   </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen">
+<body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen" ontouchstart="">
 
   <div id="appUpdatingBanner" class="fixed top-4 inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 z-[10002] hidden items-center justify-between gap-3 bg-indigo-950/95 border-2 border-indigo-500 text-white px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-2xl transition-all duration-300 pointer-events-auto max-w-md">
     <div class="flex items-center gap-3 min-w-0">
@@ -80,7 +80,7 @@
           <span>Esta aplicación se ha actualizado</span>
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
         </h4>
-        <p class="text-[10px] text-indigo-200 mt-0.5">Correcciones de métricas y fotografía instaladas.</p>
+        <p class="text-[10px] text-indigo-200 mt-0.5">Integración Ventas-Caja corregida exitosamente.</p>
       </div>
     </div>
     <button type="button" onclick="window.dismissUpdateBanner()" class="w-7 h-7 rounded-lg bg-indigo-900/80 hover:bg-indigo-800 text-indigo-300 flex items-center justify-center shrink-0">
@@ -261,6 +261,7 @@
         <div id="usersListGrid" class="grid grid-cols-2 gap-2"></div>
       </div>
       
+      <!-- CONF CONTRASEÑA ADMIN -->
       <div id="adminPinConfigSection" class="p-3 bg-zinc-950 rounded-2xl border border-amber-600/50 space-y-2 hidden">
         <div id="setupPinBox">
           <span class="text-[10px] font-bold text-amber-400 uppercase block">🔑 Configurar Clave de Administrador:</span>
@@ -337,7 +338,6 @@
           </div>
         </div>
 
-        <!-- Clave / Patrón Android con Dibujo Trazado -->
         <div class="space-y-2 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
           <div class="flex items-center justify-between">
             <label class="font-bold text-zinc-300 uppercase text-[9px] block">3. Clave / Seguridad</label>
@@ -510,6 +510,7 @@
             <button type="button" onclick="window.togglePosCam()" class="px-3 py-2 bg-purple-900 text-purple-200 rounded-xl font-bold flex items-center gap-1"><i class="ph-bold ph-camera"></i> Escanear</button>
           </div>
           
+          <!-- VENTA MANUAL SIN STOCK -->
           <div class="flex gap-2 shrink-0 bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 shadow-sm items-center">
              <i class="ph-bold ph-tag text-zinc-500"></i>
              <input type="text" id="posManualName" placeholder="Art. Manual (Funda, etc)..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-2 py-1.5 text-white text-xs">
@@ -596,6 +597,7 @@
             <button type="button" onclick="window.saveCashMovement()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow">Guardar en Caja</button>
         </div>
         
+        <!-- CIERRE DIARIO -->
         <div class="pt-2 border-t border-zinc-800 space-y-2">
            <span class="text-[10px] font-bold text-zinc-400 uppercase block">Opciones de Cierre de Caja:</span>
            <div class="grid grid-cols-3 gap-1.5">
@@ -623,6 +625,7 @@
           <span class="text-[9px] text-zinc-600 block mt-1">Toca 5 veces sobre el estado para acceder al Modo Maestro</span>
         </div>
 
+        <!-- PANEL DE TELEMETRÍA MAESTRO -->
         <div id="masterAdminUnlockedView" class="hidden p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3">
           <div class="flex items-center justify-between border-b border-indigo-900 pb-2">
             <div class="flex items-center gap-1.5">
@@ -666,7 +669,7 @@
   <!-- SISTEMA PRINCIPAL JAVASCRIPT BLINDADO                                              -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v10.6.0'; 
+    var APP_CODE_VERSION = 'v10.6.1';
 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
@@ -950,7 +953,6 @@
         try {
             if (!Array.isArray(cashMovements)) cashMovements = [];
             var inc = 0, exp = 0;
-            
             var startOfToday = new Date().setHours(0,0,0,0);
             
             cashMovements.forEach(function(c) { 
@@ -990,10 +992,10 @@
                   '<b style="font-size:10px;">REPORTE DE CAJA DIARIO</b><br>' +
                   '<span style="font-size:9px;">' + new Date().toLocaleString('es-AR') + '</span></div>' +
                   '<div style="text-align:left;font-size:10px;margin-bottom:6px;">' +
-                  '<b>Ingresos (Hoy):</b> ' + $('cashTotalIncome').textContent + '<br>' +
-                  '<b>Egresos (Hoy):</b> ' + $('cashTotalExpense').textContent + '<br>' +
+                  '<b>Ingresos Totales:</b> ' + $('cashTotalIncome').textContent + '<br>' +
+                  '<b>Egresos Totales:</b> ' + $('cashTotalExpense').textContent + '<br>' +
                   '</div><div style="border-top:1px dashed #000;padding-top:4px;">' +
-                  '<b style="font-size:12px;">SALDO DEL DÍA: ' + $('cashNetBalance').textContent + '</b></div></div>';
+                  '<b style="font-size:12px;">SALDO FINAL: ' + $('cashNetBalance').textContent + '</b></div></div>';
         $('printArea').innerHTML = html;
         $('printArea').style.display = 'block'; $('printArea').classList.remove('hidden');
         window.print(); setTimeout(function(){ $('printArea').classList.add('hidden'); }, 500);
@@ -1002,12 +1004,12 @@
     window.sendCashCierreWA = function() {
         var phone = prompt("Ingrese número de WhatsApp:");
         if (!phone) return;
-        var msg = `*${workshopSettings.name.toUpperCase()} - CIERRE DE CAJA*\n📅 Fecha: ${new Date().toLocaleString('es-AR')}\n\n🟢 Ingresos (Hoy): ${$('cashTotalIncome').textContent}\n🔴 Egresos (Hoy): ${$('cashTotalExpense').textContent}\n\n💰 *SALDO DEL DÍA: ${$('cashNetBalance').textContent}*`;
+        var msg = `*${workshopSettings.name.toUpperCase()} - CIERRE DE CAJA*\n📅 Fecha: ${new Date().toLocaleString('es-AR')}\n\n🟢 Ingresos: ${$('cashTotalIncome').textContent}\n🔴 Egresos: ${$('cashTotalExpense').textContent}\n\n💰 *SALDO FINAL: ${$('cashNetBalance').textContent}*`;
         window.open('https://wa.me/' + phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg), '_blank');
     };
 
     window.cerrarCajaRestablecer = function() {
-        var confirmar = confirm("¿Confirmas el Cierre de Caja?\nEsto archivará y limpiará los movimientos para iniciar un nuevo día.");
+        var confirmar = confirm("¿Confirmas el Cierre de Caja?\nEsto enviará a cero los movimientos diarios para iniciar un nuevo turno.");
         if (confirmar) {
             cashMovements = [];
             StorageShield.save('cash', cashMovements);
@@ -1021,7 +1023,7 @@
         if(!r) return;
         var amountToCharge = (parseFloat(r.budget) || 0) - (parseFloat(r.advance) || 0);
         if(amountToCharge <= 0) {
-            window.showToast("Aviso", "No hay saldo pendiente de cobro.");
+            window.showToast("Aviso", "No hay saldo pendiente de cobro para esta orden.");
             return;
         }
         if($('cshAmount')) $('cshAmount').value = amountToCharge;
@@ -1108,6 +1110,7 @@
         
         if($('dtlDeviceFault')) $('dtlDeviceFault').textContent = r.fault || 'Sin descripción previa';
         if($('dtlRepairDetailsText')) $('dtlRepairDetailsText').textContent = r.repairDetails || 'Ningún trabajo detallado aún.';
+        if($('dtlRepairDetailsBox')) $('dtlRepairDetailsBox').style.display = 'block';
 
         if($('dtlOperationalStatusBadge')) $('dtlOperationalStatusBadge').textContent = r.status;
         if($('dtlBudgetTotal')) $('dtlBudgetTotal').textContent = '$' + (r.budget || 0);
@@ -1536,8 +1539,14 @@
        var newSale = { id: saleId, timestamp: Date.now(), total: total, paymentMethod: method, items: JSON.parse(JSON.stringify(posCart)), soldBy: activeUser, customerName: custName };
        sales.unshift(newSale);
        StorageShield.save('sales', sales); StorageShield.save('stock', stockItems);
+       
+       // Agregar venta a caja
+       if (!Array.isArray(cashMovements)) cashMovements = [];
+       cashMovements.unshift({ id: 'CSH-'+Date.now(), type: 'INCOME', amount: total, concept: 'Venta #' + saleId + (custName ? ' (' + custName + ')' : ''), method: method, date: Date.now(), user: activeUser });
+       StorageShield.save('cash', cashMovements);
+       
        window.clearPosCart(); window.renderPosCatalog(); window.closeModal('salesModal');
-       window.showToast("Venta Exitosa", "Se registró la venta y se generó el ticket.");
+       window.showToast("Venta Exitosa", "Se registró la venta en caja.");
        
        window.openSaleTicketModal(saleId);
     };
@@ -1622,8 +1631,12 @@
           });
           StorageShield.save('stock', stockItems); window.renderStockList();
         }
+        
+        cashMovements = cashMovements.filter(function(cm) { return !(cm.concept && cm.concept.includes(saleId)); });
+        StorageShield.save('cash', cashMovements); window.updateCashBalanceUI();
+
         sales.splice(saleIndex, 1); StorageShield.save('sales', sales);
-        window.renderVentasList(); window.showToast("Venta Anulada", "Stock repuesto.");
+        window.renderVentasList(); window.showToast("Venta Anulada", "Stock repuesto y caja descontada.");
       });
     };
 
@@ -1665,6 +1678,7 @@
       window.open('https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
     };
 
+    // --- PANEL MAESTRO DE LICENCIAS Y TELEMETRÍA ---
     function createLicenseHash(workshopCode, type, days) {
       var d = (type === 'SEM6') ? (days || 180) : 99999;
       var str = workshopCode + '_' + type + '_' + d + '_OPENLINE_SECURE_2026';
@@ -1723,6 +1737,7 @@
       } else { window.showToast('Inválido', 'Clave no válida para este taller.'); }
     };
 
+    // --- ALERTA DE ACTUALIZACIÓN CON SONIDO ---
     var audioCtx = null;
     function playAudioNotification() {
       try {
@@ -1781,6 +1796,7 @@
       }
 
       window.renderRepairsList(); window.updateCounters();
+      window.renderBranchSelectors();
       
       try {
           var savedVersion = localStorage.getItem(VERSION_STORAGE_KEY);
