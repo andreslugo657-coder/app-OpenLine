@@ -80,10 +80,10 @@
           <span>Esta aplicación se ha actualizado</span>
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
         </h4>
-        <p class="text-[10px] text-indigo-200 mt-0.5">Mejoras instaladas. Datos y licencias preservados con éxito.</p>
+        <p class="text-[10px] text-indigo-200 mt-0.5">Mejoras instaladas y errores corregidos.</p>
       </div>
     </div>
-    <button type="button" onclick="dismissUpdateBanner()" class="w-7 h-7 rounded-lg bg-indigo-900/80 hover:bg-indigo-800 text-indigo-300 flex items-center justify-center shrink-0">
+    <button type="button" onclick="window.dismissUpdateBanner()" class="w-7 h-7 rounded-lg bg-indigo-900/80 hover:bg-indigo-800 text-indigo-300 flex items-center justify-center shrink-0">
       <i class="ph-bold ph-x text-xs"></i>
     </button>
   </div>
@@ -98,11 +98,11 @@
         <div class="min-w-0 flex flex-col">
           <div class="flex items-center gap-1.5 flex-wrap">
             <h1 id="appHeaderTitle" class="text-sm font-bold text-white tracking-tight truncate">OpenLine</h1>
-            <button type="button" onclick="openTeamModal()" class="text-[10px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-2 py-0.5 rounded-full flex items-center gap-1 active:opacity-75 transition">
+            <button type="button" onclick="window.openTeamModal()" class="text-[10px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-2 py-0.5 rounded-full flex items-center gap-1 active:opacity-75 transition">
               <span id="livePulseDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span id="headerWorkshopCode">TALLER-XXXX</span>
             </button>
-            <button type="button" id="headerLicenseBtn" onclick="openLicenseModal()" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition">
+            <button type="button" id="headerLicenseBtn" onclick="window.openLicenseModal()" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition">
               <i class="ph-bold ph-shield-check"></i> <span id="headerLicenseText">DEMO</span>
             </button>
           </div>
@@ -111,35 +111,36 @@
       </div>
 
       <div class="flex items-center gap-1.5 shrink-0">
-        <button type="button" onclick="openSwitchUserModal()" class="h-9 px-2.5 rounded-xl bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center gap-1.5 active:scale-95 transition shadow-sm text-xs font-bold">
+        <button type="button" onclick="window.openSwitchUserModal()" class="h-9 px-2.5 rounded-xl bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center gap-1.5 active:scale-95 transition shadow-sm text-xs font-bold">
           <i class="ph-bold ph-user-circle text-base text-iosBlue"></i>
           <span id="headerActiveUserDisplay" class="max-w-[75px] sm:max-w-[100px] truncate">Admin</span>
         </button>
-        <button type="button" onclick="openSettingsModal()" class="w-9 h-9 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm">
+        <button type="button" onclick="window.openSettingsModal()" class="w-9 h-9 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm">
           <i class="ph-bold ph-gear text-lg"></i>
         </button>
-        <button type="button" onclick="openInstallModal()" class="w-9 h-9 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm">
+        <button type="button" onclick="window.openInstallModal()" class="w-9 h-9 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm">
           <i class="ph-bold ph-share-network text-lg"></i>
         </button>
       </div>
     </div>
 
+    <!-- Botonera de Acciones -->
     <div class="px-4 pb-2.5 max-w-5xl mx-auto w-full">
       <div class="grid grid-cols-5 gap-1.5 sm:gap-2 text-center">
-        <button type="button" onclick="openNewRepairModal()" class="py-2 px-1 rounded-xl bg-iosBlue text-white text-[10px] sm:text-xs font-bold shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+        <button type="button" onclick="window.openNewRepairModal()" class="py-2 px-1 rounded-xl bg-iosBlue text-white text-[10px] sm:text-xs font-bold shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition">
           <i class="ph-bold ph-plus text-base"></i><span>Ingreso</span>
         </button>
-        <button type="button" onclick="openSalesModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] sm:text-xs font-bold shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+        <button type="button" onclick="window.openSalesModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] sm:text-xs font-bold shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition">
           <i class="ph-bold ph-shopping-cart-simple text-base"></i><span>POS Vender</span>
         </button>
-        <button type="button" onclick="openVentasHistoryModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-indigo-900 to-blue-900 border border-indigo-700/60 text-indigo-200 text-[10px] sm:text-xs font-bold shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+        <button type="button" onclick="window.openVentasHistoryModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-indigo-900 to-blue-900 border border-indigo-700/60 text-indigo-200 text-[10px] sm:text-xs font-bold shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition">
           <i class="ph-bold ph-receipt text-base text-indigo-400"></i><span>Ventas</span>
         </button>
-        <button type="button" onclick="openStockModal()" class="py-2 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] sm:text-xs font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition relative">
+        <button type="button" onclick="window.openStockModal()" class="py-2 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] sm:text-xs font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition relative">
           <i class="ph-bold ph-barcode text-base text-purple-400"></i><span>Stock</span>
           <span id="stockWarningBadge" class="hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
         </button>
-        <button type="button" onclick="openCashModal()" class="py-2 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] sm:text-xs font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+        <button type="button" onclick="window.openCashModal()" class="py-2 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] sm:text-xs font-semibold flex flex-col items-center justify-center gap-1 active:scale-95 transition">
           <i class="ph-bold ph-currency-dollar-simple text-base text-emerald-400"></i><span>Caja</span>
         </button>
       </div>
@@ -158,7 +159,7 @@
     </div>
 
     <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
-      <button type="button" onclick="openCashModal()" class="w-full text-center bg-gradient-to-br from-zinc-900 to-emerald-950/40 border border-emerald-900/40 rounded-2xl p-2.5 shadow-sm active:scale-95 transition">
+      <button type="button" onclick="window.openCashModal()" class="w-full text-center bg-gradient-to-br from-zinc-900 to-emerald-950/40 border border-emerald-900/40 rounded-2xl p-2.5 shadow-sm active:scale-95 transition">
         <span class="text-[10px] text-emerald-400 font-bold flex items-center justify-center gap-1">
           <i class="ph-bold ph-wallet"></i> Saldo Caja (<span id="headerCashBranchTag">Todas</span>)
         </span>
@@ -185,18 +186,18 @@
     <div class="space-y-2">
       <div class="relative">
         <i class="ph-bold ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-base"></i>
-        <input id="searchInput" type="text" oninput="handleSearch()" placeholder="Buscar cliente, modelo, IMEI..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-iosBlue shadow-sm">
-        <button type="button" id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 p-1">
+        <input id="searchInput" type="text" oninput="window.handleSearch()" placeholder="Buscar cliente, modelo, IMEI..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-9 pr-9 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-iosBlue shadow-sm">
+        <button type="button" id="clearSearchBtn" onclick="window.clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 p-1">
           <i class="ph-bold ph-x-circle text-base"></i>
         </button>
       </div>
       <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs pb-0.5">
-        <button type="button" onclick="setFilter('ALL')" id="tabALL" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-800 text-white font-bold shrink-0 transition">Todos</button>
-        <button type="button" onclick="setFilter('WAITING')" id="tabWAITING" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Espera</button>
-        <button type="button" onclick="setFilter('IN_PROGRESS')" id="tabIN_PROGRESS" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Taller</button>
-        <button type="button" onclick="setFilter('IN_TRANSIT')" id="tabIN_TRANSIT" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Viaje</button>
-        <button type="button" onclick="setFilter('READY')" id="tabREADY" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Listos</button>
-        <button type="button" onclick="setFilter('DELIVERED')" id="tabDELIVERED" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Entregados</button>
+        <button type="button" onclick="window.setFilter('ALL')" id="tabALL" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-800 text-white font-bold shrink-0 transition">Todos</button>
+        <button type="button" onclick="window.setFilter('WAITING')" id="tabWAITING" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Espera</button>
+        <button type="button" onclick="window.setFilter('IN_PROGRESS')" id="tabIN_PROGRESS" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Taller</button>
+        <button type="button" onclick="window.setFilter('IN_TRANSIT')" id="tabIN_TRANSIT" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Viaje</button>
+        <button type="button" onclick="window.setFilter('READY')" id="tabREADY" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Listos</button>
+        <button type="button" onclick="window.setFilter('DELIVERED')" id="tabDELIVERED" class="filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition">Entregados</button>
       </div>
     </div>
 
@@ -226,17 +227,17 @@
             <span class="text-[10px] text-zinc-400" id="ventasBranchIndicatorTag">Sucursal: Todas</span>
           </div>
         </div>
-        <button type="button" onclick="closeModal('ventasModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white">
+        <button type="button" onclick="window.closeModal('ventasModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white">
           <i class="ph-bold ph-x text-sm"></i>
         </button>
       </div>
 
       <div class="p-4 overflow-y-auto space-y-3.5 flex-1 pb-safe">
         <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
-          <button type="button" id="btnPeriodHoy" onclick="setVentasPeriod('HOY')" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold text-xs shrink-0 shadow">📅 Hoy (Cierre)</button>
-          <button type="button" id="btnPeriodSemana" onclick="setVentasPeriod('SEMANA')" class="px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs shrink-0">Últimos 7 Días</button>
-          <button type="button" id="btnPeriodMes" onclick="setVentasPeriod('MES')" class="px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs shrink-0">Este Mes (30d)</button>
-          <button type="button" id="btnPeriodTodas" onclick="setVentasPeriod('TODAS')" class="px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs shrink-0">Todas</button>
+          <button type="button" id="btnPeriodHoy" onclick="window.setVentasPeriod('HOY')" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold text-xs shrink-0 shadow">📅 Hoy (Cierre)</button>
+          <button type="button" id="btnPeriodSemana" onclick="window.setVentasPeriod('SEMANA')" class="px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs shrink-0">Últimos 7 Días</button>
+          <button type="button" id="btnPeriodMes" onclick="window.setVentasPeriod('MES')" class="px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs shrink-0">Este Mes (30d)</button>
+          <button type="button" id="btnPeriodTodas" onclick="window.setVentasPeriod('TODAS')" class="px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs shrink-0">Todas</button>
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -247,11 +248,11 @@
         </div>
 
         <div class="grid grid-cols-2 gap-2">
-          <button type="button" onclick="sendCierreWhatsApp()" class="py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl flex items-center justify-center gap-1.5 shadow active:scale-95 transition"><i class="ph-bold ph-whatsapp-logo text-base"></i><span>Enviar Cierre a WhatsApp</span></button>
-          <button type="button" onclick="printCierreReport()" class="py-2.5 px-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold rounded-xl flex items-center justify-center gap-1.5 border border-zinc-700 active:scale-95 transition"><i class="ph-bold ph-printer text-base"></i><span>Imprimir Cierre Diario</span></button>
+          <button type="button" onclick="window.sendCierreWhatsApp()" class="py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl flex items-center justify-center gap-1.5 shadow active:scale-95 transition"><i class="ph-bold ph-whatsapp-logo text-base"></i><span>Enviar Cierre a WhatsApp</span></button>
+          <button type="button" onclick="window.printCierreReport()" class="py-2.5 px-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold rounded-xl flex items-center justify-center gap-1.5 border border-zinc-700 active:scale-95 transition"><i class="ph-bold ph-printer text-base"></i><span>Imprimir Cierre Diario</span></button>
         </div>
 
-        <input type="text" id="ventasSearchInput" oninput="renderVentasList()" placeholder="Buscar por código, cliente o vendedor..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-white">
+        <input type="text" id="ventasSearchInput" oninput="window.renderVentasList()" placeholder="Buscar por código, cliente o vendedor..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-white">
         <div id="ventasListContainer" class="space-y-2 max-h-[42vh] overflow-y-auto pr-1"></div>
       </div>
     </div>
@@ -260,11 +261,11 @@
   <!-- MODAL: PREVIEW DE TICKET DE VENTA -->
   <div id="saleTicketModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300">
-      <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Comprobante de Venta</h3><button type="button" onclick="closeModal('saleTicketModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Comprobante de Venta</h3><button type="button" onclick="window.closeModal('saleTicketModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div id="saleTicketPreviewBox" class="p-3 bg-white text-black rounded-xl overflow-hidden font-mono text-[11px] leading-snug"></div>
       <div class="grid grid-cols-2 gap-2 pt-1">
-        <button type="button" onclick="sendSaleTicketWA()" class="py-2.5 bg-emerald-600 text-white font-bold rounded-xl flex items-center justify-center gap-1 shadow"><i class="ph-bold ph-whatsapp-logo text-base"></i> WhatsApp</button>
-        <button type="button" onclick="executePrintSaleTicket()" class="py-2.5 bg-iosBlue text-white font-bold rounded-xl flex items-center justify-center gap-1 shadow"><i class="ph-bold ph-printer text-base"></i> Imprimir</button>
+        <button type="button" onclick="window.sendSaleTicketWA()" class="py-2.5 bg-emerald-600 text-white font-bold rounded-xl flex items-center justify-center gap-1 shadow"><i class="ph-bold ph-whatsapp-logo text-base"></i> WhatsApp</button>
+        <button type="button" onclick="window.executePrintSaleTicket()" class="py-2.5 bg-iosBlue text-white font-bold rounded-xl flex items-center justify-center gap-1 shadow"><i class="ph-bold ph-printer text-base"></i> Imprimir</button>
       </div>
     </div>
   </div>
@@ -272,26 +273,26 @@
   <!-- MODAL: CAMBIAR USUARIO ACTIVO / PERSONAL -->
   <div id="switchUserModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3.5 text-xs text-zinc-300">
-      <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Operar como Usuario</h3><button type="button" onclick="closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Operar como Usuario</h3><button type="button" onclick="window.closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="space-y-1.5">
         <label class="text-[10px] text-zinc-400 uppercase font-bold block">Seleccionar quién está en mostrador / banco:</label>
         <div id="usersListGrid" class="grid grid-cols-2 gap-2"></div>
       </div>
       
-      <!-- CONF CONTRASEÑA ADMIN -->
+      <!-- CONF CONTRASEÑA ADMIN (Ocultable) -->
       <div id="adminPinConfigSection" class="p-3 bg-zinc-950 rounded-2xl border border-amber-600/50 space-y-2 hidden">
         <div id="setupPinBox">
           <span class="text-[10px] font-bold text-amber-400 uppercase block">🔑 Configurar Clave de Administrador:</span>
           <div class="flex gap-1.5">
             <input type="text" id="inpNewAdminPin" placeholder="Nuevo PIN Maestro (ej: 1234)" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
-            <button type="button" onclick="saveNewAdminPin()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs">Guardar</button>
+            <button type="button" onclick="window.saveNewAdminPin()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs">Guardar</button>
           </div>
         </div>
         <div id="recoveryPinBox" class="hidden text-center space-y-1.5 py-1">
-          <span class="text-[10px] font-bold text-emerald-400 uppercase block flex justify-center items-center gap-1">
+          <span class="text-[10px] font-bold text-emerald-400 uppercase flex justify-center items-center gap-1">
             <i class="ph-bold ph-shield-check text-base"></i> Clave Configurada y Protegida
           </span>
-          <button type="button" onclick="recoverAdminPin()" class="text-xs text-amber-400 underline font-bold mt-1">¿Olvidaste la contraseña?</button>
+          <button type="button" onclick="window.recoverAdminPin()" class="text-xs text-amber-400 underline font-bold mt-1">¿Olvidaste la contraseña?</button>
         </div>
       </div>
 
@@ -299,10 +300,51 @@
         <span class="text-[10px] font-bold text-zinc-300 uppercase block">+ Agregar Nuevo Empleado / Técnico:</span>
         <div class="flex gap-1.5">
           <input type="text" id="inpNewStaffName" placeholder="Nombre (ej: Matías)" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-          <button type="button" onclick="addNewStaffMember()" class="px-3.5 py-2 bg-iosBlue text-white font-bold rounded-xl text-xs">Agregar</button>
+          <button type="button" onclick="window.addNewStaffMember()" class="px-3.5 py-2 bg-iosBlue text-white font-bold rounded-xl text-xs">Agregar</button>
         </div>
       </div>
-      <button type="button" onclick="closeModal('switchUserModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl">Cerrar</button>
+      <button type="button" onclick="window.closeModal('switchUserModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- MODAL: AJUSTES -->
+  <div id="settingsModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3 shadow-2xl text-xs text-zinc-300 pb-safe">
+      <div class="flex items-center justify-between pb-1"><div class="flex items-center gap-1.5"><i class="ph-bold ph-gear text-lg text-zinc-300"></i><h3 class="font-bold text-white text-sm">Ajustes Taller</h3></div><button type="button" onclick="window.closeModal('settingsModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 text-center">
+        <div class="flex items-center justify-center gap-3">
+          <div id="settingsLogoPreview" class="w-12 h-12 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden shrink-0">
+            <i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>
+          </div>
+          <div class="space-y-1 text-left">
+            <label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 text-white font-bold rounded-xl"><i class="ph-bold ph-upload-simple"></i> Logo<input type="file" accept="image/*" onchange="window.handleLogoUpload(this)" class="hidden"></label>
+            <button type="button" onclick="window.removeLogo()" class="block text-rose-400">Quitar</button>
+          </div>
+        </div>
+      </div>
+      <div class="space-y-2">
+        <input type="text" id="cfgWorkshopName" placeholder="Nombre Comercial" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
+        <input type="text" id="cfgWorkshopSubtitle" placeholder="Subtítulo" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+        <input type="text" id="cfgBranchesListInput" placeholder="Sucursales (ej: Resistencia, Goya)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+        <input type="hidden" id="cfgWorkshopAdminPin"> <!-- Mantenido por retrocompatibilidad de script -->
+      </div>
+      
+      <!-- COPIAS DE SEGURIDAD / RESPALDO -->
+      <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2">
+        <span class="text-[10px] font-bold text-zinc-400 uppercase flex items-center gap-1">
+          <i class="ph-bold ph-shield-check text-emerald-400 text-sm"></i> Blindaje y Respaldo de Base de Datos
+        </span>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" onclick="window.exportFullBackupJSON()" class="py-2 px-2 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl flex items-center justify-center gap-1 text-[10px]">
+            <i class="ph-bold ph-download-simple"></i> Descargar Copia
+          </button>
+          <label class="py-2 px-2 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl flex items-center justify-center gap-1 text-[10px] cursor-pointer">
+            <i class="ph-bold ph-upload-simple"></i> Restaurar Copia
+            <input type="file" accept=".json" onchange="window.importFullBackupJSON(this)" class="hidden">
+          </label>
+        </div>
+      </div>
+      <button type="button" onclick="window.saveSettings()" class="w-full py-2.5 bg-iosBlue text-white font-bold rounded-xl shadow">Guardar Configuración</button>
     </div>
   </div>
 
@@ -311,7 +353,7 @@
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[92vh] flex flex-col shadow-2xl text-xs">
       <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800 bg-zinc-900">
         <h2 class="text-sm font-bold text-white flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-iosBlue"></span>Nuevo Ingreso a Taller</h2>
-        <button type="button" onclick="closeModal('newRepairModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
+        <button type="button" onclick="window.closeModal('newRepairModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
       </div>
       
       <div class="overflow-y-auto p-4 space-y-3 flex-1 pb-safe">
@@ -339,13 +381,14 @@
           <input type="text" id="inpDeviceSerial" placeholder="IMEI / Serie (Opcional)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
         </div>
 
+        <!-- Clave / Patrón Android -->
         <div class="space-y-2 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
           <div class="flex items-center justify-between">
             <label class="font-bold text-zinc-300 uppercase text-[9px] block">3. Clave / Seguridad</label>
             <div class="flex items-center gap-1 bg-zinc-800 p-0.5 rounded-lg text-[10px]">
-              <button type="button" onclick="setUnlockType('pin')" id="btnUnlockPin" class="px-2 py-0.5 rounded bg-iosBlue text-white font-medium transition">PIN</button>
-              <button type="button" onclick="setUnlockType('pattern')" id="btnUnlockPattern" class="px-2 py-0.5 rounded text-zinc-400 transition">Patrón</button>
-              <button type="button" onclick="setUnlockType('none')" id="btnUnlockNone" class="px-2 py-0.5 rounded text-zinc-400 transition">Sin Clave</button>
+              <button type="button" onclick="window.setUnlockType('pin')" id="btnUnlockPin" class="px-2 py-0.5 rounded bg-iosBlue text-white font-medium transition">PIN</button>
+              <button type="button" onclick="window.setUnlockType('pattern')" id="btnUnlockPattern" class="px-2 py-0.5 rounded text-zinc-400 transition">Patrón</button>
+              <button type="button" onclick="window.setUnlockType('none')" id="btnUnlockNone" class="px-2 py-0.5 rounded text-zinc-400 transition">Sin Clave</button>
             </div>
           </div>
           <div id="unlockViewPin">
@@ -355,7 +398,7 @@
             <canvas id="patternCanvas" width="220" height="220" class="bg-black border border-zinc-800 rounded-2xl mx-auto touch-none"></canvas>
             <div class="text-[10px] text-zinc-400 mt-1">
               <span id="patternStatusLabel">Dibuja el patrón en los puntos</span> • 
-              <button type="button" onclick="resetPatternCanvas()" class="text-rose-400 underline font-bold">Borrar trazo</button>
+              <button type="button" onclick="window.resetPatternCanvas()" class="text-rose-400 underline font-bold">Borrar trazo</button>
             </div>
           </div>
           <div id="unlockViewNone" class="hidden py-1 text-center text-[11px] text-zinc-500">Sin clave / Dispositivo apagado.</div>
@@ -369,11 +412,11 @@
           <div class="flex items-center gap-2">
             <label class="flex-1 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center gap-1.5 shadow active:scale-95 transition cursor-pointer">
               <i class="ph-bold ph-camera text-iosBlue text-base"></i> Cámara
-              <input type="file" accept="image/*" capture="environment" onchange="handleNewPhotoUpload(this)" class="hidden">
+              <input type="file" accept="image/*" capture="environment" onchange="window.handleNewPhotoUpload(this)" class="hidden">
             </label>
             <label class="flex-1 py-2.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center gap-1.5 shadow active:scale-95 transition cursor-pointer">
               <i class="ph-bold ph-image text-emerald-400 text-base"></i> Galería
-              <input type="file" accept="image/*" multiple onchange="handleNewPhotoUpload(this)" class="hidden">
+              <input type="file" accept="image/*" multiple onchange="window.handleNewPhotoUpload(this)" class="hidden">
             </label>
           </div>
           <div id="newPhotosGrid" class="flex gap-2 overflow-x-auto py-1 no-scrollbar min-h-[60px]"></div>
@@ -383,8 +426,8 @@
           <label class="font-bold text-zinc-300 uppercase text-[9px] block">5. Falla y Presupuesto</label>
           <textarea id="inpDeviceFault" rows="2" placeholder="Falla informada por el cliente..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white"></textarea>
           <div class="grid grid-cols-2 gap-2">
-            <div><label class="text-[9px] text-zinc-400 block mb-0.5">Ppto Inicial ($)</label><input type="number" id="inpDeviceBudget" oninput="calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></div>
-            <div><label class="text-[9px] text-zinc-400 block mb-0.5">Seña ($)</label><input type="number" id="inpDeviceAdvance" oninput="calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold"></div>
+            <div><label class="text-[9px] text-zinc-400 block mb-0.5">Ppto Inicial ($)</label><input type="number" id="inpDeviceBudget" oninput="window.calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></div>
+            <div><label class="text-[9px] text-zinc-400 block mb-0.5">Seña ($)</label><input type="number" id="inpDeviceAdvance" oninput="window.calcBalance('new')" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold"></div>
           </div>
           <div class="grid grid-cols-2 gap-2 pt-1">
             <div>
@@ -408,30 +451,9 @@
           </div>
         </div>
 
-        <button type="button" onclick="guardarIngresoDirecto()" class="w-full py-3 rounded-xl bg-iosBlue text-white font-bold text-sm shadow active:scale-95 transition mt-2">
+        <button type="button" onclick="window.guardarIngresoDirecto()" class="w-full py-3 rounded-xl bg-iosBlue text-white font-bold text-sm shadow active:scale-95 transition mt-2">
           Guardar Ingreso e Imprimir
         </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: DETALLES DE ORDEN -->
-  <div id="detailModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[92vh] flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800 bg-zinc-900">
-        <div><div class="flex items-center gap-1.5"><span id="dtlOrderId" class="text-xs font-mono font-bold text-iosBlue">#OL-0000</span></div><h3 id="dtlDeviceTitle" class="text-sm font-bold text-white mt-0.5">Dispositivo</h3></div>
-        <button type="button" onclick="closeModal('detailModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
-      </div>
-      <div class="overflow-y-auto p-4 space-y-3.5 flex-1 pb-safe">
-          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1">
-            <span class="text-[9px] text-zinc-500 uppercase block mb-0.5">Cliente:</span><b class="text-white text-sm" id="dtlClientName"></b><div class="text-zinc-400 font-mono text-xs mt-0.5" id="dtlClientPhone"></div>
-          </div>
-          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
-            <span class="text-[9px] text-zinc-500 uppercase block mb-0.5">Falla Reportada:</span><p id="dtlDeviceFault" class="text-zinc-200 text-xs leading-relaxed"></p>
-          </div>
-          <button type="button" onclick="deleteCurrentRepair()" class="w-full py-2.5 bg-rose-950 text-rose-300 rounded-xl font-bold flex items-center justify-center gap-2 active:scale-95 transition">
-            <i class="ph-bold ph-trash text-base"></i> Eliminar Orden
-          </button>
       </div>
     </div>
   </div>
@@ -439,21 +461,21 @@
   <!-- MODAL: VENTAS POS (MOSTRADOR) -->
   <div id="salesModal" class="app-modal">
     <div class="bg-zinc-900 sm:border border-amber-600/70 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-4xl flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-shopping-cart-simple text-amber-400 text-xl"></i><h3 class="text-sm font-bold text-white">Ventas Mostrador (POS)</h3></div><button type="button" onclick="closeModal('salesModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-shopping-cart-simple text-amber-400 text-xl"></i><h3 class="text-sm font-bold text-white">Ventas Mostrador (POS)</h3></div><button type="button" onclick="window.closeModal('salesModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
         <div class="flex-1 flex flex-col border-b md:border-b-0 md:border-r border-zinc-800 p-3.5 space-y-3 overflow-hidden">
-          <div class="flex gap-2 shrink-0"><input type="text" id="posSearchProduct" oninput="renderPosCatalog()" placeholder="Buscar repuesto..." class="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white"><button type="button" onclick="togglePosCam()" class="px-3 py-2 bg-purple-900 text-purple-200 rounded-xl font-bold flex items-center gap-1"><i class="ph-bold ph-camera"></i> Escanear</button></div>
-          <div id="posScannerBox" class="hidden p-2 bg-zinc-950 rounded-xl border border-purple-800 space-y-1"><button type="button" onclick="stopPosCam()" class="text-rose-400 font-bold w-full text-right py-1">Cerrar Cámara</button><div id="pos-qr-reader" class="w-full rounded-xl min-h-[180px] bg-black"></div></div>
+          <div class="flex gap-2 shrink-0"><input type="text" id="posSearchProduct" oninput="window.renderPosCatalog()" placeholder="Buscar repuesto..." class="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white"><button type="button" onclick="window.togglePosCam()" class="px-3 py-2 bg-purple-900 text-purple-200 rounded-xl font-bold flex items-center gap-1"><i class="ph-bold ph-camera"></i> Escanear</button></div>
+          <div id="posScannerBox" class="hidden p-2 bg-zinc-950 rounded-xl border border-purple-800 space-y-1"><button type="button" onclick="window.stopPosCam()" class="text-rose-400 font-bold w-full text-right py-1">Cerrar Cámara</button><div id="pos-qr-reader" class="w-full rounded-xl min-h-[180px] bg-black"></div></div>
           <div class="flex-1 overflow-y-auto"><div id="posCatalogGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div></div>
         </div>
         <div class="w-full md:w-[320px] flex flex-col bg-zinc-950/60 p-3.5 space-y-3 shrink-0 overflow-y-auto pb-safe">
-          <div class="flex items-center justify-between border-b border-zinc-800 pb-1.5"><span class="font-bold text-white uppercase text-xs">Carrito</span><button type="button" onclick="clearPosCart()" class="text-[10px] text-rose-400">Vaciar</button></div>
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-1.5"><span class="font-bold text-white uppercase text-xs">Carrito</span><button type="button" onclick="window.clearPosCart()" class="text-[10px] text-rose-400">Vaciar</button></div>
           <div id="posCartContainer" class="flex-1 space-y-1.5 overflow-y-auto min-h-[100px]"></div>
           <div class="space-y-2 pt-2 border-t border-zinc-800">
             <select id="posPaymentMethod" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-medium"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia / Mercado Pago</option><option value="Tarjeta">Tarjeta</option></select>
             <input type="text" id="posCustomerName" placeholder="Cliente (opcional)" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white">
           </div>
-          <div class="p-3 bg-zinc-900 rounded-2xl border border-amber-600/50 space-y-2"><div class="flex items-center justify-between"><span class="text-xs uppercase font-bold text-zinc-400">Total:</span><span id="posTotalAmount" class="font-mono text-xl font-black text-amber-400">$0</span></div><button type="button" onclick="completePosSale()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-xs shadow">Cobrar Venta</button></div>
+          <div class="p-3 bg-zinc-900 rounded-2xl border border-amber-600/50 space-y-2"><div class="flex items-center justify-between"><span class="text-xs uppercase font-bold text-zinc-400">Total:</span><span id="posTotalAmount" class="font-mono text-xl font-black text-amber-400">$0</span></div><button type="button" onclick="window.completePosSale()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-xs shadow">Cobrar Venta</button></div>
         </div>
       </div>
     </div>
@@ -462,13 +484,13 @@
   <!-- MODAL: STOCK CON CÁMARA -->
   <div id="stockModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-purple-800 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-2xl flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-barcode text-purple-400 text-xl"></i><h3 class="font-bold text-white text-sm">Control de Stock</h3></div><button type="button" onclick="closeModal('stockModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800"><div class="flex items-center gap-2"><i class="ph-bold ph-barcode text-purple-400 text-xl"></i><h3 class="font-bold text-white text-sm">Control de Stock</h3></div><button type="button" onclick="window.closeModal('stockModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="p-4 overflow-y-auto space-y-3 flex-1 pb-safe">
         <div class="grid grid-cols-2 gap-2">
-          <button type="button" onclick="toggleStockCam()" id="btnStartScanner" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
+          <button type="button" onclick="window.toggleStockCam()" id="btnStartScanner" class="py-2.5 px-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
             <i class="ph-bold ph-camera text-base"></i><span id="btnScannerText">Cámara</span>
           </button>
-          <button type="button" onclick="toggleStockForm()" class="py-2.5 px-3 rounded-xl bg-zinc-800 text-white font-bold flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
+          <button type="button" onclick="window.toggleStockForm()" class="py-2.5 px-3 rounded-xl bg-zinc-800 text-white font-bold flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
             <i class="ph-bold ph-plus-circle text-purple-400 text-base"></i><span>+ Producto</span>
           </button>
         </div>
@@ -476,18 +498,56 @@
         <div id="scannerContainer" class="hidden p-3 bg-zinc-950 border border-purple-800 rounded-2xl space-y-2">
           <div class="flex justify-between items-center text-xs text-purple-300 font-semibold">
             <span>Apunte la cámara al código de barras o QR:</span>
-            <button type="button" onclick="stopStockCam()" class="text-rose-400 font-bold px-2 py-1 bg-rose-950/60 rounded-lg">Cerrar</button>
+            <button type="button" onclick="window.stopStockCam()" class="text-rose-400 font-bold px-2 py-1 bg-rose-950/60 rounded-lg">Cerrar</button>
           </div>
           <div id="qr-reader" class="w-full rounded-2xl overflow-hidden min-h-[220px] bg-black"></div>
         </div>
 
         <div id="newStockFormContainer" class="hidden p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><div class="flex gap-1"><input type="text" id="stkCode" placeholder="Código *" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white font-mono"><button type="button" onclick="autoBarcode()" class="px-2.5 bg-zinc-700 rounded-xl text-[10px] font-bold">Auto</button></div><input type="text" id="stkName" placeholder="Nombre Repuesto *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white"></div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><div class="flex gap-1"><input type="text" id="stkCode" placeholder="Código *" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white font-mono"><button type="button" onclick="window.autoBarcode()" class="px-2.5 bg-zinc-700 rounded-xl text-[10px] font-bold">Auto</button></div><input type="text" id="stkName" placeholder="Nombre Repuesto *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white"></div>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2"><select id="stkCategory" class="col-span-2 sm:col-span-1 w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-white"><option value="Pantallas">Pantallas</option><option value="Baterías">Baterías</option><option value="Pines">Pines</option><option value="Otros">Otros</option></select><input type="number" id="stkQuantity" value="1" placeholder="Cant" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-white font-bold"><input type="number" id="stkCostPrice" placeholder="Costo ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-zinc-300 font-mono"><input type="number" id="stkSalePrice" placeholder="Venta ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-emerald-400 font-bold font-mono"></div>
-          <button type="button" onclick="saveStockItem()" class="w-full py-2.5 rounded-xl bg-purple-600 text-white font-bold text-xs shadow">Guardar Repuesto</button>
+          <button type="button" onclick="window.saveStockItem()" class="w-full py-2.5 rounded-xl bg-purple-600 text-white font-bold text-xs shadow">Guardar Repuesto</button>
         </div>
-        <input type="text" id="stkSearchInput" oninput="renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-white">
+        <input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-white">
         <div id="stockListContainer" class="space-y-1.5 max-h-[40vh] overflow-y-auto"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CAJA COMPLETA -->
+  <div id="cashModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-2xl flex flex-col shadow-2xl text-xs text-zinc-300">
+      <div class="flex items-center justify-between px-5 py-3.5 border-b border-zinc-800">
+        <div class="flex items-center gap-2"><i class="ph-bold ph-currency-dollar-simple text-emerald-400 text-xl"></i><h3 class="font-bold text-white text-sm">Caja por Sucursal</h3></div>
+        <button type="button" onclick="window.closeModal('cashModal')" class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button>
+      </div>
+      <div class="p-4 overflow-y-auto space-y-3 flex-1 pb-safe">
+        <div class="flex items-center justify-between bg-zinc-950 p-2.5 rounded-xl border border-zinc-800 gap-2"><span class="font-bold text-zinc-300 text-xs">Caja:</span><div id="cashBranchSelectorContainer" class="flex gap-1 overflow-x-auto no-scrollbar"></div></div>
+        
+        <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-emerald-400 font-bold block">Ingresos</span><span id="cashTotalIncome" class="text-sm font-bold text-emerald-400 font-mono mt-0.5 block">$0</span></div>
+            <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[9px] text-rose-400 font-bold block">Egresos</span><span id="cashTotalExpense" class="text-sm font-bold text-rose-400 font-mono mt-0.5 block">$0</span></div>
+            <div class="p-2.5 bg-gradient-to-b from-zinc-900 to-indigo-950 border border-indigo-700/60 rounded-xl"><span class="text-[9px] text-indigo-300 font-bold block">Saldo</span><span id="cashNetBalance" class="text-sm font-bold text-white font-mono mt-0.5 block">$0</span></div>
+        </div>
+        
+        <div class="flex gap-2">
+            <button type="button" onclick="window.showCashIncome()" class="flex-1 py-2 rounded-xl bg-emerald-950 border border-emerald-600/70 text-emerald-200 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-arrow-down-left text-base"></i> + Ingreso</button>
+            <button type="button" onclick="window.showCashExpense()" class="flex-1 py-2 rounded-xl bg-rose-950 border border-rose-600/70 text-rose-200 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-arrow-up-right text-base"></i> - Salida</button>
+        </div>
+        
+        <div id="cashMovementForm" class="hidden p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2">
+            <div class="flex items-center justify-between"><span id="cashFormTitle" class="font-bold text-white text-xs">Registrar</span><button type="button" onclick="window.hideCashForm()"><i class="ph-bold ph-x"></i></button></div>
+            <input type="hidden" id="cshType" value="INCOME">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <select id="cshBranch" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-bold"></select>
+                <input type="number" id="cshAmount" placeholder="Monto ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-mono font-bold">
+                <select id="cshMethod" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-2 text-white"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia</option><option value="Tarjeta">Tarjeta</option></select>
+            </div>
+            <input type="text" id="cshConcept" placeholder="Concepto (ej: Pago repuesto...)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+            <button type="button" onclick="window.saveCashMovement()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow">Guardar en Caja</button>
+        </div>
+        
+        <div id="cashListContainer" class="space-y-1.5 max-h-[35vh] overflow-y-auto"></div>
       </div>
     </div>
   </div>
@@ -499,14 +559,11 @@
   <!-- SISTEMA PRINCIPAL JAVASCRIPT BLINDADO                                              -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v9.7.0'; // ACTUALIZADO PARA FORZAR EL POPUP DE ACTUALIZACION
+    var APP_CODE_VERSION = 'v9.8.0'; // ACTUALIZADO PARA FORZAR EL POPUP DE ACTUALIZACION
 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var VERSION_STORAGE_KEY = 'openline_code_installed_version';
-    var MASTER_REGISTRY_KEY = 'openline_master_lic_registry';
-    var TELEMETRY_STORAGE_KEY = 'openline_telemetry_master_db';
-    var CLOCK_CHECK_KEY = 'openline_vault_clock_check';
     var ACTIVE_USER_KEY = 'openline_current_active_user';
 
     var myDeviceId = localStorage.getItem(DEVICE_ID_KEY) || ('dev_' + Math.random().toString(36).substring(2, 9));
@@ -516,11 +573,11 @@
 
     function $(id) { return document.getElementById(id); }
 
-    // --- FIX GLOBAL DE MODALES Y ALERTAS (Declaraciones nativas) ---
-    function openModal(id) { var el = $(id); if (el) el.classList.add('active'); }
-    function closeModal(id) { var el = $(id); if (el) el.classList.remove('active'); }
+    // --- FIX GLOBAL DE MODALES Y ALERTAS (Declaraciones nativas a window) ---
+    window.openModal = function(id) { var el = $(id); if (el) el.classList.add('active'); };
+    window.closeModal = function(id) { var el = $(id); if (el) el.classList.remove('active'); };
     
-    function showToast(title, msg) {
+    window.showToast = function(title, msg) {
       var tc = $('toastContainer');
       if(tc) {
          var t = document.createElement('div');
@@ -529,30 +586,21 @@
          tc.appendChild(t);
          setTimeout(function(){ t.remove(); }, 3500);
       } else { alert(title + "\n" + msg); }
-    }
+    };
 
-    function openNewRepairModal() { openModal('newRepairModal'); }
-    function openTeamModal() { openModal('teamModal'); }
-    function openLicenseModal() { openModal('licenseModal'); }
-    function openSettingsModal() { openModal('settingsModal'); }
-    function openInstallModal() { openModal('installModal'); }
-    function openSalesModal() { renderPosCatalog(); openModal('salesModal'); }
-    function openStockModal() { renderStockList(); openModal('stockModal'); }
-    function openCashModal() { openModal('cashModal'); }
-    function openVentasHistoryModal() { setVentasPeriod('HOY'); openModal('ventasModal'); }
+    window.openNewRepairModal = function() { window.openModal('newRepairModal'); };
+    window.openTeamModal = function() { window.openModal('teamModal'); };
+    window.openLicenseModal = function() { window.openModal('licenseModal'); };
+    window.openInstallModal = function() { window.openModal('installModal'); };
+    window.openSalesModal = function() { window.renderPosCatalog(); window.openModal('salesModal'); };
+    window.openStockModal = function() { window.renderStockList(); window.openModal('stockModal'); };
+    window.openCashModal = function() { window.updateCashBalanceUI(); window.openModal('cashModal'); };
+    window.openVentasHistoryModal = function() { window.setVentasPeriod('HOY'); window.openModal('ventasModal'); };
 
-    // Funciones Fallback para prevenir Crashes en botones no requeridos ahora:
-    function showCashIncome() { showToast('Caja', 'Se requiere módulo completo'); }
-    function showCashExpense() { showToast('Caja', 'Se requiere módulo completo'); }
-    function printCierreReport() { showToast('Reporte', 'Imprimiendo reporte de cierre...'); }
-    function sendCierreWhatsApp() { showToast('WhatsApp', 'Enviando reporte...'); }
-    
     // --- BÓVEDA DE DATOS ---
     var StorageShield = {
       getKey: function(entity) { return 'openline_vault_' + currentWorkshopId + '_' + entity; },
-      save: function(entity, data) {
-        localStorage.setItem(this.getKey(entity), JSON.stringify(data));
-      },
+      save: function(entity, data) { localStorage.setItem(this.getKey(entity), JSON.stringify(data)); },
       load: function(entity, defaultVal) {
         var saved = localStorage.getItem(this.getKey(entity));
         if (saved) { try { return JSON.parse(saved); } catch(e){} }
@@ -568,56 +616,120 @@
     var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPin: '1234', users: ['Admin'], branches: ['Central'] }, StorageShield.load('settings', {}));
     var currentFilter = 'ALL';
     var currentBranchFilter = 'ALL';
+    var currentCashBranch = 'ALL';
     var currentVentasPeriod = 'HOY';
     var selectedRepairId = null;
+
+    // --- CONFIGURACIÓN ---
+    window.openSettingsModal = function() {
+        $('cfgWorkshopName').value = workshopSettings.name || '';
+        $('cfgWorkshopSubtitle').value = workshopSettings.subtitle || '';
+        $('cfgBranchesListInput').value = (workshopSettings.branches || ['Central']).join(', ');
+        
+        if(workshopSettings.logo) {
+            $('settingsLogoPreview').innerHTML = '<img src="'+workshopSettings.logo+'" class="w-full h-full object-cover">';
+        } else {
+            $('settingsLogoPreview').innerHTML = '<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>';
+        }
+        window.openModal('settingsModal');
+    };
+
+    window.saveSettings = function() {
+        workshopSettings.name = $('cfgWorkshopName').value;
+        workshopSettings.subtitle = $('cfgWorkshopSubtitle').value;
+        var branches = $('cfgBranchesListInput').value.split(',').map(function(b){return b.trim();}).filter(function(b){return b;});
+        if(branches.length>0) workshopSettings.branches = branches;
+        StorageShield.save('settings', workshopSettings);
+        
+        if($('appHeaderTitle')) $('appHeaderTitle').textContent = workshopSettings.name;
+        if($('appHeaderSubtitle')) $('appHeaderSubtitle').textContent = workshopSettings.subtitle;
+        
+        window.renderBranchSelectors();
+        window.showToast("Guardado", "Ajustes actualizados");
+        window.closeModal('settingsModal');
+    };
+
+    window.handleLogoUpload = function(input) {
+        if(input.files && input.files[0]) {
+            var r = new FileReader();
+            r.onload = function(e) {
+                workshopSettings.logo = e.target.result;
+                $('settingsLogoPreview').innerHTML = '<img src="'+e.target.result+'" class="w-full h-full object-cover">';
+                if($('headerCustomLogo')) {
+                    $('headerCustomLogo').src = e.target.result;
+                    $('headerCustomLogo').classList.remove('hidden');
+                    if($('headerDefaultIcon')) $('headerDefaultIcon').classList.add('hidden');
+                }
+            };
+            r.readAsDataURL(input.files[0]);
+        }
+    };
+    window.removeLogo = function() {
+        workshopSettings.logo = '';
+        $('settingsLogoPreview').innerHTML = '<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>';
+        if($('headerCustomLogo')) $('headerCustomLogo').classList.add('hidden');
+        if($('headerDefaultIcon')) $('headerDefaultIcon').classList.remove('hidden');
+    };
+
+    window.renderBranchSelectors = function() {
+        var opts = (workshopSettings.branches || ['Central']).map(function(b) { return '<option value="'+b+'">'+b+'</option>'; }).join('');
+        if($('cshBranch')) $('cshBranch').innerHTML = opts;
+        if($('posBranch')) $('posBranch').innerHTML = opts;
+        if($('newBranchOptionsList')) {
+            $('newBranchOptionsList').innerHTML = (workshopSettings.branches || ['Central']).map(function(b, i) {
+                var checked = i === 0 ? 'checked' : '';
+                return '<label class="flex items-center gap-1.5 p-2 bg-zinc-800 rounded-xl border border-zinc-700 cursor-pointer"><input type="radio" name="newBranchRadio" value="'+b+'" '+checked+'> <span class="text-xs text-white">'+b+'</span></label>';
+            }).join('');
+        }
+    };
 
     // --- CÁMARAS (QR / BARCODE) ---
     var posScanner = null;
     var stockScanner = null;
 
-    function togglePosCam() {
+    window.togglePosCam = function() {
       var box = $('posScannerBox');
       if (box.classList.contains('hidden')) {
         box.classList.remove('hidden');
         if (!posScanner) posScanner = new Html5Qrcode("pos-qr-reader");
         posScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: {width: 250, height: 250} }, function(decodedText) {
-            addPosItemByCode(decodedText);
-            showToast("Producto Escaneado", decodedText);
+            window.addPosItemByCode(decodedText);
+            window.showToast("Producto Escaneado", decodedText);
         }).catch(function(err){ console.log(err); });
-      } else { stopPosCam(); }
-    }
+      } else { window.stopPosCam(); }
+    };
 
-    function stopPosCam() {
+    window.stopPosCam = function() {
       $('posScannerBox').classList.add('hidden');
       if (posScanner) { try { posScanner.stop().catch(function(e){}); } catch(e){} }
-    }
+    };
 
-    function toggleStockCam() {
+    window.toggleStockCam = function() {
       var box = $('scannerContainer');
       if (box.classList.contains('hidden')) {
         box.classList.remove('hidden');
         if (!stockScanner) stockScanner = new Html5Qrcode("qr-reader");
         stockScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: {width: 250, height: 250} }, function(decodedText) {
             if($('stkCode')) $('stkCode').value = decodedText;
-            showToast("Código Capturado", decodedText);
-            stopStockCam();
+            window.showToast("Código Capturado", decodedText);
+            window.stopStockCam();
         }).catch(function(err){ console.log(err); });
-      } else { stopStockCam(); }
-    }
+      } else { window.stopStockCam(); }
+    };
 
-    function stopStockCam() {
+    window.stopStockCam = function() {
       $('scannerContainer').classList.add('hidden');
       if (stockScanner) { try { stockScanner.stop().catch(function(e){}); } catch(e){} }
-    }
+    };
 
     // --- LOGICA DE USUARIOS Y PIN ADMIN ---
-    function openSwitchUserModal() {
+    window.openSwitchUserModal = function() {
       var grid = $('usersListGrid');
       var list = workshopSettings.users || ['Admin'];
       if(grid) {
           grid.innerHTML = list.map(function(u) {
             var isCurrent = (u === activeUser);
-            return '<button type="button" onclick="selectActiveUser(\'' + u + '\')" class="p-3 rounded-2xl border flex items-center justify-between ' + (isCurrent ? 'bg-indigo-950/80 border-indigo-500 text-white font-bold' : 'bg-zinc-950 border-zinc-800 text-zinc-300') + '">' +
+            return '<button type="button" onclick="window.selectActiveUser(\'' + u + '\')" class="p-3 rounded-2xl border flex items-center justify-between ' + (isCurrent ? 'bg-indigo-950/80 border-indigo-500 text-white font-bold' : 'bg-zinc-950 border-zinc-800 text-zinc-300') + '">' +
                      '<span class="truncate">' + u + '</span>' + (isCurrent ? '<i class="ph-bold ph-check text-emerald-400"></i>' : '') +
                    '</button>';
           }).join('');
@@ -625,46 +737,55 @@
       
       var adminSect = $('adminPinConfigSection');
       if(adminSect) {
-         adminSect.style.display = (activeUser === 'Admin') ? 'block' : 'none';
-         var isCustom = (workshopSettings.adminPin && workshopSettings.adminPin !== '1234');
-         $('setupPinBox').style.display = isCustom ? 'none' : 'block';
-         $('recoveryPinBox').style.display = isCustom ? 'block' : 'none';
+         if(activeUser === 'Admin') {
+             adminSect.classList.remove('hidden');
+             var isCustom = (workshopSettings.adminPin && workshopSettings.adminPin !== '1234');
+             if(isCustom) {
+                 $('setupPinBox').classList.add('hidden');
+                 $('recoveryPinBox').classList.remove('hidden');
+             } else {
+                 $('setupPinBox').classList.remove('hidden');
+                 $('recoveryPinBox').classList.add('hidden');
+             }
+         } else {
+             adminSect.classList.add('hidden');
+         }
       }
 
-      openModal('switchUserModal');
-    }
+      window.openModal('switchUserModal');
+    };
 
-    function selectActiveUser(userName) {
+    window.selectActiveUser = function(userName) {
       activeUser = userName;
       localStorage.setItem(ACTIVE_USER_KEY, activeUser);
       if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
-      closeModal('switchUserModal');
-      showToast("Usuario Activo", "Operando como: " + activeUser);
-    }
+      window.closeModal('switchUserModal');
+      window.showToast("Usuario Activo", "Operando como: " + activeUser);
+    };
 
-    function addNewStaffMember() {
+    window.addNewStaffMember = function() {
       var name = $('inpNewStaffName').value.trim();
       if (!name) return;
       if (!workshopSettings.users.includes(name)) {
         workshopSettings.users.push(name);
         StorageShield.save('settings', workshopSettings);
         $('inpNewStaffName').value = '';
-        openSwitchUserModal();
-        showToast("Personal Agregado", name + " habilitado.");
+        window.openSwitchUserModal();
+        window.showToast("Personal Agregado", name + " habilitado.");
       }
-    }
+    };
 
-    function saveNewAdminPin() {
+    window.saveNewAdminPin = function() {
        var newPin = $('inpNewAdminPin').value.trim();
        if(!newPin) return;
        workshopSettings.adminPin = newPin;
        StorageShield.save('settings', workshopSettings);
        $('inpNewAdminPin').value = '';
-       showToast("Seguridad", "Clave Maestra configurada y protegida.");
-       openSwitchUserModal(); 
-    }
+       window.showToast("Seguridad", "Clave Maestra configurada y protegida.");
+       window.openSwitchUserModal(); 
+    };
 
-    function recoverAdminPin() {
+    window.recoverAdminPin = function() {
        var method = prompt("Recuperar Clave Maestra:\nEscribe 'W' para WhatsApp o 'M' para Mail");
        if(!method) return;
        var pin = workshopSettings.adminPin || '1234';
@@ -676,16 +797,16 @@
            var email = prompt("Ingresa tu correo electrónico:");
            if(email) window.location.href = 'mailto:' + email + '?subject=Recuperación Clave OpenLine&body=' + encodeURIComponent(msg);
        } else {
-           showToast("Error", "Opción no válida.");
+           window.showToast("Error", "Opción no válida.");
        }
-    }
+    };
 
-    function requestAdminPinAuth(actionDesc, onSuccessCallback) {
+    window.requestAdminPinAuth = function(actionDesc, onSuccessCallback) {
       var correctPin = (workshopSettings.adminPin || '1234').trim();
       var entered = prompt("🔒 ACCIÓN PROTEGIDA POR ADMINISTRADOR\n" + (actionDesc || "Autorización requerida") + "\n\nIngrese la Clave Maestra:");
       if (entered === correctPin) { onSuccessCallback(); } 
-      else if (entered !== null) { showToast("Error", "Clave de Admin incorrecta."); }
-    }
+      else if (entered !== null) { window.showToast("Error", "Clave de Admin incorrecta."); }
+    };
 
     // --- REPARACIONES E INGRESOS ---
     var currentPhotos = [];
@@ -694,26 +815,26 @@
     var selectedPatternSequence = [];
     var patternCtx = null;
 
-    function handleSearch() {
+    window.handleSearch = function() {
         var val = $('searchInput') ? $('searchInput').value.trim() : '';
         if($('clearSearchBtn')) { $('clearSearchBtn').classList[val ? 'remove' : 'add']('hidden'); }
-        renderRepairsList();
-    }
-    function clearSearch() {
+        window.renderRepairsList();
+    };
+    window.clearSearch = function() {
         if($('searchInput')) $('searchInput').value = '';
         if($('clearSearchBtn')) $('clearSearchBtn').classList.add('hidden');
-        renderRepairsList();
-    }
-    function setFilter(f) {
+        window.renderRepairsList();
+    };
+    window.setFilter = function(f) {
         currentFilter = f;
         ['ALL','WAITING','IN_PROGRESS','IN_TRANSIT','READY','DELIVERED'].forEach(function(id) {
             var el = $('tab'+id);
             if(el) el.className = (id === f) ? 'filter-tab px-3 py-1.5 rounded-xl bg-zinc-800 text-white font-bold shrink-0 transition' : 'filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400 font-medium shrink-0 transition';
         });
-        renderRepairsList();
-    }
+        window.renderRepairsList();
+    };
 
-    function renderRepairsList() {
+    window.renderRepairsList = function() {
         var container = $('repairsList');
         if(!container) return;
         var term = ($('searchInput') ? $('searchInput').value.toLowerCase().trim() : '');
@@ -732,15 +853,15 @@
                 var stColor = 'text-zinc-300';
                 if(r.status === 'READY') stColor = 'text-emerald-400';
                 if(r.status === 'IN_PROGRESS') stColor = 'text-amber-400';
-                return '<div onclick="openDetailModal(\''+r.id+'\')" class="bg-zinc-900 border border-zinc-800 p-3 rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.98] transition cursor-pointer">' +
+                return '<div onclick="window.openDetailModal(\''+r.id+'\')" class="bg-zinc-900 border border-zinc-800 p-3 rounded-2xl flex items-center justify-between shadow-sm active:scale-[0.98] transition cursor-pointer">' +
                        '<div><div class="flex items-center gap-1.5"><span class="font-mono text-xs font-bold text-iosBlue">'+r.id+'</span><span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-zinc-800 '+stColor+'">'+r.status+'</span></div>' +
                        '<h4 class="text-sm font-bold text-white mt-0.5">'+r.deviceBrand+' '+r.deviceModel+'</h4><div class="text-[10px] text-zinc-400 mt-0.5">'+r.clientName+'</div></div>' +
                        '<i class="ph-bold ph-caret-right text-zinc-600 text-lg"></i></div>';
             }).join('');
         }
-    }
+    };
 
-    function updateCounters() {
+    window.updateCounters = function() {
         var wait=0, prog=0, trans=0, ready=0;
         repairs.forEach(function(r) {
             if(currentBranchFilter !== 'ALL' && r.branch !== currentBranchFilter) return;
@@ -753,39 +874,39 @@
         if($('counterInProgress')) $('counterInProgress').textContent = prog;
         if($('counterTransit')) $('counterTransit').textContent = trans;
         if($('counterReady')) $('counterReady').textContent = ready;
-    }
+    };
 
-    function handleNewPhotoUpload(input) {
+    window.handleNewPhotoUpload = function(input) {
         if (input.files && input.files[0]) {
             Array.from(input.files).forEach(function(file) {
                 var reader = new FileReader();
                 reader.onload = function(e) {
                     currentPhotos.push(e.target.result);
-                    renderNewPhotos();
+                    window.renderNewPhotos();
                 };
                 reader.readAsDataURL(file);
             });
         }
-    }
-    function renderNewPhotos() {
+    };
+    window.renderNewPhotos = function() {
         if($('photoCountBadge')) $('photoCountBadge').textContent = currentPhotos.length + ' fotos';
         if($('newPhotosGrid')) {
             $('newPhotosGrid').innerHTML = currentPhotos.map(function(src, i) {
-                return '<div class="relative w-14 h-14 shrink-0 rounded-lg overflow-hidden border border-zinc-700"><img src="'+src+'" class="w-full h-full object-cover"><button type="button" onclick="removePhoto('+i+')" class="absolute top-0 right-0 bg-red-600 text-white rounded-bl-lg w-5 h-5 flex items-center justify-center text-[10px]"><i class="ph-bold ph-x"></i></button></div>';
+                return '<div class="relative w-14 h-14 shrink-0 rounded-lg overflow-hidden border border-zinc-700"><img src="'+src+'" class="w-full h-full object-cover"><button type="button" onclick="window.removePhoto('+i+')" class="absolute top-0 right-0 bg-red-600 text-white rounded-bl-lg w-5 h-5 flex items-center justify-center text-[10px]"><i class="ph-bold ph-x"></i></button></div>';
             }).join('');
         }
-    }
-    function removePhoto(i) { currentPhotos.splice(i,1); renderNewPhotos(); }
+    };
+    window.removePhoto = function(i) { currentPhotos.splice(i,1); window.renderNewPhotos(); };
 
-    function calcBalance(type) {
+    window.calcBalance = function(type) {
         if(type === 'new') {
             var total = parseFloat($('inpDeviceBudget').value) || 0;
             var advance = parseFloat($('inpDeviceAdvance').value) || 0;
             if($('newCalculatedBalance')) $('newCalculatedBalance').textContent = '$' + (total - advance);
         }
-    }
+    };
 
-    function guardarIngresoDirecto() {
+    window.guardarIngresoDirecto = function() {
         var id = 'OL-' + Math.floor(1000 + Math.random() * 9000);
         var r = {
             id: id, branch: 'Central',
@@ -796,18 +917,18 @@
             advance: parseFloat($('inpDeviceAdvance').value) || 0, status: $('inpNewInitialStatus').value,
             createdAt: Date.now(), createdBy: activeUser
         };
-        if(!r.clientName || !r.deviceBrand || !r.deviceModel) { showToast("Error", "Completa los campos obligatorios (*)"); return; }
+        if(!r.clientName || !r.deviceBrand || !r.deviceModel) { window.showToast("Error", "Completa los campos obligatorios (*)"); return; }
         repairs.unshift(r); 
         StorageShield.save('repairs', repairs);
-        closeModal('newRepairModal');
-        showToast("Éxito", "Orden creada: " + id);
+        window.closeModal('newRepairModal');
+        window.showToast("Éxito", "Orden creada: " + id);
         
-        currentPhotos = []; renderNewPhotos();
+        currentPhotos = []; window.renderNewPhotos();
         ['inpClientName','inpClientPhone','inpDeviceBrand','inpDeviceModel','inpDeviceFault','inpDeviceBudget','inpDeviceAdvance','inpDeviceSerial','inpUnlockPin'].forEach(function(el){ if($(el)) $(el).value=''; });
-        renderRepairsList(); updateCounters();
-    }
+        window.renderRepairsList(); window.updateCounters();
+    };
 
-    function openDetailModal(id) {
+    window.openDetailModal = function(id) {
         var r = repairs.find(function(x) { return x.id === id; });
         if(!r) return;
         selectedRepairId = id;
@@ -816,20 +937,20 @@
         if($('dtlClientName')) $('dtlClientName').textContent = r.clientName;
         if($('dtlClientPhone')) $('dtlClientPhone').textContent = r.clientPhone;
         if($('dtlDeviceFault')) $('dtlDeviceFault').textContent = r.fault || 'Sin descripción';
-        openModal('detailModal');
-    }
+        window.openModal('detailModal');
+    };
 
-    function deleteCurrentRepair() {
-        if(activeUser !== 'Admin') { showToast("Denegado", "Solo Admin puede eliminar órdenes."); return; }
-        requestAdminPinAuth("Eliminar orden permanentemente", function() {
+    window.deleteCurrentRepair = function() {
+        if(activeUser !== 'Admin') { window.showToast("Denegado", "Solo Admin puede eliminar órdenes."); return; }
+        window.requestAdminPinAuth("Eliminar orden permanentemente", function() {
             repairs = repairs.filter(function(r) { return r.id !== selectedRepairId; });
             StorageShield.save('repairs', repairs);
-            closeModal('detailModal'); showToast("Eliminado", "Orden borrada correctamente.");
-            renderRepairsList(); updateCounters();
+            window.closeModal('detailModal'); window.showToast("Eliminado", "Orden borrada correctamente.");
+            window.renderRepairsList(); window.updateCounters();
         });
-    }
+    };
 
-    function setUnlockType(type) {
+    window.setUnlockType = function(type) {
       activeUnlockType = type;
       ['btnUnlockPin', 'btnUnlockPattern', 'btnUnlockNone'].forEach(function(id) { if($(id)) $(id).className = 'px-2 py-0.5 rounded text-zinc-400 transition'; });
       if($('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1))) $('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1)).className = 'px-2 py-0.5 rounded bg-iosBlue text-white font-medium transition';
@@ -838,14 +959,14 @@
       if($('unlockViewPattern')) $('unlockViewPattern').style.display = type === 'pattern' ? 'block' : 'none';
       if($('unlockViewNone')) $('unlockViewNone').style.display = type === 'none' ? 'block' : 'none';
       
-      if(type === 'pattern') setTimeout(initPatternCanvas, 100);
-    }
+      if(type === 'pattern') setTimeout(window.initPatternCanvas, 100);
+    };
 
-    function initPatternCanvas() {
+    window.initPatternCanvas = function() {
       var canvas = $('patternCanvas');
       if(!canvas) return;
       patternCtx = canvas.getContext('2d');
-      resetPatternCanvas();
+      window.resetPatternCanvas();
       
       var handleStart = function(e) {
          e.preventDefault(); isDrawingPattern = true; selectedPatternSequence = [1];
@@ -860,9 +981,9 @@
       canvas.ontouchstart = handleStart; canvas.onmousedown = handleStart;
       canvas.ontouchmove = function(e){ e.preventDefault(); }; canvas.onmousemove = function(e){ e.preventDefault(); };
       canvas.ontouchend = handleEnd; canvas.onmouseup = handleEnd; canvas.onmouseleave = handleEnd;
-    }
+    };
 
-    function resetPatternCanvas() {
+    window.resetPatternCanvas = function() {
       if(!patternCtx) return;
       var canvas = $('patternCanvas');
       patternCtx.clearRect(0,0,canvas.width, canvas.height);
@@ -876,35 +997,35 @@
       }
       selectedPatternSequence = [];
       if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Dibuja el patrón en los puntos'; $('patternStatusLabel').className = 'text-zinc-400 mt-1'; }
-    }
+    };
 
     // --- LOGICA DE STOCK ---
-    function toggleStockForm() {
+    window.toggleStockForm = function() {
       var form = $('newStockFormContainer');
       if(form) form.style.display = form.style.display === 'block' ? 'none' : 'block';
-    }
-    function autoBarcode() {
+    };
+    window.autoBarcode = function() {
       if($('stkCode')) $('stkCode').value = Math.floor(100000000000 + Math.random() * 900000000000).toString();
-    }
-    function saveStockItem() {
+    };
+    window.saveStockItem = function() {
       var code = $('stkCode').value.trim() || Math.floor(100000000000 + Math.random() * 900000000000).toString();
       var name = $('stkName').value.trim();
       var cat = $('stkCategory').value;
       var qty = parseInt($('stkQuantity').value) || 1;
       var price = parseFloat($('stkSalePrice').value) || 0;
       
-      if(!name) { showToast('Error', 'Ingrese nombre del repuesto'); return; }
+      if(!name) { window.showToast('Error', 'Ingrese nombre del repuesto'); return; }
       
       var existing = stockItems.find(function(i) { return i.code === code; });
       if(existing) { existing.qty += qty; existing.price = price; } 
       else { stockItems.push({ code: code, name: name, category: cat, qty: qty, price: price }); }
       
       StorageShield.save('stock', stockItems);
-      showToast('Guardado', 'Stock actualizado');
+      window.showToast('Guardado', 'Stock actualizado');
       $('stkName').value = ''; $('stkCode').value = ''; $('stkSalePrice').value = '';
-      renderStockList();
-    }
-    function renderStockList() {
+      window.renderStockList();
+    };
+    window.renderStockList = function() {
       var container = $('stockListContainer');
       if(!container) return;
       var term = ($('stkSearchInput') ? $('stkSearchInput').value.toLowerCase() : '');
@@ -917,10 +1038,10 @@
                  '<div class="text-right"><div class="text-emerald-400 font-bold text-xs">$' + i.price + '</div><div class="text-[10px] text-zinc-400">Stock: ' + i.qty + '</div></div>' +
                  '</div>';
       }).join('');
-    }
+    };
 
     // --- POS VENTAS LOGIC Y TICKETS ---
-    function renderPosCatalog() {
+    window.renderPosCatalog = function() {
        var grid = $('posCatalogGrid');
        if(!grid) return;
        var term = $('posSearchProduct') ? $('posSearchProduct').value.toLowerCase().trim() : '';
@@ -929,25 +1050,25 @@
        if(filtered.length === 0) { grid.innerHTML = '<div class="col-span-2 text-zinc-500 text-center p-4">No hay repuestos en stock.</div>'; return; }
        
        grid.innerHTML = filtered.map(function(i) {
-          return '<button type="button" onclick="addPosItemByCode(\''+i.code+'\')" class="p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-left hover:border-amber-500 active:scale-95 transition">' +
+          return '<button type="button" onclick="window.addPosItemByCode(\''+i.code+'\')" class="p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-left hover:border-amber-500 active:scale-95 transition">' +
                  '<div class="font-bold text-white text-[10px] leading-tight mb-1 line-clamp-2">'+i.name+'</div>' +
                  '<div class="flex justify-between items-end"><span class="text-amber-400 font-bold text-xs">$'+i.price+'</span><span class="text-[9px] text-zinc-500">Stock: '+i.qty+'</span></div></button>';
        }).join('');
-    }
+    };
 
     var posCart = [];
-    function addPosItemByCode(code) {
+    window.addPosItemByCode = function(code) {
        var st = stockItems.find(function(i) { return i.code === code; });
        if(!st || st.qty <= 0) return;
        var cartItem = posCart.find(function(c) { return c.code === code; });
        if(cartItem) {
            if(cartItem.qty < st.qty) cartItem.qty++;
-           else showToast("Límite", "No hay más stock disponible de este repuesto.");
+           else window.showToast("Límite", "No hay más stock disponible de este repuesto.");
        } else { posCart.push({ code: st.code, name: st.name, price: st.price, qty: 1 }); }
-       renderPosCart();
-    }
+       window.renderPosCart();
+    };
 
-    function renderPosCart() {
+    window.renderPosCart = function() {
        var container = $('posCartContainer');
        var total = 0;
        if(posCart.length === 0) {
@@ -959,28 +1080,28 @@
            return '<div class="flex justify-between items-center p-2 bg-zinc-900 rounded-xl border border-zinc-800">' +
                   '<div class="text-[10px] text-white flex-1"><div class="font-bold truncate pr-2">'+c.name+'</div><div class="text-amber-400">$'+c.price+' x '+c.qty+'</div></div>' +
                   '<div class="flex gap-1 items-center">' +
-                    '<button type="button" onclick="removePosItem('+idx+')" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center"><i class="ph-bold ph-minus"></i></button>' +
+                    '<button type="button" onclick="window.removePosItem('+idx+')" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center"><i class="ph-bold ph-minus"></i></button>' +
                     '<span class="text-xs font-bold w-4 text-center text-white">'+c.qty+'</span>' +
-                    '<button type="button" onclick="addPosItemByCode(\''+c.code+'\')" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center"><i class="ph-bold ph-plus"></i></button>' +
-                    '<button type="button" onclick="deletePosItemRow('+idx+')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex justify-center items-center ml-1"><i class="ph-bold ph-trash"></i></button>' +
+                    '<button type="button" onclick="window.addPosItemByCode(\''+c.code+'\')" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center"><i class="ph-bold ph-plus"></i></button>' +
+                    '<button type="button" onclick="window.deletePosItemRow('+idx+')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex justify-center items-center ml-1"><i class="ph-bold ph-trash"></i></button>' +
                   '</div></div>';
        }).join('');
        if($('posTotalAmount')) $('posTotalAmount').textContent = '$' + total.toLocaleString();
-    }
+    };
 
-    function removePosItem(idx) {
+    window.removePosItem = function(idx) {
        if(posCart[idx].qty > 1) posCart[idx].qty--; else posCart.splice(idx, 1);
-       renderPosCart();
-    }
+       window.renderPosCart();
+    };
     
-    function deletePosItemRow(idx) {
+    window.deletePosItemRow = function(idx) {
        posCart.splice(idx, 1);
-       renderPosCart();
-    }
+       window.renderPosCart();
+    };
     
-    function clearPosCart() { posCart = []; renderPosCart(); }
+    window.clearPosCart = function() { posCart = []; window.renderPosCart(); };
 
-    function completePosSale() {
+    window.completePosSale = function() {
        if(posCart.length === 0) return;
        var total = 0;
        posCart.forEach(function(c) {
@@ -995,22 +1116,22 @@
        var newSale = { id: saleId, timestamp: Date.now(), total: total, paymentMethod: method, items: JSON.parse(JSON.stringify(posCart)), soldBy: activeUser, customerName: custName };
        sales.unshift(newSale);
        StorageShield.save('sales', sales); StorageShield.save('stock', stockItems);
-       clearPosCart(); renderPosCatalog(); closeModal('salesModal');
-       showToast("Venta Exitosa", "Se registró la venta y se descontó el stock.");
+       window.clearPosCart(); window.renderPosCatalog(); window.closeModal('salesModal');
+       window.showToast("Venta Exitosa", "Se registró la venta y se descontó el stock.");
        
-       openSaleTicketModal(saleId);
-    }
+       window.openSaleTicketModal(saleId);
+    };
 
-    function setVentasPeriod(period) {
+    window.setVentasPeriod = function(period) {
       currentVentasPeriod = period;
       ['Hoy', 'Semana', 'Mes', 'Todas'].forEach(function(p) {
         var btn = $('btnPeriod' + p);
         if (btn) btn.className = (p.toUpperCase() === period) ? 'px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold text-xs shrink-0 shadow' : 'px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs shrink-0';
       });
-      renderVentasList();
-    }
+      window.renderVentasList();
+    };
 
-    function renderVentasList() {
+    window.renderVentasList = function() {
       var container = $('ventasListContainer');
       if(!container) return;
       var isAdmin = (activeUser === 'Admin'); 
@@ -1021,17 +1142,17 @@
 
       container.innerHTML = filtered.map(function(s) {
         var itemsText = (s.items || []).map(function(it) { return it.qty + 'x ' + it.name; }).join(', ');
-        var deleteBtnHtml = isAdmin ? '<button type="button" onclick="deleteSaleAction(\'' + s.id + '\')" class="px-2 py-1 bg-rose-950 hover:bg-rose-900 text-rose-300 rounded-lg font-bold flex items-center gap-1"><i class="ph-bold ph-trash"></i> Eliminar</button>' : '';
+        var deleteBtnHtml = isAdmin ? '<button type="button" onclick="window.deleteSaleAction(\'' + s.id + '\')" class="px-2 py-1 bg-rose-950 hover:bg-rose-900 text-rose-300 rounded-lg font-bold flex items-center gap-1"><i class="ph-bold ph-trash"></i> Eliminar</button>' : '';
         return '<div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2">' +
                  '<div class="flex items-center justify-between"><div class="flex items-center gap-1.5 flex-wrap"><span class="font-mono text-xs font-bold text-amber-400">' + s.id + '</span><span class="text-[9px] px-1.5 py-0.2 rounded font-bold bg-zinc-800 text-zinc-300">' + (s.paymentMethod || 'Efectivo') + '</span></div><b class="font-mono text-sm font-black text-white">$' + (parseFloat(s.total)||0).toLocaleString() + '</b></div>' +
                  '<div class="text-[11px] text-zinc-300"><span>' + itemsText + '</span></div>' +
-                 '<div class="flex items-center justify-between text-[10px] text-zinc-500 pt-1 border-t border-zinc-800/80"><span>Vendedor: <b>' + (s.soldBy || 'Admin') + '</b></span><div class="flex items-center gap-1"><button type="button" onclick="openSaleTicketModal(\'' + s.id + '\')" class="px-2 py-1 bg-zinc-800 text-zinc-200 rounded-lg font-bold flex items-center gap-1 shadow"><i class="ph-bold ph-receipt"></i> Ticket</button>' + deleteBtnHtml + '</div></div></div>';
+                 '<div class="flex items-center justify-between text-[10px] text-zinc-500 pt-1 border-t border-zinc-800/80"><span>Vendedor: <b>' + (s.soldBy || 'Admin') + '</b></span><div class="flex items-center gap-1"><button type="button" onclick="window.openSaleTicketModal(\'' + s.id + '\')" class="px-2 py-1 bg-zinc-800 text-zinc-200 rounded-lg font-bold flex items-center gap-1 shadow"><i class="ph-bold ph-receipt"></i> Ticket</button>' + deleteBtnHtml + '</div></div></div>';
       }).join('');
-    }
+    };
 
-    function deleteSaleAction(saleId) {
-      if(activeUser !== 'Admin') { showToast("Acceso Denegado", "Solo el Administrador puede eliminar ventas."); return; }
-      requestAdminPinAuth("Anular venta " + saleId + " y reponer stock al inventario", function() {
+    window.deleteSaleAction = function(saleId) {
+      if(activeUser !== 'Admin') { window.showToast("Acceso Denegado", "Solo el Administrador puede eliminar ventas."); return; }
+      window.requestAdminPinAuth("Anular venta " + saleId + " y reponer stock al inventario", function() {
         var saleIndex = sales.findIndex(function(s) { return s.id === saleId; });
         if (saleIndex < 0) return;
         var targetSale = sales[saleIndex];
@@ -1040,15 +1161,15 @@
             var stItem = stockItems.find(function(si) { return si.code === it.code; });
             if (stItem) stItem.qty += (it.qty || 1);
           });
-          StorageShield.save('stock', stockItems); renderStockList();
+          StorageShield.save('stock', stockItems); window.renderStockList();
         }
         sales.splice(saleIndex, 1); StorageShield.save('sales', sales);
-        renderVentasList(); showToast("Venta Anulada", "Stock repuesto correctamente.");
+        window.renderVentasList(); window.showToast("Venta Anulada", "Stock repuesto correctamente.");
       });
-    }
+    };
 
     var selectedSaleForTicket = null;
-    function openSaleTicketModal(saleId) {
+    window.openSaleTicketModal = function(saleId) {
       var s = sales.find(function(x) { return x.id === saleId; });
       if (!s) return;
       selectedSaleForTicket = s;
@@ -1063,18 +1184,18 @@
 
       if($('saleTicketPreviewBox')) $('saleTicketPreviewBox').innerHTML = html;
       if($('printArea')) $('printArea').innerHTML = html;
-      openModal('saleTicketModal');
-    }
+      window.openModal('saleTicketModal');
+    };
 
-    function executePrintSaleTicket() {
+    window.executePrintSaleTicket = function() {
       if($('printArea')) {
          $('printArea').style.display = 'block'; $('printArea').classList.remove('hidden');
          window.print();
          setTimeout(function(){ $('printArea').classList.add('hidden'); }, 500);
       }
-    }
+    };
 
-    function sendSaleTicketWA() {
+    window.sendSaleTicketWA = function() {
       if (!selectedSaleForTicket) return;
       var s = selectedSaleForTicket;
       var phone = prompt("Ingrese el WhatsApp del cliente con código de país (ej: 5493624123456):");
@@ -1083,7 +1204,76 @@
       var itemsList = (s.items || []).map(function(it) { return '• ' + it.qty + 'x ' + it.name + ' ($' + (it.qty*it.price).toLocaleString() + ')'; }).join('\n');
       var msg = '*' + workshopSettings.name.toUpperCase() + ' - TICKET DE VENTA* 🧾\n\n🔖 *Ticket:* #' + s.id + '\n🧑‍💼 *Atendido por:* ' + (s.soldBy || 'Admin') + '\n\n📦 *Detalle:*\n' + itemsList + '\n\n💰 *TOTAL:* *$' + (parseFloat(s.total)||0).toLocaleString() + '*\n💳 *Pago:* ' + (s.paymentMethod || 'Efectivo') + '\n\n¡Gracias por su compra!';
       window.open('https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
-    }
+    };
+
+    window.sendCierreWhatsApp = function() {
+      window.showToast('Enviando', 'Abriendo WhatsApp con el reporte...');
+    };
+    window.printCierreReport = function() {
+      window.showToast('Impresión', 'Enviando reporte a la impresora...');
+    };
+
+    // --- MÓDULO DE CAJA ---
+    window.showCashIncome = function() {
+        $('cshType').value = 'INCOME';
+        $('cashFormTitle').textContent = 'Registrar Ingreso';
+        $('cashMovementForm').classList.remove('hidden');
+    };
+    window.showCashExpense = function() {
+        $('cshType').value = 'EXPENSE';
+        $('cashFormTitle').textContent = 'Registrar Egreso';
+        $('cashMovementForm').classList.remove('hidden');
+    };
+    window.hideCashForm = function() {
+        $('cashMovementForm').classList.add('hidden');
+    };
+    window.saveCashMovement = function() {
+        var amt = parseFloat($('cshAmount').value);
+        var concept = $('cshConcept').value.trim();
+        if(!amt || !concept) { window.showToast('Error', 'Completa monto y concepto'); return; }
+        cashMovements.unshift({
+            id: 'CSH-'+Date.now(),
+            type: $('cshType').value,
+            amount: amt,
+            concept: concept,
+            method: $('cshMethod').value,
+            branch: currentCashBranch === 'ALL' ? (workshopSettings.branches[0] || 'Central') : currentCashBranch,
+            date: Date.now(),
+            user: activeUser
+        });
+        StorageShield.save('cash', cashMovements);
+        window.hideCashForm();
+        $('cshAmount').value = ''; $('cshConcept').value = '';
+        window.updateCashBalanceUI();
+        window.showToast('Caja', 'Movimiento registrado');
+    };
+    window.updateCashBalanceUI = function() {
+        var inc = 0, exp = 0;
+        var filtered = cashMovements.filter(function(c) {
+            return currentCashBranch === 'ALL' || c.branch === currentCashBranch;
+        });
+        filtered.forEach(function(c) {
+            if(c.type === 'INCOME') inc += c.amount;
+            else exp += c.amount;
+        });
+        if($('cashTotalIncome')) $('cashTotalIncome').textContent = '$'+inc.toLocaleString();
+        if($('cashTotalExpense')) $('cashTotalExpense').textContent = '$'+exp.toLocaleString();
+        if($('cashNetBalance')) $('cashNetBalance').textContent = '$'+(inc-exp).toLocaleString();
+        if($('headerCashBalance')) $('headerCashBalance').textContent = '$'+(inc-exp).toLocaleString();
+
+        var container = $('cashListContainer');
+        if(container) {
+            if(filtered.length===0) { container.innerHTML = '<div class="text-center text-zinc-500 p-4">No hay movimientos</div>'; }
+            else {
+                container.innerHTML = filtered.map(function(c) {
+                    var isInc = c.type === 'INCOME';
+                    return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl">' +
+                           '<div><div class="font-bold text-xs text-white">'+c.concept+'</div><div class="text-[9px] text-zinc-500">'+c.method+' • '+c.user+'</div></div>' +
+                           '<div class="font-mono text-sm font-bold '+(isInc?'text-emerald-400':'text-rose-400')+'">'+(isInc?'+':'-')+'$'+c.amount+'</div></div>';
+                }).join('');
+            }
+        }
+    };
 
     // --- ALERTA DE ACTUALIZACIÓN CON SONIDO ---
     var audioCtx = null;
@@ -1103,18 +1293,18 @@
         }
       } catch(e) {}
     }
-    function triggerAppUpdatingAlert() {
+    window.triggerAppUpdatingAlert = function() {
       playAudioNotification();
       var banner = $('appUpdatingBanner');
       if (banner) {
         banner.classList.remove('hidden'); banner.classList.add('flex');
-        setTimeout(function() { dismissUpdateBanner(); }, 6000);
+        setTimeout(function() { window.dismissUpdateBanner(); }, 6000);
       }
-    }
-    function dismissUpdateBanner() {
+    };
+    window.dismissUpdateBanner = function() {
       var banner = $('appUpdatingBanner');
       if (banner) { banner.classList.add('hidden'); banner.classList.remove('flex'); }
-    }
+    };
 
     // --- INICIALIZACIÓN DE LA APLICACIÓN ---
     document.addEventListener('DOMContentLoaded', function() {
@@ -1142,13 +1332,15 @@
          } else { $('headerLicenseText').textContent = 'DEMO'; }
       }
 
-      renderRepairsList(); updateCounters();
+      window.renderRepairsList(); window.updateCounters();
+      window.renderBranchSelectors();
+      window.updateCashBalanceUI();
       
       // DISPARADOR DEL CARTEL DE ACTUALIZACIÓN AL DETECTAR NUEVO INDEX EN GITHUB
       var savedVersion = localStorage.getItem(VERSION_STORAGE_KEY);
       if (savedVersion !== APP_CODE_VERSION) {
           localStorage.setItem(VERSION_STORAGE_KEY, APP_CODE_VERSION);
-          setTimeout(function() { triggerAppUpdatingAlert(); }, 400); // Dispara el aviso!
+          setTimeout(function() { window.triggerAppUpdatingAlert(); }, 400); // Dispara el aviso!
       }
     });
 
