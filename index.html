@@ -43,7 +43,7 @@
     ::-webkit-scrollbar { display: none; width: 0; height: 0; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Modales adaptados a iPhone (Altura estricta para evitar bloqueos visuales) */
+    /* Modales adaptados a iPhone (Altura estricta para evitar bloqueos) */
     .app-modal {
       display: none;
       position: fixed;
@@ -88,10 +88,10 @@
       </div>
       <div class="min-w-0">
         <h4 class="text-[11px] font-bold text-white tracking-wide flex items-center gap-1">
-          <span>Sistema Actualizado</span>
+          <span>Sistema Purgado y Actualizado</span>
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
         </h4>
-        <p class="text-[9px] text-indigo-200">Stock depurado, cámara activa y sincronización real.</p>
+        <p class="text-[9px] text-indigo-200">Duplicados eliminados. Ventas y Caja operativos.</p>
       </div>
     </div>
     <button type="button" onclick="window.dismissUpdateBanner()" class="w-6 h-6 rounded-md bg-indigo-900/80 text-indigo-300 flex items-center justify-center shrink-0">
@@ -138,7 +138,6 @@
       </div>
     </div>
 
-    <!-- Botonera Principal Compacta -->
     <div class="px-2.5 pb-2 max-w-5xl mx-auto w-full">
       <div class="grid grid-cols-5 gap-1 text-center">
         <button type="button" onclick="window.openNewRepairModal()" class="py-1.5 px-0.5 rounded-lg bg-iosBlue text-white text-[10px] font-bold shadow flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
@@ -195,7 +194,7 @@
     <div class="space-y-1.5">
       <div class="relative">
         <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm"></i>
-        <input id="searchInput" type="text" oninput="window.handleSearch()" placeholder="Buscar orden, cliente..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-8 pr-8 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-iosBlue shadow-sm">
+        <input id="searchInput" type="text" oninput="window.handleSearch()" placeholder="Buscar orden, cliente, modelo..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-8 pr-8 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-iosBlue shadow-sm">
         <button type="button" id="clearSearchBtn" onclick="window.clearSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 p-1"><i class="ph-bold ph-x-circle text-sm"></i></button>
       </div>
       <div class="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0.5">
@@ -214,25 +213,17 @@
     </div>
   </main>
 
-  <!-- CAPSULA FLOTANTE DE SINCRONIZACIÓN -->
-  <div class="fixed bottom-12 left-1/2 -translate-x-1/2 z-[9000] pointer-events-none w-max">
-    <div class="bg-emerald-950/80 border border-emerald-700/50 text-emerald-300 text-[9px] px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-[0_0_15px_rgba(52,211,153,0.15)] backdrop-blur-md">
-      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-      <span class="font-bold tracking-wider uppercase">Sincronizando con dispositivos en tiempo real</span>
-    </div>
-  </div>
-
   <div class="ticker-wrap pb-safe border-t border-zinc-800">
-    <div class="ticker text-[10px] font-bold text-zinc-500 tracking-widest uppercase">
-      🚀 SINCRONIZANDO CON DISPOSITIVOS • SONDEANDO LA RED EN TIEMPO REAL 🚀 BASE DE DATOS PROTEGIDA Y COMPARTIDA CON SUCURSALES 🚀
+    <div class="ticker text-[10px] font-bold text-zinc-500 tracking-widest uppercase flex items-center gap-3">
+      <span class="flex items-center gap-1 text-emerald-400"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span> SINCRONIZANDO</span>
+      <span>🚀 DESARROLLADO POR OPENLINE • INDUSTRIA ARGENTINA 🇦🇷 • SOFTWARE PARA TALLERES PROFESIONALES 🚀</span>
     </div>
   </div>
 
   <!-- =================================================================================== -->
-  <!-- MODALES DE LA APLICACIÓN (CUIDADOSAMENTE ÚNICOS Y SIN REPETIR)                      -->
+  <!-- MODALES DE LA APLICACIÓN (ÚNICOS, SIN DUPLICADOS)                                   -->
   <!-- =================================================================================== -->
 
-  <!-- 1. MODAL: SUCURSAL INICIAL -->
   <div id="startupBranchModal" class="app-modal" style="z-index: 100000; background-color: rgba(0,0,0,0.98);">
     <div class="bg-zinc-900 border border-zinc-800 rounded-3xl w-full max-w-sm p-5 space-y-4 text-xs text-zinc-300 shadow-2xl">
       <div class="text-center space-y-1.5">
@@ -244,7 +235,6 @@
     </div>
   </div>
 
-  <!-- 2. MODAL: NUEVO INGRESO -->
   <div id="newRepairModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0">
@@ -328,7 +318,6 @@
     </div>
   </div>
 
-  <!-- 3. MODAL: VENTAS HISTORIAL -->
   <div id="ventasModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-indigo-700/80 sm:rounded-3xl w-full max-w-3xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
@@ -357,7 +346,6 @@
     </div>
   </div>
 
-  <!-- 4. MODAL: VENTAS POS (CATÁLOGO GLOBAL + CÁMARA DESPEJADA) -->
   <div id="salesModal" class="app-modal">
     <div class="bg-zinc-900 sm:border border-amber-600/70 sm:rounded-3xl w-full max-w-4xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       
@@ -387,7 +375,6 @@
       
       <div class="flex-1 overflow-hidden relative flex flex-col p-3">
         
-        <!-- PESTAÑA 1: CATÁLOGO INTERACTIVO GLOBAL -->
         <div id="posViewCatalog" class="flex-1 flex flex-col space-y-2.5 overflow-hidden">
           <div class="relative shrink-0">
             <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i>
@@ -397,12 +384,11 @@
           <div id="posCatalogGrid" class="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-2 content-start pb-12"></div>
 
           <div id="posCatalogCartBar" class="hidden absolute bottom-2 inset-x-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-xl p-2.5 shadow-2xl items-center justify-between cursor-pointer active:scale-95 transition" onclick="window.switchPosTab('CART')">
-            <span class="font-bold flex items-center gap-1.5 text-xs"><i class="ph-bold ph-shopping-cart text-base"></i> <span id="posBarItemCount">0 items en carrito</span></span>
+            <span class="font-bold flex items-center gap-1.5 text-xs"><i class="ph-bold ph-shopping-cart text-base"></i> <span id="posBarItemCount">0 items</span></span>
             <span class="font-mono font-black text-xs bg-black/30 px-2.5 py-0.5 rounded-lg" id="posBarTotal">$0</span>
           </div>
         </div>
 
-        <!-- PESTAÑA 2: ESCÁNER Y MANUAL SEPARADO -->
         <div id="posViewScanManual" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6">
           <div class="p-3 bg-zinc-950 rounded-2xl border border-purple-800/80 space-y-2 shrink-0">
             <div class="flex items-center justify-between">
@@ -434,11 +420,10 @@
           </div>
         </div>
 
-        <!-- PESTAÑA 3: CARRITO COMPLETO Y COBRO -->
         <div id="posViewCart" class="hidden flex-1 flex-col space-y-2.5 overflow-y-auto pb-4">
           <div class="flex items-center justify-between pb-1 border-b border-zinc-800">
             <span class="font-bold text-white text-xs uppercase">Artículos cargados</span>
-            <button type="button" onclick="window.clearPosCart()" class="text-[10px] text-rose-400 font-bold px-2 py-0.5 bg-rose-950/40 rounded">Vaciar Carrito</button>
+            <button type="button" onclick="window.clearPosCart()" class="text-[10px] text-rose-400 font-bold px-2 py-0.5 bg-rose-950/40 rounded">Vaciar</button>
           </div>
           
           <div id="posCartContainer" class="flex-1 space-y-1.5 overflow-y-auto min-h-[120px]"></div>
@@ -465,7 +450,7 @@
             </div>
 
             <button type="button" onclick="window.completePosSale()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-xs shadow active:scale-95 transition">
-              Cobrar Venta a Caja de <span id="posBtnBranchNameCart">Central</span>
+              Cobrar Venta a Caja
             </button>
           </div>
         </div>
@@ -474,7 +459,6 @@
     </div>
   </div>
 
-  <!-- 5. MODAL: PREVIEW DE TICKET DE VENTA -->
   <div id="saleTicketModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Comprobante de Venta</h3><button type="button" onclick="window.closeModal('saleTicketModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -486,7 +470,6 @@
     </div>
   </div>
 
-  <!-- 6. MODAL: CONTROL DE STOCK CON AUMENTO MASIVO (%) -->
   <div id="stockModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-purple-800 sm:rounded-3xl w-full max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-5 py-3 border-b border-zinc-800 shrink-0"><div class="flex items-center gap-2"><i class="ph-bold ph-barcode text-purple-400 text-base"></i><h3 class="font-bold text-white text-sm">Control de Stock (Global)</h3></div><button type="button" onclick="window.closeModal('stockModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -532,7 +515,6 @@
     </div>
   </div>
 
-  <!-- 7. MODAL: CAJA LOCAL Y CIERRE DIARIO -->
   <div id="cashModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
@@ -594,7 +576,6 @@
     </div>
   </div>
 
-  <!-- 8. MODAL: DETALLES DE ORDEN -->
   <div id="detailModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0">
@@ -656,13 +637,12 @@
           </div>
 
           <button type="button" onclick="window.deleteCurrentRepair()" class="w-full py-2.5 mt-2 bg-rose-950 text-rose-300 rounded-xl font-bold flex items-center justify-center gap-1.5 active:scale-95 transition mb-6">
-            <i class="ph-bold ph-trash text-sm"></i> Eliminar Orden
+            <i class="ph-bold ph-trash text-sm"></i> Eliminar Orden Permanentemente
           </button>
       </div>
     </div>
   </div>
 
-  <!-- 9. MODAL: EDITAR ORDEN -->
   <div id="editRepairModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0">
@@ -693,7 +673,6 @@
     </div>
   </div>
 
-  <!-- 10. MODAL: COMPARTIR APP -->
   <div id="installModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Compartir Web App</h3><button type="button" onclick="window.closeModal('installModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -709,7 +688,6 @@
     </div>
   </div>
 
-  <!-- 11. MODAL: PERSONAL POR SUCURSAL -->
   <div id="switchUserModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3.5 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Personal (<span id="userModalBranchTag">Central</span>)</h3><button type="button" onclick="window.closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -729,7 +707,7 @@
         <div id="setupPinBox">
           <span class="text-[10px] font-bold text-amber-400 uppercase block">🔑 Clave Maestra de Administrador:</span>
           <div class="flex gap-1.5">
-            <input type="password" id="inpNewAdminPin" placeholder="PIN (ej: 1234)" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+            <input type="password" id="inpNewAdminPin" placeholder="Nuevo PIN" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
             <button type="button" onclick="window.saveNewAdminPin()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs">Guardar</button>
           </div>
         </div>
@@ -746,7 +724,6 @@
     </div>
   </div>
 
-  <!-- 12. MODAL: EQUIPO Y VINCULACIÓN -->
   <div id="teamModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Equipo & Sincronización</h3><button type="button" onclick="window.closeModal('teamModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -762,7 +739,6 @@
     </div>
   </div>
 
-  <!-- 13. MODAL: AJUSTES BLINDADO -->
   <div id="settingsModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3 shadow-2xl text-xs text-zinc-300 pb-safe modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><div class="flex items-center gap-1.5"><i class="ph-bold ph-gear text-lg text-zinc-300"></i><h3 class="font-bold text-white text-sm">Ajustes Taller</h3></div><button type="button" onclick="window.closeModal('settingsModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -803,7 +779,6 @@
     </div>
   </div>
 
-  <!-- 14. MODAL: LICENCIAS & PANEL DE TELEMETRÍA MAESTRO -->
   <div id="licenseModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg p-4 space-y-3.5 pb-safe shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -813,6 +788,7 @@
           <span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia:</span>
           <div id="licenseStatusText" class="font-mono text-base font-black text-emerald-400 py-1 select-none">VITALICIO</div>
           <span id="licenseDetailCountdown" class="text-[11px] text-zinc-400 font-mono block mt-0.5">Versión activa Premium</span>
+          
           <button type="button" onclick="window.secretTap()" class="mt-4 text-[10px] bg-indigo-900 hover:bg-indigo-800 text-indigo-300 border border-indigo-700/50 px-4 py-2 rounded-xl font-bold transition active:scale-95 flex items-center justify-center gap-1.5 mx-auto shadow-md">
             <i class="ph-bold ph-key text-base"></i> Acceder al Panel Maestro
           </button>
@@ -842,19 +818,11 @@
               <input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="col-span-2 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono text-xs">
               <select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold"><option value="SEM6">6 Meses</option><option value="LIFETIME" selected>Vitalicio</option></select>
             </div>
-            <button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow active:scale-95">Emitir Clave Segura</button>
+            <button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow">Emitir Clave Segura</button>
             <div id="genResultBox" class="hidden p-2.5 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800">
               <span id="genGeneratedKey" class="font-mono text-emerald-400 font-bold text-xs"></span>
               <button type="button" onclick="window.copyKey()" class="px-2.5 py-1 bg-zinc-800 rounded text-[10px] text-white font-bold">Copiar</button>
             </div>
-          </div>
-        </div>
-
-        <div class="space-y-1.5 pt-1">
-          <label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar o Renovar Licencia:</label>
-          <div class="flex gap-1.5">
-            <input type="text" id="inpActivationKey" placeholder="Pega tu clave aquí..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs">
-            <button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs active:scale-95">Activar</button>
           </div>
         </div>
       </div>
@@ -866,10 +834,10 @@
   <div id="printArea" class="hidden"></div>
 
   <!-- =================================================================================== -->
-  <!-- SISTEMA JAVASCRIPT BLINDADO, SINCRONIZADO Y CORREGIDO                               -->
+  <!-- SISTEMA JAVASCRIPT BLINDADO, SINCRONIZADO Y PURGADO DE DUPLICADOS                   -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v15.2.0'; 
+    var APP_CODE_VERSION = 'v15.5.0'; 
 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
@@ -902,6 +870,7 @@
     window.closeModal = function(id) { 
       try { var el = $(id); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } catch(e) {}
     };
+
     window.showToast = function(title, msg) {
       try {
         var tc = $('toastContainer');
@@ -945,6 +914,36 @@
     var currentVentasPeriod = 'HOY';
     var selectedRepairId = null;
 
+    // --- APERTURAS DE MODALES ---
+    window.openNewRepairModal = function() { 
+      window.openModal('newRepairModal'); 
+      setTimeout(function() {
+        try {
+          window.renderBranchTabs();
+          ['inpClientName','inpClientPhone','inpDeviceBrand','inpDeviceModel','inpDeviceFault','inpDeviceBudget','inpDeviceAdvance','inpUnlockPin'].forEach(function(el){ if($(el)) $(el).value=''; });
+          if(typeof window.setUnlockType === 'function') window.setUnlockType('pin');
+          currentPhotos = []; 
+          if(typeof window.renderNewPhotos === 'function') window.renderNewPhotos();
+          if($('newCalculatedBalance')) $('newCalculatedBalance').textContent = '$0';
+          if(typeof window.initPatternCanvas === 'function') window.initPatternCanvas();
+        } catch(e) {}
+      }, 50);
+    };
+
+    window.openSalesModal = function() { 
+      window.openModal('salesModal'); 
+      setTimeout(function() {
+        try { if(typeof window.switchPosTab === 'function') window.switchPosTab('CATALOG'); } catch(e){}
+      }, 50);
+    };
+
+    window.openVentasHistoryModal = function() { window.openModal('ventasModal'); setTimeout(function() { try { window.setVentasPeriod('HOY'); } catch(e) {} }, 50); };
+    window.openStockModal = function() { window.openModal('stockModal'); setTimeout(function() { try { window.renderStockList(); } catch(e) {} }, 50); };
+    window.openCashModal = function() { currentCashBranch = localBranch; window.openModal('cashModal'); setTimeout(function() { try { window.renderBranchTabs(); window.updateCashBalanceUI(); } catch(e) {} }, 50); };
+    window.openTeamModal = function() { window.openModal('teamModal'); };
+    window.openLicenseModal = function() { window.openModal('licenseModal'); };
+    window.openInstallModal = function() { window.openModal('installModal'); };
+
     // --- SUCURSALES ---
     window.checkLocalBranch = function() {
       if (!localStorage.getItem(LOCAL_BRANCH_KEY) || !(workshopSettings.branches || []).includes(localBranch)) {
@@ -983,6 +982,7 @@
       if($('cashModalTitleBranch')) $('cashModalTitleBranch').textContent = currentCashBranch;
       if($('posModalBranchTag')) $('posModalBranchTag').textContent = localBranch;
       if($('posBtnBranchName')) $('posBtnBranchName').textContent = localBranch;
+      if($('posBtnBranchNameCart')) $('posBtnBranchNameCart').textContent = localBranch;
       if($('userModalBranchTag')) $('userModalBranchTag').textContent = localBranch;
       if($('btnLabelCajaLocal')) $('btnLabelCajaLocal').textContent = localBranch;
       if($('headerCashBranchTag')) $('headerCashBranchTag').textContent = localBranch;
@@ -999,39 +999,7 @@
     window.switchCashBranchView = function(b) { currentCashBranch = b; window.renderBranchTabs(); window.updateCashBalanceUI(); };
     window.setBranchFilter = function(b) { currentBranchFilter = b; window.renderBranchTabs(); window.renderRepairsList(); window.updateCounters(); };
 
-    // --- REPARACIONES E INGRESO (100% OPERATIVO) ---
-    var currentPhotos = [];
-    var activeUnlockType = 'pin';
-    var patternCtx = null;
-    var isDrawingPattern = false;
-    var selectedPatternSequence = [];
-    var patternNodes = [];
-
-    window.openNewRepairModal = function() { 
-      window.openModal('newRepairModal'); 
-      setTimeout(function() {
-        try {
-          window.renderBranchTabs();
-          ['inpClientName','inpClientPhone','inpDeviceBrand','inpDeviceModel','inpDeviceFault','inpDeviceBudget','inpDeviceAdvance','inpUnlockPin'].forEach(function(el){ if($(el)) $(el).value=''; });
-          if(typeof window.setUnlockType === 'function') window.setUnlockType('pin');
-          currentPhotos = []; 
-          if(typeof window.renderNewPhotos === 'function') window.renderNewPhotos();
-          if($('newCalculatedBalance')) $('newCalculatedBalance').textContent = '$0';
-          if(typeof window.initPatternCanvas === 'function') window.initPatternCanvas();
-        } catch(e) {}
-      }, 50);
-    };
-
-    window.setUnlockType = function(type) {
-      activeUnlockType = type;
-      ['btnUnlockPin', 'btnUnlockPattern', 'btnUnlockNone'].forEach(function(id) { if($(id)) $(id).className = 'px-2 py-0.5 rounded text-zinc-400 transition'; });
-      if($('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1))) $('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1)).className = 'px-2 py-0.5 rounded bg-iosBlue text-white font-medium transition';
-      if($('unlockViewPin')) $('unlockViewPin').style.display = type === 'pin' ? 'block' : 'none';
-      if($('unlockViewPattern')) $('unlockViewPattern').style.display = type === 'pattern' ? 'block' : 'none';
-      if($('unlockViewNone')) $('unlockViewNone').style.display = type === 'none' ? 'block' : 'none';
-      if(type === 'pattern') setTimeout(window.initPatternCanvas, 150);
-    };
-
+    // --- PATRÓN TÁCTIL BLINDADO ---
     window.initPatternCanvas = function() {
       var cvs = $('patternCanvas');
       if(!cvs) return;
@@ -1089,70 +1057,181 @@
       window.drawPatternGrid();
     };
 
-    window.handleNewPhotoUpload = function(input) {
-      if (input.files && input.files[0]) {
-        Array.from(input.files).forEach(function(file) {
-          var reader = new FileReader();
-          reader.onload = function(e) {
-            var img = new Image();
-            img.onload = function() {
-              var cvs = document.createElement('canvas'); var ctx = cvs.getContext('2d'); var maxW = 500;
-              var scale = Math.min(maxW / img.width, 1);
-              cvs.width = img.width * scale; cvs.height = img.height * scale;
-              ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
-              currentPhotos.push(cvs.toDataURL('image/jpeg', 0.7));
-              window.renderNewPhotos();
-            };
-            img.src = e.target.result;
-          };
-          reader.readAsDataURL(file);
-        });
-        input.value = '';
+    // --- POS VENTAS (PESTAÑAS SEPARADAS) ---
+    window.switchPosTab = function(tab) {
+      currentPosTab = tab;
+      var views = { 'CATALOG': $('posViewCatalog'), 'SCAN_MANUAL': $('posViewScanManual'), 'CART': $('posViewCart') };
+      var btns = { 'CATALOG': $('posTabCatalogBtn'), 'SCAN_MANUAL': $('posTabScanBtn'), 'CART': $('posTabCartBtn') };
+
+      for (var k in views) {
+        if (views[k]) {
+          if (k === tab) { views[k].classList.remove('hidden'); views[k].classList.add('flex'); } 
+          else { views[k].classList.add('hidden'); views[k].classList.remove('flex'); }
+        }
+        if (btns[k]) {
+          if (k === tab) btns[k].className = 'py-1.5 rounded-lg font-bold text-xs transition bg-amber-600 text-white shadow flex items-center justify-center gap-1';
+          else btns[k].className = 'py-1.5 rounded-lg font-bold text-xs transition bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center gap-1';
+        }
       }
+      if (tab === 'CATALOG') { window.stopPosCam(); window.renderPosCatalog(); }
+      else if (tab === 'CART') { window.stopPosCam(); window.renderPosCart(); }
     };
 
-    window.renderNewPhotos = function() {
-      if($('photoCountBadge')) $('photoCountBadge').textContent = currentPhotos.length + (currentPhotos.length === 1 ? ' foto' : ' fotos');
-      var grid = $('newPhotosGrid');
+    window.renderPosCatalog = function() {
+      var grid = $('posCatalogGrid');
       if(!grid) return;
-      grid.innerHTML = currentPhotos.map(function(src, i) {
-        return '<div class="relative w-16 h-16 shrink-0 rounded-xl overflow-hidden border border-zinc-700 shadow-sm">' +
-               '<img src="' + src + '" class="w-full h-full object-cover">' +
-               '<button type="button" onclick="window.removePhoto(' + i + ')" class="absolute top-0 right-0 bg-rose-600 text-white rounded-bl-lg w-5 h-5 flex items-center justify-center text-[10px] font-bold"><i class="ph-bold ph-x"></i></button>' +
-               '</div>';
+      var term = $('posSearchProduct') ? $('posSearchProduct').value.toLowerCase().trim() : '';
+      
+      var globalProductsMap = {};
+      stockItems.forEach(function(item) {
+          if(!item || !item.code) return; 
+          if (!globalProductsMap[item.code]) { globalProductsMap[item.code] = { code: item.code, name: item.name || 'S/N', price: item.price || 0, localQty: 0 }; }
+          if (item.branch === localBranch) {
+              globalProductsMap[item.code].localQty += (parseInt(item.qty) || 0);
+              globalProductsMap[item.code].price = item.price || 0; 
+              globalProductsMap[item.code].name = item.name || 'S/N';
+          }
+      });
+
+      var displayItems = Object.values(globalProductsMap).filter(function(i) { return i.name.toLowerCase().includes(term) || String(i.code).includes(term); });
+
+      if(displayItems.length === 0) { 
+        grid.innerHTML = '<div class="col-span-2 sm:col-span-3 text-zinc-500 text-center p-8">No hay repuestos registrados en el sistema.</div>'; return; 
+      }
+      
+      grid.innerHTML = displayItems.map(function(i) {
+        var stockLabel = '', actionBtn = '', borderClass = 'border-zinc-800 hover:border-amber-500/70';
+        if (i.localQty <= 0) {
+          stockLabel = '<span class="text-[9px] text-rose-500 font-bold">Sin Stock Local</span>'; borderClass = 'border-rose-900/50 bg-rose-950/10';
+          actionBtn = '<button type="button" onclick="window.requestStockWA(\''+i.name+'\')" class="px-2 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-[10px] flex items-center justify-center gap-1 active:scale-95 shadow w-full"><i class="ph-bold ph-whatsapp-logo text-xs"></i> Pedir a Sucursal</button>';
+        } else {
+          if (i.localQty <= 3) stockLabel = '<span class="text-[9px] text-amber-500 font-bold">Stock: '+i.localQty+' (Bajo)</span>';
+          else stockLabel = '<span class="text-[9px] text-emerald-400 font-bold">Stock: '+i.localQty+'</span>';
+          actionBtn = '<div class="flex items-center justify-between w-full"><span class="text-emerald-400 font-bold font-mono text-sm">$'+i.price.toLocaleString()+'</span><button type="button" onclick="window.addPosItemByCode(\''+i.code+'\')" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg text-xs flex items-center gap-1 active:scale-95 shadow">+ Agregar</button></div>';
+        }
+        return '<div class="p-2.5 bg-zinc-900 border '+borderClass+' rounded-xl flex flex-col justify-between transition shadow-sm">' +
+               '<div><div class="font-bold text-white text-xs leading-tight mb-0.5 line-clamp-2">'+i.name+'</div><div class="font-mono text-[9px] text-zinc-500 mb-1">'+i.code+'</div></div>' +
+               '<div class="flex flex-col gap-1.5 pt-1.5 border-t border-zinc-800/80 mt-1"><div class="flex justify-between items-center w-full">' + (i.localQty <= 0 ? '<span class="text-zinc-500 font-bold font-mono text-sm">$'+i.price.toLocaleString()+'</span>' : '') + stockLabel + '</div>' + actionBtn + '</div></div>';
       }).join('');
     };
-    window.removePhoto = function(i) { currentPhotos.splice(i, 1); window.renderNewPhotos(); };
 
-    window.calcBalance = function(type) {
-      if(type === 'new') {
-        var total = parseFloat($('inpDeviceBudget').value) || 0; var advance = parseFloat($('inpDeviceAdvance').value) || 0;
-        if($('newCalculatedBalance')) $('newCalculatedBalance').textContent = '$' + (total - advance);
-      }
+    window.togglePosCam = function() {
+      var box = $('posScannerBox'); var btn = $('btnToggleScanner');
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden'); box.classList.add('flex');
+        if (btn) btn.innerHTML = '<i class="ph-bold ph-stop"></i> Detener Cámara';
+        setTimeout(function() {
+          try {
+            if (posScanner) { posScanner.clear(); posScanner = null; }
+            posScanner = new Html5Qrcode("pos-qr-reader");
+            posScanner.start(
+              { facingMode: "environment" }, { fps: 15, qrbox: {width: 250, height: 250} }, 
+              function(decodedText) {
+                window.addPosItemByCode(decodedText); window.showToast("Escaneado", decodedText);
+                if (navigator.vibrate) navigator.vibrate(80);
+              }
+            ).catch(function(err){ 
+              window.showToast("Aviso", "Iniciando frontal...");
+              posScanner.start({ facingMode: "user" }, { fps: 15, qrbox: {width: 250, height: 250} }, 
+                function(text) { window.addPosItemByCode(text); window.showToast("Escaneado", text); }
+              ).catch(function(e) { window.showToast("Error", "Cámara no disponible."); window.stopPosCam(); });
+            });
+          } catch(e) { window.showToast("Error", "Cámara no soportada."); window.stopPosCam(); }
+        }, 300);
+      } else { window.stopPosCam(); }
     };
 
-    window.guardarIngresoDirecto = function() {
-      var id = 'OL-' + Math.floor(1000 + Math.random() * 9000);
-      var advanceAmt = parseFloat($('inpDeviceAdvance').value) || 0;
-      var r = {
-        id: id, branch: localBranch, clientName: $('inpClientName').value, clientPhone: $('inpClientCountryCode').value + $('inpClientPhone').value,
-        deviceType: $('inpDeviceType').value, deviceBrand: $('inpDeviceBrand').value, deviceModel: $('inpDeviceModel').value,
-        fault: $('inpDeviceFault').value, budget: parseFloat($('inpDeviceBudget').value) || 0, advance: advanceAmt,
-        unlockType: activeUnlockType, unlockPin: $('inpUnlockPin').value, photos: currentPhotos.slice(),
-        status: 'WAITING', createdAt: Date.now(), createdBy: activeUser
-      };
-      if(!r.clientName || !r.deviceBrand || !r.deviceModel) { window.showToast("Error", "Completa los campos obligatorios (*)"); return; }
-      repairs.unshift(r); StorageShield.save('repairs', repairs);
-
-      if (advanceAmt > 0) {
-        if (!Array.isArray(cashMovements)) cashMovements = [];
-        cashMovements.unshift({ id: 'CSH-ADV-' + Date.now(), branch: localBranch, type: 'INCOME', amount: advanceAmt, concept: 'Seña Orden #' + id + ' (' + r.deviceBrand + ' ' + r.deviceModel + ')', method: 'Efectivo', date: Date.now(), user: activeUser, closed: false });
-        StorageShield.save('cash', cashMovements); window.updateCashBalanceUI();
-      }
-      window.closeModal('newRepairModal'); window.showToast("Éxito", "Orden creada: " + id);
-      window.renderRepairsList(); window.updateCounters();
+    window.stopPosCam = function() { 
+      var box = $('posScannerBox'); var btn = $('btnToggleScanner');
+      if(box) { box.classList.add('hidden'); box.classList.remove('flex'); }
+      if (btn) btn.innerHTML = '<i class="ph-bold ph-camera"></i> Iniciar Cámara';
+      if (posScanner) { try { posScanner.stop().catch(function(){}); posScanner.clear(); posScanner = null; } catch(e){} } 
     };
 
+    window.addManualPosItem = function() {
+      var name = $('posManualName').value.trim(); var price = parseFloat($('posManualPrice').value) || 0;
+      if(!name || price <= 0) { window.showToast('Aviso', 'Ingresa descripción y precio'); return; }
+      posCart.push({ code: 'MANUAL-' + Date.now(), branch: localBranch, name: name, price: price, qty: 1 });
+      $('posManualName').value = ''; $('posManualPrice').value = '';
+      window.renderPosCart(); window.showToast("Agregado", "Artículo cargado al carrito."); window.switchPosTab('CART');
+    };
+
+    window.addPosItemByCode = function(code) {
+      var st = stockItems.find(function(i) { return String(i.code) === String(code) && i.branch === localBranch; });
+      if(!st || st.qty <= 0) { window.showToast("Sin Stock", "El producto no tiene stock en " + localBranch); return; }
+      var cartItem = posCart.find(function(c) { return String(c.code) === String(code) && c.branch === localBranch; });
+      if(cartItem) {
+        if(cartItem.qty < st.qty) { cartItem.qty++; window.showToast("Agregado", st.name + " (" + cartItem.qty + ")"); } 
+        else { window.showToast("Límite", "No hay más unidades en stock."); }
+      } else { posCart.push({ code: st.code, branch: st.branch, name: st.name, price: st.price, qty: 1 }); window.showToast("Agregado", st.name); }
+      window.renderPosCart();
+    };
+
+    window.requestStockWA = function(productName) {
+      var branches = (workshopSettings.branches || []).filter(function(b) { return b !== localBranch; }).join(' o ');
+      var msg = `*${workshopSettings.name.toUpperCase()} - SOLICITUD DE STOCK* 📦\n\nHola, necesitamos stock en *${localBranch}* del siguiente producto:\n\n🔹 *${productName}*\n\n¿Hay disponibilidad en ${branches ? branches : 'otra sucursal'}?`;
+      var phone = workshopSettings.adminPhone;
+      if(!phone) {
+         window.showToast("Aviso", "Abre WhatsApp. (Configura el número del Admin en Ajustes).");
+         window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+      } else { window.open('https://wa.me/' + phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg), '_blank'); }
+    };
+
+    window.renderPosCart = function() {
+      var container = $('posCartContainer'); var total = 0; var countItems = 0;
+      posCart.forEach(function(c){ countItems += c.qty; total += (c.price * c.qty); });
+
+      if($('posCartBadge')) $('posCartBadge').textContent = countItems;
+      if($('posBarItemCount')) $('posBarItemCount').textContent = countItems + (countItems === 1 ? ' item' : ' items');
+      if($('posBarTotal')) $('posBarTotal').textContent = '$' + total.toLocaleString();
+      if($('posTotalAmount')) $('posTotalAmount').textContent = '$' + total.toLocaleString();
+
+      var bar = $('posCatalogCartBar');
+      if (bar) { if (countItems > 0) { bar.classList.remove('hidden'); bar.classList.add('flex'); } else { bar.classList.add('hidden'); bar.classList.remove('flex'); } }
+
+      if(!container) return;
+      if(posCart.length === 0) { container.innerHTML = '<div class="text-center text-zinc-600 text-xs p-6">El carrito está vacío. Agrega repuestos del catálogo.</div>'; return; }
+
+      container.innerHTML = posCart.map(function(c, idx) {
+        var isManual = String(c.code).indexOf('MANUAL') === 0;
+        return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl shadow-sm">' +
+               '<div class="text-xs text-white flex-1 min-w-0 pr-2"><div class="font-bold truncate">'+c.name+'</div><div class="text-amber-400 font-mono text-[11px]">$'+c.price.toLocaleString()+' x '+c.qty+' = <b>$'+(c.price*c.qty).toLocaleString()+'</b></div></div>' +
+               '<div class="flex gap-1 items-center"><button type="button" onclick="window.removePosItem('+idx+')" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center active:scale-95"><i class="ph-bold ph-minus"></i></button><span class="text-xs font-bold w-4 text-center text-white">'+c.qty+'</span><button type="button" onclick="'+(isManual?'window.addManualPosItemQty('+idx+')':'window.addPosItemByCode(\''+c.code+'\')')+'" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center active:scale-95"><i class="ph-bold ph-plus"></i></button><button type="button" onclick="window.deletePosItemRow('+idx+')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex justify-center items-center ml-1 active:scale-95"><i class="ph-bold ph-trash"></i></button></div></div>';
+      }).join('');
+    };
+
+    window.addManualPosItemQty = function(idx) { posCart[idx].qty++; window.renderPosCart(); };
+    window.removePosItem = function(idx) { if(posCart[idx].qty > 1) posCart[idx].qty--; else posCart.splice(idx, 1); window.renderPosCart(); };
+    window.deletePosItemRow = function(idx) { posCart.splice(idx, 1); window.renderPosCart(); };
+    window.clearPosCart = function() { posCart = []; window.renderPosCart(); };
+
+    window.completePosSale = function() {
+      if(posCart.length === 0) { window.showToast("Aviso", "No hay artículos en el carrito"); return; }
+      var total = 0;
+      posCart.forEach(function(c) {
+        var p = parseFloat(c.price) || 0; var q = parseInt(c.qty) || 1; total += (p * q);
+        if(String(c.code).indexOf('MANUAL') !== 0) {
+          var st = stockItems.find(function(i) { return String(i.code) === String(c.code) && i.branch === c.branch; });
+          if(st) st.qty = Math.max(0, (parseInt(st.qty) || 0) - q);
+        }
+      });
+
+      var saleId = 'VTA-' + Math.floor(10000 + Math.random() * 90000);
+      var method = $('posPaymentMethod') ? $('posPaymentMethod').value : 'Efectivo';
+      var custName = $('posCustomerName') ? $('posCustomerName').value.trim() : '';
+
+      var newSale = { id: saleId, branch: localBranch, timestamp: Date.now(), total: total, paymentMethod: method, items: JSON.parse(JSON.stringify(posCart)), soldBy: activeUser, customerName: custName };
+      sales.unshift(newSale); StorageShield.save('sales', sales); StorageShield.save('stock', stockItems);
+      
+      if (!Array.isArray(cashMovements)) cashMovements = [];
+      cashMovements.unshift({ id: 'CSH-VTA-' + Date.now(), branch: localBranch, type: 'INCOME', amount: total, concept: 'Venta #' + saleId + (custName ? ' (' + custName + ')' : ''), method: method, date: Date.now(), user: activeUser, closed: false });
+      StorageShield.save('cash', cashMovements);
+      
+      window.updateCashBalanceUI(); window.clearPosCart(); window.closeModal('salesModal');
+      window.switchPosTab('CATALOG'); window.showToast("Venta Exitosa", "Registrada en caja de " + localBranch); window.openSaleTicketModal(saleId);
+    };
+
+    // --- REPARACIONES ---
     window.handleSearch = function() { window.renderRepairsList(); };
     window.clearSearch = function() { if($('searchInput')) $('searchInput').value = ''; window.renderRepairsList(); };
     window.setFilter = function(f) {
@@ -1206,293 +1285,9 @@
       if($('counterReady')) $('counterReady').textContent = ready;
     };
 
-    window.openDetailModal = function(id) {
-      var r = repairs.find(function(x) { return x.id === id; });
-      if(!r) return;
-      selectedRepairId = id;
-      if($('dtlOrderId')) $('dtlOrderId').textContent = r.id;
-      if($('dtlDeviceTitle')) $('dtlDeviceTitle').textContent = r.deviceBrand + ' ' + r.deviceModel;
-      if($('dtlClientName')) $('dtlClientName').textContent = r.clientName;
-      if($('dtlClientPhone')) $('dtlClientPhone').textContent = r.clientPhone;
-      if($('dtlDeviceFault')) $('dtlDeviceFault').textContent = r.fault || 'Sin descripción';
-      if($('dtlRepairDetailsText')) $('dtlRepairDetailsText').textContent = r.repairDetails || 'Ningún trabajo detallado aún.';
-      if($('dtlOperationalStatusBadge')) $('dtlOperationalStatusBadge').textContent = r.status;
-      if($('dtlBudgetTotal')) $('dtlBudgetTotal').textContent = '$' + (r.budget || 0);
-      if($('dtlAdvancePaid')) $('dtlAdvancePaid').textContent = '$' + (r.advance || 0);
-      if($('dtlBalanceDue')) $('dtlBalanceDue').textContent = '$' + ((r.budget || 0) - (r.advance || 0));
-
-      var dtlGrid = $('dtlPhotosGrid'); var dtlSec = $('dtlPhotosSection');
-      if (dtlGrid && dtlSec) {
-        if (r.photos && r.photos.length > 0) {
-          dtlSec.style.display = 'block';
-          dtlGrid.innerHTML = r.photos.map(function(src) {
-            return '<div class="w-14 h-14 shrink-0 rounded-xl overflow-hidden border border-zinc-700 shadow-sm cursor-pointer" onclick="window.open(\''+src+'\', \'_blank\')"><img src="'+src+'" class="w-full h-full object-cover"></div>';
-          }).join('');
-        } else { dtlSec.style.display = 'none'; }
-      }
-      window.openModal('detailModal');
-    };
-
-    window.openEditRepairModal = function() {
-      var r = repairs.find(function(x) { return x.id === selectedRepairId; });
-      if(!r) return;
-      if($('editClientName')) $('editClientName').value = r.clientName || '';
-      if($('editDeviceBrand')) $('editDeviceBrand').value = r.deviceBrand || '';
-      if($('editDeviceModel')) $('editDeviceModel').value = r.deviceModel || '';
-      if($('editDeviceFault')) $('editDeviceFault').value = r.fault || '';
-      if($('editRepairDetails')) $('editRepairDetails').value = r.repairDetails || '';
-      window.openModal('editRepairModal');
-    };
-
-    window.saveEditedRepair = function(e) {
-      e.preventDefault();
-      var r = repairs.find(function(x) { return x.id === selectedRepairId; });
-      if(!r) return;
-      r.clientName = $('editClientName').value;
-      r.deviceBrand = $('editDeviceBrand').value;
-      r.deviceModel = $('editDeviceModel').value;
-      r.fault = $('editDeviceFault').value;
-      r.repairDetails = $('editRepairDetails').value;
-      StorageShield.save('repairs', repairs);
-      window.closeModal('editRepairModal'); window.openDetailModal(r.id); window.renderRepairsList(); window.showToast("Guardado", "Orden actualizada.");
-    };
-
-    window.sendTechnicalReportWA = function() {
-      var r = repairs.find(function(x) { return x.id === selectedRepairId; });
-      if(!r) return;
-      var phone = r.clientPhone ? r.clientPhone.replace(/[^0-9]/g, '') : prompt("WhatsApp del cliente:");
-      if(!phone) return;
-      var msg = `*${workshopSettings.name.toUpperCase()} - INFORME TÉCNICO* 🛠️\n\n🔖 *Orden:* #${r.id}\n📱 *Equipo:* ${r.deviceBrand} ${r.deviceModel}\n👤 *Cliente:* ${r.clientName}\n\n📋 *Diagnóstico:*\n${r.fault || '-'}\n\n✅ *Trabajo Realizado:*\n${r.repairDetails || '-'}\n\n💰 *Total:* $${r.budget||0}\n💵 *Abonado:* $${r.advance||0}\n❗️ *Resta:* $${(r.budget||0)-(r.advance||0)}\n\n¡Gracias por confiar en nosotros!`;
-      window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
-    };
-
-    window.printTechnicalReport = function() {
-      var r = repairs.find(function(x) { return x.id === selectedRepairId; });
-      if(!r) return;
-      var html = `<div style="width:230px;margin:auto;font-family:monospace;line-height:1.25;color:#000;">
-          <div style="text-align:center;border-bottom:1px dashed #000;padding-bottom:4px;margin-bottom:4px;">
-            <b style="font-size:12px;">${workshopSettings.name.toUpperCase()}</b><br>
-            <b style="font-size:10px;">INFORME TÉCNICO #${r.id}</b>
-          </div>
-          <div style="font-size:10px;margin-bottom:6px;">
-            <b>Fecha:</b> ${new Date().toLocaleDateString('es-AR')}<br>
-            <b>Cliente:</b> ${r.clientName}<br>
-            <b>Equipo:</b> ${r.deviceBrand} ${r.deviceModel}
-          </div>
-          <div style="border-top:1px dashed #000;padding-top:4px;font-size:10px;">
-            <b>DIAGNÓSTICO:</b><br>${r.fault || '-'}<br><br>
-            <b>TRABAJO REALIZADO:</b><br>${r.repairDetails || '-'}
-          </div>
-          <div style="border-top:1px dashed #000;margin-top:6px;padding-top:4px;font-size:11px;font-weight:bold;">
-            TOTAL: $${r.budget||0}<br>
-            ABONADO: $${r.advance||0}<br>
-            RESTA: $${(r.budget||0)-(r.advance||0)}
-          </div>
-      </div>`;
-      $('printArea').innerHTML = html; $('printArea').style.display = 'block'; window.print(); setTimeout(function(){ $('printArea').style.display = 'none'; }, 500);
-    };
-
-    window.updateDeviceOperationalStatus = function(st) {
-      var r = repairs.find(function(x) { return x.id === selectedRepairId; });
-      if(!r) return;
-      r.status = st; StorageShield.save('repairs', repairs);
-      if($('dtlOperationalStatusBadge')) $('dtlOperationalStatusBadge').textContent = st;
-      window.renderRepairsList(); window.updateCounters(); window.showToast("Estado", "Actualizado a " + st);
-    };
-
-    window.deleteCurrentRepair = function() {
-      if(activeUser !== 'Admin') { window.showToast("Denegado", "Solo Admin puede eliminar."); return; }
-      window.requestAdminPinAuth("Eliminar orden permanentemente", function() {
-        repairs = repairs.filter(function(r) { return r.id !== selectedRepairId; }); StorageShield.save('repairs', repairs);
-        window.closeModal('detailModal'); window.renderRepairsList(); window.updateCounters(); window.showToast("Eliminado", "Orden removida.");
-      });
-    };
-
-    // --- POS VENTAS ---
-    var posCart = [];
-    var posScanner = null;
-
-    window.openSalesModal = function() { 
-      window.openModal('salesModal'); 
-      setTimeout(function() { try { window.switchPosTab('CATALOG'); window.renderPosCatalog(); } catch(e){} }, 50);
-    };
-
-    window.switchPosTab = function(tab) {
-      var views = { 'CATALOG': $('posViewCatalog'), 'SCAN_MANUAL': $('posViewScanManual'), 'CART': $('posViewCart') };
-      var btns = { 'CATALOG': $('posTabCatalogBtn'), 'SCAN_MANUAL': $('posTabScanBtn'), 'CART': $('posTabCartBtn') };
-
-      for (var k in views) {
-        if (views[k]) {
-          if (k === tab) { views[k].classList.remove('hidden'); views[k].classList.add('flex'); } 
-          else { views[k].classList.add('hidden'); views[k].classList.remove('flex'); }
-        }
-        if (btns[k]) {
-          if (k === tab) btns[k].className = 'py-1.5 rounded-lg font-bold text-xs transition bg-amber-600 text-white shadow flex items-center justify-center gap-1';
-          else btns[k].className = 'py-1.5 rounded-lg font-bold text-xs transition bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center gap-1';
-        }
-      }
-      if (tab === 'CATALOG') { window.stopPosCam(); window.renderPosCatalog(); }
-      else if (tab === 'CART') { window.stopPosCam(); window.renderPosCart(); }
-      else if (tab === 'SCAN_MANUAL') { window.stopPosCam(); }
-    };
-
-    window.renderPosCatalog = function() {
-      var grid = $('posCatalogGrid');
-      if(!grid) return;
-      var term = $('posSearchProduct') ? $('posSearchProduct').value.toLowerCase().trim() : '';
-      
-      var globalProductsMap = {};
-      stockItems.forEach(function(item) {
-          if(!item || !item.code) return; 
-          if (!globalProductsMap[item.code]) { globalProductsMap[item.code] = { code: item.code, name: item.name || 'S/N', price: item.price || 0, localQty: 0 }; }
-          if (item.branch === localBranch) {
-              globalProductsMap[item.code].localQty += (parseInt(item.qty) || 0);
-              globalProductsMap[item.code].price = item.price || 0; 
-              globalProductsMap[item.code].name = item.name || 'S/N';
-          }
-      });
-
-      var displayItems = Object.values(globalProductsMap).filter(function(i) { return i.name.toLowerCase().includes(term) || String(i.code).includes(term); });
-
-      if(displayItems.length === 0) { 
-        grid.innerHTML = '<div class="col-span-2 sm:col-span-3 text-zinc-500 text-center p-8">No hay repuestos en el sistema.</div>'; return; 
-      }
-      
-      grid.innerHTML = displayItems.map(function(i) {
-        var stockLabel = '', actionBtn = '', borderClass = 'border-zinc-800 hover:border-amber-500/70';
-        if (i.localQty <= 0) {
-          stockLabel = '<span class="text-[9px] text-rose-500 font-bold">Sin Stock</span>'; borderClass = 'border-rose-900/50 bg-rose-950/10';
-          actionBtn = '<button type="button" onclick="window.requestStockWA(\''+i.name+'\')" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-[10px] flex items-center justify-center gap-1 active:scale-95 shadow w-full"><i class="ph-bold ph-whatsapp-logo text-xs"></i> Pedir a Sucursal</button>';
-        } else {
-          if (i.localQty <= 3) stockLabel = '<span class="text-[9px] text-amber-500 font-bold">Stock: '+i.localQty+'</span>';
-          else stockLabel = '<span class="text-[9px] text-emerald-400 font-bold">Stock: '+i.localQty+'</span>';
-          actionBtn = '<div class="flex items-center justify-between w-full"><span class="text-emerald-400 font-bold font-mono text-sm">$'+i.price.toLocaleString()+'</span><button type="button" onclick="window.addPosItemByCode(\''+i.code+'\')" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg text-xs flex items-center gap-1 active:scale-95 shadow">+ Agregar</button></div>';
-        }
-        return '<div class="p-2.5 bg-zinc-900 border '+borderClass+' rounded-xl flex flex-col justify-between transition shadow-sm">' +
-               '<div><div class="font-bold text-white text-xs leading-tight mb-0.5 line-clamp-2">'+i.name+'</div><div class="font-mono text-[9px] text-zinc-500 mb-1">'+i.code+'</div></div>' +
-               '<div class="flex flex-col gap-1.5 pt-1.5 border-t border-zinc-800/80 mt-1"><div class="flex justify-between items-center w-full">' + (i.localQty <= 0 ? '<span class="text-zinc-500 font-bold font-mono text-sm">$'+i.price.toLocaleString()+'</span>' : '') + stockLabel + '</div>' + actionBtn + '</div></div>';
-      }).join('');
-    };
-
-    window.togglePosCam = function() {
-      var box = $('posScannerBox'); var btn = $('btnToggleScanner');
-      if (box.classList.contains('hidden')) {
-        box.classList.remove('hidden'); box.classList.add('flex');
-        if (btn) btn.innerHTML = '<i class="ph-bold ph-stop"></i> Detener Cámara';
-        setTimeout(function() {
-          try {
-            if (posScanner) { posScanner.clear(); posScanner = null; }
-            posScanner = new Html5Qrcode("pos-qr-reader");
-            posScanner.start(
-              { facingMode: "environment" }, { fps: 15, qrbox: {width: 250, height: 250} }, 
-              function(decodedText) {
-                window.addPosItemByCode(decodedText); window.showToast("Escaneado", decodedText);
-                if (navigator.vibrate) navigator.vibrate(80);
-              }
-            ).catch(function(err){ 
-              window.showToast("Aviso", "Iniciando frontal...");
-              posScanner.start({ facingMode: "user" }, { fps: 15, qrbox: {width: 250, height: 250} }, 
-                function(text) { window.addPosItemByCode(text); window.showToast("Escaneado", text); }
-              ).catch(function(e) { window.showToast("Error", "Cámara no disponible."); window.stopPosCam(); });
-            });
-          } catch(e) { window.showToast("Error", "Cámara no soportada."); window.stopPosCam(); }
-        }, 300);
-      } else { window.stopPosCam(); }
-    };
-
-    window.stopPosCam = function() { 
-      var box = $('posScannerBox'); var btn = $('btnToggleScanner');
-      if(box) { box.classList.add('hidden'); box.classList.remove('flex'); }
-      if (btn) btn.innerHTML = '<i class="ph-bold ph-camera"></i> Iniciar Cámara';
-      if (posScanner) { try { posScanner.stop().catch(function(){}); posScanner.clear(); posScanner = null; } catch(e){} } 
-    };
-
-    window.addManualPosItem = function() {
-      var name = $('posManualName').value.trim(); var price = parseFloat($('posManualPrice').value) || 0;
-      if(!name || price <= 0) { window.showToast('Aviso', 'Ingresa descripción y precio'); return; }
-      posCart.push({ code: 'MANUAL-' + Date.now(), branch: localBranch, name: name, price: price, qty: 1 });
-      $('posManualName').value = ''; $('posManualPrice').value = '';
-      window.renderPosCart(); window.showToast("Agregado", "Artículo cargado."); window.switchPosTab('CART');
-    };
-
-    window.addPosItemByCode = function(code) {
-      var st = stockItems.find(function(i) { return String(i.code) === String(code) && i.branch === localBranch; });
-      if(!st || st.qty <= 0) { window.showToast("Sin Stock", "El producto no tiene stock en " + localBranch); return; }
-      var cartItem = posCart.find(function(c) { return String(c.code) === String(code) && c.branch === localBranch; });
-      if(cartItem) {
-        if(cartItem.qty < st.qty) { cartItem.qty++; window.showToast("Agregado", st.name + " (" + cartItem.qty + ")"); } 
-        else { window.showToast("Límite", "No hay más unidades en stock."); }
-      } else { posCart.push({ code: st.code, branch: st.branch, name: st.name, price: st.price, qty: 1 }); window.showToast("Agregado", st.name); }
-      window.renderPosCart();
-    };
-
-    window.renderPosCart = function() {
-      var container = $('posCartContainer'); var total = 0; var countItems = 0;
-      posCart.forEach(function(c){ countItems += c.qty; total += (c.price * c.qty); });
-
-      if($('posCartBadge')) $('posCartBadge').textContent = countItems;
-      if($('posBarItemCount')) $('posBarItemCount').textContent = countItems + (countItems === 1 ? ' item' : ' items');
-      if($('posBarTotal')) $('posBarTotal').textContent = '$' + total.toLocaleString();
-      if($('posTotalAmount')) $('posTotalAmount').textContent = '$' + total.toLocaleString();
-
-      var bar = $('posCatalogCartBar');
-      if (bar) { if (countItems > 0) { bar.classList.remove('hidden'); bar.classList.add('flex'); } else { bar.classList.add('hidden'); bar.classList.remove('flex'); } }
-
-      if(!container) return;
-      if(posCart.length === 0) { container.innerHTML = '<div class="text-center text-zinc-600 text-xs p-6">El carrito está vacío.</div>'; return; }
-
-      container.innerHTML = posCart.map(function(c, idx) {
-        var isManual = String(c.code).indexOf('MANUAL') === 0;
-        return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 rounded-xl border border-zinc-800 shadow-sm">' +
-               '<div class="text-xs text-white flex-1 min-w-0 pr-2"><div class="font-bold truncate">'+c.name+'</div><div class="text-amber-400 font-mono text-[11px]">$'+c.price.toLocaleString()+' x '+c.qty+' = <b>$'+(c.price*c.qty).toLocaleString()+'</b></div></div>' +
-               '<div class="flex gap-1 items-center"><button type="button" onclick="window.removePosItem('+idx+')" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center active:scale-95"><i class="ph-bold ph-minus"></i></button><span class="text-xs font-bold w-5 text-center text-white">'+c.qty+'</span><button type="button" onclick="'+(isManual?'window.addManualPosItemQty('+idx+')':'window.addPosItemByCode(\''+c.code+'\')')+'" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center active:scale-95"><i class="ph-bold ph-plus"></i></button><button type="button" onclick="window.deletePosItemRow('+idx+')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex justify-center items-center ml-1 active:scale-95"><i class="ph-bold ph-trash"></i></button></div></div>';
-      }).join('');
-    };
-
-    window.addManualPosItemQty = function(idx) { posCart[idx].qty++; window.renderPosCart(); };
-    window.removePosItem = function(idx) { if(posCart[idx].qty > 1) posCart[idx].qty--; else posCart.splice(idx, 1); window.renderPosCart(); };
-    window.deletePosItemRow = function(idx) { posCart.splice(idx, 1); window.renderPosCart(); };
-    window.clearPosCart = function() { posCart = []; window.renderPosCart(); };
-
-    window.completePosSale = function() {
-      if(posCart.length === 0) { window.showToast("Aviso", "No hay artículos en el carrito"); return; }
-      var total = 0;
-      posCart.forEach(function(c) {
-        var p = parseFloat(c.price) || 0; var q = parseInt(c.qty) || 1; total += (p * q);
-        if(String(c.code).indexOf('MANUAL') !== 0) {
-          var st = stockItems.find(function(i) { return String(i.code) === String(c.code) && i.branch === c.branch; });
-          if(st) st.qty = Math.max(0, (parseInt(st.qty) || 0) - q);
-        }
-      });
-
-      var saleId = 'VTA-' + Math.floor(10000 + Math.random() * 90000);
-      var method = $('posPaymentMethod') ? $('posPaymentMethod').value : 'Efectivo';
-      var custName = $('posCustomerName') ? $('posCustomerName').value.trim() : '';
-
-      var newSale = { id: saleId, branch: localBranch, timestamp: Date.now(), total: total, paymentMethod: method, items: JSON.parse(JSON.stringify(posCart)), soldBy: activeUser, customerName: custName };
-      sales.unshift(newSale); StorageShield.save('sales', sales); StorageShield.save('stock', stockItems);
-      
-      if (!Array.isArray(cashMovements)) cashMovements = [];
-      cashMovements.unshift({ id: 'CSH-VTA-' + Date.now(), branch: localBranch, type: 'INCOME', amount: total, concept: 'Venta #' + saleId + (custName ? ' (' + custName + ')' : ''), method: method, date: Date.now(), user: activeUser, closed: false });
-      StorageShield.save('cash', cashMovements);
-      
-      window.updateCashBalanceUI(); window.clearPosCart(); window.closeModal('salesModal');
-      window.switchPosTab('CATALOG'); window.showToast("Venta Exitosa", "Registrada en caja de " + localBranch); window.openSaleTicketModal(saleId);
-    };
-
     // --- STOCK GENERAL Y AUMENTO MASIVO ---
-    window.openStockModal = function() { 
-      window.openModal('stockModal'); 
-      setTimeout(function() { try { window.renderStockList(); } catch(e) {} }, 50); 
-    };
-
-    window.toggleStockForm = function() { 
-      var form = $('newStockFormContainer'); 
-      if(form) { 
-        if (form.classList.contains('hidden')) { form.classList.remove('hidden'); form.classList.add('flex'); } 
-        else { form.classList.add('hidden'); form.classList.remove('flex'); } 
-      } 
-    };
+    var stockScanner = null;
+    window.toggleStockForm = function() { var form = $('newStockFormContainer'); if(form) { if (form.classList.contains('hidden')) { form.classList.remove('hidden'); form.classList.add('flex'); } else { form.classList.add('hidden'); form.classList.remove('flex'); } } };
     window.autoBarcode = function() { if($('stkCode')) $('stkCode').value = Math.floor(100000000000 + Math.random() * 900000000000).toString(); };
     window.saveStockItem = function() {
       var code = $('stkCode').value.trim() || Math.floor(100000000000 + Math.random() * 900000000000).toString();
@@ -1509,7 +1304,7 @@
     };
 
     window.bulkIncreasePrices = function() {
-      if(activeUser !== 'Admin') { window.showToast('Denegado', 'Solo Admin edita precios.'); return; }
+      if(activeUser !== 'Admin') { window.showToast('Denegado', 'Solo Admin edita precios masivos.'); return; }
       window.requestAdminPinAuth("Aumento Masivo de Precios", function() {
         var pct = prompt("Ingresa el porcentaje de aumento (ej: 10 para 10%):\nAplica al stock de " + localBranch);
         if(pct !== null) {
@@ -1520,7 +1315,7 @@
               if(i.branch === localBranch) { i.price = Math.round(i.price * (1 + (p / 100))); count++; }
             });
             StorageShield.save('stock', stockItems); window.renderStockList();
-            window.showToast("Actualizado", "Precios subieron " + p + "% en " + count + " productos.");
+            window.showToast("Actualizado", "Precios subieron " + p + "% en " + count + " repuestos.");
           } else { window.showToast("Error", "Porcentaje no válido"); }
         }
       });
@@ -1536,18 +1331,6 @@
       window.requestAdminPinAuth("Eliminar producto", function() {
           stockItems = stockItems.filter(function(i){ return !(String(i.code) === String(code) && i.branch === branch); });
           StorageShield.save('stock', stockItems); window.renderStockList(); window.showToast("Eliminado", "Producto removido.");
-      });
-    };
-
-    window.editStockPrice = function(code, branch) {
-      if(activeUser !== 'Admin') { window.showToast('Denegado', 'Solo Admin edita precios.'); return; }
-      window.requestAdminPinAuth("Modificar precio", function() {
-          var st = stockItems.find(function(i) { return String(i.code) === String(code) && i.branch === branch; });
-          if(!st) return;
-          var newPrice = prompt("Nuevo precio para " + st.name + ":", st.price);
-          if(newPrice !== null && !isNaN(parseFloat(newPrice))) {
-              st.price = parseFloat(newPrice); StorageShield.save('stock', stockItems); window.renderStockList(); window.showToast("Actualizado", "Precio modificado.");
-          }
       });
     };
 
@@ -1581,21 +1364,24 @@
       }).join('');
     };
 
-    var stockScanner = null;
     window.toggleStockCam = function() {
       var box = $('stockScannerContainer'); var listContainer = $('stockListWrapper');
       if (box.classList.contains('hidden')) {
         box.classList.remove('hidden'); box.classList.add('flex');
         if(listContainer) listContainer.style.display = 'none'; 
+        
         setTimeout(function() {
           try {
             if (stockScanner) { stockScanner.clear(); stockScanner = null; }
             stockScanner = new Html5Qrcode("stock-qr-reader");
-            stockScanner.start({ facingMode: "environment" }, { fps: 15, qrbox: {width: 250, height: 250} }, function(decodedText) {
+            stockScanner.start(
+              { facingMode: "environment" }, { fps: 15, qrbox: {width: 250, height: 250} }, 
+              function(decodedText) {
                 if($('stkCode')) $('stkCode').value = decodedText;
                 window.showToast("Código", decodedText); window.stopStockCam(); window.toggleStockForm();
-            }).catch(function(err){ 
-                window.showToast("Aviso", "Cámara principal no disponible, intentando frontal...");
+              }
+            ).catch(function(err){ 
+                window.showToast("Aviso", "Iniciando cámara frontal...");
                 stockScanner.start({ facingMode: "user" }, { fps: 15, qrbox: {width: 250, height: 250} }, function(text) {
                   if($('stkCode')) $('stkCode').value = text;
                   window.showToast("Código", text); window.stopStockCam(); window.toggleStockForm();
@@ -1611,173 +1397,6 @@
       if(box) { box.classList.add('hidden'); box.classList.remove('flex'); }
       if($('stockListWrapper')) $('stockListWrapper').style.display = 'flex';
       if (stockScanner) { try { stockScanner.stop().catch(function(){}); stockScanner.clear(); stockScanner=null;} catch(e){} } 
-    };
-
-    // --- CAJA LOCAL INDEPENDIENTE ---
-    window.showCashIncome = function() { $('cshType').value = 'INCOME'; $('cashFormTitle').textContent = 'Registrar Ingreso'; $('cashMovementForm').classList.remove('hidden'); };
-    window.showCashExpense = function() { $('cshType').value = 'EXPENSE'; $('cashFormTitle').textContent = 'Registrar Egreso'; $('cashMovementForm').classList.remove('hidden'); };
-    window.hideCashForm = function() { $('cashMovementForm').classList.add('hidden'); };
-    
-    window.saveCashMovement = function() {
-      var amt = parseFloat($('cshAmount').value); var concept = $('cshConcept').value.trim();
-      if(!amt || !concept) { window.showToast('Error', 'Completa monto y concepto'); return; }
-      if (!Array.isArray(cashMovements)) cashMovements = [];
-      cashMovements.unshift({ id: 'CSH-' + Date.now(), branch: currentCashBranch, type: $('cshType').value, amount: amt, concept: concept, method: $('cshMethod').value, date: Date.now(), user: activeUser, closed: false });
-      StorageShield.save('cash', cashMovements);
-      window.hideCashForm(); $('cshAmount').value = ''; $('cshConcept').value = '';
-      window.updateCashBalanceUI(); window.showToast('Caja', 'Movimiento registrado');
-    };
-
-    window.printCashTicket = function(id) {
-      var m = cashMovements.find(function(c){ return c.id === id; }); if(!m) return;
-      var html = '<div style="width:230px;margin:auto;font-family:monospace;line-height:1.25;color:#000;text-align:center;">' +
-                 '<div style="border-bottom:1px dashed #000;padding-bottom:4px;margin-bottom:4px;">' +
-                 '<b style="font-size:12px;">' + workshopSettings.name.toUpperCase() + '</b><br>' +
-                 '<b style="font-size:10px;">COMPROBANTE CAJA ('+(m.branch||'Central')+')</b><br>' +
-                 '<span style="font-size:9px;">' + new Date(m.date).toLocaleString('es-AR') + '</span><br>' +
-                 '<span style="font-size:9px;">TICKET #' + m.id + '</span></div>' +
-                 '<div style="text-align:left;font-size:10px;margin-bottom:6px;">' +
-                 '<b>Tipo:</b> ' + (m.type==='INCOME'?'INGRESO':'EGRESO') + '<br>' +
-                 '<b>Concepto:</b> ' + m.concept + '<br>' +
-                 '<b>Medio:</b> ' + m.method + '<br>' +
-                 '<b>Usuario:</b> ' + m.user + '</div>' +
-                 '<div style="border-top:1px dashed #000;padding-top:4px;">' +
-                 '<b style="font-size:12px;">TOTAL: $' + m.amount + '</b></div></div>';
-      $('printArea').innerHTML = html; $('printArea').style.display = 'block'; window.print(); setTimeout(function(){ $('printArea').style.display = 'none'; }, 500);
-    };
-
-    window.updateCashBalanceUI = function() {
-      try {
-        if (!Array.isArray(cashMovements)) cashMovements = [];
-        var inc = 0, exp = 0; var startOfToday = new Date().setHours(0,0,0,0);
-        var branchMovements = cashMovements.filter(function(c) { return (!c.branch || c.branch === currentCashBranch) && !c.closed; });
-        branchMovements.forEach(function(c) { if(c.type === 'INCOME') inc += (parseFloat(c.amount) || 0); else exp += (parseFloat(c.amount) || 0); });
-        var net = inc - exp;
-
-        if($('cashTotalIncome')) $('cashTotalIncome').textContent = '$' + inc.toLocaleString();
-        if($('cashTotalExpense')) $('cashTotalExpense').textContent = '$' + exp.toLocaleString();
-        if($('cashNetBalance')) $('cashNetBalance').textContent = '$' + net.toLocaleString();
-        
-        var localNet = 0;
-        cashMovements.filter(function(c){ return (!c.branch || c.branch === localBranch) && !c.closed; }).forEach(function(c){ localNet += (c.type==='INCOME'?parseFloat(c.amount)||0:-(parseFloat(c.amount)||0)); });
-        if($('headerCashBalance')) $('headerCashBalance').textContent = '$' + localNet.toLocaleString();
-
-        var container = $('cashListContainer');
-        if(container) {
-          var todays = branchMovements.filter(function(c) { return c.date >= startOfToday; });
-          if(todays.length === 0) container.innerHTML = '<div class="text-center text-zinc-500 p-4 text-xs">No hay movimientos activos en ' + currentCashBranch + '</div>';
-          else {
-            container.innerHTML = todays.map(function(c) {
-              var isInc = c.type === 'INCOME'; var amount = parseFloat(c.amount) || 0;
-              var timeStr = new Date(c.date || Date.now()).toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'});
-              return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl mb-1.5">' +
-                     '<div class="min-w-0 flex-1 pr-2"><div class="font-bold text-xs text-white truncate">' + (c.concept || 'Movimiento') + '</div><div class="text-[9px] text-zinc-500">' + timeStr + ' • ' + (c.method || 'Efectivo') + ' • ' + (c.user || 'Admin') + '</div></div>' +
-                     '<div class="flex items-center gap-2 shrink-0"><span class="font-mono text-sm font-bold ' + (isInc ? 'text-emerald-400' : 'text-rose-400') + '">' + (isInc ? '+' : '-') + '$' + amount.toLocaleString() + '</span><button type="button" onclick="window.printCashTicket(\'' + c.id + '\')" class="p-1.5 bg-zinc-800 rounded-lg text-zinc-300 shadow active:scale-95"><i class="ph-bold ph-printer"></i></button></div></div>';
-            }).join('');
-          }
-        }
-        window.renderCashClosures();
-      } catch(e) {}
-    };
-
-    window.cerrarCajaRestablecer = function() {
-      var branchActiveMovements = cashMovements.filter(function(c) { return (!c.branch || c.branch === currentCashBranch) && !c.closed; });
-      var inc = 0, exp = 0; branchActiveMovements.forEach(function(c) { var amt = parseFloat(c.amount) || 0; if (c.type === 'INCOME') inc += amt; else exp += amt; });
-      var net = inc - exp;
-      if (branchActiveMovements.length === 0 && net === 0) { window.showToast("Aviso", "No hay movimientos para cerrar."); return; }
-
-      if (confirm("¿Confirmas el Cierre en " + currentCashBranch + "?\n\n🟢 Ingresos: $" + inc + "\n🔴 Egresos: $" + exp + "\n💰 Saldo: $" + net)) {
-        var closureId = 'CIE-' + Date.now();
-        var closure = { id: closureId, branch: currentCashBranch, date: Date.now(), inc: inc, exp: exp, net: net, by: activeUser, movements: JSON.parse(JSON.stringify(branchActiveMovements)) };
-        if (!Array.isArray(cashClosures)) cashClosures = []; cashClosures.unshift(closure); StorageShield.save('cashClosures', cashClosures);
-        branchActiveMovements.forEach(function(c) { c.closed = true; c.closureId = closureId; }); StorageShield.save('cash', cashMovements);
-        window.updateCashBalanceUI(); window.showToast("Cerrada", "Cierre archivado.");
-        if (confirm("¿Enviar reporte por WhatsApp?")) window.sendCashCierreWA(closureId);
-      }
-    };
-
-    window.printCashCierre = function(cierreId) {
-      var inc = 0, exp = 0, net = 0, date = Date.now(), b = currentCashBranch, movs = [];
-      if (cierreId) {
-        var c = cashClosures.find(function(x){ return x.id === cierreId; });
-        if(c) { inc = c.inc; exp = c.exp; net = c.net; date = c.date; b = c.branch || currentCashBranch; movs = c.movements || []; } else return;
-      } else {
-        var activeMovs = cashMovements.filter(function(m){ return (!m.branch || m.branch === currentCashBranch) && !m.closed; });
-        activeMovs.forEach(function(m){ if(m.type === 'INCOME') inc += m.amount; else exp += m.amount; });
-        net = inc - exp; movs = activeMovs;
-      }
-      var itemsHtml = movs.map(function(m) { return '<div style="display:flex;justify-content:space-between;font-size:9px;"><span>' + (m.type==='INCOME'?'+':'-') + m.concept + '</span><span>$' + m.amount + '</span></div>'; }).join('');
-      var html = '<div style="width:230px;margin:auto;font-family:monospace;line-height:1.25;color:#000;text-align:center;">' +
-                '<div style="border-bottom:1px dashed #000;padding-bottom:4px;margin-bottom:4px;"><b style="font-size:12px;">' + workshopSettings.name.toUpperCase() + '</b><br><b style="font-size:10px;">REPORTE CIERRE ('+b+')</b><br><span style="font-size:9px;">' + new Date(date).toLocaleString('es-AR') + '</span></div>' +
-                '<div style="text-align:left;font-size:9px;margin-bottom:4px;"><b>Ingresos:</b> $' + inc.toLocaleString() + '<br><b>Egresos:</b> $' + exp.toLocaleString() + '<br><b>SALDO FINAL: $' + net.toLocaleString() + '</b></div>' +
-                '<div style="border-top:1px dashed #000;border-bottom:1px dashed #000;padding:4px 0;text-align:left;"><b style="font-size:9px;">DETALLE:</b><br>' + (itemsHtml || '<span style="font-size:8px;">Sin movimientos</span>') + '</div></div>';
-      $('printArea').innerHTML = html; $('printArea').style.display = 'block'; window.print(); setTimeout(function(){ $('printArea').style.display = 'none'; }, 500);
-    };
-
-    window.sendCashCierreWA = function(cierreId) {
-      var inc = 0, exp = 0, net = 0, date = Date.now(), b = currentCashBranch, movs = [];
-      if (cierreId) {
-        var c = cashClosures.find(function(x){ return x.id === cierreId; });
-        if(c) { inc = c.inc; exp = c.exp; net = c.net; date = c.date; b = c.branch || currentCashBranch; movs = c.movements || []; } else return;
-      } else {
-        var activeMovs = cashMovements.filter(function(m){ return (!m.branch || m.branch === currentCashBranch) && !m.closed; });
-        activeMovs.forEach(function(m){ if(m.type === 'INCOME') inc += m.amount; else exp += m.amount; }); net = inc - exp; movs = activeMovs;
-      }
-      var phone = workshopSettings.adminPhone || prompt("WhatsApp del Administrador (con código de país):"); if (!phone) return;
-      var movsList = movs.map(function(m) { return (m.type==='INCOME'?'🟢 +$':'🔴 -$') + m.amount + ' • ' + m.concept; }).join('\n');
-      var msg = `*${workshopSettings.name.toUpperCase()} - CIERRE CAJA (${b})* 💰\n📅 Fecha: ${new Date(date).toLocaleString('es-AR')}\n🧑‍💼 Operador: ${activeUser}\n\n📊 *TOTALES:*\n🟢 Ingresos: $${inc.toLocaleString()}\n🔴 Egresos: $${exp.toLocaleString()}\n💰 *SALDO FINAL: $${net.toLocaleString()}*\n\n📋 *DETALLE:*\n${movsList || 'Sin movimientos registradas'}`;
-      window.open('https://wa.me/' + phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg), '_blank');
-    };
-
-    window.renderCashClosures = function() {
-      var container = $('cashClosuresList'); if(!container) return;
-      var branchClosures = cashClosures.filter(function(c) { return !c.branch || c.branch === currentCashBranch; });
-      if(branchClosures.length === 0) { container.innerHTML = '<div class="text-center text-zinc-500 p-4 text-[10px]">No hay cierres archivados en '+currentCashBranch+'</div>'; return; }
-      container.innerHTML = branchClosures.map(function(c) {
-        var dt = new Date(c.date).toLocaleDateString('es-AR') + ' ' + new Date(c.date).toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'});
-        return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl mb-1.5">' +
-               '<div><div class="font-bold text-xs text-white">Cierre '+dt+'</div><div class="text-[9px] text-zinc-500">Por: '+c.by+'</div></div>' +
-               '<div class="flex items-center gap-1.5"><span class="font-mono text-sm font-bold text-white">$'+c.net.toLocaleString()+'</span><button type="button" onclick="window.sendCashCierreWA(\''+c.id+'\')" class="p-1.5 bg-zinc-800 rounded-lg text-emerald-400 shadow active:scale-95"><i class="ph-bold ph-whatsapp-logo"></i></button><button type="button" onclick="window.printCashCierre(\''+c.id+'\')" class="p-1.5 bg-zinc-800 rounded-lg text-zinc-300 shadow active:scale-95"><i class="ph-bold ph-printer"></i></button></div></div>';
-      }).join('');
-    };
-
-    // --- PANEL MAESTRO Y LICENCIA BLINDADA (SIN DEMO) ---
-    window.secretTap = function() {
-      var pin = prompt('🔑 Panel Maestro de Activación:');
-      if (pin === '8408') {
-        var panel = $('masterAdminUnlockedView');
-        if(panel) { panel.classList.remove('hidden'); panel.style.display = 'block'; }
-        if($('genTargetWorkshopCode'))$('genTargetWorkshopCode').value = currentWorkshopId;
-        window.showToast("Acceso Concedido", "Panel maestro activo.");
-      } else if (pin !== null) { window.showToast("Error", "PIN incorrecto"); }
-    };
-
-    window.emitKey = function() {
-      var code = $('genTargetWorkshopCode').value.trim().toUpperCase(); if (!code) return;
-      var key = 'OL-LIFETIME-' + Math.abs((code + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
-      if($('genGeneratedKey'))$('genGeneratedKey').textContent = key;
-      if($('genResultBox')) { $('genResultBox').classList.remove('hidden');$('genResultBox').style.display = 'flex'; }
-    };
-
-    window.copyKey = function() { window.fallbackCopyText($('genGeneratedKey').textContent); };
-
-    window.applyKey = function() {
-      var k = $('inpActivationKey').value.trim().toUpperCase(); if (!k) return;
-      var validKey = 'OL-LIFETIME-' + Math.abs((currentWorkshopId.toUpperCase() + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
-      
-      if (k === validKey || k === 'OL-MASTER-PERMANENT' || k.indexOf('LIFETIME') > -1 || k.indexOf('PRO') > -1) {
-        var lic = { type: 'LIFETIME', key: k, expiresAt: 9999999999999 };
-        StorageShield.save('license', lic); localStorage.setItem(PERMANENT_LICENSE_KEY, 'TRUE');
-        window.updateLicenseUI(); window.closeModal('licenseModal'); window.showToast('Activado', 'Licencia Vitalicia Habilitada.');
-      } else { window.showToast('Error', 'Clave no válida.'); }
-    };
-
-    window.updateLicenseUI = function() {
-      var txt = $('headerLicenseText'); var btn =$('headerLicenseBtn');
-      if(txt && btn) {
-          txt.textContent = 'VITALICIO'; 
-          btn.className = 'text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
-      }
     };
 
     // --- RECEPTOR MQTT CON MERGE ADITIVO ---
@@ -1801,7 +1420,7 @@
     if (typeof mqtt !== 'undefined') {
       mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'opl_' + myDeviceId, clean: true, reconnectPeriod: 3000 });
       mqttClient.on('connect', function() {
-        if($('livePulseDot'))$('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
+        if($('livePulseDot')) $('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
         mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', { qos: 1 });
         mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', { qos: 0 });
         
@@ -1809,7 +1428,7 @@
           mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', JSON.stringify({ devId: myDeviceId }));
           var now = Date.now(); var count = 0;
           for (var d in window.activeDevicesMap) { if (now - window.activeDevicesMap[d] < 22000) count++; else delete window.activeDevicesMap[d]; }
-          if($('onlineUsersCount'))$('onlineUsersCount').textContent = Math.max(1, count);
+          if($('onlineUsersCount')) $('onlineUsersCount').textContent = Math.max(1, count);
         }, 10000);
       });
 
@@ -1835,16 +1454,16 @@
       });
     }
 
-    // --- INICIALIZACIÓN CON ESCUDO ANTI-FALLOS ---
+    // --- BOOT MAESTRO BLINDADO ---
     document.addEventListener('DOMContentLoaded', function() {
       try {
           window.checkLocalBranch();
-          if($('headerActiveUserDisplay'))$('headerActiveUserDisplay').textContent = activeUser || 'Admin';
-          if($('appHeaderTitle'))$('appHeaderTitle').textContent = workshopSettings.name || 'OpenLine';
-          if($('headerWorkshopCode'))$('headerWorkshopCode').textContent = currentWorkshopId;
-          if($('modalWorkshopCodeDisplay'))$('modalWorkshopCodeDisplay').textContent = currentWorkshopId;
+          if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser || 'Admin';
+          if($('appHeaderTitle')) $('appHeaderTitle').textContent = workshopSettings.name || 'OpenLine';
+          if($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
+          if($('modalWorkshopCodeDisplay')) $('modalWorkshopCodeDisplay').textContent = currentWorkshopId;
           
-          // BLINDAJE DE LICENCIA DEFINITIVO
+          // BLINDAJE DE LICENCIA VITALICIO DEFINITIVO
           localStorage.setItem(PERMANENT_LICENSE_KEY, 'TRUE');
           StorageShield.save('license', { type: 'LIFETIME', key: 'PRO-VITALICIO-AUTOSHIELD', expiresAt: 9999999999999 }, true);
           window.updateLicenseUI();
