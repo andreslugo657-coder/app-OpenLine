@@ -204,13 +204,13 @@
     </div>
   </div>
 
-  <!-- MODALES DE ALERTA INTERNOS (SIN BLOQUEOS NATIVOS) -->
-  <div id="appPromptModal" style="display: none;" class="app-modal" style="z-index: 100001;">
-    <div class="bg-zinc-900 border border-zinc-700 rounded-3xl w-full max-w-xs p-5 space-y-4 shadow-2xl text-center">
+  <!-- MODALES DE ALERTA INTERNOS (Z-INDEX SUPERIOR Y BLINDADO) -->
+  <div id="appPromptModal" style="display: none; z-index: 100005;" class="fixed inset-0 bg-black/95 backdrop-blur-md items-center justify-center p-4">
+    <div class="bg-zinc-900 border border-zinc-700 rounded-3xl w-full max-w-xs p-5 space-y-4 shadow-[0_0_50px_rgba(0,0,0,0.8)] text-center relative">
       <h3 class="font-black text-white text-sm" id="appPromptTitle">Mensaje</h3>
       <p class="text-[11px] text-zinc-400 leading-tight whitespace-pre-line" id="appPromptDesc"></p>
       <form onsubmit="window.confirmAppPrompt(event)" class="w-full m-0 p-0">
-        <input type="text" id="appPromptInput" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-3 text-white text-center font-bold text-sm outline-none focus:border-iosBlue transition-colors mb-2">
+        <input type="text" id="appPromptInput" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-3 text-white text-center font-bold text-sm outline-none focus:border-iosBlue transition-colors mb-2" autocomplete="off">
         <div class="grid grid-cols-2 gap-2">
           <button type="button" onclick="window.closeAppPrompt(null)" class="py-2.5 bg-zinc-800 text-white font-bold rounded-xl text-xs active:scale-95 transition">Cancelar</button>
           <button type="submit" class="py-2.5 bg-iosBlue text-white font-bold rounded-xl text-xs active:scale-95 transition">Aceptar</button>
@@ -219,8 +219,8 @@
     </div>
   </div>
 
-  <div id="appConfirmModal" style="display: none;" class="app-modal" style="z-index: 100001;">
-    <div class="bg-zinc-900 border border-rose-800/50 rounded-3xl w-full max-w-xs p-5 space-y-4 shadow-2xl text-center">
+  <div id="appConfirmModal" style="display: none; z-index: 100005;" class="fixed inset-0 bg-black/95 backdrop-blur-md items-center justify-center p-4">
+    <div class="bg-zinc-900 border border-rose-800/50 rounded-3xl w-full max-w-xs p-5 space-y-4 shadow-[0_0_50px_rgba(0,0,0,0.8)] text-center relative">
       <div class="w-10 h-10 bg-rose-500/20 text-rose-400 rounded-full flex items-center justify-center mx-auto text-lg"><i class="ph-bold ph-warning"></i></div>
       <h3 class="font-black text-white text-sm" id="appConfirmTitle">¿Estás seguro?</h3>
       <p class="text-[11px] text-zinc-400 leading-tight whitespace-pre-line" id="appConfirmDesc"></p>
@@ -232,8 +232,15 @@
   </div>
 
   <!-- =================================================================================== -->
-  <!-- MODALES DE LA APLICACIÓN                                                            -->
+  <!-- MODALES DE LA APLICACIÓN NORMALES                                                   -->
   <!-- =================================================================================== -->
+
+  <div id="startupBranchModal" style="display: none;" class="app-modal">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-3xl w-full max-w-sm p-5 space-y-4 text-xs text-zinc-300 shadow-2xl">
+      <div class="text-center space-y-1.5"><div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-full flex items-center justify-center mx-auto text-xl shadow-lg"><i class="ph-bold ph-storefront"></i></div><h3 class="font-black text-white text-base">Ubicación del Equipo</h3><p class="text-[11px] text-zinc-400 leading-tight">Por favor, asigna la sucursal a la que pertenece este dispositivo.</p></div>
+      <div id="startupBranchList" class="space-y-2 max-h-48 overflow-y-auto no-scrollbar"></div>
+    </div>
+  </div>
 
   <div id="newRepairModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs">
@@ -439,24 +446,17 @@
     </div>
   </div>
 
-  <!-- PANEL DE PERSONAL Y DISPOSITIVOS (CON RESTRICCIONES) -->
   <div id="switchUserModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3.5 text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Personal & Dispositivos</h3><button type="button" onclick="window.closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       
       <div class="space-y-1.5">
-        <div class="flex items-center justify-between">
-          <label class="text-[10px] text-zinc-400 uppercase font-bold block">👤 Personal del Taller:</label>
-          <span class="text-[9px] text-zinc-500">Toca el nombre para operar</span>
-        </div>
+        <div class="flex items-center justify-between"><label class="text-[10px] text-zinc-400 uppercase font-bold block">👤 Personal del Taller:</label><span class="text-[9px] text-zinc-500">Toca el nombre para operar</span></div>
         <div id="usersUnifiedList" class="space-y-1.5 max-h-36 overflow-y-auto pr-1"></div>
       </div>
 
       <div id="sectionDevices" class="pt-2 border-t border-zinc-800/80 space-y-1.5 hidden">
-        <div class="flex items-center justify-between">
-          <label class="text-[10px] text-rose-400 uppercase font-bold block">📱 Dispositivos Conectados:</label>
-          <span class="text-[9px] text-zinc-500">Reasignar sucursal o expulsar</span>
-        </div>
+        <div class="flex items-center justify-between"><label class="text-[10px] text-rose-400 uppercase font-bold block">📱 Dispositivos Conectados:</label><span class="text-[9px] text-zinc-500">Reasignar sucursal o expulsar</span></div>
         <div id="devicesUnifiedList" class="space-y-1.5 max-h-28 overflow-y-auto pr-1"></div>
       </div>
 
@@ -470,7 +470,7 @@
         <div id="setupPinBox">
           <span class="text-[10px] font-bold text-amber-400 uppercase block">🔑 Configurar Clave Maestra (Una sola vez):</span>
           <div class="flex gap-1.5 mt-1">
-            <input type="password" id="inpNewAdminPin" placeholder="Crear PIN nuevo" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+            <input type="password" id="inpNewAdminPin" placeholder="Crear PIN nuevo" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono text-center tracking-widest">
             <button type="button" onclick="window.saveNewAdminPin()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs active:scale-95 transition">Guardar</button>
           </div>
           <p class="text-[8px] text-zinc-500 mt-1 text-center">Configura la clave una sola vez. Luego quedará oculta.</p>
@@ -516,7 +516,6 @@
     </div>
   </div>
 
-  <!-- LICENCIA Y PANEL MAESTRO CREADOR (CON FORM CIEGO Y INPUT PASSWORD) -->
   <div id="licenseModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg p-4 space-y-3.5 pb-safe shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -544,7 +543,7 @@
         </div>
 
         <!-- PANEL MAESTRO CREADOR (SE MUESTRA AL PONER PIN CORRECTO) -->
-        <div id="masterAdminUnlockedView" class="hidden p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3">
+        <div id="masterAdminUnlockedView" style="display: none;" class="p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3">
           <div class="flex items-center justify-between border-b border-indigo-900 pb-2">
             <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide">Panel Maestro Creador</span></div>
             <button type="button" onclick="window.requestTelemetryBroadcast()" class="text-[9px] bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 active:scale-95"><i class="ph-bold ph-arrows-clockwise"></i> Sondear Red</button>
@@ -584,10 +583,10 @@
   <div id="printArea" class="hidden"></div>
 
   <!-- =================================================================================== -->
-  <!-- SISTEMA JAVASCRIPT GLOBAL BLINDADO                                                  -->
+  <!-- SISTEMA JAVASCRIPT GLOBAL BLINDADO (GESTIÓN COMPLETA Y SEGURIDAD)                   -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v23.0.0'; 
+    var APP_CODE_VERSION = 'v23.5.0'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var VERSION_STORAGE_KEY = 'openline_code_installed_version';
@@ -614,18 +613,17 @@
     function $(id) { return document.getElementById(id); }
 
     window.openModal = function(id) { 
-      try { var el = $(id); if (el) { el.classList.remove('hidden'); el.classList.add('flex'); el.style.display = 'flex'; } } catch(e) {} 
+      try { var el = $(id); if (el) { el.classList.remove('hidden'); el.classList.add('active'); el.style.display = 'flex'; } } catch(e) {} 
     };
-    
     window.closeModal = function(id) { 
-      try { var el = $(id); if (el) { el.classList.remove('flex'); el.classList.add('hidden'); el.style.display = 'none'; } } catch(e) {} 
+      try { var el = $(id); if (el) { el.classList.remove('active'); el.classList.add('hidden'); el.style.display = 'none'; } } catch(e) {} 
     };
 
+    window.dismissBetaBanner = function() {
+      try { var banner = $('devBanner'); if (banner) { banner.classList.remove('opacity-100', 'translate-y-0'); banner.classList.add('opacity-0', '-translate-y-[150%]'); setTimeout(function() { banner.style.display = 'none'; }, 700); } } catch(e){}
+    };
     window.dismissRealtimeBanner = function() {
-      try {
-        var banner = $('realtimeSyncBanner');
-        if (banner) { banner.classList.remove('opacity-100', 'translate-y-0'); banner.classList.add('opacity-0', '-translate-y-[150%]'); setTimeout(function() { banner.style.display = 'none'; }, 700); }
-      } catch(e){}
+      try { var banner = $('realtimeSyncBanner'); if (banner) { banner.classList.remove('opacity-100', 'translate-y-0'); banner.classList.add('opacity-0', '-translate-y-[150%]'); setTimeout(function() { banner.style.display = 'none'; }, 700); } } catch(e){}
     };
 
     window.showToast = function(title, msg) {
@@ -650,13 +648,13 @@
         var inp = $('appPromptInput');
         inp.type = inputType || 'text'; inp.value = defaultVal || '';
         activePromptCallback = callback;
-        m.classList.remove('hidden'); m.classList.add('flex'); m.style.display = 'flex';
+        m.classList.remove('hidden'); m.style.display = 'flex';
         setTimeout(function(){ inp.focus(); }, 100);
       }
     };
     window.closeAppPrompt = function(val) {
       var m = $('appPromptModal');
-      if(m) { m.classList.remove('flex'); m.classList.add('hidden'); m.style.display = 'none'; }
+      if(m) { m.classList.add('hidden'); m.style.display = 'none'; }
       if (activePromptCallback) { var cb = activePromptCallback; activePromptCallback = null; cb(val); }
     };
     window.confirmAppPrompt = function(e) { 
@@ -671,12 +669,12 @@
         $('appConfirmTitle').textContent = title || '¿Estás seguro?';
         $('appConfirmDesc').innerHTML = (desc || '').replace(/\n/g, '<br>');
         activeConfirmCallback = callback;
-        m.classList.remove('hidden'); m.classList.add('flex'); m.style.display = 'flex';
+        m.classList.remove('hidden'); m.style.display = 'flex';
       }
     };
     window.closeAppConfirm = function(res) {
       var m = $('appConfirmModal');
-      if(m) { m.classList.remove('flex'); m.classList.add('hidden'); m.style.display = 'none'; }
+      if(m) { m.classList.add('hidden'); m.style.display = 'none'; }
       if (activeConfirmCallback) { var cb = activeConfirmCallback; activeConfirmCallback = null; if(res) cb(); }
     };
 
@@ -859,7 +857,7 @@
       var stored = localStorage.getItem(LOCAL_BRANCH_KEY);
       var branches = workshopSettings.branches || ['Central'];
       
-      // AUTO-ASIGNAR siempre por defecto. El admin lo cambia remotamente. Elimina modal inicial.
+      // AUTO-ASIGNAR siempre por defecto. El admin lo cambia remotamente.
       if (!stored || !branches.includes(stored)) {
         window.setLocalBranch(branches[0], true); 
       }
@@ -1137,6 +1135,16 @@
       } else { window.showToast("Aviso", "El usuario ya existe en esa sucursal."); }
     };
 
+    window.saveNewAdminPin = function() {
+      var newPin = $('inpNewAdminPin').value.trim(); if(!newPin) return;
+      window.appConfirm("Configurar Clave", "¿Confirmas que usarás [ " + newPin + " ] como Clave Maestra?\n\nAsegúrate de no olvidarla.", function() {
+        workshopSettings.adminPin = newPin; workshopSettings.isCreatorPinSet = true; StorageShield.save('settings', workshopSettings);
+        $('inpNewAdminPin').value = ''; 
+        var setupBox = $('setupPinBox'); if(setupBox) setupBox.style.display = 'none';
+        window.showToast("Seguridad", "Clave Maestra protegida de por vida."); 
+      });
+    };
+
     // --- AJUSTES ---
     window.openSettingsModal = function() {
       try {
@@ -1214,7 +1222,6 @@
     window.shareAppWA = function() { var url = window.location.origin + window.location.pathname; var msg = "🚀 *OpenLine - Gestión de Taller Profesional*\n\nAccede a la plataforma aquí:\n\n" + url; window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank'); };
     window.copyAppUrl = function() { var url = window.location.origin + window.location.pathname; if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(function() { window.showToast("Copiado", "Enlace copiado al portapapeles."); }).catch(function() { window.fallbackCopyText(url); }); } else { window.fallbackCopyText(url); } };
     window.fallbackCopyText = function(text) { var textArea = document.createElement("textarea"); textArea.value = text; document.body.appendChild(textArea); textArea.select(); try { document.execCommand('copy'); window.showToast("Copiado", "Enlace copiado al portapapeles."); } catch (err) { window.showToast("Error", "No se pudo copiar."); } document.body.removeChild(textArea); };
-    
     window.joinWorkshop = function() { 
       window.appPrompt("Vincular a Red", "Ingresa el Código del Taller Maestro (ej: TALLER-8291).\n\nEste dispositivo se reseteará y tomará los datos y la licencia de ese taller.", "text", "", function(code) {
         if(code) {
@@ -1860,7 +1867,7 @@
       }).join('');
     };
 
-    // --- RECEPTOR MQTT Y SINCRONIZACIÓN EN TIEMPO REAL ---
+    // --- RECEPTOR MQTT (Sincronización Inmediata y Comandos) ---
     function mergeByDate(localArr, remoteArr) {
       if (!Array.isArray(remoteArr)) return localArr || [];
       if (!Array.isArray(localArr)) localArr = [];
@@ -1891,7 +1898,6 @@
 
         window.broadcastPresence();
 
-        // Heartbeat y actualización cada 3 segundos
         setInterval(function() {
           window.broadcastPresence();
           var now = Date.now(); var count = 0;
@@ -1963,7 +1969,7 @@
               }
             }
             
-            // Adopción automática de Licencia desde el Taller Maestro
+            // Adopción automática si el taller sincronizado es PRO
             if(payload.license && (payload.license.type === 'LIFETIME' || payload.license.type === 'PRO' || payload.license.type === 'SEM6')) {
               StorageShield.save('license', payload.license, true);
               localStorage.setItem(PERMANENT_LICENSE_KEY, 'TRUE');
@@ -1974,12 +1980,27 @@
       });
     }
 
+    window.broadcastPresence = function() {
+      if (mqttClient && mqttClient.connected) {
+        var payload = { 
+          workshopId: currentWorkshopId.toUpperCase(), 
+          deviceId: myDeviceId, 
+          user: activeUser, 
+          branch: localBranch, 
+          name: workshopSettings.name || currentWorkshopId, 
+          licenseType: window.checkLicenseStatus(), 
+          time: Date.now() 
+        };
+        mqttClient.publish('openline/v4/global/telemetry/report', JSON.stringify(payload));
+        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', JSON.stringify({ devId: myDeviceId, user: activeUser, branch: localBranch }));
+      }
+    };
+
     // --- BOOT MAESTRO BLINDADO ---
     document.addEventListener('DOMContentLoaded', function() {
       try {
           window.activeDevicesMap[myDeviceId] = { time: Date.now(), user: activeUser, branch: localBranch };
           
-          // Omite elegir sucursal en el arranque. El Admin gestiona esto remotamente.
           window.checkLocalBranch();
           
           if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser || 'Admin';
@@ -1988,7 +2009,7 @@
           
           window.checkBannedStatus();
           
-          // Registro de telemetría inicial
+          // Registro de telemetría propio
           window.saveTelemetryData({ 
             workshopId: currentWorkshopId.toUpperCase(), 
             deviceId: myDeviceId, 
