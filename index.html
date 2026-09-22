@@ -34,6 +34,7 @@
     ::-webkit-scrollbar { display: none; width: 0; height: 0; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+    /* Modales adaptados */
     .app-modal {
       display: none; position: fixed; inset: 0; z-index: 9999;
       background-color: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
@@ -71,13 +72,14 @@
         <h4 class="font-bold text-emerald-300 text-xs uppercase tracking-wider">Sincronización en Tiempo Real</h4>
         <span class="text-[9px] font-mono bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded-full font-bold">1s LIVE</span>
       </div>
-      <p class="text-[10px] text-zinc-200 leading-relaxed">Red de talleres conectada. Cambios de stock, ingresos, caja y ventas se sincronizan segundo a segundo.</p>
+      <p class="text-[10px] text-zinc-200 leading-relaxed">Red de talleres conectada. Cambios de stock, ingresos, caja y ventas sincronizados segundo a segundo.</p>
     </div>
     <button type="button" onclick="window.dismissRealtimeBanner()" class="bg-emerald-900/60 p-1.5 rounded-lg text-emerald-300 hover:text-white transition active:scale-95">
       <i class="ph-bold ph-x text-sm"></i>
     </button>
   </div>
 
+  <!-- ENCABEZADO -->
   <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
     <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full">
       <div class="flex items-center gap-2 min-w-0">
@@ -104,11 +106,11 @@
       </div>
 
       <div class="flex items-center gap-1 shrink-0">
-        <button type="button" onclick="window.openSwitchUserModal()" class="h-8 px-2 rounded-lg bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center gap-1 active:scale-95 transition shadow-sm text-xs font-bold">
+        <button type="button" onclick="window.openSwitchUserModal()" class="h-8 px-2 rounded-lg bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center gap-1 active:scale-95 transition shadow-sm text-xs font-bold" title="Personal y Dispositivos">
           <i class="ph-bold ph-user-circle text-sm text-iosBlue"></i>
           <span id="headerActiveUserDisplay" class="max-w-[70px] truncate">Admin</span>
         </button>
-        <button type="button" onclick="window.openSettingsModal()" class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm">
+        <button type="button" onclick="window.openSettingsModal()" class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm" title="Ajustes">
           <i class="ph-bold ph-gear text-base"></i>
         </button>
         <button type="button" onclick="window.openInstallModal()" class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm" title="Compartir App">
@@ -129,17 +131,17 @@
         <button type="button" onclick="window.openVentasHistoryModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-indigo-900 to-blue-900 border border-indigo-700/60 text-indigo-200 text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform">
           <i class="ph-bold ph-receipt text-base text-indigo-400"></i><span>Ventas</span>
         </button>
-        <button type="button" onclick="window.openStockModal()" class="py-2 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform relative">
+        <button type="button" onclick="window.openStockModal()" class="py-2 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform relative">
           <i class="ph-bold ph-barcode text-base text-purple-400"></i><span>Stock</span>
         </button>
-        <button type="button" onclick="window.openCashModal()" class="py-2 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform">
+        <button type="button" onclick="window.openCashModal()" class="py-2 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform">
           <i class="ph-bold ph-currency-dollar-simple text-base text-emerald-400"></i><span>Caja (<span id="btnLabelCajaLocal">C</span>)</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- LISTA DE ÓRDENES PRINCIPAL -->
+  <!-- CUERPO PRINCIPAL -->
   <main class="flex-1 w-full max-w-5xl mx-auto px-3 py-2 space-y-2 pb-safe overflow-y-auto z-10 relative">
     <div id="branchFilterContainer" class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 shadow-sm space-y-1">
       <div class="flex items-center justify-between px-1">
@@ -204,18 +206,18 @@
   </div>
 
   <!-- =================================================================================== -->
-  <!-- MODALES DE LA APLICACIÓN (INTOCABLES)                                               -->
+  <!-- MODALES DE LA APLICACIÓN                                                            -->
   <!-- =================================================================================== -->
 
-  <div id="startupBranchModal" class="app-modal" style="z-index: 100000; background-color: rgba(0,0,0,0.98);">
+  <div id="startupBranchModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border border-zinc-800 rounded-3xl w-full max-w-sm p-5 space-y-4 text-xs text-zinc-300 shadow-2xl">
       <div class="text-center space-y-1.5"><div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-full flex items-center justify-center mx-auto text-xl shadow-lg"><i class="ph-bold ph-storefront"></i></div><h3 class="font-black text-white text-base">Configuración de Sucursal</h3><p class="text-[11px] text-zinc-400 leading-tight">Selecciona la sucursal física de este equipo.</p></div>
       <div id="startupBranchList" class="space-y-2 max-h-48 overflow-y-auto no-scrollbar"></div>
     </div>
   </div>
 
-  <div id="newRepairModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs">
+  <div id="newRepairModal" style="display: none;" class="app-modal">
+    <div class="bg-zinc-900 sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0">
         <h2 class="text-sm font-bold text-white flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-iosBlue"></span>Nuevo Ingreso</h2>
         <button type="button" onclick="window.closeModal('newRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button>
@@ -283,8 +285,8 @@
     </div>
   </div>
 
-  <div id="salesModal" class="app-modal">
-    <div class="bg-zinc-900 sm:border border-amber-600/70 sm:rounded-3xl w-full max-w-4xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
+  <div id="salesModal" style="display: none;" class="app-modal">
+    <div class="bg-zinc-900 sm:border border-amber-600/70 rounded-t-3xl sm:rounded-3xl w-full max-w-4xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
       <div class="p-3 border-b border-zinc-800 shrink-0 space-y-2">
         <div class="flex items-center justify-between"><div class="flex items-center gap-2"><i class="ph-bold ph-shopping-cart-simple text-amber-400 text-lg"></i><h3 class="font-bold text-white text-sm">Venta Mostrador (<span id="posModalBranchTag" class="text-amber-400 font-bold">Central</span>)</h3></div><button type="button" onclick="window.closeModal('salesModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-xs"></i></button></div>
         <div class="grid grid-cols-3 gap-1 p-1 bg-zinc-950 rounded-xl border border-zinc-800">
@@ -294,7 +296,14 @@
         </div>
       </div>
       <div class="flex-1 overflow-hidden relative flex flex-col p-3 min-h-0">
-        <div id="posViewCatalog" class="flex-1 flex flex-col space-y-2.5 overflow-hidden min-h-0"><div class="relative shrink-0"><i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i><input type="text" id="posSearchProduct" oninput="window.renderPosCatalog()" placeholder="Buscar repuesto en la red..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white"></div><div id="posCatalogGrid" class="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-2 content-start pb-12 min-h-[260px]"></div><div id="posCatalogCartBar" class="hidden absolute bottom-2 inset-x-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-xl p-2.5 shadow-2xl items-center justify-between cursor-pointer active:scale-95 transition" onclick="window.switchPosTab('CART')"><span class="font-bold flex items-center gap-1.5 text-xs"><i class="ph-bold ph-shopping-cart text-base"></i> <span id="posBarItemCount">0 items en carrito</span></span><span class="font-mono font-black text-xs bg-black/30 px-2.5 py-0.5 rounded-lg" id="posBarTotal">$0</span></div></div>
+        <div id="posViewCatalog" class="flex-1 flex flex-col space-y-2.5 overflow-hidden min-h-0">
+          <div class="relative shrink-0"><i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i><input type="text" id="posSearchProduct" oninput="window.renderPosCatalog()" placeholder="Buscar repuesto en la red..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white"></div>
+          <div id="posCatalogGrid" class="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-2 content-start pb-12 min-h-[260px]"></div>
+          <div id="posCatalogCartBar" class="hidden absolute bottom-2 inset-x-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-xl p-2.5 shadow-2xl items-center justify-between cursor-pointer active:scale-95 transition" onclick="window.switchPosTab('CART')">
+            <span class="font-bold flex items-center gap-1.5 text-xs"><i class="ph-bold ph-shopping-cart text-base"></i> <span id="posBarItemCount">0 items en carrito</span></span>
+            <span class="font-mono font-black text-xs bg-black/30 px-2.5 py-0.5 rounded-lg" id="posBarTotal">$0</span>
+          </div>
+        </div>
         <div id="posViewScanManual" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6 min-h-0">
           <div class="p-3 bg-zinc-950 rounded-2xl border border-purple-800/80 space-y-2 shrink-0"><div class="flex items-center justify-between"><span class="text-[10px] font-bold text-purple-300 uppercase flex items-center gap-1"><i class="ph-bold ph-barcode text-sm"></i> Lector de Códigos</span><button type="button" id="btnToggleScanner" onclick="window.togglePosCam()" class="px-2.5 py-1 bg-purple-900 text-purple-200 rounded-lg font-bold text-xs flex items-center gap-1 active:scale-95"><i class="ph-bold ph-camera"></i> Iniciar</button></div><div id="posScannerBox" class="hidden flex-col p-2 bg-black rounded-xl border border-purple-800 gap-1.5"><button type="button" onclick="window.stopPosCam()" class="text-rose-400 font-bold self-end bg-rose-950/40 px-2.5 py-0.5 rounded text-[10px] active:scale-95">Cerrar</button><div id="pos-qr-reader" class="w-full bg-black rounded-xl overflow-hidden"></div></div></div>
           <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 shrink-0"><span class="text-[10px] font-bold text-amber-400 uppercase flex items-center gap-1"><i class="ph-bold ph-tag text-sm"></i> Venta Manual Rápida</span><input type="text" id="posManualName" placeholder="Descripción (Funda, Cable, etc)..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white"><div class="flex gap-2"><input type="number" id="posManualPrice" placeholder="Precio ($)" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono font-bold"><button type="button" onclick="window.addManualPosItem()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shadow active:scale-95 transition">+ Agregar</button></div></div>
@@ -311,8 +320,8 @@
     </div>
   </div>
 
-  <div id="ventasModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-indigo-700/80 sm:rounded-3xl w-full max-w-3xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
+  <div id="ventasModal" style="display: none;" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-indigo-700/80 rounded-t-3xl sm:rounded-3xl w-full max-w-3xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
         <div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-indigo-950 border border-indigo-700 flex items-center justify-center text-indigo-400"><i class="ph-bold ph-receipt text-base"></i></div><div><h3 class="font-bold text-white text-sm">Historial de Ventas</h3><span class="text-[10px] text-zinc-400" id="ventasBranchIndicatorTag">Global</span></div></div>
         <button type="button" onclick="window.closeModal('ventasModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button>
@@ -326,8 +335,8 @@
     </div>
   </div>
 
-  <div id="stockModal" class="app-modal">
-    <div class="bg-zinc-900 sm:border border-purple-800 sm:rounded-3xl w-full max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
+  <div id="stockModal" style="display: none;" class="app-modal">
+    <div class="bg-zinc-900 sm:border border-purple-800 rounded-t-3xl sm:rounded-3xl w-full max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
       <div class="p-3 border-b border-zinc-800 shrink-0 space-y-2">
         <div class="flex items-center justify-between"><div class="flex items-center gap-2"><i class="ph-bold ph-barcode text-purple-400 text-lg"></i><h3 class="font-bold text-white text-sm">Control de Stock</h3></div><button type="button" onclick="window.closeModal('stockModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-xs"></i></button></div>
         <div class="grid grid-cols-3 gap-1 p-1 bg-zinc-950 rounded-xl border border-zinc-800">
@@ -337,7 +346,10 @@
         </div>
       </div>
       <div class="flex-1 overflow-hidden relative flex flex-col p-3 min-h-0">
-        <div id="stockViewList" class="flex-1 flex flex-col space-y-2.5 overflow-hidden min-h-0"><div class="flex gap-2 shrink-0"><div class="relative flex-1"><i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i><input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-2 text-xs text-white"></div><button type="button" onclick="window.bulkIncreasePrices()" class="px-3 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs flex items-center gap-1 shrink-0 shadow active:scale-95 transition"><i class="ph-bold ph-trend-up"></i> % Suba</button></div><div id="stockListContainer" class="space-y-1.5 overflow-y-auto flex-1 pb-4 min-h-[260px]"></div></div>
+        <div id="stockViewList" class="flex-1 flex flex-col space-y-2.5 overflow-hidden min-h-0">
+          <div class="flex gap-2 shrink-0"><div class="relative flex-1"><i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i><input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-2 text-xs text-white"></div><button type="button" onclick="window.bulkIncreasePrices()" class="px-3 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs flex items-center gap-1 shrink-0 shadow active:scale-95 transition"><i class="ph-bold ph-trend-up"></i> % Suba</button></div>
+          <div id="stockListContainer" class="space-y-1.5 overflow-y-auto flex-1 pb-4 min-h-[260px]"></div>
+        </div>
         <div id="stockViewForm" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6 min-h-0">
           <div class="p-3.5 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
             <span class="text-xs font-bold text-purple-300 uppercase block flex items-center gap-1.5"><i class="ph-bold ph-tag"></i> Datos del Repuesto</span>
@@ -355,7 +367,7 @@
     </div>
   </div>
 
-  <div id="cashModal" class="app-modal">
+  <div id="cashModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><div class="flex items-center gap-2"><i class="ph-bold ph-currency-dollar-simple text-emerald-400 text-lg"></i><div><h3 class="font-bold text-white text-sm">Caja Local</h3><span class="text-[10px] text-zinc-400">Sucursal: <b id="cashModalTitleBranch" class="text-emerald-400">Central</b></span></div></div><button type="button" onclick="window.closeModal('cashModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="p-3.5 overflow-y-auto space-y-3 flex-1 pb-8">
@@ -370,7 +382,7 @@
     </div>
   </div>
 
-  <div id="detailModal" class="app-modal">
+  <div id="detailModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0"><div><div class="flex items-center gap-1.5"><span id="dtlOrderId" class="text-xs font-mono font-bold text-iosBlue">#OL-0000</span></div><h3 id="dtlDeviceTitle" class="text-sm font-bold text-white mt-0.5">Dispositivo</h3></div><div class="flex items-center gap-2"><button type="button" onclick="window.openEditRepairModal()" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-[10px] border border-zinc-700 flex items-center gap-1 active:scale-95 transition"><i class="ph-bold ph-pencil-simple text-amber-400"></i> Editar</button><button type="button" onclick="window.closeModal('detailModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div></div>
       <div class="overflow-y-auto p-4 space-y-3.5 flex-1 pb-10">
@@ -388,7 +400,7 @@
     </div>
   </div>
 
-  <div id="editRepairModal" class="app-modal">
+  <div id="editRepairModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0"><h3 class="text-sm font-bold text-white">Editar Orden</h3><button type="button" onclick="window.closeModal('editRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
       <form onsubmit="window.saveEditedRepair(event)" class="overflow-y-auto p-4 space-y-3 flex-1 pb-8">
@@ -401,7 +413,7 @@
     </div>
   </div>
 
-  <div id="installModal" class="app-modal">
+  <div id="installModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Compartir Web App</h3><button type="button" onclick="window.closeModal('installModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-1"><span class="font-bold text-emerald-400 uppercase text-[10px] flex items-center gap-1"><i class="ph-bold ph-shield-check"></i> Privacidad Garantizada</span><p class="text-zinc-300 leading-tight">El dispositivo que abra este enlace iniciará con un taller en blanco, salvo que lo vincules usando el código de tu taller maestro.</p></div>
@@ -410,7 +422,7 @@
     </div>
   </div>
 
-  <div id="saleTicketModal" class="app-modal">
+  <div id="saleTicketModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Comprobante de Venta</h3><button type="button" onclick="window.closeModal('saleTicketModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div id="saleTicketPreviewBox" class="p-3 bg-white text-black rounded-xl overflow-hidden font-mono text-[11px] leading-snug"></div>
@@ -418,8 +430,8 @@
     </div>
   </div>
 
-  <!-- PANEL USUARIOS Y DISPOSITIVOS (COMPLETO) -->
-  <div id="switchUserModal" class="app-modal">
+  <!-- PANEL USUARIOS Y DISPOSITIVOS BLINDADO -->
+  <div id="switchUserModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3.5 text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Personal & Dispositivos</h3><button type="button" onclick="window.closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       
@@ -461,7 +473,7 @@
     </div>
   </div>
 
-  <div id="teamModal" class="app-modal">
+  <div id="teamModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Equipo & Sincronización</h3><button type="button" onclick="window.closeModal('teamModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800"><span class="text-[10px] text-zinc-400 block mb-0.5">Código Taller (Red Global):</span><div id="modalWorkshopCodeDisplay" class="font-mono text-base font-bold text-white">TALLER-XXXX</div></div>
@@ -470,12 +482,11 @@
       <button type="button" onclick="window.leaveWorkshop()" class="w-full py-2.5 bg-rose-950/60 hover:bg-rose-900 border border-rose-800/50 text-rose-300 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition active:scale-95 mt-2">
         <i class="ph-bold ph-plugs-connected text-rose-400"></i> Desvincular este dispositivo de la red
       </button>
-
       <button type="button" onclick="window.closeModal('teamModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1">Cerrar</button>
     </div>
   </div>
 
-  <div id="settingsModal" class="app-modal">
+  <div id="settingsModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3 shadow-2xl text-xs text-zinc-300 pb-safe modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><div class="flex items-center gap-1.5"><i class="ph-bold ph-gear text-lg text-zinc-300"></i><h3 class="font-bold text-white text-sm">Ajustes Taller</h3></div><button type="button" onclick="window.closeModal('settingsModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="overflow-y-auto space-y-3 flex-1 pb-6">
@@ -488,18 +499,31 @@
     </div>
   </div>
 
-  <!-- 14. LICENCIAS Y PANEL MAESTRO CREADOR (BAJO CLAVE 8408) -->
-  <div id="licenseModal" class="app-modal">
+  <!-- 14. LICENCIAS Y PANEL MAESTRO CREADOR (CON DESBLOQUEO DIRECTO 8408) -->
+  <div id="licenseModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg p-4 space-y-3.5 pb-safe shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="overflow-y-auto space-y-3.5 flex-1 pr-1 pb-6">
         <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center">
           <span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia:</span>
-          <div id="licenseStatusText" class="font-mono text-base font-black text-emerald-400 py-1 select-none">VITALICIO</div>
-          <span id="licenseDetailCountdown" class="text-[11px] text-zinc-400 font-mono block mt-0.5">Versión activa Premium</span>
-          <button type="button" onclick="window.secretTap()" class="mt-4 text-[10px] bg-indigo-900 hover:bg-indigo-800 text-indigo-300 border border-indigo-700/50 px-4 py-2 rounded-xl font-bold transition active:scale-95 flex items-center justify-center gap-1.5 mx-auto shadow-md">
-            <i class="ph-bold ph-key text-base"></i> Acceder al Panel Maestro Creador
-          </button>
+          <div id="licenseStatusText" class="font-mono text-base font-black text-amber-400 py-1 select-none">DEMO</div>
+          <span id="licenseDetailCountdown" class="text-[11px] text-zinc-400 font-mono block mt-0.5">Versión activa en este equipo</span>
+
+          <!-- CAJA VISIBLE Y DIRECTA PARA DESBLOQUEAR EL PANEL MAESTRO (SIN PROMPT) -->
+          <div class="mt-4 p-3 bg-zinc-900 rounded-2xl border border-indigo-700/60 text-center space-y-2">
+            <span class="text-[10px] font-bold text-indigo-300 uppercase tracking-wider flex items-center justify-center gap-1">
+              <i class="ph-bold ph-key text-base"></i> Acceso Creador (Panel Maestro)
+            </span>
+            <div class="flex items-center justify-center gap-2 max-w-xs mx-auto">
+              <input type="password" id="inpMasterCreatorPin" placeholder="PIN Maestro (8408)" 
+                     class="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono text-center text-xs outline-none focus:border-indigo-400"
+                     onkeydown="if(event.key==='Enter') window.unlockMasterCreator();">
+              <button type="button" onclick="window.unlockMasterCreator()" 
+                      class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-bold rounded-xl text-xs shadow-md transition">
+                Entrar
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- PANEL MAESTRO CREADOR DESBLOQUEADO SOLO CON 8408 -->
@@ -546,7 +570,7 @@
   <!-- SISTEMA JAVASCRIPT GLOBAL BLINDADO (GESTIÓN COMPLETA Y SEGURIDAD)                   -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v22.0.0'; 
+    var APP_CODE_VERSION = 'v21.0.0'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var VERSION_STORAGE_KEY = 'openline_code_installed_version';
@@ -573,11 +597,23 @@
     function $(id) { return document.getElementById(id); }
 
     window.openModal = function(id) { 
-      try { var el = $(id); if (el) { el.classList.remove('hidden'); el.classList.add('flex'); el.style.display = 'flex'; } } catch(e) {} 
+      try { 
+        var el = $(id); 
+        if (el) { 
+          el.classList.add('active'); 
+          el.style.display = 'flex'; 
+        } 
+      } catch(e) {} 
     };
     
     window.closeModal = function(id) { 
-      try { var el = $(id); if (el) { el.classList.remove('flex'); el.classList.add('hidden'); el.style.display = 'none'; } } catch(e) {} 
+      try { 
+        var el = $(id); 
+        if (el) { 
+          el.classList.remove('active'); 
+          el.style.display = 'none'; 
+        } 
+      } catch(e) {} 
     };
 
     window.dismissBetaBanner = function() {
@@ -634,18 +670,40 @@
     var cashMovements = StorageShield.load('cash', []); if(!Array.isArray(cashMovements)) cashMovements = [];
     var cashClosures = StorageShield.load('cashClosures', []); if(!Array.isArray(cashClosures)) cashClosures = [];
     var sales = StorageShield.load('sales', []); if(!Array.isArray(sales)) sales = [];
-    var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPin: '1234', adminPhone: '', branches: ['Central'], usersByBranch: {}, isCreatorPinSet: false }, StorageShield.load('settings', {}));
+    var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPin: '1234', adminPhone: '', branches: ['Central'], usersByBranch: {} }, StorageShield.load('settings', {}));
     if(!Array.isArray(workshopSettings.branches)) workshopSettings.branches = ['Central'];
     
     var activeUser = 'Admin'; try { activeUser = localStorage.getItem(ACTIVE_USER_KEY) || 'Admin'; } catch(e){}
     var currentFilter = 'ALL'; var currentBranchFilter = localBranch; var currentVentasPeriod = 'HOY'; var selectedRepairId = null;
+
+    // --- GESTIÓN DE LICENCIAS (DEMO VS VITALICIO) ---
+    window.checkLicenseStatus = function() {
+      var lic = StorageShield.load('license', null);
+      if (lic && (lic.type === 'LIFETIME' || lic.type === 'PRO' || lic.type === 'SEM6')) return 'PRO';
+      if (localStorage.getItem(PERMANENT_LICENSE_KEY) === 'TRUE') return 'PRO';
+      return 'DEMO';
+    };
+
+    window.updateLicenseUI = function() {
+      var status = window.checkLicenseStatus();
+      var txt = $('headerLicenseText'); var btn = $('headerLicenseBtn'); var modalTxt = $('licenseStatusText');
+      if (status === 'PRO') {
+          if(txt) txt.textContent = 'VITALICIO'; 
+          if(btn) btn.className = 'text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
+          if(modalTxt) { modalTxt.textContent = 'VITALICIO'; modalTxt.className = 'font-mono text-base font-black text-emerald-400 py-1 select-none'; }
+      } else {
+          if(txt) txt.textContent = 'DEMO'; 
+          if(btn) btn.className = 'text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition';
+          if(modalTxt) { modalTxt.textContent = 'VERSIÓN DEMO'; modalTxt.className = 'font-mono text-base font-black text-amber-400 py-1 select-none'; }
+      }
+    };
 
     // --- RECUPERACIÓN DE CLAVE VÍA WHATSAPP ---
     window.recoverAdminPinWA = function() {
       var pin = (workshopSettings.adminPin || '1234').trim();
       var phone = (workshopSettings.adminPhone || '').replace(/[^0-9]/g, '');
       if (!phone) {
-        phone = prompt("📱 RECUPERACIÓN DE CLAVE\nNo tienes un WhatsApp configurado en Ajustes.\n\nIngresa tu número con código de país (ej: 5493777123456):");
+        phone = prompt("📱 RECUPERACIÓN DE CLAVE\nNo tienes un WhatsApp configurado en Ajustes.\n\nIngresa tu número con código de país (ej: 5491123456789):");
         if (!phone) return;
         phone = phone.replace(/[^0-9]/g, '');
         workshopSettings.adminPhone = phone;
@@ -667,6 +725,31 @@
         window.showToast("Error", "Clave incorrecta."); 
       }
     };
+
+    // --- DESBLOQUEO INFALIBLE PANEL MAESTRO (PIN: 8408) ---
+    window.unlockMasterCreator = function() {
+      var input = $('inpMasterCreatorPin');
+      var pin = input ? input.value.trim() : '';
+      if (pin === '8408') {
+        var panel = $('masterAdminUnlockedView');
+        if (panel) {
+          panel.classList.remove('hidden');
+          panel.style.display = 'block';
+        }
+        if ($('genTargetWorkshopCode')) $('genTargetWorkshopCode').value = currentWorkshopId;
+        window.renderMasterTelemetry();
+        window.requestTelemetryBroadcast();
+        window.showToast("Acceso Concedido", "Panel Maestro Creador desbloqueado.");
+        if (input) input.value = '';
+        setTimeout(function() {
+          if (panel) panel.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
+      } else {
+        window.showToast("Error", "Clave maestra incorrecta.");
+        if (input) input.select();
+      }
+    };
+    window.secretTap = window.unlockMasterCreator;
 
     // --- GESTIÓN UNIFICADA: USUARIOS Y DISPOSITIVOS ---
     window.renderUnifiedUsersAndDevices = function() {
@@ -699,9 +782,7 @@
           var branchControl = isMainAdmin ? 
             '<span class="text-[9px] font-mono font-bold text-iosBlue bg-iosBlue/10 px-2 py-0.5 rounded">GLOBAL</span>' :
             '<select onchange="window.changeUserBranch(\'' + u.name + '\', \'' + u.branch + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + branchOptions + '</select>';
-          var deleteButton = isMainAdmin ? 
-            '' : 
-            '<button type="button" onclick="window.deleteStaffMember(\'' + u.name + '\', \'' + u.branch + '\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center active:scale-95 transition" title="Eliminar usuario"><i class="ph-bold ph-trash"></i></button>';
+          var deleteButton = isMainAdmin ? '' : '<button type="button" onclick="window.deleteStaffMember(\'' + u.name + '\', \'' + u.branch + '\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center active:scale-95 transition" title="Eliminar usuario"><i class="ph-bold ph-trash"></i></button>';
 
           return '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800">' +
                    '<div class="flex items-center gap-1.5 min-w-0 cursor-pointer flex-1" onclick="window.selectActiveUser(\'' + u.name + '\')">' +
@@ -779,9 +860,7 @@
 
     window.checkBannedStatus = function() {
       if(workshopSettings.bannedDevices && workshopSettings.bannedDevices.includes(myDeviceId)) {
-        localStorage.removeItem(WORKSHOP_ID_KEY);
-        alert("Tu acceso ha sido revocado por el Administrador.");
-        window.location.reload();
+        localStorage.removeItem(WORKSHOP_ID_KEY); alert("Tu acceso ha sido revocado por el Administrador."); window.location.reload();
       }
     };
 
@@ -789,9 +868,7 @@
       window.requestAdminPinAuth("Desvincular este dispositivo permanentemente", function() {
         if(!workshopSettings.bannedDevices) workshopSettings.bannedDevices = [];
         if(!workshopSettings.bannedDevices.includes(devId)) workshopSettings.bannedDevices.push(devId);
-        StorageShield.save('settings', workshopSettings);
-        window.renderUnifiedUsersAndDevices();
-        window.showToast("Desvinculado", "El dispositivo ha sido expulsado.");
+        StorageShield.save('settings', workshopSettings); window.renderUnifiedUsersAndDevices(); window.showToast("Desvinculado", "El dispositivo ha sido expulsado.");
       });
     };
     
@@ -1254,7 +1331,7 @@
             posScanner.start({ facingMode: "environment" }, config, function(decodedText) { window.addPosItemByCode(decodedText); window.showToast("Escaneado", decodedText); if (navigator.vibrate) navigator.vibrate(80);
             }).catch(function(err){ 
               window.showToast("Aviso", "Iniciando frontal...");
-              posScanner.start({ facingMode: "user" }, config, function(text) { window.addPosItemByCode(text); window.showToast("Escaneado", text); }
+              posScanner.start({ facingMode: "user" }, { fps: 15, qrbox: {width: 250, height: 250} }, function(text) { window.addPosItemByCode(text); window.showToast("Escaneado", text); }
               ).catch(function(e) { window.showToast("Error", "Cámara no disponible."); window.stopPosCam(); });
             });
           } catch(e) { window.showToast("Error", "Cámara no soportada."); window.stopPosCam(); }
@@ -1340,7 +1417,7 @@
       if (dtlGrid && dtlSec) {
         if (r.photos && r.photos.length > 0) {
           dtlSec.style.display = 'block';
-          dtlGrid.innerHTML = r.photos.map(function(src) { return '<div class="w-14 h-14 shrink-0 rounded-xl overflow-hidden border border-zinc-700 shadow-sm cursor-pointer" onclick="window.open(\''+src+'\', \'_blank\')"><img src="'+src+'" class="w-full h-full object-cover"></div>'; }).join('');
+          dtlGrid.innerHTML = r.photos.map(function(src) { return '<div class="w-14 h-14 shrink-0 rounded-xl overflow-hidden border border-zinc-700 shadow-sm cursor-pointer" onclick="window.open(\''+src+'\', \'_blank\')"><img src="' + src + '" class="w-full h-full object-cover"></div>'; }).join('');
         } else { dtlSec.style.display = 'none'; }
       }
       window.openModal('detailModal');
@@ -1446,7 +1523,7 @@
           var p = parseFloat(pct);
           if(!isNaN(p) && p > 0) {
             var count = 0; stockItems.forEach(function(i) { if(i.branch === localBranch) { i.price = Math.round(i.price * (1 + (p / 100))); count++; } });
-            StorageShield.save('stock', stockItems); window.renderStockList(); window.showToast("Actualizado", "Precios subieron " + p + "% en " + count + " productos.");
+            StorageShield.save('stock', stockItems); window.renderStockList(); window.showToast("Actualizado", "Precios subieron " + p + "% en " + count + " repuestos.");
           } else { window.showToast("Error", "Porcentaje no válido"); }
         }
       });
@@ -1507,7 +1584,7 @@
             stockScanner.start({ facingMode: "environment" }, config, function(decodedText) {
                 if($('stkCode')) $('stkCode').value = decodedText; window.showToast("Código Detectado", decodedText); window.stopStockCam(); window.switchStockTab('FORM');
             }).catch(function(err){ 
-                window.showToast("Aviso", "Iniciando cámara frontal...");
+                window.showToast("Aviso", "Iniciando frontal...");
                 stockScanner.start({ facingMode: "user" }, config, function(txt) {
                   if($('stkCode')) $('stkCode').value = txt; window.showToast("Código Detectado", txt); window.stopStockCam(); window.switchStockTab('FORM');
                 }).catch(function(e) { window.showToast("Error", "Cámara bloqueada o sin permisos."); window.stopStockCam(); });
@@ -1583,7 +1660,7 @@
       var branchActiveMovements = cashMovements.filter(function(c) { return (!c.branch || c.branch === currentCashBranch) && !c.closed; });
       var inc = 0, exp = 0; branchActiveMovements.forEach(function(c) { var amt = parseFloat(c.amount) || 0; if (c.type === 'INCOME') inc += amt; else exp += amt; });
       var net = inc - exp;
-      if (branchActiveMovements.length === 0 && net === 0) { window.showToast("Aviso", "No hay movimientos para cerrar."); return; }
+      if (branchActiveMovements.length === 0 && net === 0) { window.showToast("Aviso", "No hay movimientos para cerrar en " + currentCashBranch); return; }
 
       if (confirm("¿Confirmas el Cierre en " + currentCashBranch + "?\n\n🟢 Ingresos: $" + inc + "\n🔴 Egresos: $" + exp + "\n💰 Saldo a Rendir: $" + net)) {
         var closureId = 'CIE-' + Date.now();
@@ -1638,7 +1715,7 @@
       }).join('');
     };
 
-    // --- RECEPTOR MQTT Y SINCRONIZACIÓN EN TIEMPO REAL ---
+    // --- RECEPTOR MQTT (Sincronización Inmediata y Comandos) ---
     function mergeByDate(localArr, remoteArr) {
       if (!Array.isArray(remoteArr)) return localArr || [];
       if (!Array.isArray(localArr)) localArr = [];
@@ -1669,7 +1746,6 @@
 
         window.broadcastPresence();
 
-        // Heartbeat y actualización cada 3 segundos
         setInterval(function() {
           window.broadcastPresence();
           var now = Date.now(); var count = 0;
@@ -1735,15 +1811,33 @@
                 StorageShield.save('settings', workshopSettings, true);
                 if(typeof window.renderUnifiedUsersAndDevices === 'function') window.renderUnifiedUsersAndDevices();
               }
-              if(payload.settings.isCreatorPinSet !== undefined) {
-                workshopSettings.isCreatorPinSet = payload.settings.isCreatorPinSet;
-                StorageShield.save('settings', workshopSettings, true);
-              }
+            }
+            // Adopción automática si el taller sincronizado es PRO
+            if(payload.license && (payload.license.type === 'LIFETIME' || payload.license.type === 'PRO' || payload.license.type === 'SEM6')) {
+              StorageShield.save('license', payload.license, true);
+              localStorage.setItem(PERMANENT_LICENSE_KEY, 'TRUE');
+              window.updateLicenseUI();
             }
           }
         } catch(e) {}
       });
     }
+
+    window.broadcastPresence = function() {
+      if (mqttClient && mqttClient.connected) {
+        var payload = { 
+          workshopId: currentWorkshopId.toUpperCase(), 
+          deviceId: myDeviceId, 
+          user: activeUser, 
+          branch: localBranch, 
+          name: workshopSettings.name || currentWorkshopId, 
+          licenseType: window.checkLicenseStatus(), 
+          time: Date.now() 
+        };
+        mqttClient.publish('openline/v4/global/telemetry/report', JSON.stringify(payload));
+        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', JSON.stringify({ devId: myDeviceId, user: activeUser, branch: localBranch }));
+      }
+    };
 
     // --- BOOT MAESTRO BLINDADO ---
     document.addEventListener('DOMContentLoaded', function() {
@@ -1756,15 +1850,21 @@
           
           window.checkBannedStatus();
           
-          // Registro de telemetría propio
-          window.saveTelemetryData({ workshopId: currentWorkshopId.toUpperCase(), deviceId: myDeviceId, user: activeUser, branch: localBranch, name: workshopSettings.name, licenseType: 'VITALICIO' });
+          // Registro de telemetría propio con estado de licencia real
+          window.saveTelemetryData({ 
+            workshopId: currentWorkshopId.toUpperCase(), 
+            deviceId: myDeviceId, 
+            user: activeUser, 
+            branch: localBranch, 
+            name: workshopSettings.name, 
+            licenseType: window.checkLicenseStatus() 
+          });
 
-          // Licencia permanente
-          localStorage.setItem(PERMANENT_LICENSE_KEY, 'TRUE');
-          StorageShield.save('license', { type: 'LIFETIME', key: 'PRO-VITALICIO-AUTOSHIELD', expiresAt: 9999999999999 }, true);
           window.updateLicenseUI();
-
-          window.renderBranchTabs(); window.renderRepairsList(); window.updateCounters(); window.updateCashBalanceUI();
+          window.renderBranchTabs(); 
+          window.renderRepairsList(); 
+          window.updateCounters(); 
+          window.updateCashBalanceUI();
           
           // Mostrar banner animado de sincronización
           setTimeout(function() {
