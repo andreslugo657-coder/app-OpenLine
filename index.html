@@ -34,7 +34,7 @@
     ::-webkit-scrollbar { display: none; width: 0; height: 0; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Modales adaptados a Chrome y Safari */
+    /* Modales adaptados */
     .app-modal {
       display: none; position: fixed; inset: 0; z-index: 9999;
       background-color: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
@@ -72,14 +72,13 @@
         <h4 class="font-bold text-emerald-300 text-xs uppercase tracking-wider">Sincronización en Tiempo Real</h4>
         <span class="text-[9px] font-mono bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded-full font-bold">1s LIVE</span>
       </div>
-      <p class="text-[10px] text-zinc-200 leading-relaxed">Red de talleres conectada. Cambios de stock, ingresos, caja y ventas sincronizados segundo a segundo.</p>
+      <p class="text-[10px] text-zinc-200 leading-relaxed">Red de talleres conectada. Cambios de stock, ingresos, caja y ventas se sincronizan segundo a segundo.</p>
     </div>
     <button type="button" onclick="window.dismissRealtimeBanner()" class="bg-emerald-900/60 p-1.5 rounded-lg text-emerald-300 hover:text-white transition active:scale-95">
       <i class="ph-bold ph-x text-sm"></i>
     </button>
   </div>
 
-  <!-- ENCABEZADO PRINCIPAL -->
   <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
     <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full">
       <div class="flex items-center gap-2 min-w-0">
@@ -97,8 +96,8 @@
             <span class="text-[9px] font-mono bg-emerald-950 border border-emerald-700/60 text-emerald-400 px-1.5 py-0.5 rounded-full flex items-center gap-1">
               <i class="ph-bold ph-users text-[9px]"></i> <span id="onlineUsersCount">1</span>
             </span>
-            <button type="button" id="headerLicenseBtn" onclick="window.openLicenseModal()" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition">
-              <i class="ph-bold ph-shield-check"></i> <span id="headerLicenseText">VITALICIO</span>
+            <button type="button" id="headerLicenseBtn" onclick="window.openLicenseModal()" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition">
+              <i class="ph-bold ph-shield-check"></i> <span id="headerLicenseText">DEMO</span>
             </button>
           </div>
           <span id="appHeaderSubtitle" class="text-[10px] text-zinc-400 font-medium truncate">Servicio Técnico Profesional</span>
@@ -192,6 +191,13 @@
     </div>
   </main>
 
+  <div class="fixed bottom-12 left-1/2 -translate-x-1/2 z-[9000] pointer-events-none w-max">
+    <div class="bg-emerald-950/90 border border-emerald-600/70 text-emerald-300 text-[10px] px-3.5 py-1 rounded-full flex items-center gap-1.5 shadow-[0_0_15px_rgba(52,211,153,0.2)] backdrop-blur-md">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span class="font-bold tracking-wide">Sincronizando con dispositivos en tiempo real</span>
+    </div>
+  </div>
+
   <div class="ticker-wrap pb-safe border-t border-zinc-800">
     <div class="ticker text-[10px] font-bold text-zinc-500 tracking-widest uppercase flex items-center gap-3">
       <span>🚀 DESARROLLADO POR OPENLINE • INDUSTRIA ARGENTINA 🇦🇷 • SOFTWARE PARA TALLERES PROFESIONALES 🚀</span>
@@ -202,7 +208,6 @@
   <!-- MODALES DE LA APLICACIÓN                                                            -->
   <!-- =================================================================================== -->
 
-  <!-- 1. SUCURSAL INICIAL -->
   <div id="startupBranchModal" style="display: none;" class="hidden fixed inset-0 z-[100000] bg-black/90 backdrop-blur-sm items-center justify-center p-4">
     <div class="bg-zinc-900 border border-zinc-800 rounded-3xl w-full max-w-sm p-5 space-y-4 text-xs text-zinc-300 shadow-2xl">
       <div class="text-center space-y-1.5"><div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-full flex items-center justify-center mx-auto text-xl shadow-lg"><i class="ph-bold ph-storefront"></i></div><h3 class="font-black text-white text-base">Configuración de Sucursal</h3><p class="text-[11px] text-zinc-400 leading-tight">Selecciona la sucursal física de este equipo.</p></div>
@@ -210,7 +215,6 @@
     </div>
   </div>
 
-  <!-- 2. NUEVO INGRESO -->
   <div id="newRepairModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0">
@@ -280,7 +284,6 @@
     </div>
   </div>
 
-  <!-- 3. VENTAS POS -->
   <div id="salesModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 sm:border border-amber-600/70 rounded-t-3xl sm:rounded-3xl w-full max-w-4xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
       <div class="p-3 border-b border-zinc-800 shrink-0 space-y-2">
@@ -292,32 +295,15 @@
         </div>
       </div>
       <div class="flex-1 overflow-hidden relative flex flex-col p-3 min-h-0">
-        <div id="posViewCatalog" class="flex-1 flex flex-col space-y-2.5 overflow-hidden min-h-0">
-          <div class="relative shrink-0"><i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i><input type="text" id="posSearchProduct" oninput="window.renderPosCatalog()" placeholder="Buscar repuesto en la red..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white"></div>
-          <div id="posCatalogGrid" class="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-2 content-start pb-12 min-h-[260px]"></div>
-          <div id="posCatalogCartBar" class="hidden absolute bottom-2 inset-x-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-xl p-2.5 shadow-2xl items-center justify-between cursor-pointer active:scale-95 transition" onclick="window.switchPosTab('CART')">
-            <span class="font-bold flex items-center gap-1.5 text-xs"><i class="ph-bold ph-shopping-cart text-base"></i> <span id="posBarItemCount">0 items en carrito</span></span>
-            <span class="font-mono font-black text-xs bg-black/30 px-2.5 py-0.5 rounded-lg" id="posBarTotal">$0</span>
-          </div>
-        </div>
+        <div id="posViewCatalog" class="flex-1 flex flex-col space-y-2.5 overflow-hidden min-h-0"><div class="relative shrink-0"><i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i><input type="text" id="posSearchProduct" oninput="window.renderPosCatalog()" placeholder="Buscar repuesto en la red..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white"></div><div id="posCatalogGrid" class="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-2 content-start pb-12 min-h-[260px]"></div><div id="posCatalogCartBar" class="hidden absolute bottom-2 inset-x-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-xl p-2.5 shadow-2xl items-center justify-between cursor-pointer active:scale-95 transition" onclick="window.switchPosTab('CART')"><span class="font-bold flex items-center gap-1.5 text-xs"><i class="ph-bold ph-shopping-cart text-base"></i> <span id="posBarItemCount">0 items en carrito</span></span><span class="font-mono font-black text-xs bg-black/30 px-2.5 py-0.5 rounded-lg" id="posBarTotal">$0</span></div></div>
         <div id="posViewScanManual" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6 min-h-0">
-          <div class="p-3 bg-zinc-950 rounded-2xl border border-purple-800/80 space-y-2 shrink-0">
-            <div class="flex items-center justify-between"><span class="text-[10px] font-bold text-purple-300 uppercase flex items-center gap-1"><i class="ph-bold ph-barcode text-sm"></i> Lector de Códigos</span><button type="button" id="btnToggleScanner" onclick="window.togglePosCam()" class="px-2.5 py-1 bg-purple-900 text-purple-200 rounded-lg font-bold text-xs flex items-center gap-1 active:scale-95"><i class="ph-bold ph-camera"></i> Iniciar</button></div>
-            <div id="posScannerBox" class="hidden flex-col p-2 bg-black rounded-xl border border-purple-800 gap-1.5"><button type="button" onclick="window.stopPosCam()" class="text-rose-400 font-bold self-end bg-rose-950/40 px-2.5 py-0.5 rounded text-[10px] active:scale-95">Cerrar</button><div id="pos-qr-reader" class="w-full bg-black rounded-xl overflow-hidden"></div></div>
-          </div>
-          <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 shrink-0">
-            <span class="text-[10px] font-bold text-amber-400 uppercase flex items-center gap-1"><i class="ph-bold ph-tag text-sm"></i> Venta Manual Rápida</span>
-            <input type="text" id="posManualName" placeholder="Descripción (Funda, Cable, etc)..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-            <div class="flex gap-2"><input type="number" id="posManualPrice" placeholder="Precio ($)" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono font-bold"><button type="button" onclick="window.addManualPosItem()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shadow active:scale-95 transition">+ Agregar</button></div>
-          </div>
+          <div class="p-3 bg-zinc-950 rounded-2xl border border-purple-800/80 space-y-2 shrink-0"><div class="flex items-center justify-between"><span class="text-[10px] font-bold text-purple-300 uppercase flex items-center gap-1"><i class="ph-bold ph-barcode text-sm"></i> Lector de Códigos</span><button type="button" id="btnToggleScanner" onclick="window.togglePosCam()" class="px-2.5 py-1 bg-purple-900 text-purple-200 rounded-lg font-bold text-xs flex items-center gap-1 active:scale-95"><i class="ph-bold ph-camera"></i> Iniciar</button></div><div id="posScannerBox" class="hidden flex-col p-2 bg-black rounded-xl border border-purple-800 gap-1.5"><button type="button" onclick="window.stopPosCam()" class="text-rose-400 font-bold self-end bg-rose-950/40 px-2.5 py-0.5 rounded text-[10px] active:scale-95">Cerrar</button><div id="pos-qr-reader" class="w-full bg-black rounded-xl overflow-hidden"></div></div></div>
+          <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 shrink-0"><span class="text-[10px] font-bold text-amber-400 uppercase flex items-center gap-1"><i class="ph-bold ph-tag text-sm"></i> Venta Manual Rápida</span><input type="text" id="posManualName" placeholder="Descripción (Funda, Cable, etc)..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white"><div class="flex gap-2"><input type="number" id="posManualPrice" placeholder="Precio ($)" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono font-bold"><button type="button" onclick="window.addManualPosItem()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shadow active:scale-95 transition">+ Agregar</button></div></div>
         </div>
         <div id="posViewCart" class="hidden flex-1 flex-col space-y-2.5 overflow-y-auto pb-4 min-h-0">
           <div class="flex items-center justify-between pb-1 border-b border-zinc-800"><span class="font-bold text-white text-xs uppercase">Artículos cargados</span><button type="button" onclick="window.clearPosCart()" class="text-[10px] text-rose-400 font-bold px-2 py-0.5 bg-rose-950/40 rounded">Vaciar</button></div><div id="posCartContainer" class="flex-1 space-y-1.5 overflow-y-auto min-h-[120px]"></div>
           <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 shrink-0">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <div><label class="text-[9px] text-zinc-400 block mb-0.5">Forma de Pago:</label><select id="posPaymentMethod" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-1.5 text-white font-medium text-xs"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia / Mercado Pago</option><option value="Tarjeta">Tarjeta</option></select></div>
-              <div><label class="text-[9px] text-zinc-400 block mb-0.5">Cliente (Opcional):</label><input type="text" id="posCustomerName" placeholder="Nombre..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white text-xs"></div>
-            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><div><label class="text-[9px] text-zinc-400 block mb-0.5">Forma de Pago:</label><select id="posPaymentMethod" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-1.5 text-white font-medium text-xs"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia / Mercado Pago</option><option value="Tarjeta">Tarjeta</option></select></div><div><label class="text-[9px] text-zinc-400 block mb-0.5">Cliente (Opcional):</label><input type="text" id="posCustomerName" placeholder="Nombre..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white text-xs"></div></div>
             <div class="flex items-center justify-between pt-1 border-t border-zinc-800"><span class="text-xs uppercase font-bold text-zinc-400">Total a Cobrar:</span><span id="posTotalAmount" class="font-mono text-xl font-black text-amber-400">$0</span></div>
             <button type="button" onclick="window.completePosSale()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-xs shadow active:scale-95 transition">Cobrar Venta a Caja</button>
           </div>
@@ -326,7 +312,6 @@
     </div>
   </div>
 
-  <!-- 4. HISTORIAL DE VENTAS -->
   <div id="ventasModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-indigo-700/80 rounded-t-3xl sm:rounded-3xl w-full max-w-3xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
@@ -342,7 +327,6 @@
     </div>
   </div>
 
-  <!-- 5. CONTROL DE STOCK -->
   <div id="stockModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 sm:border border-purple-800 rounded-t-3xl sm:rounded-3xl w-full max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
       <div class="p-3 border-b border-zinc-800 shrink-0 space-y-2">
@@ -354,10 +338,7 @@
         </div>
       </div>
       <div class="flex-1 overflow-hidden relative flex flex-col p-3 min-h-0">
-        <div id="stockViewList" class="flex-1 flex flex-col space-y-2.5 overflow-hidden min-h-0">
-          <div class="flex gap-2 shrink-0"><div class="relative flex-1"><i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i><input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-2 text-xs text-white"></div><button type="button" onclick="window.bulkIncreasePrices()" class="px-3 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs flex items-center gap-1 shrink-0 shadow active:scale-95 transition"><i class="ph-bold ph-trend-up"></i> % Suba</button></div>
-          <div id="stockListContainer" class="space-y-1.5 overflow-y-auto flex-1 pb-4 min-h-[260px]"></div>
-        </div>
+        <div id="stockViewList" class="flex-1 flex flex-col space-y-2.5 overflow-hidden min-h-0"><div class="flex gap-2 shrink-0"><div class="relative flex-1"><i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i><input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-2 text-xs text-white"></div><button type="button" onclick="window.bulkIncreasePrices()" class="px-3 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs flex items-center gap-1 shrink-0 shadow active:scale-95 transition"><i class="ph-bold ph-trend-up"></i> % Suba</button></div><div id="stockListContainer" class="space-y-1.5 overflow-y-auto flex-1 pb-4 min-h-[260px]"></div></div>
         <div id="stockViewForm" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6 min-h-0">
           <div class="p-3.5 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
             <span class="text-xs font-bold text-purple-300 uppercase block flex items-center gap-1.5"><i class="ph-bold ph-tag"></i> Datos del Repuesto</span>
@@ -375,7 +356,6 @@
     </div>
   </div>
 
-  <!-- 6. CAJA LOCAL -->
   <div id="cashModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><div class="flex items-center gap-2"><i class="ph-bold ph-currency-dollar-simple text-emerald-400 text-lg"></i><div><h3 class="font-bold text-white text-sm">Caja Local</h3><span class="text-[10px] text-zinc-400">Sucursal: <b id="cashModalTitleBranch" class="text-emerald-400">Central</b></span></div></div><button type="button" onclick="window.closeModal('cashModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -391,7 +371,6 @@
     </div>
   </div>
 
-  <!-- 7. DETALLES DE ORDEN -->
   <div id="detailModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0"><div><div class="flex items-center gap-1.5"><span id="dtlOrderId" class="text-xs font-mono font-bold text-iosBlue">#OL-0000</span></div><h3 id="dtlDeviceTitle" class="text-sm font-bold text-white mt-0.5">Dispositivo</h3></div><div class="flex items-center gap-2"><button type="button" onclick="window.openEditRepairModal()" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-[10px] border border-zinc-700 flex items-center gap-1 active:scale-95 transition"><i class="ph-bold ph-pencil-simple text-amber-400"></i> Editar</button><button type="button" onclick="window.closeModal('detailModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div></div>
@@ -410,7 +389,6 @@
     </div>
   </div>
 
-  <!-- 8. EDITAR ORDEN -->
   <div id="editRepairModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0"><h3 class="text-sm font-bold text-white">Editar Orden</h3><button type="button" onclick="window.closeModal('editRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -424,7 +402,6 @@
     </div>
   </div>
 
-  <!-- 9. COMPARTIR APP -->
   <div id="installModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Compartir Web App</h3><button type="button" onclick="window.closeModal('installModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -434,7 +411,6 @@
     </div>
   </div>
 
-  <!-- 10. PREVIEW TICKET -->
   <div id="saleTicketModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Comprobante de Venta</h3><button type="button" onclick="window.closeModal('saleTicketModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -443,7 +419,7 @@
     </div>
   </div>
 
-  <!-- 11. MODAL USUARIOS / PERSONAL & DISPOSITIVOS (COMPLETO) -->
+  <!-- 11. PANEL USUARIOS Y DISPOSITIVOS (COMPLETO) -->
   <div id="switchUserModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3.5 text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Personal & Dispositivos</h3><button type="button" onclick="window.closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -482,26 +458,19 @@
           <button type="button" onclick="window.addNewStaffMember()" class="px-3.5 py-2 bg-iosBlue text-white font-bold rounded-xl text-xs active:scale-95 transition">Agregar</button>
         </div>
       </div>
-      <button type="button" onclick="window.closeModal('switchUserModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl">Cerrar</button>
+      <button type="button" onclick="window.closeModal('switchUserModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-2">Cerrar</button>
     </div>
   </div>
 
-  <!-- 12. EQUIPO & MQTT -->
   <div id="teamModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Equipo & Sincronización</h3><button type="button" onclick="window.closeModal('teamModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800"><span class="text-[10px] text-zinc-400 block mb-0.5">Código Taller (Red Global):</span><div id="modalWorkshopCodeDisplay" class="font-mono text-base font-bold text-white">TALLER-XXXX</div></div>
       <div class="space-y-1"><label class="text-[10px] text-zinc-400 block font-bold">Vincular a otro Taller (Sincronizar red):</label><div class="flex gap-1.5"><input type="text" id="inpJoinWorkshopCode" placeholder="Ej: TALLER-8291" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase"><button type="button" onclick="window.joinWorkshop()" class="px-3.5 py-2 rounded-xl bg-indigo-600 text-white font-bold shadow active:scale-95">Unirme</button></div></div>
-      
-      <button type="button" onclick="window.leaveWorkshop()" class="w-full py-2.5 bg-rose-950/60 hover:bg-rose-900 border border-rose-800/50 text-rose-300 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition active:scale-95 mt-2">
-        <i class="ph-bold ph-plugs-connected text-rose-400"></i> Desvincular este dispositivo de la red
-      </button>
-
       <button type="button" onclick="window.closeModal('teamModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1">Cerrar</button>
     </div>
   </div>
 
-  <!-- 13. AJUSTES -->
   <div id="settingsModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3 shadow-2xl text-xs text-zinc-300 pb-safe modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><div class="flex items-center gap-1.5"><i class="ph-bold ph-gear text-lg text-zinc-300"></i><h3 class="font-bold text-white text-sm">Ajustes Taller</h3></div><button type="button" onclick="window.closeModal('settingsModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -515,51 +484,17 @@
     </div>
   </div>
 
-  <!-- 14. LICENCIAS Y PANEL MAESTRO CREADOR (BAJO CLAVE 8408) -->
   <div id="licenseModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg p-4 space-y-3.5 pb-safe shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="overflow-y-auto space-y-3.5 flex-1 pr-1 pb-6">
-        <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center">
-          <span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia:</span>
-          <div id="licenseStatusText" class="font-mono text-base font-black text-emerald-400 py-1 select-none">VITALICIO</div>
-          <span id="licenseDetailCountdown" class="text-[11px] text-zinc-400 font-mono block mt-0.5">Versión activa Premium</span>
-          <button type="button" onclick="window.secretTap()" class="mt-4 text-[10px] bg-indigo-900 hover:bg-indigo-800 text-indigo-300 border border-indigo-700/50 px-4 py-2 rounded-xl font-bold transition active:scale-95 flex items-center justify-center gap-1.5 mx-auto shadow-md">
-            <i class="ph-bold ph-key text-base"></i> Acceder al Panel Maestro Creador
-          </button>
-        </div>
-
-        <!-- PANEL MAESTRO CREADOR DESBLOQUEADO SOLO CON 8408 -->
+        <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center"><span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia:</span><div id="licenseStatusText" class="font-mono text-base font-black text-emerald-400 py-1 select-none">VITALICIO</div><span id="licenseDetailCountdown" class="text-[11px] text-zinc-400 font-mono block mt-0.5">Versión activa Premium</span><button type="button" onclick="window.secretTap()" class="mt-4 text-[10px] bg-indigo-900 hover:bg-indigo-800 text-indigo-300 border border-indigo-700/50 px-4 py-2 rounded-xl font-bold transition active:scale-95 flex items-center justify-center gap-1.5 mx-auto shadow-md"><i class="ph-bold ph-key text-base"></i> Acceder al Panel Maestro Creador</button></div>
         <div id="masterAdminUnlockedView" class="hidden p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3">
-          <div class="flex items-center justify-between border-b border-indigo-900 pb-2">
-            <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide">Panel Maestro Creador</span></div>
-            <button type="button" onclick="window.requestTelemetryBroadcast()" class="text-[9px] bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 active:scale-95"><i class="ph-bold ph-arrows-clockwise"></i> Sondear Red</button>
-          </div>
-          <div class="grid grid-cols-5 gap-1.5 text-center">
-            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-zinc-400 uppercase block font-bold">Talleres</span><b class="text-white text-xs font-mono" id="telTotalWorkshops">0</b></div>
-            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-emerald-400 uppercase block font-bold">En Línea</span><b class="text-emerald-400 text-xs font-mono" id="telOnlineWorkshops">0</b></div>
-            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-iosBlue uppercase block font-bold">Usuarios</span><b class="text-iosBlue text-xs font-mono" id="telOnlineUsers">0</b></div>
-            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-amber-400 uppercase block font-bold">DEMO</span><b class="text-amber-400 text-xs font-mono" id="telDemoWorkshops">0</b></div>
-            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-indigo-400 uppercase block font-bold">PRO</span><b class="text-indigo-400 text-xs font-mono" id="telProWorkshops">0</b></div>
-          </div>
-          <div class="space-y-1.5">
-            <span class="text-[9px] text-zinc-400 uppercase font-bold block">Talleres y Dispositivos Registrados:</span>
-            <div id="telemetryWorkshopsList" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
-          </div>
-          <div class="space-y-2 pt-2 border-t border-indigo-900/50">
-            <span class="text-[9px] font-bold text-indigo-300 uppercase">Generar Licencia de Activación:</span>
-            <div class="grid grid-cols-3 gap-1.5">
-              <input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="col-span-2 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono text-xs">
-              <select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold"><option value="SEM6">6 Meses</option><option value="LIFETIME" selected>Vitalicio</option></select>
-            </div>
-            <button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow active:scale-95">Emitir Clave Segura</button>
-            <div id="genResultBox" class="hidden p-2.5 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800">
-              <span id="genGeneratedKey" class="font-mono text-emerald-400 font-bold text-xs"></span>
-              <button type="button" onclick="window.copyKey()" class="px-2.5 py-1 bg-zinc-800 rounded text-[10px] text-white font-bold">Copiar</button>
-            </div>
-          </div>
+          <div class="flex items-center justify-between border-b border-indigo-900 pb-2"><div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide">Panel Maestro Creador</span></div><button type="button" onclick="window.requestTelemetryBroadcast()" class="text-[9px] bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 active:scale-95"><i class="ph-bold ph-arrows-clockwise"></i> Sondear Red</button></div>
+          <div class="grid grid-cols-5 gap-1.5 text-center"><div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-zinc-400 uppercase block font-bold">Talleres</span><b class="text-white text-xs font-mono" id="telTotalWorkshops">0</b></div><div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-emerald-400 uppercase block font-bold">En Línea</span><b class="text-emerald-400 text-xs font-mono" id="telOnlineWorkshops">0</b></div><div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-iosBlue uppercase block font-bold">Usuarios</span><b class="text-iosBlue text-xs font-mono" id="telOnlineUsers">0</b></div><div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-amber-400 uppercase block font-bold">DEMO</span><b class="text-amber-400 text-xs font-mono" id="telDemoWorkshops">0</b></div><div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-indigo-400 uppercase block font-bold">PRO</span><b class="text-indigo-400 text-xs font-mono" id="telProWorkshops">0</b></div></div>
+          <div class="space-y-1.5"><span class="text-[9px] text-zinc-400 uppercase font-bold block">Talleres y Dispositivos Registrados:</span><div id="telemetryWorkshopsList" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div></div>
+          <div class="space-y-2 pt-2 border-t border-indigo-900/50"><span class="text-[9px] font-bold text-indigo-300 uppercase">Generar Licencia de Activación:</span><div class="grid grid-cols-3 gap-1.5"><input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="col-span-2 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono text-xs"><select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold"><option value="SEM6">6 Meses</option><option value="LIFETIME" selected>Vitalicio</option></select></div><button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow active:scale-95">Emitir Clave Segura</button><div id="genResultBox" class="hidden p-2.5 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800"><span id="genGeneratedKey" class="font-mono text-emerald-400 font-bold text-xs"></span><button type="button" onclick="window.copyKey()" class="px-2.5 py-1 bg-zinc-800 rounded text-[10px] text-white font-bold">Copiar</button></div></div>
         </div>
-
         <div class="space-y-1.5 pt-1"><label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar o Renovar Licencia:</label><div class="flex gap-1.5"><input type="password" id="inpActivationKey" placeholder="Pega tu clave aquí..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs"><button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs active:scale-95">Activar</button></div></div>
       </div>
       <button type="button" onclick="window.closeModal('licenseModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1 shrink-0">Cerrar</button>
@@ -661,7 +596,9 @@
     var cashMovements = StorageShield.load('cash', []); if(!Array.isArray(cashMovements)) cashMovements = [];
     var cashClosures = StorageShield.load('cashClosures', []); if(!Array.isArray(cashClosures)) cashClosures = [];
     var sales = StorageShield.load('sales', []); if(!Array.isArray(sales)) sales = [];
-    var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPin: '1234', adminPhone: '', branches: ['Central'], usersByBranch: {}, isCreatorPinSet: false }, StorageShield.load('settings', {}));
+    
+    var loadedSettings = StorageShield.load('settings', {}); if (typeof loadedSettings !== 'object' || loadedSettings === null) loadedSettings = {};
+    var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPin: '1234', adminPhone: '', branches: ['Central'], usersByBranch: {}, isCreatorPinSet: false }, loadedSettings);
     if(!Array.isArray(workshopSettings.branches)) workshopSettings.branches = ['Central'];
     
     var activeUser = 'Admin'; try { activeUser = localStorage.getItem(ACTIVE_USER_KEY) || 'Admin'; } catch(e){}
@@ -672,7 +609,7 @@
       var pin = (workshopSettings.adminPin || '1234').trim();
       var phone = (workshopSettings.adminPhone || '').replace(/[^0-9]/g, '');
       if (!phone) {
-        phone = prompt("📱 RECUPERACIÓN DE CLAVE\nNo tienes un WhatsApp configurado en Ajustes.\n\nIngresa tu número con código de país (ej: 5493777123456):");
+        phone = prompt("📱 RECUPERACIÓN DE CLAVE\nNo tienes un WhatsApp configurado en Ajustes.\n\nIngresa tu número con código de país (ej: 5491123456789):");
         if (!phone) return;
         phone = phone.replace(/[^0-9]/g, '');
         workshopSettings.adminPhone = phone;
@@ -700,46 +637,33 @@
       var usersContainer = $('usersUnifiedList');
       var devicesContainer = $('devicesUnifiedList');
       var branchSelect = $('inpNewStaffBranch');
-
       var branches = workshopSettings.branches || ['Central'];
 
-      // Poblar selector de sucursal para nuevo personal
       if (branchSelect) {
         branchSelect.innerHTML = branches.map(function(b) {
           return '<option value="' + b + '">' + b + '</option>';
         }).join('');
       }
 
-      // Renderizar Personal / Usuarios
       if (usersContainer) {
         if (!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {};
         var allUsers = [];
-        
-        // Asegurar que Admin exista
         allUsers.push({ name: 'Admin', branch: 'Global' });
 
         branches.forEach(function(b) {
           var list = workshopSettings.usersByBranch[b] || [];
-          list.forEach(function(u) {
-            if (u !== 'Admin') allUsers.push({ name: u, branch: b });
-          });
+          list.forEach(function(u) { if (u !== 'Admin') allUsers.push({ name: u, branch: b }); });
         });
 
         usersContainer.innerHTML = allUsers.map(function(u) {
           var isCurrent = (u.name === activeUser);
           var isMainAdmin = (u.name === 'Admin');
 
-          var branchOptions = branches.map(function(b) {
-            return '<option value="' + b + '" ' + (u.branch === b ? 'selected' : '') + '>' + b + '</option>';
-          }).join('');
-
+          var branchOptions = branches.map(function(b) { return '<option value="' + b + '" ' + (u.branch === b ? 'selected' : '') + '>' + b + '</option>'; }).join('');
           var branchControl = isMainAdmin ? 
             '<span class="text-[9px] font-mono font-bold text-iosBlue bg-iosBlue/10 px-2 py-0.5 rounded">GLOBAL</span>' :
-            '<select onchange="window.changeUserBranch(\'' + u.name + '\', \'' + u.branch + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none">' + branchOptions + '</select>';
-
-          var deleteButton = isMainAdmin ? 
-            '' :
-            '<button type="button" onclick="window.deleteStaffMember(\'' + u.name + '\', \'' + u.branch + '\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center active:scale-95 transition" title="Eliminar usuario"><i class="ph-bold ph-trash"></i></button>';
+            '<select onchange="window.changeUserBranch(\'' + u.name + '\', \'' + u.branch + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + branchOptions + '</select>';
+          var deleteButton = isMainAdmin ? '' : '<button type="button" onclick="window.deleteStaffMember(\'' + u.name + '\', \'' + u.branch + '\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center active:scale-95 transition" title="Eliminar usuario"><i class="ph-bold ph-trash"></i></button>';
 
           return '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800">' +
                    '<div class="flex items-center gap-1.5 min-w-0 cursor-pointer flex-1" onclick="window.selectActiveUser(\'' + u.name + '\')">' +
@@ -747,103 +671,61 @@
                      '<span class="font-bold text-xs truncate ' + (isCurrent ? 'text-white' : 'text-zinc-300') + '">' + u.name + '</span>' +
                      (isCurrent ? '<span class="text-[8px] bg-emerald-950 text-emerald-400 px-1 rounded font-bold">ACTIVO</span>' : '') +
                    '</div>' +
-                   '<div class="flex items-center gap-1.5 shrink-0">' +
-                     branchControl +
-                     deleteButton +
-                   '</div>' +
+                   '<div class="flex items-center gap-1.5 shrink-0">' + branchControl + deleteButton + '</div>' +
                  '</div>';
         }).join('');
       }
 
-      // Renderizar Dispositivos Conectados
       if (devicesContainer) {
-        var now = Date.now();
-        var devHtml = '';
-        var count = 0;
-
+        var now = Date.now(); var devHtml = ''; var count = 0;
         for (var d in window.activeDevicesMap) {
           var info = window.activeDevicesMap[d];
           if (info && (now - info.time < 25000)) {
             var isMe = (d === myDeviceId);
-            var devBranchOptions = branches.map(function(b) {
-              return '<option value="' + b + '" ' + ((info.branch || 'Central') === b ? 'selected' : '') + '>' + b + '</option>';
-            }).join('');
-
+            var devBranchOptions = branches.map(function(b) { return '<option value="' + b + '" ' + ((info.branch || 'Central') === b ? 'selected' : '') + '>' + b + '</option>'; }).join('');
             var devBranchSelect = isMe ?
               '<span class="text-[9px] font-mono text-emerald-400 font-bold px-1 uppercase">' + (info.branch || 'Central') + '</span>' :
-              '<select onchange="window.changeRemoteDeviceBranch(\'' + d + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none">' + devBranchOptions + '</select>';
-
+              '<select onchange="window.changeRemoteDeviceBranch(\'' + d + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + devBranchOptions + '</select>';
             var kickBtn = isMe ?
               '<span class="text-[8px] bg-zinc-800 text-zinc-500 px-1.5 py-0.5 rounded font-bold">ESTE EQUIPO</span>' :
               '<button type="button" onclick="window.kickDevice(\'' + d + '\')" class="px-2 py-0.5 rounded bg-rose-950 text-rose-400 text-[10px] font-bold active:scale-95 transition">Expulsar</button>';
 
             devHtml += '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800">' +
                          '<div class="min-w-0 flex-1 pr-2">' +
-                           '<div class="flex items-center gap-1.5">' +
-                             '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>' +
-                             '<span class="font-bold text-xs text-white truncate">' + (info.user || 'Admin') + '</span>' +
-                           '</div>' +
+                           '<div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span class="font-bold text-xs text-white truncate">' + (info.user || 'Admin') + '</span></div>' +
                            '<div class="text-[8px] text-zinc-500 font-mono truncate">' + d + '</div>' +
                          '</div>' +
-                         '<div class="flex items-center gap-1.5 shrink-0">' +
-                           devBranchSelect +
-                           kickBtn +
-                         '</div>' +
+                         '<div class="flex items-center gap-1.5 shrink-0">' + devBranchSelect + kickBtn + '</div>' +
                        '</div>';
             count++;
           }
         }
-
-        if (count === 0) {
-          devHtml = '<div class="text-center text-zinc-500 text-xs p-3">No hay dispositivos en línea ahora mismo.</div>';
-        }
-
+        if (count === 0) { devHtml = '<div class="text-center text-zinc-500 text-xs p-3">No hay dispositivos en línea ahora mismo.</div>'; }
         devicesContainer.innerHTML = devHtml;
       }
     };
 
     window.changeUserBranch = function(userName, oldBranch, newBranch) {
       if (oldBranch === newBranch) return;
-      if (activeUser !== 'Admin') {
-        window.showToast("Denegado", "Solo el Administrador puede reasignar sucursales.");
-        window.renderUnifiedUsersAndDevices();
-        return;
-      }
+      if (activeUser !== 'Admin') { window.showToast("Denegado", "Solo el Administrador puede reasignar sucursales."); window.renderUnifiedUsersAndDevices(); return; }
       window.requestAdminPinAuth("Reasignar sucursal a " + userName, function() {
         if (!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {};
-        if (workshopSettings.usersByBranch[oldBranch]) {
-          workshopSettings.usersByBranch[oldBranch] = workshopSettings.usersByBranch[oldBranch].filter(function(u) { return u !== userName; });
-        }
+        if (workshopSettings.usersByBranch[oldBranch]) { workshopSettings.usersByBranch[oldBranch] = workshopSettings.usersByBranch[oldBranch].filter(function(u) { return u !== userName; }); }
         if (!workshopSettings.usersByBranch[newBranch]) workshopSettings.usersByBranch[newBranch] = [];
-        if (!workshopSettings.usersByBranch[newBranch].includes(userName)) {
-          workshopSettings.usersByBranch[newBranch].push(userName);
-        }
-        StorageShield.save('settings', workshopSettings);
-        window.renderUnifiedUsersAndDevices();
-        window.showToast("Actualizado", userName + " asignado a " + newBranch);
+        if (!workshopSettings.usersByBranch[newBranch].includes(userName)) { workshopSettings.usersByBranch[newBranch].push(userName); }
+        StorageShield.save('settings', workshopSettings); window.renderUnifiedUsersAndDevices(); window.showToast("Actualizado", userName + " asignado a " + newBranch);
       });
     };
 
     window.deleteStaffMember = function(userName, branch) {
-      if (userName === 'Admin') {
-        window.showToast("Denegado", "No se puede eliminar la cuenta principal de Administrador.");
-        return;
-      }
-      if (activeUser !== 'Admin') {
-        window.showToast("Denegado", "Solo el Administrador puede eliminar usuarios.");
-        return;
-      }
+      if (userName === 'Admin') { window.showToast("Denegado", "No se puede eliminar la cuenta principal de Administrador."); return; }
+      if (activeUser !== 'Admin') { window.showToast("Denegado", "Solo el Administrador puede eliminar usuarios."); return; }
       window.requestAdminPinAuth("Eliminar usuario " + userName, function() {
         if (workshopSettings.usersByBranch && workshopSettings.usersByBranch[branch]) {
           workshopSettings.usersByBranch[branch] = workshopSettings.usersByBranch[branch].filter(function(u) { return u !== userName; });
           StorageShield.save('settings', workshopSettings);
-          if (activeUser === userName) {
-            activeUser = 'Admin';
-            localStorage.setItem(ACTIVE_USER_KEY, 'Admin');
-            if ($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = 'Admin';
-          }
-          window.renderUnifiedUsersAndDevices();
-          window.showToast("Eliminado", "Usuario " + userName + " eliminado del taller.");
+          if (activeUser === userName) { activeUser = 'Admin'; localStorage.setItem(ACTIVE_USER_KEY, 'Admin'); if ($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = 'Admin'; }
+          window.renderUnifiedUsersAndDevices(); window.showToast("Eliminado", "Usuario " + userName + " eliminado del taller.");
         }
       });
     };
@@ -851,11 +733,7 @@
     window.changeRemoteDeviceBranch = function(devId, newBranch) {
       window.requestAdminPinAuth("Asignar nueva sucursal al dispositivo", function() {
         if (mqttClient && mqttClient.connected) {
-          mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/command', JSON.stringify({
-            targetDevId: devId,
-            command: 'SET_BRANCH',
-            branch: newBranch
-          }));
+          mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/command', JSON.stringify({ targetDevId: devId, command: 'SET_BRANCH', branch: newBranch }));
           window.showToast("Comando Enviado", "El dispositivo fue reasignado a " + newBranch);
         }
       });
@@ -863,9 +741,7 @@
 
     window.checkBannedStatus = function() {
       if(workshopSettings.bannedDevices && workshopSettings.bannedDevices.includes(myDeviceId)) {
-        localStorage.removeItem(WORKSHOP_ID_KEY);
-        alert("Tu acceso ha sido revocado por el Administrador.");
-        window.location.reload();
+        localStorage.removeItem(WORKSHOP_ID_KEY); alert("Tu acceso ha sido revocado por el Administrador."); window.location.reload();
       }
     };
 
@@ -873,18 +749,7 @@
       window.requestAdminPinAuth("Desvincular este dispositivo permanentemente", function() {
         if(!workshopSettings.bannedDevices) workshopSettings.bannedDevices = [];
         if(!workshopSettings.bannedDevices.includes(devId)) workshopSettings.bannedDevices.push(devId);
-        StorageShield.save('settings', workshopSettings);
-        window.renderUnifiedUsersAndDevices();
-        window.showToast("Desvinculado", "El dispositivo ha sido expulsado.");
-      });
-    };
-    
-    window.leaveWorkshop = function() {
-      window.requestAdminPinAuth("Desvincular ESTE dispositivo de la red actual", function() {
-        if (confirm("⚠️ ¿Confirmas desvincular este dispositivo? Iniciará con un taller en blanco independiente.")) {
-          localStorage.removeItem(WORKSHOP_ID_KEY);
-          window.location.reload();
-        }
+        StorageShield.save('settings', workshopSettings); window.renderUnifiedUsersAndDevices(); window.showToast("Desvinculado", "El dispositivo ha sido expulsado.");
       });
     };
 
@@ -975,11 +840,22 @@
       setTimeout(function() {
         try {
           window.renderUnifiedUsersAndDevices();
+          var adminSect = $('adminPinConfigSection');
+          if(adminSect) {
+            if(activeUser === 'Admin') { 
+              adminSect.classList.remove('hidden'); adminSect.style.display = 'block';
+              var setupBox = $('setupPinBox');
+              if (setupBox) {
+                  if (workshopSettings.isCreatorPinSet || (workshopSettings.adminPin && workshopSettings.adminPin !== '1234')) { setupBox.style.display = 'none'; } 
+                  else { setupBox.style.display = 'block'; }
+              }
+            }
+            else { adminSect.classList.add('hidden'); adminSect.style.display = 'none'; }
+          }
         } catch(e) {}
       }, 50);
     };
 
-    // --- CAMBIO DE USUARIO PROTEGIDO ---
     window.selectActiveUser = function(userName) {
       if (userName === 'Admin' && activeUser !== 'Admin') {
         window.requestAdminPinAuth("Ingresar como Administrador", function() {
@@ -999,23 +875,21 @@
     window.addNewStaffMember = function() {
       var name = $('inpNewStaffName').value.trim(); 
       var branch = $('inpNewStaffBranch') ? $('inpNewStaffBranch').value : localBranch;
-      if (!name || !branch) {
-        window.showToast("Error", "Completa nombre y sucursal.");
-        return;
-      }
+      if (!name || !branch) { window.showToast("Error", "Completa nombre y sucursal."); return; }
       
       if(!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {};
       if(!workshopSettings.usersByBranch[branch]) workshopSettings.usersByBranch[branch] = [];
       
       if (!workshopSettings.usersByBranch[branch].includes(name)) {
         workshopSettings.usersByBranch[branch].push(name);
-        StorageShield.save('settings', workshopSettings); 
-        $('inpNewStaffName').value = ''; 
-        window.renderUnifiedUsersAndDevices(); 
-        window.showToast("Personal", name + " agregado a " + branch);
-      } else {
-        window.showToast("Aviso", "El usuario ya existe en esa sucursal.");
-      }
+        StorageShield.save('settings', workshopSettings); $('inpNewStaffName').value = ''; window.renderUnifiedUsersAndDevices(); window.showToast("Personal", name + " agregado a " + branch);
+      } else { window.showToast("Aviso", "El usuario ya existe en esa sucursal."); }
+    };
+
+    window.saveNewAdminPin = function() {
+      var newPin = $('inpNewAdminPin').value.trim(); if(!newPin) return;
+      workshopSettings.adminPin = newPin; workshopSettings.isCreatorPinSet = true; StorageShield.save('settings', workshopSettings);
+      $('inpNewAdminPin').value = ''; window.showToast("Seguridad", "Clave Maestra protegida permanentemente."); window.openSwitchUserModal(); 
     };
 
     window.openSettingsModal = function() {
@@ -1307,13 +1181,13 @@
 
         if (i.localQty <= 0) {
           stockLabel = '<span class="text-[9px] text-rose-500 font-bold">Sin Stock (' + localBranch + ')</span>'; borderClass = 'border-rose-900/50 bg-rose-950/10';
-          actionBtn = '<button type="button" onclick="window.requestStockWA(\''+i.name.replace(/'/g, "\\'")+'\', \''+i.code+'\')" class="px-2 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-[10px] flex items-center justify-center gap-1 active:scale-95 shadow w-full"><i class="ph-bold ph-whatsapp-logo text-xs"></i> Pedir a Sucursal</button>';
+          actionBtn = '<button type="button" onclick="window.requestStockWA(\'' + i.name.replace(/'/g, "\\'") + '\', \'' + i.code + '\')" class="px-2 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-[10px] flex items-center justify-center gap-1 active:scale-95 shadow w-full"><i class="ph-bold ph-whatsapp-logo text-xs"></i> Pedir a Sucursal</button>';
         } else {
           if (i.localQty <= 3) { stockLabel = '<span class="text-[9px] text-amber-500 font-bold">Stock: ' + i.localQty + ' (Bajo)</span>'; } 
           else { stockLabel = '<span class="text-[9px] text-emerald-400 font-bold">Stock: ' + i.localQty + '</span>'; }
           actionBtn = '<div class="flex items-center justify-between w-full"><span class="text-emerald-400 font-bold font-mono text-sm">$' + i.price.toLocaleString() + '</span><button type="button" onclick="window.addPosItemByCode(\'' + i.code + '\')" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg text-xs flex items-center gap-1 active:scale-95 shadow">+ Agregar</button></div>';
         }
-        return '<div class="p-2.5 bg-zinc-900 border '+borderClass+' rounded-xl flex flex-col justify-between transition shadow-sm"><div><div class="font-bold text-white text-xs leading-tight mb-0.5 line-clamp-2">'+i.name+'</div><div class="font-mono text-[9px] text-zinc-500 mb-0.5">'+i.code+'</div>'+otherBranchesText+'</div><div class="flex flex-col gap-1.5 pt-1.5 border-t border-zinc-800/80 mt-1"><div class="flex justify-between items-center w-full">' + (i.localQty <= 0 ? '<span class="text-zinc-500 font-bold font-mono text-sm">$'+i.price.toLocaleString()+'</span>' : '') + stockLabel + '</div>' + actionBtn + '</div></div>';
+        return '<div class="p-2.5 bg-zinc-900 border ' + borderClass + ' rounded-xl flex flex-col justify-between transition shadow-sm"><div><div class="font-bold text-white text-xs leading-tight mb-0.5 line-clamp-2">' + i.name + '</div><div class="font-mono text-[9px] text-zinc-500 mb-0.5">' + i.code + '</div>' + otherBranchesText + '</div><div class="flex flex-col gap-1.5 pt-1.5 border-t border-zinc-800/80 mt-1"><div class="flex justify-between items-center w-full">' + (i.localQty <= 0 ? '<span class="text-zinc-500 font-bold font-mono text-sm">$' + i.price.toLocaleString() + '</span>' : '') + stockLabel + '</div>' + actionBtn + '</div></div>';
       }).join('');
     };
 
@@ -1416,7 +1290,7 @@
       if (dtlGrid && dtlSec) {
         if (r.photos && r.photos.length > 0) {
           dtlSec.style.display = 'block';
-          dtlGrid.innerHTML = r.photos.map(function(src) { return '<div class="w-14 h-14 shrink-0 rounded-xl overflow-hidden border border-zinc-700 shadow-sm cursor-pointer" onclick="window.open(\''+src+'\', \'_blank\')"><img src="' + src + '" class="w-full h-full object-cover"></div>'; }).join('');
+          dtlGrid.innerHTML = r.photos.map(function(src) { return '<div class="w-14 h-14 shrink-0 rounded-xl overflow-hidden border border-zinc-700 shadow-sm cursor-pointer" onclick="window.open(\''+src+'\', \'_blank\')"><img src="'+src+'" class="w-full h-full object-cover"></div>'; }).join('');
         } else { dtlSec.style.display = 'none'; }
       }
       window.openModal('detailModal');
@@ -1585,7 +1459,7 @@
             }).catch(function(err){ 
                 window.showToast("Aviso", "Iniciando cámara frontal...");
                 stockScanner.start({ facingMode: "user" }, config, function(txt) {
-                  if($('stkCode')) $('stkCode').value = txt; window.showToast("Código", txt); window.stopStockCam(); window.switchStockTab('FORM');
+                  if($('stkCode')) $('stkCode').value = txt; window.showToast("Código Detectado", txt); window.stopStockCam(); window.switchStockTab('FORM');
                 }).catch(function(e) { window.showToast("Error", "Cámara bloqueada o sin permisos."); window.stopStockCam(); });
             });
           } catch(e) { window.showToast("Error", "Cámara no soportada."); window.stopStockCam(); }
@@ -1659,7 +1533,7 @@
       var branchActiveMovements = cashMovements.filter(function(c) { return (!c.branch || c.branch === currentCashBranch) && !c.closed; });
       var inc = 0, exp = 0; branchActiveMovements.forEach(function(c) { var amt = parseFloat(c.amount) || 0; if (c.type === 'INCOME') inc += amt; else exp += amt; });
       var net = inc - exp;
-      if (branchActiveMovements.length === 0 && net === 0) { window.showToast("Aviso", "No hay movimientos para cerrar en " + currentCashBranch); return; }
+      if (branchActiveMovements.length === 0 && net === 0) { window.showToast("Aviso", "No hay movimientos para cerrar."); return; }
 
       if (confirm("¿Confirmas el Cierre en " + currentCashBranch + "?\n\n🟢 Ingresos: $" + inc + "\n🔴 Egresos: $" + exp + "\n💰 Saldo a Rendir: $" + net)) {
         var closureId = 'CIE-' + Date.now();
@@ -1714,7 +1588,7 @@
       }).join('');
     };
 
-    // --- RECEPTOR MQTT (Sincronización Inmediata y Comandos) ---
+    // --- RECEPTOR MQTT Y SINCRONIZACIÓN EN TIEMPO REAL ---
     function mergeByDate(localArr, remoteArr) {
       if (!Array.isArray(remoteArr)) return localArr || [];
       if (!Array.isArray(localArr)) localArr = [];
@@ -1745,6 +1619,7 @@
 
         window.broadcastPresence();
 
+        // Heartbeat y actualización cada 3 segundos
         setInterval(function() {
           window.broadcastPresence();
           var now = Date.now(); var count = 0;
@@ -1766,7 +1641,7 @@
           if (topic.endsWith('/command')) {
             if (payload && payload.targetDevId === myDeviceId && payload.command === 'SET_BRANCH') {
                 localStorage.setItem(LOCAL_BRANCH_KEY, payload.branch);
-                alert("El Administrador ha reasignado este dispositivo a la sucursal: " + payload.branch);
+                alert("El Administrador te ha reasignado a la sucursal: " + payload.branch);
                 window.location.reload();
             }
             return;
@@ -1810,115 +1685,17 @@
                 StorageShield.save('settings', workshopSettings, true);
                 if(typeof window.renderUnifiedUsersAndDevices === 'function') window.renderUnifiedUsersAndDevices();
               }
+              if(payload.settings.isCreatorPinSet !== undefined) {
+                workshopSettings.isCreatorPinSet = payload.settings.isCreatorPinSet;
+                StorageShield.save('settings', workshopSettings, true);
+              }
             }
           }
         } catch(e) {}
       });
     }
 
-    // --- PANEL MAESTRO Y TELEMETRÍA GLOBAL (BAJO CLAVE 8408) ---
-    window.secretTap = function() {
-      var pin = prompt('🔐 PANEL MAESTRO CREADOR\nSolo acceso autorizado para generación de licencias.\n\nIngresa tu clave maestra de creador:');
-      if (pin === '8408') {
-        var panel = $('masterAdminUnlockedView');
-        if(panel) { panel.classList.remove('hidden'); panel.style.display = 'block'; }
-        if($('genTargetWorkshopCode')) $('genTargetWorkshopCode').value = currentWorkshopId;
-        window.renderMasterTelemetry();
-        window.requestTelemetryBroadcast();
-        window.showToast("Acceso Concedido", "Panel Maestro Creador desbloqueado.");
-      } else if (pin !== null) {
-        window.showToast("Acceso Denegado", "Clave maestra incorrecta.");
-      }
-    };
-
-    window.emitKey = function() {
-      var code = $('genTargetWorkshopCode').value.trim().toUpperCase(); if (!code) return;
-      var key = 'OL-LIFETIME-' + Math.abs((code + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
-      if($('genGeneratedKey')) $('genGeneratedKey').textContent = key;
-      if($('genResultBox')) { $('genResultBox').classList.remove('hidden'); $('genResultBox').style.display = 'flex'; }
-    };
-
-    window.copyKey = function() { window.fallbackCopyText($('genGeneratedKey').textContent); };
-
-    window.applyKey = function() {
-      var k = $('inpActivationKey').value.trim().toUpperCase(); if (!k) return;
-      var validKey = 'OL-LIFETIME-' + Math.abs((currentWorkshopId.toUpperCase() + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
-      
-      if (k === validKey || k === 'OL-MASTER-PERMANENT' || k.indexOf('LIFETIME') > -1 || k.indexOf('PRO') > -1) {
-        StorageShield.save('license', { type: 'LIFETIME', key: k, expiresAt: 9999999999999 }); localStorage.setItem(PERMANENT_LICENSE_KEY, 'TRUE');
-        window.updateLicenseUI(); window.closeModal('licenseModal'); window.showToast('Activado', 'Licencia Vitalicia Habilitada.');
-      } else { window.showToast('Error', 'Clave no válida.'); }
-    };
-
-    window.updateLicenseUI = function() {
-      var txt = $('headerLicenseText'); var btn = $('headerLicenseBtn');
-      if(txt && btn) {
-          txt.textContent = 'VITALICIO'; 
-          btn.className = 'text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
-      }
-    };
-
-    window.saveTelemetryData = function(data) {
-      if(!data || !data.workshopId) return;
-      var reg = StorageShield.load(TELEMETRY_REGISTRY_KEY, {});
-      if(!reg[data.workshopId]) { reg[data.workshopId] = { workshopId: data.workshopId, name: data.name || data.workshopId, devices: {}, licenseType: data.licenseType || 'PRO', firstSeen: Date.now(), lastSeen: Date.now() }; }
-      reg[data.workshopId].lastSeen = Date.now();
-      reg[data.workshopId].name = data.name || reg[data.workshopId].name;
-      reg[data.workshopId].licenseType = data.licenseType || reg[data.workshopId].licenseType;
-      if(data.deviceId) { reg[data.workshopId].devices[data.deviceId] = { user: data.user || 'Admin', branch: data.branch || 'Central', lastSeen: Date.now() }; }
-      StorageShield.save(TELEMETRY_REGISTRY_KEY, reg, true);
-      window.renderMasterTelemetry();
-    };
-
-    window.renderMasterTelemetry = function() {
-      var reg = StorageShield.load(TELEMETRY_REGISTRY_KEY, {});
-      var now = Date.now(); var totalWorkshops = Object.keys(reg).length; var onlineWorkshops = 0; var activeUsers = 0; var demoCount = 0; var proCount = 0;
-
-      for (var wId in reg) {
-        var w = reg[wId]; var isOnline = (now - w.lastSeen < 25000);
-        if(isOnline) onlineWorkshops++;
-        if(w.licenseType === 'DEMO') demoCount++; else proCount++;
-        for(var dId in (w.devices || {})) { if(now - w.devices[dId].lastSeen < 25000) activeUsers++; }
-      }
-
-      if($('telTotalWorkshops')) $('telTotalWorkshops').textContent = Math.max(1, totalWorkshops);
-      if($('telOnlineWorkshops')) $('telOnlineWorkshops').textContent = Math.max(1, onlineWorkshops);
-      if($('telOnlineUsers')) $('telOnlineUsers').textContent = Math.max(1, activeUsers);
-      if($('telDemoWorkshops')) $('telDemoWorkshops').textContent = demoCount;
-      if($('telProWorkshops')) $('telProWorkshops').textContent = Math.max(1, proCount);
-
-      var list = $('telemetryWorkshopsList');
-      if(list) {
-        var html = '';
-        for (var wId in reg) {
-          var w = reg[wId];
-          var isOnline = (now - w.lastSeen < 25000);
-          var devCount = Object.keys(w.devices || {}).length;
-          html += '<div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-between">' +
-                    '<div>' +
-                      '<div class="flex items-center gap-1.5">' +
-                        '<span class="w-2 h-2 rounded-full ' + (isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-600') + '"></span>' +
-                        '<b class="text-white text-xs font-mono">' + w.workshopId + '</b>' +
-                        '<span class="text-[9px] px-1.5 py-0.2 rounded font-bold ' + (w.licenseType==='DEMO'?'bg-amber-950 text-amber-300':'bg-emerald-950 text-emerald-300') + '">' + (w.licenseType||'PRO') + '</span>' +
-                      '</div>' +
-                      '<div class="text-[9px] text-zinc-400 mt-0.5">' + (w.name || 'Taller') + ' • ' + devCount + ' dispositivo(s) • ' + (isOnline ? '<span class="text-emerald-400">En línea ahora</span>' : 'Visto: ' + new Date(w.lastSeen).toLocaleDateString('es-AR')) + '</div>' +
-                    '</div>' +
-                    '<span class="text-[9px] font-mono font-bold text-indigo-300">' + (isOnline ? 'CONECTADO' : 'OFFLINE') + '</span>' +
-                  '</div>';
-        }
-        list.innerHTML = html || '<div class="text-zinc-500 text-xs p-4 text-center">Sondeando red...</div>';
-      }
-    };
-
-    window.broadcastPresence = function() {
-      if (mqttClient && mqttClient.connected) {
-        var payload = { workshopId: currentWorkshopId.toUpperCase(), deviceId: myDeviceId, user: activeUser, branch: localBranch, name: workshopSettings.name || currentWorkshopId, licenseType: 'VITALICIO', time: Date.now() };
-        mqttClient.publish('openline/v4/global/telemetry/report', JSON.stringify(payload));
-        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', JSON.stringify({ devId: myDeviceId, user: activeUser, branch: localBranch }));
-      }
-    };
-
-    // --- BOOT MAESTRO ---
+    // --- BOOT MAESTRO BLINDADO ---
     document.addEventListener('DOMContentLoaded', function() {
       try {
           window.activeDevicesMap[myDeviceId] = { time: Date.now(), user: activeUser, branch: localBranch };
@@ -1929,14 +1706,17 @@
           
           window.checkBannedStatus();
           
+          // Registro de telemetría propio
           window.saveTelemetryData({ workshopId: currentWorkshopId.toUpperCase(), deviceId: myDeviceId, user: activeUser, branch: localBranch, name: workshopSettings.name, licenseType: 'VITALICIO' });
 
+          // Licencia permanente
           localStorage.setItem(PERMANENT_LICENSE_KEY, 'TRUE');
           StorageShield.save('license', { type: 'LIFETIME', key: 'PRO-VITALICIO-AUTOSHIELD', expiresAt: 9999999999999 }, true);
           window.updateLicenseUI();
 
           window.renderBranchTabs(); window.renderRepairsList(); window.updateCounters(); window.updateCashBalanceUI();
           
+          // Mostrar banner animado
           setTimeout(function() {
             var banner = $('realtimeSyncBanner');
             if (banner) {
@@ -1950,7 +1730,6 @@
 
       } catch (criticalError) { console.error("Boot seguro interceptó:", criticalError); }
     });
-
   </script>
 </body>
 </html>
