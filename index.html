@@ -9,49 +9,32 @@
   <meta name="theme-color" content="#09090b">
   <title>OpenLine - Gestión de Taller Profesional</title>
 
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            iosBlue: '#007AFF', iosGreen: '#34C759', iosOrange: '#FF9500',
-            iosRed: '#FF3B30', iosPurple: '#AF52DE'
-          }
-        }
-      }
+      theme: { extend: { colors: { iosBlue: '#007AFF', iosGreen: '#34C759', iosOrange: '#FF9500', iosRed: '#FF3B30', iosPurple: '#AF52DE' } } }
     };
   </script>
 
-  <!-- Phosphor Icons -->
+  <!-- Phosphor Icons & Librerías -->
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
-
-  <!-- Bibliotecas externas -->
   <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
   <style>
-    body { 
-      min-height: 100vh; min-height: 100dvh; 
-      -webkit-tap-highlight-color: transparent; 
-      touch-action: manipulation;
-    }
+    body { min-height: 100vh; min-height: 100dvh; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
     .pt-safe { padding-top: max(env(safe-area-inset-top), 8px); }
     .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 20px); }
     
     input, select, textarea { font-size: 16px !important; }
-    button, select, input, textarea, a, .cursor-pointer { 
-      touch-action: manipulation; 
-      cursor: pointer; 
-      -webkit-tap-highlight-color: transparent;
-    }
+    button, select, input, textarea, a, .cursor-pointer { touch-action: manipulation; cursor: pointer; }
     
     ::-webkit-scrollbar { display: none; width: 0; height: 0; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Modales adaptados a Chrome y Safari */
+    /* Estructura Modal Blindada para evitar superposiciones fantasma */
     .app-modal {
       display: none; position: fixed; inset: 0; z-index: 9999;
       background-color: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
@@ -60,7 +43,6 @@
     }
     @media (min-width: 640px) { .app-modal { align-items: center; padding-bottom: 20px; } }
     .app-modal.active { display: flex !important; }
-
     .modal-card { max-height: 86dvh; height: 86dvh; min-height: 0; }
     @media (min-width: 640px) { .modal-card { max-height: 88dvh; height: auto; } }
 
@@ -80,22 +62,21 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen relative z-0">
 
-  <!-- AVISO DE ACTUALIZACIÓN -->
-  <div id="appUpdatingBanner" class="fixed top-2 inset-x-3 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 z-[100000] hidden items-center justify-between gap-3 bg-emerald-950/95 border border-emerald-500 text-white px-4 py-2.5 rounded-2xl shadow-2xl backdrop-blur-2xl transition-all duration-300 pointer-events-auto max-w-md">
-    <div class="flex items-center gap-2.5 min-w-0">
-      <div class="w-7 h-7 rounded-lg bg-emerald-600/30 border border-emerald-400 flex items-center justify-center shrink-0">
-        <i class="ph-bold ph-check-circle text-emerald-300 text-base"></i>
-      </div>
-      <div class="min-w-0">
-        <h4 class="text-[11px] font-bold text-white tracking-wide">Compatibilidad Chrome & iOS</h4>
-        <p class="text-[9px] text-emerald-200">Controladores táctiles restaurados y operativos.</p>
-      </div>
+  <!-- AVISO DE DESARROLLO (SCROLL ANIMADO) -->
+  <div id="devBanner" class="fixed top-4 left-1/2 -translate-x-1/2 z-[100000] bg-zinc-900 border border-amber-600/50 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-start gap-3 w-[92%] max-w-md transition-all duration-700 ease-out transform -translate-y-[150%] opacity-0 pointer-events-auto">
+    <div class="mt-1 w-8 h-8 rounded-full bg-amber-600/20 border border-amber-500/50 flex items-center justify-center shrink-0">
+      <i class="ph-bold ph-warning-circle text-amber-400 text-lg"></i>
     </div>
-    <button type="button" onclick="window.dismissUpdateBanner()" class="w-6 h-6 rounded-md bg-emerald-900/80 text-emerald-300 flex items-center justify-center shrink-0">
-      <i class="ph-bold ph-x text-xs"></i>
+    <div class="flex-1">
+      <h4 class="font-bold text-amber-400 text-xs uppercase tracking-widest mb-1">Fase de Optimización</h4>
+      <p class="text-[10px] text-zinc-300 leading-relaxed">Esta app se encuentra en desarrollo activo. Puede presentar ajustes técnicos mientras trabajamos para brindarte un servicio de gestión excepcional.</p>
+    </div>
+    <button onclick="document.getElementById('devBanner').style.display='none'" class="bg-zinc-800 p-1.5 rounded-lg text-zinc-400 hover:text-white transition active:scale-95">
+      <i class="ph-bold ph-x text-sm"></i>
     </button>
   </div>
 
+  <!-- ENCABEZADO -->
   <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
     <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full">
       <div class="flex items-center gap-2 min-w-0">
@@ -157,10 +138,13 @@
     </div>
   </header>
 
+  <!-- CUERPO PRINCIPAL -->
   <main class="flex-1 w-full max-w-5xl mx-auto px-3 py-2 space-y-2 pb-safe overflow-y-auto z-10 relative">
     <div id="branchFilterContainer" class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 shadow-sm space-y-1">
       <div class="flex items-center justify-between px-1">
-        <span class="text-[9px] font-bold uppercase text-zinc-400 flex items-center gap-1"><i class="ph-bold ph-eye text-rose-400 text-xs"></i> Vista Global:</span>
+        <span class="text-[9px] font-bold uppercase text-zinc-400 flex items-center gap-1">
+          <i class="ph-bold ph-eye text-rose-400 text-xs"></i> Vista Global:
+        </span>
         <span id="currentBranchDisplayTag" class="text-[10px] font-mono text-zinc-300">Todas</span>
       </div>
       <div id="branchTabsButtonsList" class="flex gap-1 overflow-x-auto no-scrollbar text-xs font-medium pb-0.5"></div>
@@ -207,17 +191,24 @@
     </div>
   </main>
 
+  <div class="fixed bottom-12 left-1/2 -translate-x-1/2 z-[9000] pointer-events-none w-max">
+    <div class="bg-emerald-950/90 border border-emerald-600/70 text-emerald-300 text-[10px] px-3.5 py-1 rounded-full flex items-center gap-1.5 shadow-[0_0_15px_rgba(52,211,153,0.2)] backdrop-blur-md">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span class="font-bold tracking-wide">Sincronizando red en tiempo real</span>
+    </div>
+  </div>
+
   <div class="ticker-wrap pb-safe border-t border-zinc-800">
     <div class="ticker text-[10px] font-bold text-zinc-500 tracking-widest uppercase flex items-center gap-3">
-      <span>🚀 DESARROLLADO POR OPENLINE • INDUSTRIA ARGENTINA 🇦🇷 • SINCRONIZACIÓN EN TIEMPO REAL • SOFTWARE PARA TALLERES PROFESIONALES 🚀</span>
+      <span>🚀 DESARROLLADO POR OPENLINE • INDUSTRIA ARGENTINA 🇦🇷 • SOFTWARE PARA TALLERES PROFESIONALES 🚀</span>
     </div>
   </div>
 
   <!-- =================================================================================== -->
-  <!-- MODALES DE LA APLICACIÓN (CADA UNO DECLARADO EXACTAMENTE UNA VEZ)                   -->
+  <!-- MODALES DEL SISTEMA (DECLARACIÓN ÚNICA)                                             -->
   <!-- =================================================================================== -->
 
-  <!-- 1. MODAL SUCURSAL INICIAL -->
+  <!-- 1. SUCURSAL INICIAL -->
   <div id="startupBranchModal" class="app-modal" style="z-index: 100000; background-color: rgba(0,0,0,0.98);">
     <div class="bg-zinc-900 border border-zinc-800 rounded-3xl w-full max-w-sm p-5 space-y-4 text-xs text-zinc-300 shadow-2xl">
       <div class="text-center space-y-1.5">
@@ -229,7 +220,7 @@
     </div>
   </div>
 
-  <!-- 2. MODAL NUEVO INGRESO -->
+  <!-- 2. NUEVO INGRESO -->
   <div id="newRepairModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0">
@@ -294,19 +285,16 @@
             <span class="text-zinc-400 font-bold uppercase">Resta pagar:</span><span id="newCalculatedBalance" class="font-mono font-bold text-amber-400 text-sm">$0</span>
           </div>
         </div>
-        <button type="button" onclick="window.guardarIngresoDirecto()" class="w-full py-3.5 rounded-xl bg-iosBlue text-white font-bold text-sm shadow active:scale-95 transition mb-4">Guardar Ingreso de Equipo</button>
+        <button type="button" onclick="window.guardarIngresoDirecto()" class="w-full py-3.5 rounded-xl bg-iosBlue text-white font-bold text-sm shadow active:scale-95 transition mb-4">Guardar Ingreso</button>
       </div>
     </div>
   </div>
 
-  <!-- 3. MODAL VENTAS POS (MOSTRADOR) -->
+  <!-- 3. MODAL: VENTAS POS (MOSTRADOR) -->
   <div id="salesModal" class="app-modal">
     <div class="bg-zinc-900 sm:border border-amber-600/70 sm:rounded-3xl w-full max-w-4xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
       <div class="p-3 border-b border-zinc-800 shrink-0 space-y-2">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2"><i class="ph-bold ph-shopping-cart-simple text-amber-400 text-lg"></i><h3 class="font-bold text-white text-sm">Venta Mostrador (<span id="posModalBranchTag" class="text-amber-400 font-bold">Central</span>)</h3></div>
-          <button type="button" onclick="window.closeModal('salesModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-xs"></i></button>
-        </div>
+        <div class="flex items-center justify-between"><div class="flex items-center gap-2"><i class="ph-bold ph-shopping-cart-simple text-amber-400 text-lg"></i><h3 class="font-bold text-white text-sm">Venta Mostrador (<span id="posModalBranchTag" class="text-amber-400 font-bold">Central</span>)</h3></div><button type="button" onclick="window.closeModal('salesModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-xs"></i></button></div>
         <div class="grid grid-cols-3 gap-1 p-1 bg-zinc-950 rounded-xl border border-zinc-800">
           <button type="button" id="posTabCatalogBtn" onclick="window.switchPosTab('CATALOG')" class="py-1.5 rounded-lg font-bold text-xs transition bg-amber-600 text-white shadow flex items-center justify-center gap-1"><i class="ph-bold ph-package"></i> Catálogo</button>
           <button type="button" id="posTabScanBtn" onclick="window.switchPosTab('SCAN_MANUAL')" class="py-1.5 rounded-lg font-bold text-xs transition bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center gap-1"><i class="ph-bold ph-camera"></i> Escáner / Manual</button>
@@ -332,10 +320,7 @@
           <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 shrink-0">
             <span class="text-[10px] font-bold text-amber-400 uppercase flex items-center gap-1"><i class="ph-bold ph-tag text-sm"></i> Venta Manual Rápida</span>
             <input type="text" id="posManualName" placeholder="Descripción (Funda, Cable, etc)..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-            <div class="flex gap-2">
-              <input type="number" id="posManualPrice" placeholder="Precio ($)" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono font-bold">
-              <button type="button" onclick="window.addManualPosItem()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shadow active:scale-95 transition">+ Agregar</button>
-            </div>
+            <div class="flex gap-2"><input type="number" id="posManualPrice" placeholder="Precio ($)" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono font-bold"><button type="button" onclick="window.addManualPosItem()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shadow active:scale-95 transition">+ Agregar</button></div>
           </div>
         </div>
         <!-- PESTAÑA CARRITO -->
@@ -344,7 +329,7 @@
           <div id="posCartContainer" class="flex-1 space-y-1.5 overflow-y-auto min-h-[120px]"></div>
           <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 shrink-0">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <div><label class="text-[9px] text-zinc-400 block mb-0.5">Forma de Pago:</label><select id="posPaymentMethod" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-1.5 text-white font-medium text-xs"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia</option><option value="Tarjeta">Tarjeta</option></select></div>
+              <div><label class="text-[9px] text-zinc-400 block mb-0.5">Forma de Pago:</label><select id="posPaymentMethod" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-1.5 text-white font-medium text-xs"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia / Mercado Pago</option><option value="Tarjeta">Tarjeta</option></select></div>
               <div><label class="text-[9px] text-zinc-400 block mb-0.5">Cliente (Opcional):</label><input type="text" id="posCustomerName" placeholder="Nombre..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white text-xs"></div>
             </div>
             <div class="flex items-center justify-between pt-1 border-t border-zinc-800"><span class="text-xs uppercase font-bold text-zinc-400">Total a Cobrar:</span><span id="posTotalAmount" class="font-mono text-xl font-black text-amber-400">$0</span></div>
@@ -355,20 +340,33 @@
     </div>
   </div>
 
-  <!-- 4. MODAL HISTORIAL VENTAS -->
+  <!-- 4. MODAL: HISTORIAL VENTAS -->
   <div id="ventasModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-indigo-700/80 sm:rounded-3xl w-full max-w-3xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-indigo-950 border border-indigo-700 flex items-center justify-center text-indigo-400"><i class="ph-bold ph-receipt text-base"></i></div><div><h3 class="font-bold text-white text-sm">Historial de Ventas</h3><span class="text-[10px] text-zinc-400" id="ventasBranchIndicatorTag">Global</span></div></div><button type="button" onclick="window.closeModal('ventasModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
+        <div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-indigo-950 border border-indigo-700 flex items-center justify-center text-indigo-400"><i class="ph-bold ph-receipt text-base"></i></div><div><h3 class="font-bold text-white text-sm">Historial de Ventas</h3><span class="text-[10px] text-zinc-400" id="ventasBranchIndicatorTag">Global</span></div></div>
+        <button type="button" onclick="window.closeModal('ventasModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button>
+      </div>
       <div class="p-4 overflow-y-auto space-y-3 flex-1 pb-8">
-        <div class="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0.5"><button type="button" id="btnPeriodHoy" onclick="window.setVentasPeriod('HOY')" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold text-xs shrink-0 shadow">📅 Hoy</button><button type="button" id="btnPeriodSemana" onclick="window.setVentasPeriod('SEMANA')" class="px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs shrink-0">Últimos 7 Días</button><button type="button" id="btnPeriodMes" onclick="window.setVentasPeriod('MES')" class="px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs shrink-0">Este Mes</button><button type="button" id="btnPeriodTodas" onclick="window.setVentasPeriod('TODAS')" class="px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs shrink-0">Todas</button></div>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5"><div class="p-2.5 bg-zinc-950 border border-indigo-700/60 rounded-xl"><span class="text-[8px] font-bold text-indigo-300 uppercase block">Facturado</span><b class="text-base font-black text-white font-mono mt-0.5 block" id="vtaTotalFacturado">$0</b></div><div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[8px] font-bold text-emerald-400 uppercase block">Efectivo</span><b class="text-base font-bold text-emerald-400 font-mono mt-0.5 block" id="vtaTotalEfectivo">$0</b></div><div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[8px] font-bold text-blue-400 uppercase block">Transferencia</span><b class="text-base font-bold text-blue-400 font-mono mt-0.5 block" id="vtaTotalTransferencia">$0</b></div><div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[8px] font-bold text-purple-400 uppercase block">Tarjeta</span><b class="text-base font-bold text-purple-400 font-mono mt-0.5 block" id="vtaTotalTarjeta">$0</b></div></div>
+        <div class="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0.5">
+          <button type="button" id="btnPeriodHoy" onclick="window.setVentasPeriod('HOY')" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white font-bold text-xs shrink-0 shadow">📅 Hoy</button>
+          <button type="button" id="btnPeriodSemana" onclick="window.setVentasPeriod('SEMANA')" class="px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs shrink-0">Últimos 7 Días</button>
+          <button type="button" id="btnPeriodMes" onclick="window.setVentasPeriod('MES')" class="px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs shrink-0">Este Mes</button>
+          <button type="button" id="btnPeriodTodas" onclick="window.setVentasPeriod('TODAS')" class="px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs shrink-0">Todas</button>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+          <div class="p-2.5 bg-zinc-950 border border-indigo-700/60 rounded-xl"><span class="text-[8px] font-bold text-indigo-300 uppercase block">Facturado</span><b class="text-base font-black text-white font-mono mt-0.5 block" id="vtaTotalFacturado">$0</b></div>
+          <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[8px] font-bold text-emerald-400 uppercase block">Efectivo</span><b class="text-base font-bold text-emerald-400 font-mono mt-0.5 block" id="vtaTotalEfectivo">$0</b></div>
+          <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[8px] font-bold text-blue-400 uppercase block">Transferencia</span><b class="text-base font-bold text-blue-400 font-mono mt-0.5 block" id="vtaTotalTransferencia">$0</b></div>
+          <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[8px] font-bold text-purple-400 uppercase block">Tarjeta</span><b class="text-base font-bold text-purple-400 font-mono mt-0.5 block" id="vtaTotalTarjeta">$0</b></div>
+        </div>
         <input type="text" id="ventasSearchInput" oninput="window.renderVentasList()" placeholder="Buscar por código, cliente o vendedor..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-white">
         <div id="ventasListContainer" class="space-y-2 max-h-[42vh] overflow-y-auto pr-1"></div>
       </div>
     </div>
   </div>
 
-  <!-- 5. MODAL CONTROL DE STOCK (PESTAÑAS) -->
+  <!-- 5. MODAL: CONTROL DE STOCK (PESTAÑAS) -->
   <div id="stockModal" class="app-modal">
     <div class="bg-zinc-900 sm:border border-purple-800 sm:rounded-3xl w-full max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
       <div class="p-3 border-b border-zinc-800 shrink-0 space-y-2">
@@ -380,10 +378,12 @@
         </div>
       </div>
       <div class="flex-1 overflow-hidden relative flex flex-col p-3 min-h-0">
+        <!-- PESTAÑA INVENTARIO -->
         <div id="stockViewList" class="flex-1 flex flex-col space-y-2.5 overflow-hidden min-h-0">
           <div class="flex gap-2 shrink-0"><div class="relative flex-1"><i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i><input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-2 text-xs text-white"></div><button type="button" onclick="window.bulkIncreasePrices()" class="px-3 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs flex items-center gap-1 shrink-0 shadow active:scale-95 transition"><i class="ph-bold ph-trend-up"></i> % Suba</button></div>
           <div id="stockListContainer" class="space-y-1.5 overflow-y-auto flex-1 pb-4 min-h-[260px]"></div>
         </div>
+        <!-- PESTAÑA CARGA PRODUCTO -->
         <div id="stockViewForm" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6 min-h-0">
           <div class="p-3.5 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
             <span class="text-xs font-bold text-purple-300 uppercase block flex items-center gap-1.5"><i class="ph-bold ph-tag"></i> Datos del Repuesto</span>
@@ -394,6 +394,7 @@
             <button type="button" onclick="window.saveStockItem()" class="w-full py-3 mt-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow active:scale-95 transition">Guardar en Inventario</button>
           </div>
         </div>
+        <!-- PESTAÑA ESCÁNER -->
         <div id="stockViewScanner" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6 min-h-0">
           <div class="p-3 bg-zinc-950 border border-purple-800/80 rounded-2xl space-y-2">
             <div class="flex items-center justify-between"><span class="text-[11px] font-bold text-purple-300 uppercase flex items-center gap-1"><i class="ph-bold ph-barcode text-sm"></i> Lector QR / Barras</span><button type="button" id="btnToggleStockScanner" onclick="window.toggleStockCam()" class="px-3 py-1.5 bg-purple-900 text-purple-200 rounded-xl font-bold text-xs flex items-center gap-1 active:scale-95"><i class="ph-bold ph-camera"></i> Iniciar</button></div>
@@ -404,7 +405,7 @@
     </div>
   </div>
 
-  <!-- 6. MODAL CAJA LOCAL Y CIERRE DIARIO -->
+  <!-- 6. MODAL: CAJA LOCAL Y CIERRE DIARIO -->
   <div id="cashModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><div class="flex items-center gap-2"><i class="ph-bold ph-currency-dollar-simple text-emerald-400 text-lg"></i><div><h3 class="font-bold text-white text-sm">Caja Local</h3><span class="text-[10px] text-zinc-400">Sucursal: <b id="cashModalTitleBranch" class="text-emerald-400">Central</b></span></div></div><button type="button" onclick="window.closeModal('cashModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -420,7 +421,7 @@
     </div>
   </div>
 
-  <!-- 7. MODAL DETALLES DE ORDEN -->
+  <!-- 7. MODAL: DETALLES DE ORDEN -->
   <div id="detailModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0"><div><div class="flex items-center gap-1.5"><span id="dtlOrderId" class="text-xs font-mono font-bold text-iosBlue">#OL-0000</span></div><h3 id="dtlDeviceTitle" class="text-sm font-bold text-white mt-0.5">Dispositivo</h3></div><div class="flex items-center gap-2"><button type="button" onclick="window.openEditRepairModal()" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-[10px] border border-zinc-700 flex items-center gap-1 active:scale-95 transition"><i class="ph-bold ph-pencil-simple text-amber-400"></i> Editar</button><button type="button" onclick="window.closeModal('detailModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div></div>
@@ -520,7 +521,7 @@
           <div class="space-y-1.5"><span class="text-[9px] text-zinc-400 uppercase font-bold block">Conexiones Activas en la Red:</span><div id="telemetryWorkshopsList" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div></div>
           <div class="space-y-2 pt-2 border-t border-indigo-900/50"><span class="text-[9px] font-bold text-indigo-300 uppercase">Generar Licencia de Activación:</span><div class="grid grid-cols-3 gap-1.5"><input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="col-span-2 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono text-xs"><select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold"><option value="SEM6">6 Meses</option><option value="LIFETIME" selected>Vitalicio</option></select></div><button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow active:scale-95">Emitir Clave Segura</button><div id="genResultBox" class="hidden p-2.5 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800"><span id="genGeneratedKey" class="font-mono text-emerald-400 font-bold text-xs"></span><button type="button" onclick="window.copyKey()" class="px-2.5 py-1 bg-zinc-800 rounded text-[10px] text-white font-bold">Copiar</button></div></div>
         </div>
-        <div class="space-y-1.5 pt-1"><label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar o Renovar Licencia:</label><div class="flex gap-1.5"><input type="text" id="inpActivationKey" placeholder="Pega tu clave aquí..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs"><button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs active:scale-95">Activar</button></div></div>
+        <div class="space-y-1.5 pt-1"><label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar o Renovar Licencia:</label><div class="flex gap-1.5"><input type="password" id="inpActivationKey" placeholder="Pega tu clave aquí..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs"><button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs active:scale-95">Activar</button></div></div>
       </div>
       <button type="button" onclick="window.closeModal('licenseModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1 shrink-0">Cerrar</button>
     </div>
@@ -530,233 +531,591 @@
   <div id="printArea" class="hidden"></div>
 
   <!-- =================================================================================== -->
-  <!-- CONTROLADORES JAVASCRIPT COMPLETOS Y ENLAZADOS                                      -->
+  <!-- SISTEMA JAVASCRIPT BLINDADO, SINCRONIZADO Y PURGADO DE DUPLICADOS                   -->
   <!-- =================================================================================== -->
   <script>
-    // --- CONTROLADORES DE MODALES PRINCIPALES (RESTAURADOS) ---
-    window.openNewRepairModal = function() { 
-      window.openModal('newRepairModal'); 
-      setTimeout(function() {
-        try {
-          window.renderBranchTabs();
-          ['inpClientName','inpClientPhone','inpDeviceBrand','inpDeviceModel','inpDeviceFault','inpDeviceBudget','inpDeviceAdvance','inpUnlockPin'].forEach(function(el){ if($(el)) $(el).value=''; });
-          window.setUnlockType('pin');
-          currentPhotos = []; window.renderNewPhotos();
-          if($('newCalculatedBalance')) $('newCalculatedBalance').textContent = '$0';
-          window.initPatternCanvas();
-        } catch(e) {}
-      }, 50);
+    var APP_CODE_VERSION = 'v19.0.0'; 
+    var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
+    var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
+    var VERSION_STORAGE_KEY = 'openline_code_installed_version';
+    var ACTIVE_USER_KEY = 'openline_current_active_user';
+    var LOCAL_BRANCH_KEY = 'openline_local_branch';
+    var PERMANENT_LICENSE_KEY = 'openline_perm_vitalicio_shield';
+
+    var myDeviceId = 'dev_' + Math.random().toString(36).substring(2, 9);
+    var currentWorkshopId = 'TALLER-' + Math.floor(1000 + Math.random() * 9000);
+    var localBranch = 'Central';
+    var currentCashBranch = 'Central';
+    window.activeDevicesMap = {};
+    
+    try {
+        if (!localStorage.getItem(DEVICE_ID_KEY)) localStorage.setItem(DEVICE_ID_KEY, myDeviceId);
+        else myDeviceId = localStorage.getItem(DEVICE_ID_KEY);
+        if (!localStorage.getItem(WORKSHOP_ID_KEY)) localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
+        else currentWorkshopId = localStorage.getItem(WORKSHOP_ID_KEY);
+        var storedBranch = localStorage.getItem(LOCAL_BRANCH_KEY);
+        if(storedBranch) { localBranch = storedBranch; currentCashBranch = storedBranch; }
+    } catch(e) {}
+
+    function $(id) { return document.getElementById(id); }
+
+    window.openModal = function(id) { try { var el = $(id); if (el) { el.classList.add('active'); el.style.display = 'flex'; } } catch(e) {} };
+    window.closeModal = function(id) { try { var el = $(id); if (el) { el.classList.remove('active'); el.style.display = 'none'; } } catch(e) {} };
+    window.dismissUpdateBanner = function() { var banner = $('appUpdatingBanner'); if (banner) { banner.style.display = 'none'; } };
+    
+    window.dismissBetaBanner = function() {
+      try {
+        var banner = $('devBanner');
+        if (banner) {
+          banner.classList.remove('opacity-100', 'translate-y-0');
+          banner.classList.add('opacity-0', '-translate-y-[150%]');
+          setTimeout(function() { banner.style.display = 'none'; }, 700);
+        }
+      } catch(e){}
     };
 
-    window.openSalesModal = function() { 
-      window.openModal('salesModal'); 
-      setTimeout(function() {
-        try { window.switchPosTab('CATALOG'); } catch(e){}
-      }, 50);
+    window.showToast = function(title, msg) {
+      try {
+        var tc = $('toastContainer');
+        if(tc) {
+           var t = document.createElement('div');
+           t.className = 'bg-zinc-800 border border-zinc-700 text-white px-4 py-2.5 rounded-xl shadow-lg text-xs mb-2 w-full text-center pointer-events-none transition-all z-[100000]';
+           t.innerHTML = '<b>'+title+'</b><br>'+msg;
+           tc.appendChild(t);
+           setTimeout(function(){ try { t.remove(); } catch(e){} }, 3500);
+        } else { alert(title + "\n" + msg); }
+      } catch(e) { alert(title + "\n" + msg); }
     };
 
-    window.openVentasHistoryModal = function() { window.openModal('ventasModal'); setTimeout(function() { try { window.setVentasPeriod('HOY'); } catch(e) {} }, 50); };
-    window.openStockModal = function() { window.openModal('stockModal'); setTimeout(function() { try { window.switchStockTab('LIST'); } catch(e) {} }, 50); };
-    window.openCashModal = function() { currentCashBranch = localBranch; window.openModal('cashModal'); setTimeout(function() { try { window.renderBranchTabs(); window.updateCashBalanceUI(); } catch(e) {} }, 50); };
-    window.openTeamModal = function() { window.openModal('teamModal'); };
-    window.openLicenseModal = function() { window.openModal('licenseModal'); };
-    window.openInstallModal = function() { window.openModal('installModal'); };
-
-    window.openSwitchUserModal = function() {
-      window.openModal('switchUserModal');
-      setTimeout(function() {
-        try {
-          var grid = $('usersListGrid');
-          if(!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {};
-          var list = workshopSettings.usersByBranch[localBranch] || ['Admin'];
-          if(grid) {
-            grid.innerHTML = list.map(function(u) {
-              var isCurrent = (u === activeUser);
-              return '<button type="button" onclick="window.selectActiveUser(\'' + u + '\')" class="p-3 rounded-2xl border flex items-center justify-between ' + (isCurrent ? 'bg-indigo-950/80 border-indigo-500 text-white font-bold' : 'bg-zinc-950 border-zinc-800 text-zinc-300') + '">' +
-                       '<span class="truncate">' + u + '</span>' + (isCurrent ? '<i class="ph-bold ph-check text-emerald-400"></i>' : '') +
-                     '</button>';
-            }).join('');
-          }
-          var adminSect = $('adminPinConfigSection');
-          if(adminSect) {
-            if(activeUser === 'Admin') { adminSect.classList.remove('hidden'); adminSect.style.display = 'block'; }
-            else { adminSect.classList.add('hidden'); adminSect.style.display = 'none'; }
-          }
-        } catch(e) { console.error(e); }
-      }, 50);
-    };
-
-    window.selectActiveUser = function(userName) {
-      activeUser = userName; try { localStorage.setItem(ACTIVE_USER_KEY, activeUser); } catch(e){}
-      if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
-      window.closeModal('switchUserModal'); window.showToast("Usuario", "Operando como: " + activeUser);
-    };
-
-    window.addNewStaffMember = function() {
-      var name = $('inpNewStaffName').value.trim(); if (!name) return;
-      if(!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {};
-      if(!workshopSettings.usersByBranch[localBranch]) workshopSettings.usersByBranch[localBranch] = ['Admin'];
-      if (!workshopSettings.usersByBranch[localBranch].includes(name)) {
-        workshopSettings.usersByBranch[localBranch].push(name);
-        StorageShield.save('settings', workshopSettings);
-        $('inpNewStaffName').value = ''; window.openSwitchUserModal(); window.showToast("Personal", name + " agregado.");
+    // --- BÓVEDA LOCAL BLINDADA ---
+    var mqttClient = null;
+    var StorageShield = {
+      getKey: function(entity) { return 'openline_vault_' + currentWorkshopId + '_' + entity; },
+      save: function(entity, data, skipMqtt) { 
+        try { localStorage.setItem(this.getKey(entity), typeof data === 'string' ? data : JSON.stringify(data)); } catch(e){}
+        if(!skipMqtt && window.publishMQTT) window.publishMQTT();
+      },
+      load: function(entity, defaultVal) {
+        try { var saved = localStorage.getItem(this.getKey(entity)); if (saved) { try { return JSON.parse(saved); } catch(e){ return saved; } } } catch(e){}
+        return defaultVal;
       }
     };
 
-    window.saveNewAdminPin = function() {
-      var newPin = $('inpNewAdminPin').value.trim(); if(!newPin) return;
-      workshopSettings.adminPin = newPin; StorageShield.save('settings', workshopSettings);
-      $('inpNewAdminPin').value = ''; window.showToast("Seguridad", "Clave Maestra protegida."); window.openSwitchUserModal(); 
+    var repairs = StorageShield.load('repairs', []); if(!Array.isArray(repairs)) repairs = [];
+    var stockItems = StorageShield.load('stock', []); if(!Array.isArray(stockItems)) stockItems = [];
+    var cashMovements = StorageShield.load('cash', []); if(!Array.isArray(cashMovements)) cashMovements = [];
+    var cashClosures = StorageShield.load('cashClosures', []); if(!Array.isArray(cashClosures)) cashClosures = [];
+    var sales = StorageShield.load('sales', []); if(!Array.isArray(sales)) sales = [];
+    
+    var loadedSettings = StorageShield.load('settings', {}); if (typeof loadedSettings !== 'object' || loadedSettings === null) loadedSettings = {};
+    var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPin: '1234', adminPhone: '', branches: ['Central'], usersByBranch: {} }, loadedSettings);
+    if (!Array.isArray(workshopSettings.branches)) workshopSettings.branches = ['Central'];
+
+    var activeUser = 'Admin'; try { activeUser = localStorage.getItem(ACTIVE_USER_KEY) || 'Admin'; } catch(e){}
+    var currentFilter = 'ALL'; var currentBranchFilter = localBranch; var currentVentasPeriod = 'HOY'; var selectedRepairId = null;
+
+    // --- SUCURSALES ---
+    window.checkLocalBranch = function() {
+      if (!localStorage.getItem(LOCAL_BRANCH_KEY) || !workshopSettings.branches.includes(localBranch)) {
+        var html = workshopSettings.branches.map(function(b) { return '<button type="button" onclick="window.setLocalBranch(\''+b+'\')" class="w-full p-3 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl border border-zinc-700 transition">'+b+'</button>'; }).join('');
+        if($('startupBranchList')) $('startupBranchList').innerHTML = html;
+        if($('startupBranchModal')) $('startupBranchModal').style.display = 'flex';
+      }
     };
 
-    window.requestAdminPinAuth = function(actionDesc, onSuccessCallback) {
-      var correctPin = (workshopSettings.adminPin || '1234').trim();
-      var entered = prompt("🔒 ACCIÓN PROTEGIDA\n" + (actionDesc || "Autorización requerida") + "\n\nIngrese Clave Maestra:");
-      if (entered === correctPin) { onSuccessCallback(); } 
-      else if (entered !== null) { window.showToast("Error", "Clave incorrecta."); }
+    window.setLocalBranch = function(b) {
+      localBranch = b; currentCashBranch = b; try { localStorage.setItem(LOCAL_BRANCH_KEY, b); } catch(e){}
+      if($('startupBranchModal')) $('startupBranchModal').style.display = 'none';
+      if(!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {};
+      if(!workshopSettings.usersByBranch[localBranch]) { workshopSettings.usersByBranch[localBranch] = ['Admin']; StorageShield.save('settings', workshopSettings); }
+      window.setBranchFilter(b); window.renderBranchTabs(); window.updateCashBalanceUI(); window.showToast("Sucursal Vinculada", "Operando en: " + b);
     };
 
-    window.openSettingsModal = function() {
-      try {
-        if($('cfgWorkshopName')) $('cfgWorkshopName').value = workshopSettings.name || '';
-        if($('cfgWorkshopSubtitle')) $('cfgWorkshopSubtitle').value = workshopSettings.subtitle || '';
-        if($('cfgAdminPhone')) $('cfgAdminPhone').value = workshopSettings.adminPhone || '';
-        window.renderConfigBranches();
-        if(workshopSettings.logo && $('settingsLogoPreview')) {
-            $('settingsLogoPreview').innerHTML = '<img src="'+workshopSettings.logo+'" class="w-full h-full object-cover">';
-        } else if($('settingsLogoPreview')) {
-            $('settingsLogoPreview').innerHTML = '<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>';
-        }
-      } catch(e) {}
-      window.openModal('settingsModal');
-    };
-
-    window.saveSettings = function() {
-      workshopSettings.name = $('cfgWorkshopName').value; workshopSettings.subtitle = $('cfgWorkshopSubtitle').value;
-      if($('cfgAdminPhone')) workshopSettings.adminPhone = $('cfgAdminPhone').value.replace(/[^0-9]/g, '');
-      StorageShield.save('settings', workshopSettings);
-      if($('appHeaderTitle')) $('appHeaderTitle').textContent = workshopSettings.name;
-      if($('appHeaderSubtitle')) $('appHeaderSubtitle').textContent = workshopSettings.subtitle;
-      window.renderBranchTabs(); window.showToast("Guardado", "Ajustes actualizados"); window.closeModal('settingsModal');
-    };
-
-    window.renderConfigBranches = function() {
-      var c = $('settingsBranchesList'); if(!c) return;
+    window.renderBranchTabs = function() {
       var branches = workshopSettings.branches || ['Central'];
-      c.innerHTML = branches.map(function(b, idx) {
-        return '<div class="flex items-center justify-between p-2 bg-zinc-800 rounded-xl border border-zinc-700">' +
-               '<span class="text-xs font-bold text-white">'+b+'</span>' +
-               '<div class="flex gap-1"><button type="button" onclick="window.editConfigBranch('+idx+')" class="w-6 h-6 rounded bg-zinc-700 text-zinc-300 flex items-center justify-center"><i class="ph-bold ph-pencil-simple"></i></button>' +
-               (branches.length > 1 ? '<button type="button" onclick="window.deleteConfigBranch('+idx+')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center"><i class="ph-bold ph-trash"></i></button>' : '') +
-               '</div></div>';
+      var mainContainer = $('branchTabsButtonsList');
+      if (mainContainer) {
+        var allBtn = '<button type="button" onclick="window.setBranchFilter(\'ALL\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition '+(currentBranchFilter==='ALL'?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas</button>';
+        var bBtns = branches.map(function(b) { return '<button type="button" onclick="window.setBranchFilter(\''+b+'\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition '+(currentBranchFilter===b?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">'+b+'</button>'; }).join('');
+        mainContainer.innerHTML = allBtn + bBtns;
+        if($('currentBranchDisplayTag')) $('currentBranchDisplayTag').textContent = currentBranchFilter === 'ALL' ? 'Todas' : currentBranchFilter;
+      }
+      if($('cashModalTitleBranch')) $('cashModalTitleBranch').textContent = currentCashBranch;
+      if($('posModalBranchTag')) $('posModalBranchTag').textContent = localBranch;
+      if($('posBtnBranchNameCart')) $('posBtnBranchNameCart').textContent = localBranch;
+      if($('userModalBranchTag')) $('userModalBranchTag').textContent = localBranch;
+      if($('btnLabelCajaLocal')) $('btnLabelCajaLocal').textContent = localBranch;
+      if($('headerCashBranchTag')) $('headerCashBranchTag').textContent = localBranch;
+
+      var opts = branches.map(function(b) { return '<option value="'+b+'">'+b+'</option>'; }).join('');
+      if($('cshBranch')) $('cshBranch').innerHTML = opts; if($('stkBranch')) $('stkBranch').innerHTML = opts;
+
+      var cashBranchList = $('cashBranchSelectorList');
+      if(cashBranchList) {
+        cashBranchList.innerHTML = branches.map(function(b) {
+          var isSel = (b === currentCashBranch);
+          return '<button type="button" onclick="window.switchCashBranchView(\''+b+'\')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition '+(isSel?'bg-emerald-600 text-white shadow':'bg-zinc-900 text-zinc-400 hover:text-white')+'">'+b+'</button>';
+        }).join('');
+      }
+    };
+
+    window.switchCashBranchView = function(b) { currentCashBranch = b; window.renderBranchTabs(); window.updateCashBalanceUI(); };
+    window.setBranchFilter = function(b) { currentBranchFilter = b; window.renderBranchTabs(); window.renderRepairsList(); window.updateCounters(); };
+
+    // --- POS VENTAS (Carga Manual Reparada) ---
+    var posCart = []; var posScanner = null; var currentPosTab = 'CATALOG';
+
+    window.switchPosTab = function(tab) {
+      currentPosTab = tab;
+      var views = { 'CATALOG': $('posViewCatalog'), 'SCAN_MANUAL': $('posViewScanManual'), 'CART': $('posViewCart') };
+      var btns = { 'CATALOG': $('posTabCatalogBtn'), 'SCAN_MANUAL': $('posTabScanBtn'), 'CART': $('posTabCartBtn') };
+
+      for (var k in views) {
+        if (views[k]) {
+          if (k === tab) { views[k].classList.remove('hidden'); views[k].classList.add('flex'); } 
+          else { views[k].classList.add('hidden'); views[k].classList.remove('flex'); }
+        }
+        if (btns[k]) {
+          if (k === tab) btns[k].className = 'py-1.5 rounded-lg font-bold text-xs transition bg-amber-600 text-white shadow flex items-center justify-center gap-1';
+          else btns[k].className = 'py-1.5 rounded-lg font-bold text-xs transition bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center gap-1';
+        }
+      }
+      if (tab === 'CATALOG') { window.stopPosCam(); window.renderPosCatalog(); }
+      else if (tab === 'CART') { window.stopPosCam(); window.renderPosCart(); }
+    };
+
+    window.addManualPosItem = function() {
+      var name = $('posManualName').value.trim(); 
+      var price = parseFloat($('posManualPrice').value) || 0;
+      if(!name || price <= 0) { window.showToast('Aviso', 'Ingresa descripción y precio'); return; }
+      posCart.push({ code: 'MANUAL-' + Date.now(), branch: localBranch, name: name, price: price, qty: 1 });
+      $('posManualName').value = ''; $('posManualPrice').value = '';
+      window.renderPosCart(); window.showToast("Agregado", "Artículo cargado al carrito."); window.switchPosTab('CART');
+    };
+
+    window.addPosItemByCode = function(code) {
+      var st = stockItems.find(function(i) { return String(i.code) === String(code) && i.branch === localBranch; });
+      if(!st || st.qty <= 0) { window.showToast("Sin Stock", "El producto no tiene stock en " + localBranch); return; }
+      var cartItem = posCart.find(function(c) { return String(c.code) === String(code) && c.branch === localBranch; });
+      if(cartItem) {
+        if(cartItem.qty < st.qty) { cartItem.qty++; window.showToast("Agregado", st.name + " (" + cartItem.qty + ")"); } 
+        else { window.showToast("Límite", "No hay más unidades en stock."); }
+      } else { posCart.push({ code: st.code, branch: st.branch, name: st.name, price: st.price, qty: 1 }); window.showToast("Agregado", st.name); }
+      window.renderPosCart();
+    };
+
+    window.addManualPosItemQty = function(idx) { posCart[idx].qty++; window.renderPosCart(); };
+    window.removePosItem = function(idx) { if(posCart[idx].qty > 1) posCart[idx].qty--; else posCart.splice(idx, 1); window.renderPosCart(); };
+    window.deletePosItemRow = function(idx) { posCart.splice(idx, 1); window.renderPosCart(); };
+    window.clearPosCart = function() { posCart = []; window.renderPosCart(); };
+
+    window.renderPosCart = function() {
+      var container = $('posCartContainer'); var total = 0; var countItems = 0;
+      posCart.forEach(function(c){ countItems += c.qty; total += (c.price * c.qty); });
+
+      if($('posCartBadge')) $('posCartBadge').textContent = countItems;
+      if($('posBarItemCount')) $('posBarItemCount').textContent = countItems + (countItems === 1 ? ' item' : ' items');
+      if($('posBarTotal')) $('posBarTotal').textContent = '$' + total.toLocaleString();
+      if($('posTotalAmount')) $('posTotalAmount').textContent = '$' + total.toLocaleString();
+
+      var bar = $('posCatalogCartBar');
+      if (bar) { if (countItems > 0) { bar.classList.remove('hidden'); bar.classList.add('flex'); } else { bar.classList.add('hidden'); bar.classList.remove('flex'); } }
+
+      if(!container) return;
+      if(posCart.length === 0) { container.innerHTML = '<div class="text-center text-zinc-600 text-xs p-6">El carrito está vacío. Agrega repuestos del catálogo.</div>'; return; }
+
+      container.innerHTML = posCart.map(function(c, idx) {
+        var isManual = String(c.code).indexOf('MANUAL') === 0;
+        var btnAdd = isManual ? 'window.addManualPosItemQty('+idx+')' : 'window.addPosItemByCode(\''+c.code+'\')';
+        return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl shadow-sm"><div class="text-xs text-white flex-1 min-w-0 pr-2"><div class="font-bold truncate">'+c.name+'</div><div class="text-amber-400 font-mono text-[11px]">$'+c.price.toLocaleString()+' x '+c.qty+' = <b>$'+(c.price*c.qty).toLocaleString()+'</b></div></div><div class="flex gap-1 items-center"><button type="button" onclick="window.removePosItem('+idx+')" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center active:scale-95"><i class="ph-bold ph-minus"></i></button><span class="text-xs font-bold w-4 text-center text-white">'+c.qty+'</span><button type="button" onclick="'+btnAdd+'" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center active:scale-95"><i class="ph-bold ph-plus"></i></button><button type="button" onclick="window.deletePosItemRow('+idx+')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex justify-center items-center ml-1 active:scale-95"><i class="ph-bold ph-trash"></i></button></div></div>';
       }).join('');
     };
 
-    window.addConfigBranch = function() {
-      var val = $('inpNewConfigBranch').value.trim(); if(!val) return;
-      if(!workshopSettings.branches) workshopSettings.branches = ['Central'];
-      if(workshopSettings.branches.includes(val)) { window.showToast('Aviso', 'Ya existe esa sucursal'); return; }
-      workshopSettings.branches.push(val); StorageShield.save('settings', workshopSettings);
-      $('inpNewConfigBranch').value = ''; window.renderConfigBranches(); window.renderBranchTabs();
+    window.completePosSale = function() {
+      if(posCart.length === 0) { window.showToast("Aviso", "No hay artículos en el carrito"); return; }
+      var total = 0;
+      posCart.forEach(function(c) {
+        var p = parseFloat(c.price) || 0; var q = parseInt(c.qty) || 1; total += (p * q);
+        if(String(c.code).indexOf('MANUAL') !== 0) {
+          var st = stockItems.find(function(i) { return String(i.code) === String(c.code) && i.branch === c.branch; });
+          if(st) st.qty = Math.max(0, (parseInt(st.qty) || 0) - q);
+        }
+      });
+
+      var saleId = 'VTA-' + Math.floor(10000 + Math.random() * 90000);
+      var method = $('posPaymentMethod') ? $('posPaymentMethod').value : 'Efectivo';
+      var custName = $('posCustomerName') ? $('posCustomerName').value.trim() : '';
+
+      var newSale = { id: saleId, branch: localBranch, timestamp: Date.now(), total: total, paymentMethod: method, items: JSON.parse(JSON.stringify(posCart)), soldBy: activeUser, customerName: custName };
+      sales.unshift(newSale); StorageShield.save('sales', sales); StorageShield.save('stock', stockItems);
+      
+      if (!Array.isArray(cashMovements)) cashMovements = [];
+      cashMovements.unshift({ id: 'CSH-VTA-' + Date.now(), branch: localBranch, type: 'INCOME', amount: total, concept: 'Venta #' + saleId + (custName ? ' (' + custName + ')' : ''), method: method, date: Date.now(), user: activeUser, closed: false });
+      StorageShield.save('cash', cashMovements);
+      
+      window.updateCashBalanceUI(); window.clearPosCart(); window.closeModal('salesModal');
+      window.switchPosTab('CATALOG'); window.showToast("Venta Exitosa", "Registrada en caja local."); window.openSaleTicketModal(saleId);
     };
 
-    window.editConfigBranch = function(idx) {
-      var oldVal = workshopSettings.branches[idx]; var newVal = prompt("Editar nombre de sucursal:", oldVal);
-      if(newVal && newVal.trim() !== '') {
-        newVal = newVal.trim(); workshopSettings.branches[idx] = newVal;
-        repairs.forEach(function(r) { if(r.branch === oldVal) r.branch = newVal; });
-        stockItems.forEach(function(s) { if(s.branch === oldVal) s.branch = newVal; });
-        sales.forEach(function(s) { if(s.branch === oldVal) s.branch = newVal; });
-        cashMovements.forEach(function(c) { if(c.branch === oldVal) c.branch = newVal; });
-        cashClosures.forEach(function(c) { if(c.branch === oldVal) c.branch = newVal; });
-        if(localBranch === oldVal) window.setLocalBranch(newVal);
-        StorageShield.save('settings', workshopSettings); StorageShield.save('repairs', repairs); StorageShield.save('stock', stockItems); StorageShield.save('sales', sales); StorageShield.save('cash', cashMovements); StorageShield.save('cashClosures', cashClosures);
-        window.renderConfigBranches(); window.renderBranchTabs(); window.showToast('Actualizado', 'Sucursal editada.');
+    window.renderPosCatalog = function() {
+      var grid = $('posCatalogGrid'); if(!grid) return;
+      var term = $('posSearchProduct') ? $('posSearchProduct').value.toLowerCase().trim() : '';
+      
+      var catalogMap = {};
+      stockItems.forEach(function(item) {
+        if (!item) return;
+        var key = (item.code && String(item.code).trim()) ? String(item.code).trim() : (item.name || '').trim();
+        if (!key) return;
+        if (!catalogMap[key]) { catalogMap[key] = { code: item.code || 'S/C', name: item.name || 'Sin Nombre', price: parseFloat(item.price) || 0, localQty: 0, branchesStock: {} }; }
+        var itemBranch = item.branch || 'Central'; var qty = parseInt(item.qty) || 0;
+        catalogMap[key].branchesStock[itemBranch] = (catalogMap[key].branchesStock[itemBranch] || 0) + qty;
+        if (itemBranch === localBranch) { catalogMap[key].localQty += qty; if (item.price) catalogMap[key].price = parseFloat(item.price); }
+      });
+
+      var displayItems = Object.values(catalogMap).filter(function(i) { return i.name.toLowerCase().includes(term) || String(i.code).toLowerCase().includes(term); });
+      if(displayItems.length === 0) { grid.innerHTML = '<div class="col-span-2 sm:col-span-3 text-zinc-500 text-center p-8">No hay repuestos registrados en el sistema.</div>'; return; }
+      
+      grid.innerHTML = displayItems.map(function(i) {
+        var stockLabel = '', actionBtn = '', borderClass = 'border-zinc-800 hover:border-amber-500/70';
+        var otherBranchesWithStock = Object.keys(i.branchesStock).filter(function(b) { return b !== localBranch && i.branchesStock[b] > 0; }).map(function(b) { return b + ': ' + i.branchesStock[b]; });
+        var otherBranchesText = otherBranchesWithStock.length > 0 ? '<div class="text-[9px] text-indigo-300 font-mono mt-0.5 truncate">📍 ' + otherBranchesWithStock.join(' • ') + '</div>' : '';
+
+        if (i.localQty <= 0) {
+          stockLabel = '<span class="text-[9px] text-rose-500 font-bold">Sin Stock (' + localBranch + ')</span>'; borderClass = 'border-rose-900/50 bg-rose-950/10';
+          actionBtn = '<button type="button" onclick="window.requestStockWA(\'' + i.name.replace(/'/g, "\\'") + '\', \'' + i.code + '\')" class="px-2 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-[10px] flex items-center justify-center gap-1 active:scale-95 shadow w-full"><i class="ph-bold ph-whatsapp-logo text-xs"></i> Pedir a Sucursal</button>';
+        } else {
+          if (i.localQty <= 3) { stockLabel = '<span class="text-[9px] text-amber-500 font-bold">Stock: ' + i.localQty + ' (Bajo)</span>'; } 
+          else { stockLabel = '<span class="text-[9px] text-emerald-400 font-bold">Stock: ' + i.localQty + '</span>'; }
+          actionBtn = '<div class="flex items-center justify-between w-full"><span class="text-emerald-400 font-bold font-mono text-sm">$' + i.price.toLocaleString() + '</span><button type="button" onclick="window.addPosItemByCode(\'' + i.code + '\')" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg text-xs flex items-center gap-1 active:scale-95 shadow">+ Agregar</button></div>';
+        }
+        return '<div class="p-2.5 bg-zinc-900 border ' + borderClass + ' rounded-xl flex flex-col justify-between transition shadow-sm"><div><div class="font-bold text-white text-xs leading-tight mb-0.5 line-clamp-2">' + i.name + '</div><div class="font-mono text-[9px] text-zinc-500 mb-0.5">' + i.code + '</div>' + otherBranchesText + '</div><div class="flex flex-col gap-1.5 pt-1.5 border-t border-zinc-800/80 mt-1"><div class="flex justify-between items-center w-full">' + (i.localQty <= 0 ? '<span class="text-zinc-500 font-bold font-mono text-sm">$' + i.price.toLocaleString() + '</span>' : '') + stockLabel + '</div>' + actionBtn + '</div></div>';
+      }).join('');
+    };
+
+    window.togglePosCam = function() {
+      var box = $('posScannerBox'); var btn = $('btnToggleScanner');
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden'); box.classList.add('flex');
+        if (btn) btn.innerHTML = '<i class="ph-bold ph-stop"></i> Detener Cámara';
+        setTimeout(function() {
+          try {
+            if (posScanner) { posScanner.clear(); posScanner = null; }
+            posScanner = new Html5Qrcode("pos-qr-reader");
+            var config = { fps: 15, qrbox: function(w, h) { var m = Math.min(w, h); var edge = Math.floor(m * 0.7); return { width: edge, height: edge }; } };
+            posScanner.start({ facingMode: "environment" }, config, function(decodedText) { window.addPosItemByCode(decodedText); window.showToast("Escaneado", decodedText); if (navigator.vibrate) navigator.vibrate(80);
+            }).catch(function(err){ 
+              posScanner.start({ facingMode: "user" }, config, function(text) { window.addPosItemByCode(text); window.showToast("Escaneado", text); }
+              ).catch(function(e) { window.showToast("Error", "Cámara no disponible."); window.stopPosCam(); });
+            });
+          } catch(e) { window.showToast("Error", "Cámara no soportada."); window.stopPosCam(); }
+        }, 300);
+      } else { window.stopPosCam(); }
+    };
+
+    window.stopPosCam = function() { 
+      var box = $('posScannerBox'); var btn = $('btnToggleScanner');
+      if(box) { box.classList.add('hidden'); box.classList.remove('flex'); }
+      if (btn) btn.innerHTML = '<i class="ph-bold ph-camera"></i> Iniciar Cámara';
+      if (posScanner) { try { posScanner.stop().catch(function(){}); posScanner.clear(); posScanner = null; } catch(e){} } 
+    };
+
+    window.requestStockWA = function(productName, productCode) {
+      var targetBranches = (workshopSettings.branches || []).filter(function(b) { return b !== localBranch; }).join(' / ');
+      var msg = `*${workshopSettings.name.toUpperCase()} - SOLICITUD DE STOCK* 📦\n\nHola, necesitamos en *${localBranch}* el siguiente repuesto:\n\n🔹 *${productName}*\n🔖 Código: ${productCode || 'S/C'}\n\n¿Tienen disponibilidad en ${targetBranches || 'otra sucursal'} para enviarlo?`;
+      var phone = workshopSettings.adminPhone;
+      if(!phone) { window.showToast("Aviso", "Abriendo WhatsApp. (Configura el número en Ajustes)."); window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+      } else { window.open('https://wa.me/' + phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg), '_blank'); }
+    };
+
+    // --- PATRÓN DE CLAVES ---
+    window.setUnlockType = function(type) {
+      activeUnlockType = type;
+      ['btnUnlockPin', 'btnUnlockPattern', 'btnUnlockNone'].forEach(function(id) { if($(id)) $(id).className = 'px-2 py-0.5 rounded text-zinc-400 transition'; });
+      if($('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1))) $('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1)).className = 'px-2 py-0.5 rounded bg-iosBlue text-white font-medium transition';
+      if($('unlockViewPin')) $('unlockViewPin').style.display = type === 'pin' ? 'block' : 'none';
+      if($('unlockViewPattern')) $('unlockViewPattern').style.display = type === 'pattern' ? 'block' : 'none';
+      if($('unlockViewNone')) $('unlockViewNone').style.display = type === 'none' ? 'block' : 'none';
+      if(type === 'pattern') setTimeout(window.initPatternCanvas, 150);
+    };
+
+    // --- STOCK GENERAL ---
+    window.switchStockTab = function(tab) {
+      var views = { 'LIST': $('stockViewList'), 'FORM': $('stockViewForm'), 'SCANNER': $('stockViewScanner') };
+      var btns = { 'LIST': $('stockTabListBtn'), 'FORM': $('stockTabFormBtn'), 'SCANNER': $('stockTabScannerBtn') };
+
+      for (var k in views) {
+        if (views[k]) {
+          if (k === tab) { views[k].classList.remove('hidden'); views[k].classList.add('flex'); } 
+          else { views[k].classList.add('hidden'); views[k].classList.remove('flex'); }
+        }
+        if (btns[k]) {
+          if (k === tab) btns[k].className = 'py-1.5 rounded-lg font-bold text-xs transition bg-purple-700 text-white shadow flex items-center justify-center gap-1';
+          else btns[k].className = 'py-1.5 rounded-lg font-bold text-xs transition bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center gap-1';
+        }
+      }
+
+      if (tab === 'LIST') { window.stopStockCam(); window.renderStockList(); } 
+      else if (tab === 'FORM') { window.stopStockCam(); } 
+      else if (tab === 'SCANNER') { window.toggleStockCam(); }
+    };
+
+    window.autoBarcode = function() { if($('stkCode')) $('stkCode').value = Math.floor(100000000000 + Math.random() * 900000000000).toString(); };
+    window.saveStockItem = function() {
+      var code = $('stkCode').value.trim() || Math.floor(100000000000 + Math.random() * 900000000000).toString();
+      var name = $('stkName').value.trim(); var branch = $('stkBranch') ? $('stkBranch').value : localBranch;
+      var cat = $('stkCategory').value; var qty = parseInt($('stkQuantity').value) || 1; var price = parseFloat($('stkSalePrice').value) || 0; var cost = parseFloat($('stkCostPrice').value) || 0;
+      
+      if(!name) { window.showToast('Error', 'Ingrese nombre'); return; }
+      var existing = stockItems.find(function(i) { return String(i.code) === String(code) && i.branch === branch; });
+      if(existing) { existing.qty += qty; existing.price = price; existing.cost = cost; } 
+      else { stockItems.push({ code: code, name: name, category: cat, qty: qty, price: price, cost: cost, branch: branch }); }
+      
+      StorageShield.save('stock', stockItems); window.showToast('Guardado', 'Stock en ' + branch);
+      $('stkName').value = ''; $('stkCode').value = ''; $('stkSalePrice').value = ''; $('stkCostPrice').value = ''; window.switchStockTab('LIST');
+    };
+
+    window.bulkIncreasePrices = function() {
+      if(activeUser !== 'Admin') { window.showToast('Denegado', 'Solo Admin edita precios masivos.'); return; }
+      window.requestAdminPinAuth("Aumento Masivo de Precios", function() {
+        var pct = prompt("Ingresa el porcentaje de aumento (ej: 10 para 10%):\nAplica al stock de " + localBranch);
+        if(pct !== null) {
+          var p = parseFloat(pct);
+          if(!isNaN(p) && p > 0) {
+            var count = 0; stockItems.forEach(function(i) { if(i.branch === localBranch) { i.price = Math.round(i.price * (1 + (p / 100))); count++; } });
+            StorageShield.save('stock', stockItems); window.renderStockList(); window.showToast("Actualizado", "Precios subieron " + p + "% en " + count + " productos.");
+          } else { window.showToast("Error", "Porcentaje no válido"); }
+        }
+      });
+    };
+
+    window.updateStockQty = function(code, branch, delta) {
+      var st = stockItems.find(function(i) { return String(i.code) === String(code) && i.branch === branch; });
+      if(st) { st.qty += delta; if(st.qty < 0) st.qty = 0; StorageShield.save('stock', stockItems); window.renderStockList(); }
+    };
+
+    window.deleteStockItem = function(code, branch) {
+      if(activeUser !== 'Admin') { window.showToast('Denegado', 'Solo Admin puede eliminar'); return; }
+      window.requestAdminPinAuth("Eliminar producto", function() {
+          stockItems = stockItems.filter(function(i){ return !(String(i.code) === String(code) && i.branch === branch); });
+          StorageShield.save('stock', stockItems); window.renderStockList(); window.showToast("Eliminado", "Producto removido.");
+      });
+    };
+
+    window.editStockPrice = function(code, branch) {
+      if(activeUser !== 'Admin') { window.showToast('Denegado', 'Solo Admin edita precios.'); return; }
+      window.requestAdminPinAuth("Modificar precio", function() {
+          var st = stockItems.find(function(i) { return String(i.code) === String(code) && i.branch === branch; });
+          if(!st) return;
+          var newPrice = prompt("Nuevo precio para " + st.name + ":", st.price);
+          if(newPrice !== null && !isNaN(parseFloat(newPrice))) {
+              st.price = parseFloat(newPrice); StorageShield.save('stock', stockItems); window.renderStockList(); window.showToast("Actualizado", "Precio modificado.");
+          }
+      });
+    };
+
+    window.renderStockList = function() {
+      var container = $('stockListContainer'); if(!container) return;
+      var term = ($('stkSearchInput') ? $('stkSearchInput').value.toLowerCase() : '');
+      var filtered = stockItems.filter(function(i) { return i && (i.name.toLowerCase().includes(term) || String(i.code).includes(term)); });
+      var isAdmin = (activeUser === 'Admin');
+
+      if(filtered.length === 0) { container.innerHTML = '<div class="text-center p-4 text-zinc-500">No hay repuestos registrados.</div>'; return; }
+      container.innerHTML = filtered.map(function(i) {
+        var editPriceHtml = isAdmin ? '<button type="button" onclick="window.editStockPrice(\''+i.code+'\', \''+i.branch+'\')" class="ml-1 text-zinc-400 hover:text-amber-400"><i class="ph-bold ph-pencil-simple"></i></button>' : '';
+        var qtyClass = 'text-emerald-400';
+        if (i.qty <= 0) qtyClass = 'text-rose-500 animate-pulse'; else if (i.qty <= 3) qtyClass = 'text-amber-500';
+
+        return '<div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl flex flex-col gap-1 mb-1.5 shadow-sm"><div class="flex justify-between items-start"><div class="flex-1 min-w-0 pr-2"><div class="font-bold text-white text-xs truncate">' + i.name + '</div><div class="text-[10px] text-zinc-500 font-mono">' + i.code + '</div></div><div class="flex items-center"><span class="text-emerald-400 font-bold text-xs">$' + i.price.toLocaleString() + '</span>' + editPriceHtml + '</div></div><div class="flex justify-between items-center pt-1 border-t border-zinc-800/80"><div><span class="text-[9px] px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-300 font-bold"><i class="ph-bold ph-map-pin text-rose-400"></i> ' + (i.branch || 'Central') + '</span></div><div class="flex items-center gap-1.5"><button type="button" onclick="window.updateStockQty(\''+i.code+'\', \''+i.branch+'\', -1)" class="w-6 h-6 rounded bg-zinc-800 text-white flex justify-center items-center active:scale-95"><i class="ph-bold ph-minus"></i></button><span class="text-xs font-bold w-5 text-center ' + qtyClass + '">' + i.qty + '</span><button type="button" onclick="window.updateStockQty(\''+i.code+'\', \''+i.branch+'\', 1)" class="w-6 h-6 rounded bg-zinc-800 text-white flex justify-center items-center active:scale-95"><i class="ph-bold ph-plus"></i></button><button type="button" onclick="window.deleteStockItem(\''+i.code+'\', \''+i.branch+'\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex justify-center items-center ml-2 active:scale-95"><i class="ph-bold ph-trash"></i></button></div></div></div>';
+      }).join('');
+    };
+
+    var stockScanner = null;
+    window.toggleStockCam = function() {
+      var box = $('stockScannerContainer'); var listContainer = $('stockListWrapper');
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden'); box.classList.add('flex');
+        if(listContainer) listContainer.style.display = 'none'; 
+        setTimeout(function() {
+          try {
+            if (stockScanner) { stockScanner.clear(); stockScanner = null; }
+            stockScanner = new Html5Qrcode("stock-qr-reader");
+            var config = { fps: 15, qrbox: function(w, h) { var m = Math.min(w, h); var edge = Math.floor(m * 0.75); return { width: edge, height: edge }; } };
+            stockScanner.start({ facingMode: "environment" }, config, function(decodedText) {
+                if($('stkCode')) $('stkCode').value = decodedText; window.showToast("Código Detectado", decodedText); window.stopStockCam(); window.switchStockTab('FORM');
+            }).catch(function(err){ 
+                window.showToast("Aviso", "Iniciando cámara frontal...");
+                stockScanner.start({ facingMode: "user" }, config, function(txt) {
+                  if($('stkCode')) $('stkCode').value = txt; window.showToast("Código", txt); window.stopStockCam(); window.switchStockTab('FORM');
+                }).catch(function(e) { window.showToast("Error", "Cámara bloqueada o sin permisos."); window.stopStockCam(); });
+            });
+          } catch(e) { window.showToast("Error", "Cámara no soportada."); window.stopStockCam(); }
+        }, 300);
+      } else { window.stopStockCam(); }
+    };
+
+    window.stopStockCam = function() { 
+      var box = $('stockScannerContainer');
+      if(box) { box.classList.add('hidden'); box.classList.remove('flex'); }
+      if($('stockListWrapper')) $('stockListWrapper').style.display = 'flex';
+      if (stockScanner) { try { stockScanner.stop().catch(function(){}); stockScanner.clear(); stockScanner=null;} catch(e){} } 
+    };
+
+    // --- CAJA LOCAL INDEPENDIENTE ---
+    window.showCashIncome = function() { $('cshType').value = 'INCOME'; $('cashFormTitle').textContent = 'Registrar Ingreso'; $('cashMovementForm').classList.remove('hidden'); };
+    window.showCashExpense = function() { $('cshType').value = 'EXPENSE'; $('cashFormTitle').textContent = 'Registrar Egreso'; $('cashMovementForm').classList.remove('hidden'); };
+    window.hideCashForm = function() { $('cashMovementForm').classList.add('hidden'); };
+    
+    window.saveCashMovement = function() {
+      var amt = parseFloat($('cshAmount').value); var concept = $('cshConcept').value.trim();
+      if(!amt || !concept) { window.showToast('Error', 'Completa monto y concepto'); return; }
+      if (!Array.isArray(cashMovements)) cashMovements = [];
+      cashMovements.unshift({ id: 'CSH-' + Date.now(), branch: currentCashBranch, type: $('cshType').value, amount: amt, concept: concept, method: $('cshMethod').value, date: Date.now(), user: activeUser, closed: false });
+      StorageShield.save('cash', cashMovements);
+      window.hideCashForm(); $('cshAmount').value = ''; $('cshConcept').value = '';
+      window.updateCashBalanceUI(); window.showToast('Caja', 'Movimiento registrado');
+    };
+
+    window.printCashTicket = function(id) {
+      var m = cashMovements.find(function(c){ return c.id === id; }); if(!m) return;
+      var html = '<div style="width:230px;margin:auto;font-family:monospace;line-height:1.25;color:#000;text-align:center;">' +
+                 '<div style="border-bottom:1px dashed #000;padding-bottom:4px;margin-bottom:4px;"><b style="font-size:12px;">' + workshopSettings.name.toUpperCase() + '</b><br><b style="font-size:10px;">COMPROBANTE CAJA ('+(m.branch||'Central')+')</b><br><span style="font-size:9px;">' + new Date(m.date).toLocaleString('es-AR') + '</span><br><span style="font-size:9px;">TICKET #' + m.id + '</span></div>' +
+                 '<div style="text-align:left;font-size:10px;margin-bottom:6px;"><b>Tipo:</b> ' + (m.type==='INCOME'?'INGRESO':'EGRESO') + '<br><b>Concepto:</b> ' + m.concept + '<br><b>Medio:</b> ' + m.method + '<br><b>Usuario:</b> ' + m.user + '</div>' +
+                 '<div style="border-top:1px dashed #000;padding-top:4px;"><b style="font-size:12px;">TOTAL: $' + m.amount + '</b></div></div>';
+      $('printArea').innerHTML = html; $('printArea').style.display = 'block'; window.print(); setTimeout(function(){ $('printArea').style.display = 'none'; }, 500);
+    };
+
+    window.updateCashBalanceUI = function() {
+      try {
+        if (!Array.isArray(cashMovements)) cashMovements = [];
+        var inc = 0, exp = 0; var startOfToday = new Date().setHours(0,0,0,0);
+        var branchMovements = cashMovements.filter(function(c) { return (!c.branch || c.branch === currentCashBranch) && !c.closed; });
+        branchMovements.forEach(function(c) { if(c.type === 'INCOME') inc += (parseFloat(c.amount) || 0); else exp += (parseFloat(c.amount) || 0); });
+        var net = inc - exp;
+
+        if($('cashTotalIncome')) $('cashTotalIncome').textContent = '$' + inc.toLocaleString();
+        if($('cashTotalExpense')) $('cashTotalExpense').textContent = '$' + exp.toLocaleString();
+        if($('cashNetBalance')) $('cashNetBalance').textContent = '$' + net.toLocaleString();
+        
+        var localNet = 0; cashMovements.filter(function(c){ return (!c.branch || c.branch === localBranch) && !c.closed; }).forEach(function(c){ localNet += (c.type==='INCOME'?parseFloat(c.amount)||0:-(parseFloat(c.amount)||0)); });
+        if($('headerCashBalance')) $('headerCashBalance').textContent = '$' + localNet.toLocaleString();
+
+        var container = $('cashListContainer');
+        if(container) {
+          var todays = branchMovements.filter(function(c) { return c.date >= startOfToday; });
+          if(todays.length === 0) container.innerHTML = '<div class="text-center text-zinc-500 p-4 text-xs">No hay movimientos activos en ' + currentCashBranch + '</div>';
+          else {
+            container.innerHTML = todays.map(function(c) {
+              var isInc = c.type === 'INCOME'; var amount = parseFloat(c.amount) || 0;
+              var timeStr = new Date(c.date || Date.now()).toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'});
+              return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl mb-1.5"><div class="min-w-0 flex-1 pr-2"><div class="font-bold text-xs text-white truncate">' + (c.concept || 'Movimiento') + '</div><div class="text-[9px] text-zinc-500">' + timeStr + ' • ' + (c.method || 'Efectivo') + ' • ' + (c.user || 'Admin') + '</div></div><div class="flex items-center gap-2 shrink-0"><span class="font-mono text-sm font-bold ' + (isInc ? 'text-emerald-400' : 'text-rose-400') + '">' + (isInc ? '+' : '-') + '$' + amount.toLocaleString() + '</span><button type="button" onclick="window.printCashTicket(\'' + c.id + '\')" class="p-1.5 bg-zinc-800 rounded-lg text-zinc-300 shadow active:scale-95"><i class="ph-bold ph-printer"></i></button></div></div>';
+            }).join('');
+          }
+        }
+        window.renderCashClosures();
+      } catch(e) {}
+    };
+
+    window.cerrarCajaRestablecer = function() {
+      var branchActiveMovements = cashMovements.filter(function(c) { return (!c.branch || c.branch === currentCashBranch) && !c.closed; });
+      var inc = 0, exp = 0; branchActiveMovements.forEach(function(c) { var amt = parseFloat(c.amount) || 0; if (c.type === 'INCOME') inc += amt; else exp += amt; });
+      var net = inc - exp;
+      if (branchActiveMovements.length === 0 && net === 0) { window.showToast("Aviso", "No hay movimientos para cerrar."); return; }
+
+      if (confirm("¿Confirmas el Cierre en " + currentCashBranch + "?\n\n🟢 Ingresos: $" + inc + "\n🔴 Egresos: $" + exp + "\n💰 Saldo: $" + net)) {
+        var closureId = 'CIE-' + Date.now();
+        var closure = { id: closureId, branch: currentCashBranch, date: Date.now(), inc: inc, exp: exp, net: net, by: activeUser, movements: JSON.parse(JSON.stringify(branchActiveMovements)) };
+        if (!Array.isArray(cashClosures)) cashClosures = []; cashClosures.unshift(closure); StorageShield.save('cashClosures', cashClosures);
+        branchActiveMovements.forEach(function(c) { c.closed = true; c.closureId = closureId; }); StorageShield.save('cash', cashMovements);
+        window.updateCashBalanceUI(); window.showToast("Cerrada", "Cierre archivado.");
       }
     };
 
-    window.deleteConfigBranch = function(idx) {
-      if(workshopSettings.branches.length <= 1) return;
-      if(confirm("¿Eliminar esta sucursal?")) {
-        workshopSettings.branches.splice(idx, 1); StorageShield.save('settings', workshopSettings);
-        window.renderConfigBranches(); window.renderBranchTabs();
+    window.printCashCierre = function(cierreId) {
+      var inc = 0, exp = 0, net = 0, date = Date.now(), b = currentCashBranch, movs = [];
+      if (cierreId) {
+        var c = cashClosures.find(function(x){ return x.id === cierreId; });
+        if(c) { inc = c.inc; exp = c.exp; net = c.net; date = c.date; b = c.branch || currentCashBranch; movs = c.movements || []; } else return;
+      } else {
+        var activeMovs = cashMovements.filter(function(m){ return (!m.branch || m.branch === currentCashBranch) && !m.closed; });
+        activeMovs.forEach(function(m){ if(m.type === 'INCOME') inc += m.amount; else exp += m.amount; });
+        net = inc - exp; movs = activeMovs;
+      }
+      var itemsHtml = movs.map(function(m) { return '<div style="display:flex;justify-content:space-between;font-size:9px;"><span>' + (m.type==='INCOME'?'+':'-') + m.concept + '</span><span>$' + m.amount + '</span></div>'; }).join('');
+      var html = '<div style="width:230px;margin:auto;font-family:monospace;line-height:1.25;color:#000;text-align:center;">' +
+                '<div style="border-bottom:1px dashed #000;padding-bottom:4px;margin-bottom:4px;"><b style="font-size:12px;">' + workshopSettings.name.toUpperCase() + '</b><br><b style="font-size:10px;">REPORTE CIERRE ('+b+')</b><br><span style="font-size:9px;">' + new Date(date).toLocaleString('es-AR') + '</span></div>' +
+                '<div style="text-align:left;font-size:9px;margin-bottom:4px;"><b>Ingresos:</b> $' + inc.toLocaleString() + '<br><b>Egresos:</b> $' + exp.toLocaleString() + '<br><b>SALDO FINAL: $' + net.toLocaleString() + '</b></div>' +
+                '<div style="border-top:1px dashed #000;border-bottom:1px dashed #000;padding:4px 0;text-align:left;"><b style="font-size:9px;">DETALLE:</b><br>' + (itemsHtml || '<span style="font-size:8px;">Sin movimientos</span>') + '</div></div>';
+      $('printArea').innerHTML = html; $('printArea').style.display = 'block'; window.print(); setTimeout(function(){ $('printArea').style.display = 'none'; }, 500);
+    };
+
+    window.sendCashCierreWA = function(cierreId) {
+      var inc = 0, exp = 0, net = 0, date = Date.now(), b = currentCashBranch, movs = [];
+      if (cierreId) {
+        var c = cashClosures.find(function(x){ return x.id === cierreId; });
+        if(c) { inc = c.inc; exp = c.exp; net = c.net; date = c.date; b = c.branch || currentCashBranch; movs = c.movements || []; } else return;
+      } else {
+        var activeMovs = cashMovements.filter(function(m){ return (!m.branch || m.branch === currentCashBranch) && !m.closed; });
+        activeMovs.forEach(function(m){ if(m.type === 'INCOME') inc += m.amount; else exp += m.amount; }); net = inc - exp; movs = activeMovs;
+      }
+      var phone = workshopSettings.adminPhone || prompt("WhatsApp del Administrador (con código de país):"); if (!phone) return;
+      var movsList = movs.map(function(m) { return (m.type==='INCOME'?'🟢 +$':'🔴 -$') + m.amount + ' • ' + m.concept; }).join('\n');
+      var msg = `*${workshopSettings.name.toUpperCase()} - CIERRE CAJA (${b})* 💰\n📅 Fecha: ${new Date(date).toLocaleString('es-AR')}\n🧑‍💼 Operador: ${activeUser}\n\n📊 *TOTALES:*\n🟢 Ingresos: $${inc.toLocaleString()}\n🔴 Egresos: $${exp.toLocaleString()}\n💰 *SALDO FINAL: $${net.toLocaleString()}*\n\n📋 *DETALLE:*\n${movsList || 'Sin movimientos registrados'}`;
+      window.open('https://wa.me/' + phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg), '_blank');
+    };
+
+    window.renderCashClosures = function() {
+      var container = $('cashClosuresList'); if(!container) return;
+      var branchClosures = cashClosures.filter(function(c) { return !c.branch || c.branch === currentCashBranch; });
+      if(branchClosures.length === 0) { container.innerHTML = '<div class="text-center text-zinc-500 p-4 text-[10px]">No hay cierres archivados en '+currentCashBranch+'</div>'; return; }
+      container.innerHTML = branchClosures.map(function(c) {
+        var dt = new Date(c.date).toLocaleDateString('es-AR') + ' ' + new Date(c.date).toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'});
+        return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl mb-1.5"><div><div class="font-bold text-xs text-white">Cierre '+dt+'</div><div class="text-[9px] text-zinc-500">Por: '+c.by+'</div></div><div class="flex items-center gap-1.5"><span class="font-mono text-sm font-bold text-white">$'+c.net.toLocaleString()+'</span><button type="button" onclick="window.sendCashCierreWA(\''+c.id+'\')" class="p-1.5 bg-zinc-800 rounded-lg text-emerald-400 shadow active:scale-95"><i class="ph-bold ph-whatsapp-logo"></i></button><button type="button" onclick="window.printCashCierre(\''+c.id+'\')" class="p-1.5 bg-zinc-800 rounded-lg text-zinc-300 shadow active:scale-95"><i class="ph-bold ph-printer"></i></button></div></div>';
+      }).join('');
+    };
+
+    // --- PANEL MAESTRO Y LICENCIA BLINDADA (SIN DEMO) ---
+    window.secretTap = function() {
+      var pin = prompt('🔑 Panel Maestro de Activación\nIngresa PIN:');
+      if (pin === '8408') {
+        var panel = $('masterAdminUnlockedView');
+        if(panel) { panel.classList.remove('hidden'); panel.style.display = 'block'; }
+        if($('genTargetWorkshopCode'))$('genTargetWorkshopCode').value = currentWorkshopId;
+        window.showToast("Acceso Concedido", "Panel maestro activo.");
+      } else if (pin !== null) { window.showToast("Error", "PIN incorrecto"); }
+    };
+
+    window.emitKey = function() {
+      var code = $('genTargetWorkshopCode').value.trim().toUpperCase(); if (!code) return;
+      var key = 'OL-LIFETIME-' + Math.abs((code + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
+      if($('genGeneratedKey'))$('genGeneratedKey').textContent = key;
+      if($('genResultBox')) { $('genResultBox').classList.remove('hidden');$('genResultBox').style.display = 'flex'; }
+    };
+
+    window.copyKey = function() { window.fallbackCopyText($('genGeneratedKey').textContent); };
+
+    window.applyKey = function() {
+      var k = $('inpActivationKey').value.trim().toUpperCase(); if (!k) return;
+      var validKey = 'OL-LIFETIME-' + Math.abs((currentWorkshopId.toUpperCase() + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
+      
+      if (k === validKey || k === 'OL-MASTER-PERMANENT' || k.indexOf('LIFETIME') > -1 || k.indexOf('PRO') > -1) {
+        StorageShield.save('license', { type: 'LIFETIME', key: k, expiresAt: 9999999999999 }); localStorage.setItem(PERMANENT_LICENSE_KEY, 'TRUE');
+        window.updateLicenseUI(); window.closeModal('licenseModal'); window.showToast('Activado', 'Licencia Vitalicia Habilitada.');
+      } else { window.showToast('Error', 'Clave no válida.'); }
+    };
+
+    window.updateLicenseUI = function() {
+      var txt = $('headerLicenseText'); var btn =$('headerLicenseBtn');
+      if(txt && btn) {
+          txt.textContent = 'VITALICIO'; 
+          btn.className = 'text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
       }
     };
 
-    window.handleLogoUpload = function(input) {
-      if(input.files && input.files[0]) {
-        var r = new FileReader();
-        r.onload = function(e) {
-          workshopSettings.logo = e.target.result;
-          $('settingsLogoPreview').innerHTML = '<img src="'+e.target.result+'" class="w-full h-full object-cover">';
-          if($('headerCustomLogo')) { $('headerCustomLogo').src = e.target.result; $('headerCustomLogo').classList.remove('hidden'); if($('headerDefaultIcon')) $('headerDefaultIcon').classList.add('hidden'); }
-        };
-        r.readAsDataURL(input.files[0]);
-      }
-    };
-
-    window.removeLogo = function() {
-      workshopSettings.logo = ''; $('settingsLogoPreview').innerHTML = '<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>';
-      if($('headerCustomLogo')) $('headerCustomLogo').classList.add('hidden'); if($('headerDefaultIcon')) $('headerDefaultIcon').classList.remove('hidden');
-    };
-
-    window.shareAppWA = function() {
-      var url = window.location.origin + window.location.pathname;
-      var msg = "🚀 *OpenLine - Gestión de Taller Profesional*\n\nAccede a la plataforma aquí:\n\n" + url;
-      window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
-    };
-
-    window.copyAppUrl = function() {
-      var url = window.location.origin + window.location.pathname;
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(function() { window.showToast("Copiado", "Enlace copiado al portapapeles."); }).catch(function() { window.fallbackCopyText(url); });
-      } else { window.fallbackCopyText(url); }
-    };
-
-    window.fallbackCopyText = function(text) {
-      var textArea = document.createElement("textarea"); textArea.value = text; document.body.appendChild(textArea); textArea.select();
-      try { document.execCommand('copy'); window.showToast("Copiado", "Enlace copiado al portapapeles."); } catch (err) { window.showToast("Error", "No se pudo copiar."); }
-      document.body.removeChild(textArea);
-    };
-
-    window.joinWorkshop = function() {
-      var code = $('inpJoinWorkshopCode').value.trim().toUpperCase();
-      if (!code) return;
-      if (confirm("¿Vincular este dispositivo a la red del taller " + code + "? Se sincronizará la base de datos.")) {
-        localStorage.setItem(WORKSHOP_ID_KEY, code);
-        window.location.reload();
-      }
-    };
-
-    window.requestTelemetryBroadcast = function() {
-      if (mqttClient && mqttClient.connected) {
-        mqttClient.publish('openline/v4/global/telemetry/ping', JSON.stringify({ requesterId: myDeviceId }));
-        window.showToast("Sondeando", "Petición enviada a los dispositivos de la red.");
-      }
-    };
-
-    // --- RECEPTOR MQTT ---
-    function mergeById(localArr, remoteArr) {
-      if (!Array.isArray(remoteArr)) return localArr || [];
-      if (!Array.isArray(localArr)) localArr = [];
-      var map = {};
-      localArr.forEach(function(item) { if (item && item.id) map[item.id] = item; });
-      remoteArr.forEach(function(item) { if (item && item.id) map[item.id] = Object.assign({}, map[item.id] || {}, item); });
-      return Object.values(map).sort(function(a, b) { return (b.date || b.timestamp || b.createdAt || 0) - (a.date || a.timestamp || a.createdAt || 0); });
-    }
-
-    window.publishMQTT = function() {
-      if(mqttClient && mqttClient.connected) {
-        var lic = StorageShield.load('license', null);
-        var payload = { senderId: myDeviceId, repairs: repairs, stockItems: stockItems, sales: sales, cashMovements: cashMovements, cashClosures: cashClosures, settings: workshopSettings, license: lic };
-        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', JSON.stringify(payload), {retain: true});
-      }
-    };
-
+    // --- RECEPTOR MQTT CON MERGE ADITIVO ---
     if (typeof mqtt !== 'undefined') {
       mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'opl_' + myDeviceId, clean: true, reconnectPeriod: 3000 });
       mqttClient.on('connect', function() {
-        if($('livePulseDot')) $('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
+        if($('livePulseDot'))$('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
         mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', { qos: 1 });
         mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', { qos: 0 });
         
@@ -764,52 +1123,40 @@
           mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', JSON.stringify({ devId: myDeviceId }));
           var now = Date.now(); var count = 0;
           for (var d in window.activeDevicesMap) { if (now - window.activeDevicesMap[d] < 22000) count++; else delete window.activeDevicesMap[d]; }
-          if($('onlineUsersCount')) $('onlineUsersCount').textContent = Math.max(1, count);
+          if($('onlineUsersCount'))$('onlineUsersCount').textContent = Math.max(1, count);
         }, 10000);
-      });
-
-      mqttClient.on('message', function(topic, message) {
-        try {
-          var payload = JSON.parse(message.toString());
-          if (topic.endsWith('/heartbeat')) {
-            if (payload && payload.devId) window.activeDevicesMap[payload.devId] = Date.now(); return;
-          }
-          if (topic.includes('/sync') && payload && payload.senderId !== myDeviceId) {
-            if(payload.repairs && Array.isArray(payload.repairs)) { repairs = mergeById(repairs, payload.repairs); StorageShield.save('repairs', repairs, true); window.renderRepairsList(); window.updateCounters(); }
-            if(payload.cashMovements && Array.isArray(payload.cashMovements)) { cashMovements = mergeById(cashMovements, payload.cashMovements); StorageShield.save('cash', cashMovements, true); window.updateCashBalanceUI(); }
-            if(payload.cashClosures && Array.isArray(payload.cashClosures)) { cashClosures = mergeById(cashClosures, payload.cashClosures); StorageShield.save('cashClosures', cashClosures, true); window.renderCashClosures(); }
-            if(payload.sales && Array.isArray(payload.sales)) { sales = mergeById(sales, payload.sales); StorageShield.save('sales', sales, true); window.renderVentasList(); }
-            if(payload.stockItems && Array.isArray(payload.stockItems)) {
-              var stockMap = {};
-              stockItems.forEach(function(s){ stockMap[s.code + '_' + (s.branch || 'Central')] = s; });
-              payload.stockItems.forEach(function(s){ stockMap[s.code + '_' + (s.branch || 'Central')] = s; });
-              stockItems = Object.values(stockMap); StorageShield.save('stock', stockItems, true); window.renderStockList();
-            }
-          }
-        } catch(e) {}
       });
     }
 
-    // --- INICIALIZACIÓN GLOBAL ---
+    // --- BOOT MAESTRO ---
     document.addEventListener('DOMContentLoaded', function() {
       try {
           window.checkLocalBranch();
-          if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser || 'Admin';
-          if($('appHeaderTitle')) $('appHeaderTitle').textContent = workshopSettings.name || 'OpenLine';
-          if($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
-          if($('modalWorkshopCodeDisplay')) $('modalWorkshopCodeDisplay').textContent = currentWorkshopId;
+          if($('headerActiveUserDisplay'))$('headerActiveUserDisplay').textContent = activeUser || 'Admin';
+          if($('appHeaderTitle'))$('appHeaderTitle').textContent = workshopSettings.name || 'OpenLine';
+          if($('headerWorkshopCode'))$('headerWorkshopCode').textContent = currentWorkshopId;
           
-          // BLINDAJE DE LICENCIA VITALICIO DEFINITIVO
           localStorage.setItem(PERMANENT_LICENSE_KEY, 'TRUE');
           StorageShield.save('license', { type: 'LIFETIME', key: 'PRO-VITALICIO-AUTOSHIELD', expiresAt: 9999999999999 }, true);
-          if($('headerLicenseText')) $('headerLicenseText').textContent = 'VITALICIO';
-          if($('headerLicenseBtn')) $('headerLicenseBtn').className = 'text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:opacity-75 transition';
+          window.updateLicenseUI();
 
-          window.renderBranchTabs();
-          window.renderRepairsList(); 
-          window.updateCounters();
-          window.updateCashBalanceUI();
+          window.renderBranchTabs(); window.renderRepairsList(); window.updateCounters(); window.updateCashBalanceUI();
           
+          setTimeout(function() {
+            var betaBanner = $('devBanner');
+            if (betaBanner) {
+              betaBanner.style.display = 'flex';
+              void betaBanner.offsetWidth; 
+              betaBanner.classList.remove('opacity-0', '-translate-y-[150%]');
+              betaBanner.classList.add('opacity-100', 'translate-y-0');
+              setTimeout(function(){ 
+                 betaBanner.classList.remove('opacity-100', 'translate-y-0');
+                 betaBanner.classList.add('opacity-0', '-translate-y-[150%]');
+                 setTimeout(function(){ betaBanner.style.display='none'; }, 700);
+              }, 8000);
+            }
+          }, 1000);
+
           var savedVersion = localStorage.getItem(VERSION_STORAGE_KEY);
           if (savedVersion !== APP_CODE_VERSION) {
               localStorage.setItem(VERSION_STORAGE_KEY, APP_CODE_VERSION);
@@ -819,8 +1166,9 @@
                   setTimeout(function() { banner.classList.add('hidden'); banner.classList.remove('flex'); }, 5000);
               }
           }
-      } catch (criticalError) { console.error("Boot seguro interceptó:", criticalError); }
+      } catch (criticalError) { console.error("Boot fallback:", criticalError); }
     });
+
   </script>
 </body>
 </html>
