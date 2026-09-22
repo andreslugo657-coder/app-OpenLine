@@ -34,6 +34,7 @@
     ::-webkit-scrollbar { display: none; width: 0; height: 0; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+    /* Modales adaptados */
     .app-modal {
       display: none; position: fixed; inset: 0; z-index: 9999;
       background-color: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
@@ -61,16 +62,19 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen relative z-0">
 
-  <!-- AVISO DE OPTIMIZACIÓN (ANIMADO) -->
-  <div id="devBanner" class="fixed top-4 left-1/2 -translate-x-1/2 z-[100000] bg-zinc-900 border border-amber-600/50 text-white px-4 py-3 rounded-2xl shadow-2xl flex items-start gap-3 w-[92%] max-w-md transition-all duration-700 ease-out transform -translate-y-[150%] opacity-0 pointer-events-auto">
-    <div class="mt-1 w-8 h-8 rounded-full bg-amber-600/20 border border-amber-500/50 flex items-center justify-center shrink-0">
-      <i class="ph-bold ph-warning-circle text-amber-400 text-lg"></i>
+  <!-- AVISO ANIMADO: SINCRONIZACIÓN EN TIEMPO REAL -->
+  <div id="realtimeSyncBanner" style="display: none;" class="fixed top-4 left-1/2 -translate-x-1/2 z-[100000] bg-emerald-950/95 border border-emerald-500/60 text-white px-4 py-3 rounded-2xl shadow-[0_10px_35px_rgba(16,185,129,0.25)] flex items-start gap-3 w-[92%] max-w-md transition-all duration-700 ease-out transform -translate-y-[150%] opacity-0 pointer-events-auto backdrop-blur-xl">
+    <div class="mt-0.5 w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center shrink-0">
+      <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
     </div>
     <div class="flex-1">
-      <h4 class="font-bold text-amber-400 text-xs uppercase tracking-widest mb-1">Fase de Optimización</h4>
-      <p class="text-[10px] text-zinc-300 leading-relaxed">Esta plataforma se encuentra en desarrollo activo. Puede presentar ajustes técnicos mientras trabajamos para brindarte un servicio excepcional.</p>
+      <div class="flex items-center gap-1.5 mb-0.5">
+        <h4 class="font-bold text-emerald-300 text-xs uppercase tracking-wider">Sincronización en Tiempo Real</h4>
+        <span class="text-[9px] font-mono bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded-full font-bold">1s LIVE</span>
+      </div>
+      <p class="text-[10px] text-zinc-200 leading-relaxed">Red de talleres conectada. Cambios de stock, ingresos, caja y ventas se sincronizan segundo a segundo en todas las sucursales.</p>
     </div>
-    <button type="button" onclick="document.getElementById('devBanner').style.display='none'" class="bg-zinc-800 p-1.5 rounded-lg text-zinc-400 hover:text-white transition active:scale-95">
+    <button type="button" onclick="window.dismissRealtimeBanner()" class="bg-emerald-900/60 p-1.5 rounded-lg text-emerald-300 hover:text-white transition active:scale-95">
       <i class="ph-bold ph-x text-sm"></i>
     </button>
   </div>
@@ -136,7 +140,6 @@
     </div>
   </header>
 
-  <!-- LISTA DE ÓRDENES PRINCIPAL -->
   <main class="flex-1 w-full max-w-5xl mx-auto px-3 py-2 space-y-2 pb-safe overflow-y-auto z-10 relative">
     <div id="branchFilterContainer" class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 shadow-sm space-y-1">
       <div class="flex items-center justify-between px-1">
@@ -187,13 +190,6 @@
     </div>
   </main>
 
-  <div class="fixed bottom-12 left-1/2 -translate-x-1/2 z-[9000] pointer-events-none w-max">
-    <div class="bg-emerald-950/90 border border-emerald-600/70 text-emerald-300 text-[10px] px-3.5 py-1 rounded-full flex items-center gap-1.5 shadow-[0_0_15px_rgba(52,211,153,0.2)] backdrop-blur-md">
-      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-      <span class="font-bold tracking-wide">Sincronizando red en tiempo real</span>
-    </div>
-  </div>
-
   <div class="ticker-wrap pb-safe border-t border-zinc-800">
     <div class="ticker text-[10px] font-bold text-zinc-500 tracking-widest uppercase flex items-center gap-3">
       <span>🚀 DESARROLLADO POR OPENLINE • INDUSTRIA ARGENTINA 🇦🇷 • SOFTWARE PARA TALLERES PROFESIONALES 🚀</span>
@@ -206,11 +202,7 @@
 
   <div id="startupBranchModal" style="display: none;" class="hidden fixed inset-0 z-[100000] bg-black/90 backdrop-blur-sm items-center justify-center p-4">
     <div class="bg-zinc-900 border border-zinc-800 rounded-3xl w-full max-w-sm p-5 space-y-4 text-xs text-zinc-300 shadow-2xl">
-      <div class="text-center space-y-1.5">
-        <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-full flex items-center justify-center mx-auto text-xl shadow-lg"><i class="ph-bold ph-storefront"></i></div>
-        <h3 class="font-black text-white text-base">Configuración de Sucursal</h3>
-        <p class="text-[11px] text-zinc-400 leading-tight">Selecciona la sucursal física de este equipo.</p>
-      </div>
+      <div class="text-center space-y-1.5"><div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-full flex items-center justify-center mx-auto text-xl shadow-lg"><i class="ph-bold ph-storefront"></i></div><h3 class="font-black text-white text-base">Configuración de Sucursal</h3><p class="text-[11px] text-zinc-400 leading-tight">Selecciona la sucursal física de este equipo.</p></div>
       <div id="startupBranchList" class="space-y-2 max-h-48 overflow-y-auto no-scrollbar"></div>
     </div>
   </div>
@@ -284,6 +276,7 @@
     </div>
   </div>
 
+  <!-- 3. VENTAS POS (MOSTRADOR) -->
   <div id="salesModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 sm:border border-amber-600/70 rounded-t-3xl sm:rounded-3xl w-full max-w-4xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
       <div class="p-3 border-b border-zinc-800 shrink-0 space-y-2">
@@ -329,13 +322,14 @@
               <div><label class="text-[9px] text-zinc-400 block mb-0.5">Cliente (Opcional):</label><input type="text" id="posCustomerName" placeholder="Nombre..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white text-xs"></div>
             </div>
             <div class="flex items-center justify-between pt-1 border-t border-zinc-800"><span class="text-xs uppercase font-bold text-zinc-400">Total a Cobrar:</span><span id="posTotalAmount" class="font-mono text-xl font-black text-amber-400">$0</span></div>
-            <button type="button" onclick="window.completePosSale()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-xs shadow active:scale-95 transition">Cobrar Venta a Caja</button>
+            <button type="button" onclick="window.completePosSale()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-xs shadow active:scale-95 transition">Cobrar Venta a Caja de <span id="posBtnBranchNameCart">Central</span></button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- 4. HISTORIAL DE VENTAS -->
   <div id="ventasModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-indigo-700/80 rounded-t-3xl sm:rounded-3xl w-full max-w-3xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
@@ -351,6 +345,7 @@
     </div>
   </div>
 
+  <!-- 5. CONTROL DE STOCK -->
   <div id="stockModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 sm:border border-purple-800 rounded-t-3xl sm:rounded-3xl w-full max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
       <div class="p-3 border-b border-zinc-800 shrink-0 space-y-2">
@@ -362,10 +357,12 @@
         </div>
       </div>
       <div class="flex-1 overflow-hidden relative flex flex-col p-3 min-h-0">
+        <!-- PESTAÑA INVENTARIO -->
         <div id="stockViewList" class="flex-1 flex flex-col space-y-2.5 overflow-hidden min-h-0">
           <div class="flex gap-2 shrink-0"><div class="relative flex-1"><i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i><input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-2 text-xs text-white"></div><button type="button" onclick="window.bulkIncreasePrices()" class="px-3 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs flex items-center gap-1 shrink-0 shadow active:scale-95 transition"><i class="ph-bold ph-trend-up"></i> % Suba</button></div>
           <div id="stockListContainer" class="space-y-1.5 overflow-y-auto flex-1 pb-4 min-h-[260px]"></div>
         </div>
+        <!-- PESTAÑA CARGA PRODUCTO -->
         <div id="stockViewForm" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6 min-h-0">
           <div class="p-3.5 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
             <span class="text-xs font-bold text-purple-300 uppercase block flex items-center gap-1.5"><i class="ph-bold ph-tag"></i> Datos del Repuesto</span>
@@ -376,6 +373,7 @@
             <button type="button" onclick="window.saveStockItem()" class="w-full py-3 mt-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow active:scale-95 transition">Guardar en Inventario</button>
           </div>
         </div>
+        <!-- PESTAÑA ESCÁNER -->
         <div id="stockViewScanner" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6 min-h-0">
           <div class="p-3 bg-zinc-950 border border-purple-800/80 rounded-2xl space-y-2">
             <div class="flex items-center justify-between"><span class="text-[11px] font-bold text-purple-300 uppercase flex items-center gap-1"><i class="ph-bold ph-barcode text-sm"></i> Lector QR / Barras</span><button type="button" id="btnToggleStockScanner" onclick="window.toggleStockCam()" class="px-3 py-1.5 bg-purple-900 text-purple-200 rounded-xl font-bold text-xs flex items-center gap-1 active:scale-95"><i class="ph-bold ph-camera"></i> Iniciar</button></div>
@@ -386,6 +384,7 @@
     </div>
   </div>
 
+  <!-- 6. CAJA LOCAL -->
   <div id="cashModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><div class="flex items-center gap-2"><i class="ph-bold ph-currency-dollar-simple text-emerald-400 text-lg"></i><div><h3 class="font-bold text-white text-sm">Caja Local</h3><span class="text-[10px] text-zinc-400">Sucursal: <b id="cashModalTitleBranch" class="text-emerald-400">Central</b></span></div></div><button type="button" onclick="window.closeModal('cashModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -401,6 +400,7 @@
     </div>
   </div>
 
+  <!-- 7. DETALLES DE ORDEN -->
   <div id="detailModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0"><div><div class="flex items-center gap-1.5"><span id="dtlOrderId" class="text-xs font-mono font-bold text-iosBlue">#OL-0000</span></div><h3 id="dtlDeviceTitle" class="text-sm font-bold text-white mt-0.5">Dispositivo</h3></div><div class="flex items-center gap-2"><button type="button" onclick="window.openEditRepairModal()" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-[10px] border border-zinc-700 flex items-center gap-1 active:scale-95 transition"><i class="ph-bold ph-pencil-simple text-amber-400"></i> Editar</button><button type="button" onclick="window.closeModal('detailModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div></div>
@@ -419,6 +419,7 @@
     </div>
   </div>
 
+  <!-- 8. EDITAR ORDEN -->
   <div id="editRepairModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0"><h3 class="text-sm font-bold text-white">Editar Orden</h3><button type="button" onclick="window.closeModal('editRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -432,6 +433,7 @@
     </div>
   </div>
 
+  <!-- 9. COMPARTIR APP -->
   <div id="installModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Compartir Web App</h3><button type="button" onclick="window.closeModal('installModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -441,6 +443,7 @@
     </div>
   </div>
 
+  <!-- 10. PREVIEW TICKET -->
   <div id="saleTicketModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Comprobante de Venta</h3><button type="button" onclick="window.closeModal('saleTicketModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -449,48 +452,67 @@
     </div>
   </div>
 
-  <!-- PANEL DE PERSONAL CON RECUPERAR CLAVE Y KICK -->
+  <!-- 11. USUARIOS / PERSONAL -->
   <div id="switchUserModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3.5 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Personal (<span id="userModalBranchTag">Central</span>)</h3><button type="button" onclick="window.closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="space-y-1.5"><label class="text-[10px] text-zinc-400 uppercase font-bold block">Seleccionar quién opera:</label><div id="usersListGrid" class="grid grid-cols-2 gap-2"></div></div>
       
-      <!-- RECUPERAR CONTRASEÑA -->
+      <!-- RECUPERAR CLAVE -->
       <div class="flex justify-end pt-1">
         <button type="button" onclick="window.recoverAdminPinWA()" class="text-[10px] text-zinc-400 hover:text-amber-400 font-medium flex items-center gap-1 active:scale-95 transition">
-          <i class="ph-bold ph-whatsapp-logo text-emerald-400 text-xs"></i> ¿Olvidaste la clave de Admin?
+          <i class="ph-bold ph-whatsapp-logo text-emerald-400 text-xs"></i> ¿Olvidaste la clave de Administrador?
         </button>
       </div>
 
       <div id="adminPinConfigSection" class="p-3 bg-zinc-950 rounded-2xl border border-amber-600/50 space-y-2 hidden">
-        <div id="setupPinBox"><span class="text-[10px] font-bold text-amber-400 uppercase block">🔑 Clave Maestra de Administrador:</span><div class="flex gap-1.5 mt-1"><input type="password" id="inpNewAdminPin" placeholder="Nuevo PIN" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono"><button type="button" onclick="window.saveNewAdminPin()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs active:scale-95 transition">Guardar</button></div></div>
+        <div id="setupPinBox">
+          <span class="text-[10px] font-bold text-amber-400 uppercase block">🔑 Configurar Clave Maestra (Una sola vez):</span>
+          <div class="flex gap-1.5 mt-1">
+            <input type="password" id="inpNewAdminPin" placeholder="Crear PIN nuevo" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+            <button type="button" onclick="window.saveNewAdminPin()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs active:scale-95 transition">Guardar</button>
+          </div>
+          <p class="text-[8px] text-zinc-500 mt-1 text-center">Configura la clave una sola vez. Luego quedará oculta.</p>
+        </div>
+        
+        <div class="pt-2 border-t border-amber-900/40">
+          <span class="text-[10px] font-bold text-rose-400 uppercase block mb-1.5">📱 Dispositivos en Línea (Sucursal / Expulsar):</span>
+          <div id="adminActiveDevicesList" class="space-y-1.5 max-h-24 overflow-y-auto no-scrollbar"></div>
+        </div>
       </div>
 
-      <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2"><span class="text-[10px] font-bold text-zinc-300 uppercase block">+ Agregar Personal a esta sucursal:</span><div class="flex gap-1.5"><input type="text" id="inpNewStaffName" placeholder="Nombre..." class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white"><button type="button" onclick="window.addNewStaffMember()" class="px-3.5 py-2 bg-iosBlue text-white font-bold rounded-xl text-xs">Agregar</button></div></div>
+      <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2">
+        <span class="text-[10px] font-bold text-zinc-300 uppercase block">+ Agregar Personal:</span>
+        <div class="flex gap-1.5">
+          <select id="inpNewStaffBranch" class="w-[100px] shrink-0 bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs outline-none"></select>
+          <input type="text" id="inpNewStaffName" placeholder="Nombre..." class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
+          <button type="button" onclick="window.addNewStaffMember()" class="px-3.5 py-2 bg-iosBlue text-white font-bold rounded-xl text-xs">Agregar</button>
+        </div>
+      </div>
       <button type="button" onclick="window.closeModal('switchUserModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl">Cerrar</button>
     </div>
   </div>
 
-  <!-- PANEL DE EQUIPO Y RED (CON BOTÓN DE DESVINCULACIÓN) -->
+  <!-- 12. EQUIPO & MQTT -->
   <div id="teamModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Equipo & Sincronización</h3><button type="button" onclick="window.closeModal('teamModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800"><span class="text-[10px] text-zinc-400 block mb-0.5">Código Taller (Red Global):</span><div id="modalWorkshopCodeDisplay" class="font-mono text-base font-bold text-white">TALLER-XXXX</div></div>
       <div class="space-y-1"><label class="text-[10px] text-zinc-400 block font-bold">Vincular a otro Taller (Sincronizar red):</label><div class="flex gap-1.5"><input type="text" id="inpJoinWorkshopCode" placeholder="Ej: TALLER-8291" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase"><button type="button" onclick="window.joinWorkshop()" class="px-3.5 py-2 rounded-xl bg-indigo-600 text-white font-bold shadow active:scale-95">Unirme</button></div></div>
       
-      <!-- DESVINCULAR OTROS Y A SÍ MISMO -->
-      <div class="pt-2 border-t border-zinc-800/80">
+      <div class="pt-2 border-t border-zinc-800/80 mt-2">
         <span class="text-[10px] font-bold text-zinc-300 uppercase block mb-1.5">📱 Dispositivos en la Red:</span>
         <div id="teamActiveDevicesList" class="space-y-1.5 max-h-24 overflow-y-auto no-scrollbar"></div>
       </div>
       <button type="button" onclick="window.leaveWorkshop()" class="w-full py-2.5 bg-rose-950/60 hover:bg-rose-900 border border-rose-800/50 text-rose-300 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition active:scale-95 mt-2">
-        <i class="ph-bold ph-plugs-connected text-rose-400"></i> Desvincular este dispositivo
+        <i class="ph-bold ph-plugs-connected text-rose-400"></i> Desvincular este dispositivo de la red
       </button>
 
       <button type="button" onclick="window.closeModal('teamModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1">Cerrar</button>
     </div>
   </div>
 
+  <!-- 13. AJUSTES -->
   <div id="settingsModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3 shadow-2xl text-xs text-zinc-300 pb-safe modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><div class="flex items-center gap-1.5"><i class="ph-bold ph-gear text-lg text-zinc-300"></i><h3 class="font-bold text-white text-sm">Ajustes Taller</h3></div><button type="button" onclick="window.closeModal('settingsModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -504,6 +526,7 @@
     </div>
   </div>
 
+  <!-- 14. LICENCIAS Y PANEL MAESTRO -->
   <div id="licenseModal" style="display: none;" class="hidden fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm items-end sm:items-center justify-center pb-safe pt-safe">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg p-4 space-y-3.5 pb-safe shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -525,10 +548,10 @@
   <div id="printArea" class="hidden"></div>
 
   <!-- =================================================================================== -->
-  <!-- SISTEMA JAVASCRIPT GLOBAL BLINDADO                                                  -->
+  <!-- SISTEMA JAVASCRIPT GLOBAL (NÚCLEO REACTIVO)                                         -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v20.0.0'; 
+    var APP_CODE_VERSION = 'v20.5.0'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var VERSION_STORAGE_KEY = 'openline_code_installed_version';
@@ -572,6 +595,17 @@
         }
       } catch(e){}
     };
+    
+    window.dismissRealtimeBanner = function() {
+      try {
+        var banner = $('realtimeSyncBanner');
+        if (banner) {
+          banner.classList.remove('opacity-100', 'translate-y-0');
+          banner.classList.add('opacity-0', '-translate-y-[150%]');
+          setTimeout(function() { banner.style.display = 'none'; }, 700);
+        }
+      } catch(e){}
+    };
 
     window.showToast = function(title, msg) {
       try {
@@ -605,7 +639,7 @@
     var cashMovements = StorageShield.load('cash', []); if(!Array.isArray(cashMovements)) cashMovements = [];
     var cashClosures = StorageShield.load('cashClosures', []); if(!Array.isArray(cashClosures)) cashClosures = [];
     var sales = StorageShield.load('sales', []); if(!Array.isArray(sales)) sales = [];
-    var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPin: '1234', adminPhone: '', branches: ['Central'], usersByBranch: {} }, StorageShield.load('settings', {}));
+    var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPin: '1234', adminPhone: '', branches: ['Central'], usersByBranch: {}, adminPinConfigured: false }, StorageShield.load('settings', {}));
     if(!Array.isArray(workshopSettings.branches)) workshopSettings.branches = ['Central'];
     
     var activeUser = 'Admin'; try { activeUser = localStorage.getItem(ACTIVE_USER_KEY) || 'Admin'; } catch(e){}
@@ -649,7 +683,7 @@
     };
 
     window.kickDevice = function(devId) {
-      window.requestAdminPinAuth("Desvincular este dispositivo de tu taller", function() {
+      window.requestAdminPinAuth("Desvincular este dispositivo permanentemente", function() {
         if(!workshopSettings.bannedDevices) workshopSettings.bannedDevices = [];
         if(!workshopSettings.bannedDevices.includes(devId)) workshopSettings.bannedDevices.push(devId);
         StorageShield.save('settings', workshopSettings);
@@ -667,6 +701,19 @@
       });
     };
 
+    window.changeRemoteDeviceBranch = function(devId, newBranch) {
+      window.requestAdminPinAuth("Asignar nueva sucursal al dispositivo", function() {
+        if (mqttClient && mqttClient.connected) {
+          mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/command', JSON.stringify({
+            targetDevId: devId,
+            command: 'SET_BRANCH',
+            branch: newBranch
+          }));
+          window.showToast("Comando Enviado", "El dispositivo se reiniciará en " + newBranch);
+        }
+      });
+    };
+
     window.renderAdminDevicesList = function() {
       var containerAdmin = $('adminActiveDevicesList');
       var containerTeam = $('teamActiveDevicesList');
@@ -676,7 +723,12 @@
         var info = window.activeDevicesMap[d];
         if (info && (now - info.time < 25000)) {
           var isMe = (d === myDeviceId);
-          html += '<div class="flex justify-between items-center bg-black p-1.5 rounded-lg border border-zinc-800"><div class="leading-tight"><div class="text-[10px] font-bold text-white">' + (info.user||'Admin') + (isMe ? ' (Tú)' : '') + ' - <span class="text-zinc-500 font-normal">' + (info.branch||'Central') + '</span></div><div class="text-[8px] text-zinc-500 font-mono">' + d + '</div></div>' + (!isMe ? '<button type="button" onclick="window.kickDevice(\''+d+'\')" class="bg-rose-950 text-rose-400 px-2 py-1 rounded text-[9px] font-bold active:scale-95">Expulsar</button>' : '<span class="text-[9px] text-zinc-600 px-2">Actual</span>') + '</div>';
+          var branchOpts = (workshopSettings.branches || ['Central']).map(function(b) {
+              return '<option value="'+b+'" '+(info.branch===b?'selected':'')+'>'+b+'</option>';
+          }).join('');
+          var selectHtml = !isMe ? '<select onchange="window.changeRemoteDeviceBranch(\''+d+'\', this.value)" class="bg-zinc-800 text-white text-[9px] px-1 py-0.5 rounded border border-zinc-700 outline-none max-w-[80px] cursor-pointer">' + branchOpts + '</select>' : '<span class="text-[9px] text-emerald-400 font-bold px-1 uppercase">' + (info.branch||'Central') + '</span>';
+
+          html += '<div class="flex justify-between items-center bg-black p-1.5 rounded-lg border border-zinc-800"><div class="leading-tight"><div class="text-[10px] font-bold text-white">' + (info.user||'Admin') + (isMe ? ' (Tú)' : '') + '</div><div class="text-[8px] text-zinc-500 font-mono">' + d + '</div></div><div class="flex items-center gap-1.5">' + selectHtml + (!isMe ? '<button type="button" onclick="window.kickDevice(\''+d+'\')" class="bg-rose-950 text-rose-400 px-2 py-1 rounded text-[9px] font-bold active:scale-95">Expulsar</button>' : '<span class="text-[9px] text-zinc-600 px-2 font-bold">ACTUAL</span>') + '</div></div>';
           count++;
         }
       }
@@ -709,7 +761,7 @@
     window.openLicenseModal = function() { window.openModal('licenseModal'); };
     window.openInstallModal = function() { window.openModal('installModal'); };
 
-    // --- SUCURSALES (CON PIN PARA ADMIN) ---
+    // --- SUCURSALES (CON PIN PARA CAMBIOS) ---
     window.checkLocalBranch = function() {
       if (!localStorage.getItem(LOCAL_BRANCH_KEY) || !workshopSettings.branches.includes(localBranch)) {
         var html = workshopSettings.branches.map(function(b) { return '<button type="button" onclick="window.setLocalBranch(\''+b+'\')" class="w-full p-3 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl border border-zinc-700 transition">'+b+'</button>'; }).join('');
@@ -772,6 +824,13 @@
       window.openModal('switchUserModal');
       setTimeout(function() {
         try {
+          var branchSelect = $('inpNewStaffBranch');
+          if (branchSelect) {
+              branchSelect.innerHTML = (workshopSettings.branches || ['Central']).map(function(b) {
+                  return '<option value="'+b+'">'+b+'</option>';
+              }).join('');
+          }
+          
           var grid = $('usersListGrid');
           if(!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {};
           var list = workshopSettings.usersByBranch[localBranch] || ['Admin'];
@@ -781,9 +840,22 @@
               return '<button type="button" onclick="window.selectActiveUser(\'' + u + '\')" class="p-3 rounded-2xl border flex items-center justify-between ' + (isCurrent ? 'bg-indigo-950/80 border-indigo-500 text-white font-bold' : 'bg-zinc-950 border-zinc-800 text-zinc-300') + '"><span class="truncate">' + u + '</span>' + (isCurrent ? '<i class="ph-bold ph-check text-emerald-400"></i>' : '') + '</button>';
             }).join('');
           }
+          
           var adminSect = $('adminPinConfigSection');
           if(adminSect) {
-            if(activeUser === 'Admin') { adminSect.classList.remove('hidden'); adminSect.style.display = 'block'; window.renderAdminDevicesList(); }
+            if(activeUser === 'Admin') { 
+              adminSect.classList.remove('hidden'); adminSect.style.display = 'block'; 
+              window.renderAdminDevicesList(); 
+              
+              var setupBox = $('setupPinBox');
+              if (setupBox) {
+                  if (workshopSettings.adminPinConfigured || (workshopSettings.adminPin && workshopSettings.adminPin !== '1234')) {
+                      setupBox.style.display = 'none';
+                  } else {
+                      setupBox.style.display = 'block';
+                  }
+              }
+            }
             else { adminSect.classList.add('hidden'); adminSect.style.display = 'none'; }
           }
         } catch(e) {}
@@ -808,19 +880,32 @@
     };
 
     window.addNewStaffMember = function() {
-      var name = $('inpNewStaffName').value.trim(); if (!name) return;
+      var name = $('inpNewStaffName').value.trim(); 
+      var branch = $('inpNewStaffBranch') ? $('inpNewStaffBranch').value : localBranch;
+      if (!name || !branch) return;
+      
       if(!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {};
-      if(!workshopSettings.usersByBranch[localBranch]) workshopSettings.usersByBranch[localBranch] = ['Admin'];
-      if (!workshopSettings.usersByBranch[localBranch].includes(name)) {
-        workshopSettings.usersByBranch[localBranch].push(name);
-        StorageShield.save('settings', workshopSettings); $('inpNewStaffName').value = ''; window.openSwitchUserModal(); window.showToast("Personal", name + " agregado.");
+      if(!workshopSettings.usersByBranch[branch]) workshopSettings.usersByBranch[branch] = ['Admin'];
+      
+      if (!workshopSettings.usersByBranch[branch].includes(name)) {
+        workshopSettings.usersByBranch[branch].push(name);
+        StorageShield.save('settings', workshopSettings); 
+        $('inpNewStaffName').value = ''; 
+        window.openSwitchUserModal(); 
+        window.showToast("Personal", name + " agregado a " + branch);
+      } else {
+        window.showToast("Aviso", "El usuario ya existe en esta sucursal.");
       }
     };
 
     window.saveNewAdminPin = function() {
       var newPin = $('inpNewAdminPin').value.trim(); if(!newPin) return;
-      workshopSettings.adminPin = newPin; StorageShield.save('settings', workshopSettings);
-      $('inpNewAdminPin').value = ''; window.showToast("Seguridad", "Clave Maestra protegida."); window.openSwitchUserModal(); 
+      workshopSettings.adminPin = newPin; 
+      workshopSettings.adminPinConfigured = true;
+      StorageShield.save('settings', workshopSettings);
+      $('inpNewAdminPin').value = ''; 
+      window.showToast("Seguridad", "Clave Maestra protegida de por vida."); 
+      window.openSwitchUserModal(); 
     };
 
     window.openSettingsModal = function() {
@@ -938,7 +1023,7 @@
     };
     window.resetPatternCanvas = function() { selectedPatternSequence = []; isDrawingPattern = false; if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Dibuja el patrón en los puntos'; $('patternStatusLabel').className = 'text-zinc-400 mt-1'; } window.drawPatternGrid(); };
 
-    // --- FOTOS DE INGRESO ---
+    // --- FOTOS ---
     window.handleNewPhotoUpload = function(input) {
       if (input.files && input.files[0]) {
         Array.from(input.files).forEach(function(file) {
@@ -949,7 +1034,7 @@
               var cvs = document.createElement('canvas'); var ctx = cvs.getContext('2d'); var maxW = 500;
               var scale = Math.min(maxW / img.width, 1); cvs.width = img.width * scale; cvs.height = img.height * scale;
               ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
-              currentPhotos.push(cvs.toDataURL('image/jpeg', 0.6)); window.renderNewPhotos();
+              currentPhotos.push(cvs.toDataURL('image/jpeg', 0.7)); window.renderNewPhotos();
             };
             img.src = e.target.result;
           };
@@ -995,7 +1080,7 @@
       window.renderRepairsList(); window.updateCounters();
     };
 
-    // --- POS VENTAS (Carga Manual Reactivada) ---
+    // --- POS VENTAS ---
     var posCart = []; var posScanner = null; var currentPosTab = 'CATALOG';
 
     window.switchPosTab = function(tab) {
@@ -1023,7 +1108,7 @@
       if(!name || price <= 0) { window.showToast('Aviso', 'Ingresa descripción y precio'); return; }
       posCart.push({ code: 'MANUAL-' + Date.now(), branch: localBranch, name: name, price: price, qty: 1 });
       $('posManualName').value = ''; $('posManualPrice').value = '';
-      window.renderPosCart(); window.showToast("Agregado", "Artículo manual cargado."); window.switchPosTab('CART');
+      window.renderPosCart(); window.showToast("Agregado", "Artículo cargado al carrito."); window.switchPosTab('CART');
     };
 
     window.addPosItemByCode = function(code) {
@@ -1087,12 +1172,13 @@
       StorageShield.save('cash', cashMovements);
       
       window.updateCashBalanceUI(); window.clearPosCart(); window.closeModal('salesModal');
-      window.switchPosTab('CATALOG'); window.showToast("Venta Exitosa", "Registrada en caja local."); window.openSaleTicketModal(saleId);
+      window.switchPosTab('CATALOG'); window.showToast("Venta Exitosa", "Registrada en caja de " + localBranch); window.openSaleTicketModal(saleId);
     };
 
     window.renderPosCatalog = function() {
       var grid = $('posCatalogGrid'); if(!grid) return;
       var term = $('posSearchProduct') ? $('posSearchProduct').value.toLowerCase().trim() : '';
+      
       var catalogMap = {};
       stockItems.forEach(function(item) {
           if(!item || !item.code) return; 
@@ -1519,7 +1605,102 @@
       }).join('');
     };
 
-    // --- PANEL MAESTRO Y LICENCIA BLINDADA (SIN DEMO) ---
+    // --- RECEPTOR MQTT (Sincronización Inmediata y Cambio Remoto) ---
+    function mergeByDate(localArr, remoteArr) {
+      if (!Array.isArray(remoteArr)) return localArr || [];
+      if (!Array.isArray(localArr)) localArr = [];
+      var map = {};
+      localArr.forEach(function(item) { if (item && item.id) map[item.id] = item; });
+      remoteArr.forEach(function(item) { if (item && item.id) map[item.id] = Object.assign({}, map[item.id] || {}, item); });
+      return Object.values(map).sort(function(a, b) { return (b.date || b.timestamp || b.createdAt || 0) - (a.date || a.timestamp || a.createdAt || 0); });
+    }
+
+    window.publishMQTT = function() {
+      if(mqttClient && mqttClient.connected) {
+        var lic = StorageShield.load('license', null);
+        var payload = { senderId: myDeviceId, timestamp: Date.now(), repairs: repairs, stockItems: stockItems, sales: sales, cashMovements: cashMovements, cashClosures: cashClosures, settings: workshopSettings, license: lic };
+        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', JSON.stringify(payload), { retain: true });
+      }
+    };
+
+    if (typeof mqtt !== 'undefined') {
+      mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'opl_' + myDeviceId, clean: true, reconnectPeriod: 2500 });
+      
+      mqttClient.on('connect', function() {
+        if($('livePulseDot')) $('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
+        mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', { qos: 1 });
+        mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', { qos: 0 });
+        mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/command', { qos: 1 });
+        mqttClient.subscribe('openline/v4/global/telemetry/ping', { qos: 0 });
+        mqttClient.subscribe('openline/v4/global/telemetry/report', { qos: 0 });
+
+        window.broadcastPresence();
+
+        setInterval(function() {
+          window.broadcastPresence();
+          var now = Date.now(); var count = 0;
+          for (var d in window.activeDevicesMap) { 
+            if (now - window.activeDevicesMap[d].time < 20000) count++; 
+            else delete window.activeDevicesMap[d]; 
+          }
+          if($('onlineUsersCount')) $('onlineUsersCount').textContent = Math.max(1, count);
+        }, 3000);
+      });
+
+      mqttClient.on('message', function(topic, message) {
+        try {
+          var payload = JSON.parse(message.toString());
+          
+          if (topic.endsWith('/telemetry/ping')) { window.broadcastPresence(); return; }
+          if (topic.endsWith('/telemetry/report')) { window.saveTelemetryData(payload); return; }
+
+          if (topic.endsWith('/command')) {
+            if (payload && payload.targetDevId === myDeviceId && payload.command === 'SET_BRANCH') {
+                localStorage.setItem(LOCAL_BRANCH_KEY, payload.branch);
+                alert("El Administrador ha reasignado este dispositivo a la sucursal: " + payload.branch);
+                window.location.reload();
+            }
+            return;
+          }
+
+          if (topic.endsWith('/heartbeat')) {
+            if (payload && payload.devId) {
+                window.activeDevicesMap[payload.devId] = { time: Date.now(), user: payload.user || 'Admin', branch: payload.branch || 'Central' };
+                if ($('adminPinConfigSection') && !$('adminPinConfigSection').classList.contains('hidden')) { window.renderAdminDevicesList(); }
+            }
+            return;
+          }
+
+          if (topic.includes('/sync') && payload && payload.senderId !== myDeviceId) {
+            if(payload.repairs && Array.isArray(payload.repairs)) { repairs = mergeByDate(repairs, payload.repairs); StorageShield.save('repairs', repairs, true); window.renderRepairsList(); window.updateCounters(); }
+            if(payload.cashMovements && Array.isArray(payload.cashMovements)) { cashMovements = mergeByDate(cashMovements, payload.cashMovements); StorageShield.save('cash', cashMovements, true); window.updateCashBalanceUI(); }
+            if(payload.cashClosures && Array.isArray(payload.cashClosures)) { cashClosures = mergeByDate(cashClosures, payload.cashClosures); StorageShield.save('cashClosures', cashClosures, true); window.renderCashClosures(); }
+            if(payload.sales && Array.isArray(payload.sales)) { sales = mergeByDate(sales, payload.sales); StorageShield.save('sales', sales, true); window.renderVentasList(); }
+            if(payload.stockItems && Array.isArray(payload.stockItems)) {
+              var stockMap = {};
+              stockItems.forEach(function(s){ stockMap[s.code + '_' + (s.branch || 'Central')] = s; });
+              payload.stockItems.forEach(function(s){ stockMap[s.code + '_' + (s.branch || 'Central')] = s; });
+              stockItems = Object.values(stockMap); StorageShield.save('stock', stockItems, true); window.renderStockList();
+              if(currentPosTab === 'CATALOG') window.renderPosCatalog();
+            }
+            if(payload.settings) {
+              if(payload.settings.bannedDevices) {
+                workshopSettings.bannedDevices = payload.settings.bannedDevices;
+                StorageShield.save('settings', workshopSettings, true);
+                window.checkBannedStatus();
+              }
+              if(payload.settings.branches && Array.isArray(payload.settings.branches)) {
+                workshopSettings.branches = payload.settings.branches;
+                StorageShield.save('settings', workshopSettings, true);
+                window.renderBranchTabs();
+              }
+            }
+          }
+        } catch(e) {}
+      });
+    }
+
+    // --- PANEL MAESTRO Y TELEMETRÍA GLOBAL ---
     window.secretTap = function() {
       var pin = prompt('🔑 Panel Maestro de Activación\nIngresa PIN:');
       if (pin === '8408') {
@@ -1559,19 +1740,14 @@
       }
     };
 
-    // --- TELEMETRÍA GLOBAL (MASTER PANEL) ---
     window.saveTelemetryData = function(data) {
       if(!data || !data.workshopId) return;
       var reg = StorageShield.load(TELEMETRY_REGISTRY_KEY, {});
-      if(!reg[data.workshopId]) {
-        reg[data.workshopId] = { workshopId: data.workshopId, name: data.name || data.workshopId, devices: {}, licenseType: data.licenseType || 'PRO', firstSeen: Date.now(), lastSeen: Date.now() };
-      }
+      if(!reg[data.workshopId]) { reg[data.workshopId] = { workshopId: data.workshopId, name: data.name || data.workshopId, devices: {}, licenseType: data.licenseType || 'PRO', firstSeen: Date.now(), lastSeen: Date.now() }; }
       reg[data.workshopId].lastSeen = Date.now();
       reg[data.workshopId].name = data.name || reg[data.workshopId].name;
       reg[data.workshopId].licenseType = data.licenseType || reg[data.workshopId].licenseType;
-      if(data.deviceId) {
-        reg[data.workshopId].devices[data.deviceId] = { user: data.user || 'Admin', branch: data.branch || 'Central', lastSeen: Date.now() };
-      }
+      if(data.deviceId) { reg[data.workshopId].devices[data.deviceId] = { user: data.user || 'Admin', branch: data.branch || 'Central', lastSeen: Date.now() }; }
       StorageShield.save(TELEMETRY_REGISTRY_KEY, reg, true);
       window.renderMasterTelemetry();
     };
@@ -1597,30 +1773,12 @@
       if(list) {
         var html = '';
         for (var wId in reg) {
-          var w = reg[wId];
-          var isOnline = (now - w.lastSeen < 25000);
-          var devCount = Object.keys(w.devices || {}).length;
+          var w = reg[wId]; var isOnline = (now - w.lastSeen < 25000); var devCount = Object.keys(w.devices || {}).length;
           html += '<div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-between">' +
-                    '<div>' +
-                      '<div class="flex items-center gap-1.5">' +
-                        '<span class="w-2 h-2 rounded-full ' + (isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-600') + '"></span>' +
-                        '<b class="text-white text-xs font-mono">' + w.workshopId + '</b>' +
-                        '<span class="text-[9px] px-1.5 py-0.2 rounded font-bold ' + (w.licenseType==='DEMO'?'bg-amber-950 text-amber-300':'bg-emerald-950 text-emerald-300') + '">' + (w.licenseType||'PRO') + '</span>' +
-                      '</div>' +
-                      '<div class="text-[9px] text-zinc-400 mt-0.5">' + (w.name || 'Taller') + ' • ' + devCount + ' dispositivo(s) • ' + (isOnline ? '<span class="text-emerald-400">En línea ahora</span>' : 'Visto: ' + new Date(w.lastSeen).toLocaleDateString('es-AR')) + '</div>' +
-                    '</div>' +
-                    '<span class="text-[9px] font-mono font-bold text-indigo-300">' + (isOnline ? 'CONECTADO' : 'OFFLINE') + '</span>' +
-                  '</div>';
+                    '<div><div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full ' + (isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-600') + '"></span><b class="text-white text-xs font-mono">' + w.workshopId + '</b><span class="text-[9px] px-1.5 py-0.2 rounded font-bold ' + (w.licenseType==='DEMO'?'bg-amber-950 text-amber-300':'bg-emerald-950 text-emerald-300') + '">' + (w.licenseType||'PRO') + '</span></div><div class="text-[9px] text-zinc-400 mt-0.5">' + (w.name || 'Taller') + ' • ' + devCount + ' dispositivo(s) • ' + (isOnline ? '<span class="text-emerald-400">En línea ahora</span>' : 'Visto: ' + new Date(w.lastSeen).toLocaleDateString('es-AR')) + '</div></div>' +
+                    '<span class="text-[9px] font-mono font-bold text-indigo-300">' + (isOnline ? 'CONECTADO' : 'OFFLINE') + '</span></div>';
         }
         list.innerHTML = html || '<div class="text-zinc-500 text-xs p-4 text-center">Sondeando red...</div>';
-      }
-    };
-
-    window.requestTelemetryBroadcast = function() {
-      if (mqttClient && mqttClient.connected) {
-        mqttClient.publish('openline/v4/global/telemetry/ping', JSON.stringify({ requesterId: myDeviceId, time: Date.now() }));
-        window.broadcastPresence();
-        window.showToast("Sondeando", "Sondeando presencia de todos los talleres...");
       }
     };
 
@@ -1631,84 +1789,6 @@
         mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', JSON.stringify({ devId: myDeviceId, user: activeUser, branch: localBranch }));
       }
     };
-
-    // --- RECEPTOR MQTT (Sincronización Inmediata a 3s) ---
-    function mergeByDate(localArr, remoteArr) {
-      if (!Array.isArray(remoteArr)) return localArr || [];
-      if (!Array.isArray(localArr)) localArr = [];
-      var map = {};
-      localArr.forEach(function(item) { if (item && item.id) map[item.id] = item; });
-      remoteArr.forEach(function(item) { if (item && item.id) map[item.id] = Object.assign({}, map[item.id] || {}, item); });
-      return Object.values(map).sort(function(a, b) { return (b.date || b.timestamp || b.createdAt || 0) - (a.date || a.timestamp || a.createdAt || 0); });
-    }
-
-    window.publishMQTT = function() {
-      if(mqttClient && mqttClient.connected) {
-        var lic = StorageShield.load('license', null);
-        var payload = { senderId: myDeviceId, timestamp: Date.now(), repairs: repairs, stockItems: stockItems, sales: sales, cashMovements: cashMovements, cashClosures: cashClosures, settings: workshopSettings, license: lic };
-        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', JSON.stringify(payload), { retain: true });
-      }
-    };
-
-    if (typeof mqtt !== 'undefined') {
-      mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'opl_' + myDeviceId, clean: true, reconnectPeriod: 2500 });
-      
-      mqttClient.on('connect', function() {
-        if($('livePulseDot')) $('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
-        mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', { qos: 1 });
-        mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', { qos: 0 });
-        mqttClient.subscribe('openline/v4/global/telemetry/ping', { qos: 0 });
-        mqttClient.subscribe('openline/v4/global/telemetry/report', { qos: 0 });
-
-        window.broadcastPresence();
-
-        // Heartbeat rápido cada 3 segundos
-        setInterval(function() {
-          window.broadcastPresence();
-          var now = Date.now(); var count = 0;
-          for (var d in window.activeDevicesMap) { 
-            if (now - window.activeDevicesMap[d].time < 20000) count++; 
-            else delete window.activeDevicesMap[d]; 
-          }
-          if($('onlineUsersCount')) $('onlineUsersCount').textContent = Math.max(1, count);
-        }, 3000);
-      });
-
-      mqttClient.on('message', function(topic, message) {
-        try {
-          var payload = JSON.parse(message.toString());
-          
-          if (topic.endsWith('/telemetry/ping')) { window.broadcastPresence(); return; }
-          if (topic.endsWith('/telemetry/report')) { window.saveTelemetryData(payload); return; }
-
-          if (topic.endsWith('/heartbeat')) {
-            if (payload && payload.devId) {
-                window.activeDevicesMap[payload.devId] = { time: Date.now(), user: payload.user || 'Admin', branch: payload.branch || 'Central' };
-                if ($('adminPinConfigSection') && !$('adminPinConfigSection').classList.contains('hidden')) { window.renderAdminDevicesList(); }
-            }
-            return;
-          }
-
-          if (topic.includes('/sync') && payload && payload.senderId !== myDeviceId) {
-            if(payload.repairs && Array.isArray(payload.repairs)) { repairs = mergeByDate(repairs, payload.repairs); StorageShield.save('repairs', repairs, true); window.renderRepairsList(); window.updateCounters(); }
-            if(payload.cashMovements && Array.isArray(payload.cashMovements)) { cashMovements = mergeByDate(cashMovements, payload.cashMovements); StorageShield.save('cash', cashMovements, true); window.updateCashBalanceUI(); }
-            if(payload.cashClosures && Array.isArray(payload.cashClosures)) { cashClosures = mergeByDate(cashClosures, payload.cashClosures); StorageShield.save('cashClosures', cashClosures, true); window.renderCashClosures(); }
-            if(payload.sales && Array.isArray(payload.sales)) { sales = mergeByDate(sales, payload.sales); StorageShield.save('sales', sales, true); window.renderVentasList(); }
-            if(payload.stockItems && Array.isArray(payload.stockItems)) {
-              var stockMap = {};
-              stockItems.forEach(function(s){ stockMap[s.code + '_' + (s.branch || 'Central')] = s; });
-              payload.stockItems.forEach(function(s){ stockMap[s.code + '_' + (s.branch || 'Central')] = s; });
-              stockItems = Object.values(stockMap); StorageShield.save('stock', stockItems, true); window.renderStockList();
-              if(currentPosTab === 'CATALOG') window.renderPosCatalog();
-            }
-            if(payload.settings) {
-              if(payload.settings.bannedDevices) { workshopSettings.bannedDevices = payload.settings.bannedDevices; StorageShield.save('settings', workshopSettings, true); window.checkBannedStatus(); }
-              if(payload.settings.branches && Array.isArray(payload.settings.branches)) { workshopSettings.branches = payload.settings.branches; StorageShield.save('settings', workshopSettings, true); window.renderBranchTabs(); }
-            }
-          }
-        } catch(e) {}
-      });
-    }
 
     // --- BOOT MAESTRO ---
     document.addEventListener('DOMContentLoaded', function() {
@@ -1736,26 +1816,12 @@
               void banner.offsetWidth; 
               banner.classList.remove('opacity-0', '-translate-y-[150%]');
               banner.classList.add('opacity-100', 'translate-y-0');
-              setTimeout(function() { 
-                  banner.classList.remove('opacity-100', 'translate-y-0');
-                  banner.classList.add('opacity-0', '-translate-y-[150%]');
-                  setTimeout(function() { banner.style.display = 'none'; }, 700);
-              }, 6000);
+              setTimeout(window.dismissRealtimeBanner, 6000);
             }
           }, 600);
 
-          var savedVersion = localStorage.getItem(VERSION_STORAGE_KEY);
-          if (savedVersion !== APP_CODE_VERSION) {
-              localStorage.setItem(VERSION_STORAGE_KEY, APP_CODE_VERSION);
-              var updBanner = $('appUpdatingBanner');
-              if (updBanner) {
-                  updBanner.classList.remove('hidden'); updBanner.classList.add('flex');
-                  setTimeout(function() { updBanner.classList.add('hidden'); updBanner.classList.remove('flex'); }, 5000);
-              }
-          }
       } catch (criticalError) { console.error("Boot seguro interceptó:", criticalError); }
     });
-
   </script>
 </body>
 </html>
