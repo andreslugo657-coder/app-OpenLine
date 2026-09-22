@@ -72,7 +72,7 @@
         <h4 class="font-bold text-emerald-300 text-xs uppercase tracking-wider">Sincronización Activa</h4>
         <span class="text-[9px] font-mono bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded-full font-bold">1s LIVE</span>
       </div>
-      <p class="text-[10px] text-zinc-200 leading-relaxed">Red conectada. Los cambios de stock, caja, ingresos y licencias se sincronizan automáticamente.</p>
+      <p class="text-[10px] text-zinc-200 leading-relaxed">Red conectada. Los cambios de stock, caja, ingresos, logo y licencias se sincronizan automáticamente.</p>
     </div>
     <button type="button" onclick="window.dismissRealtimeBanner()" class="bg-emerald-900/60 p-1.5 rounded-lg text-emerald-300 hover:text-white transition active:scale-95">
       <i class="ph-bold ph-x text-sm"></i>
@@ -475,7 +475,7 @@
         <div id="setupPinBox">
           <span class="text-[10px] font-bold text-amber-400 uppercase block">🔑 Configurar Clave Maestra (Una sola vez):</span>
           <div class="flex gap-1.5 mt-1">
-            <input type="password" id="inpNewAdminPin" placeholder="Crear PIN nuevo" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+            <input type="password" id="inpNewAdminPin" placeholder="Crear PIN nuevo" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono text-center tracking-widest">
             <button type="button" onclick="window.saveNewAdminPin()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs active:scale-95 transition">Guardar</button>
           </div>
           <p class="text-[8px] text-zinc-500 mt-1 text-center">Configura la clave una sola vez. Luego quedará oculta.</p>
@@ -594,7 +594,7 @@
   <!-- SISTEMA JAVASCRIPT GLOBAL BLINDADO (GESTIÓN COMPLETA Y SEGURIDAD)                   -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v24.0.0'; 
+    var APP_CODE_VERSION = 'v24.5.0'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var VERSION_STORAGE_KEY = 'openline_code_installed_version';
@@ -621,10 +621,24 @@
     function $(id) { return document.getElementById(id); }
 
     window.openModal = function(id) { 
-      try { var el = $(id); if (el) { el.classList.remove('hidden'); el.classList.add('active'); el.style.display = 'flex'; } } catch(e) {} 
+      try { 
+        var el = $(id); 
+        if (el) { 
+          el.classList.remove('hidden'); 
+          el.classList.add('active'); 
+          el.style.display = 'flex'; 
+        } 
+      } catch(e) {} 
     };
     window.closeModal = function(id) { 
-      try { var el = $(id); if (el) { el.classList.remove('active'); el.classList.add('hidden'); el.style.display = 'none'; } } catch(e) {} 
+      try { 
+        var el = $(id); 
+        if (el) { 
+          el.classList.remove('active'); 
+          el.classList.add('hidden'); 
+          el.style.display = 'none'; 
+        } 
+      } catch(e) {} 
     };
 
     window.dismissBetaBanner = function() {
@@ -707,11 +721,48 @@
     var sales = StorageShield.load('sales', []); if(!Array.isArray(sales)) sales = [];
     
     var loadedSettings = StorageShield.load('settings', {}); if (typeof loadedSettings !== 'object' || loadedSettings === null) loadedSettings = {};
-    var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPin: '1234', adminPhone: '', branches: ['Central'], usersByBranch: {}, isCreatorPinSet: false }, loadedSettings);
+    var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPin: '1234', adminPhone: '', branches: ['Central'], usersByBranch: {}, isCreatorPinSet: false, logo: '' }, loadedSettings);
     if(!Array.isArray(workshopSettings.branches)) workshopSettings.branches = ['Central'];
     
     var activeUser = 'Admin'; try { activeUser = localStorage.getItem(ACTIVE_USER_KEY) || 'Admin'; } catch(e){}
     var currentFilter = 'ALL'; var currentBranchFilter = localBranch; var currentVentasPeriod = 'HOY'; var selectedRepairId = null;
+
+    // --- APLICACIÓN COMPLETA DE AJUSTES EN VIVO (LOGO, SUCURSALES, DATOS) ---
+    window.applyWorkshopSettings = function(newSettings) {
+      if (!newSettings || typeof newSettings !== 'object') return;
+      workshopSettings = Object.assign(workshopSettings, newSettings);
+      StorageShield.save('settings', workshopSettings, true);
+
+      if ($('appHeaderTitle') && workshopSettings.name) $('appHeaderTitle').textContent = workshopSettings.name;
+      if ($('appHeaderSubtitle') && workshopSettings.subtitle) $('appHeaderSubtitle').textContent = workshopSettings.subtitle;
+
+      // Render Logo en Encabezado y Ajustes
+      if (workshopSettings.logo) {
+        if ($('headerCustomLogo')) {
+          $('headerCustomLogo').src = workshopSettings.logo;
+          $('headerCustomLogo').classList.remove('hidden');
+        }
+        if ($('headerDefaultIcon')) $('headerDefaultIcon').classList.add('hidden');
+        if ($('settingsLogoPreview')) {
+          $('settingsLogoPreview').innerHTML = '<img src="' + workshopSettings.logo + '" class="w-full h-full object-cover">';
+        }
+      } else {
+        if ($('headerCustomLogo')) $('headerCustomLogo').classList.add('hidden');
+        if ($('headerDefaultIcon')) $('headerDefaultIcon').classList.remove('hidden');
+        if ($('settingsLogoPreview')) $('settingsLogoPreview').innerHTML = '<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>';
+      }
+
+      if ($('cfgWorkshopName')) $('cfgWorkshopName').value = workshopSettings.name || '';
+      if ($('cfgWorkshopSubtitle')) $('cfgWorkshopSubtitle').value = workshopSettings.subtitle || '';
+      if ($('cfgAdminPhone')) $('cfgAdminPhone').value = workshopSettings.adminPhone || '';
+
+      window.renderConfigBranches();
+      window.renderBranchTabs();
+      if (typeof window.renderUnifiedUsersAndDevices === 'function') {
+        window.renderUnifiedUsersAndDevices();
+      }
+      window.checkBannedStatus();
+    };
 
     // --- LICENCIAS Y TELEMETRÍA (HERENCIA INTELIGENTE) ---
     window.checkLicenseStatus = function() {
@@ -771,7 +822,6 @@
       var box = $('genResultBox');
       if(box) { box.classList.remove('hidden'); box.style.display = 'flex'; }
       
-      // Auto-activación remota para el taller objetivo y todos sus dispositivos vinculados
       if (mqttClient && mqttClient.connected) {
         var licData = { type: 'LIFETIME', key: key, workshopId: code, status: 'PRO', expiresAt: 9999999999999 };
         mqttClient.publish('openline/v4/workshop/' + code + '/license', JSON.stringify(licData), { retain: true, qos: 1 });
@@ -792,7 +842,6 @@
         localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId, 'TRUE');
         window.updateLicenseUI(); 
         
-        // Publicar licencia en el canal exclusivo con retain para herencia
         if (mqttClient && mqttClient.connected) {
           mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/license', JSON.stringify(licObj), { retain: true, qos: 1 });
         }
@@ -975,7 +1024,9 @@
         if (workshopSettings.usersByBranch[oldBranch]) { workshopSettings.usersByBranch[oldBranch] = workshopSettings.usersByBranch[oldBranch].filter(function(u) { return u !== userName; }); }
         if (!workshopSettings.usersByBranch[newBranch]) workshopSettings.usersByBranch[newBranch] = [];
         if (!workshopSettings.usersByBranch[newBranch].includes(userName)) { workshopSettings.usersByBranch[newBranch].push(userName); }
-        StorageShield.save('settings', workshopSettings); window.renderUnifiedUsersAndDevices(); window.showToast("Actualizado", userName + " asignado a " + newBranch);
+        window.applyWorkshopSettings(workshopSettings);
+        window.publishSettingsMQTT();
+        window.showToast("Actualizado", userName + " asignado a " + newBranch);
       });
     };
 
@@ -985,9 +1036,10 @@
       window.requestAdminPinAuth("Eliminar usuario " + userName, function() {
         if (workshopSettings.usersByBranch && workshopSettings.usersByBranch[branch]) {
           workshopSettings.usersByBranch[branch] = workshopSettings.usersByBranch[branch].filter(function(u) { return u !== userName; });
-          StorageShield.save('settings', workshopSettings);
           if (activeUser === userName) { activeUser = 'Admin'; localStorage.setItem(ACTIVE_USER_KEY, 'Admin'); if ($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = 'Admin'; }
-          window.renderUnifiedUsersAndDevices(); window.showToast("Eliminado", "Usuario " + userName + " eliminado del taller.");
+          window.applyWorkshopSettings(workshopSettings);
+          window.publishSettingsMQTT();
+          window.showToast("Eliminado", "Usuario " + userName + " eliminado del taller.");
         }
       });
     };
@@ -1014,8 +1066,9 @@
       window.requestAdminPinAuth("Desvincular este dispositivo permanentemente", function() {
         if(!workshopSettings.bannedDevices) workshopSettings.bannedDevices = [];
         if(!workshopSettings.bannedDevices.includes(devId)) workshopSettings.bannedDevices.push(devId);
-        StorageShield.save('settings', workshopSettings);
-        window.renderUnifiedUsersAndDevices(); window.showToast("Desvinculado", "El dispositivo ha sido expulsado.");
+        window.applyWorkshopSettings(workshopSettings);
+        window.publishSettingsMQTT();
+        window.showToast("Desvinculado", "El dispositivo ha sido expulsado.");
       });
     };
     
@@ -1130,12 +1183,14 @@
           activeUser = userName; try { localStorage.setItem(ACTIVE_USER_KEY, activeUser); } catch(e){}
           if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
           window.closeModal('switchUserModal'); window.showToast("Usuario", "Operando como: " + activeUser);
+          window.renderBranchTabs();
           window.broadcastPresence();
         });
       } else {
         activeUser = userName; try { localStorage.setItem(ACTIVE_USER_KEY, activeUser); } catch(e){}
         if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
         window.closeModal('switchUserModal'); window.showToast("Usuario", "Operando como: " + activeUser);
+        window.renderBranchTabs();
         window.broadcastPresence();
       }
     };
@@ -1150,21 +1205,26 @@
       
       if (!workshopSettings.usersByBranch[branch].includes(name)) {
         workshopSettings.usersByBranch[branch].push(name);
-        StorageShield.save('settings', workshopSettings); $('inpNewStaffName').value = ''; window.renderUnifiedUsersAndDevices(); window.showToast("Personal", name + " agregado a " + branch);
+        window.applyWorkshopSettings(workshopSettings);
+        window.publishSettingsMQTT();
+        $('inpNewStaffName').value = ''; 
+        window.showToast("Personal", name + " agregado a " + branch);
       } else { window.showToast("Aviso", "El usuario ya existe en esa sucursal."); }
     };
 
     window.saveNewAdminPin = function() {
       var newPin = $('inpNewAdminPin').value.trim(); if(!newPin) return;
       window.appConfirm("Configurar Clave", "¿Confirmas que usarás [ " + newPin + " ] como Clave Maestra?\n\nAsegúrate de no olvidarla.", function() {
-        workshopSettings.adminPin = newPin; workshopSettings.isCreatorPinSet = true; StorageShield.save('settings', workshopSettings);
+        workshopSettings.adminPin = newPin; workshopSettings.isCreatorPinSet = true;
+        window.applyWorkshopSettings(workshopSettings);
+        window.publishSettingsMQTT();
         $('inpNewAdminPin').value = ''; 
         var setupBox = $('setupPinBox'); if(setupBox) setupBox.style.display = 'none';
         window.showToast("Seguridad", "Clave Maestra protegida de por vida."); 
       });
     };
 
-    // --- AJUSTES ---
+    // --- AJUSTES Y CONFIGURACIÓN ---
     window.openSettingsModal = function() {
       try {
         if($('cfgWorkshopName')) $('cfgWorkshopName').value = workshopSettings.name || '';
@@ -1180,10 +1240,10 @@
     window.saveSettings = function() {
       workshopSettings.name = $('cfgWorkshopName').value; workshopSettings.subtitle = $('cfgWorkshopSubtitle').value;
       if($('cfgAdminPhone')) workshopSettings.adminPhone = $('cfgAdminPhone').value.replace(/[^0-9]/g, '');
-      StorageShield.save('settings', workshopSettings);
-      if($('appHeaderTitle')) $('appHeaderTitle').textContent = workshopSettings.name;
-      if($('appHeaderSubtitle')) $('appHeaderSubtitle').textContent = workshopSettings.subtitle;
-      window.renderBranchTabs(); window.showToast("Guardado", "Ajustes actualizados"); window.closeModal('settingsModal');
+      window.applyWorkshopSettings(workshopSettings);
+      window.publishSettingsMQTT();
+      window.showToast("Guardado", "Ajustes actualizados en toda la red."); 
+      window.closeModal('settingsModal');
     };
 
     window.renderConfigBranches = function() {
@@ -1198,8 +1258,10 @@
       var val = $('inpNewConfigBranch').value.trim(); if(!val) return;
       if(!workshopSettings.branches) workshopSettings.branches = ['Central'];
       if(workshopSettings.branches.includes(val)) { window.showToast('Aviso', 'Ya existe esa sucursal'); return; }
-      workshopSettings.branches.push(val); StorageShield.save('settings', workshopSettings);
-      $('inpNewConfigBranch').value = ''; window.renderConfigBranches(); window.renderBranchTabs();
+      workshopSettings.branches.push(val); 
+      window.applyWorkshopSettings(workshopSettings);
+      window.publishSettingsMQTT();
+      $('inpNewConfigBranch').value = '';
     };
 
     window.editConfigBranch = function(idx) {
@@ -1209,8 +1271,10 @@
           newVal = newVal.trim(); workshopSettings.branches[idx] = newVal;
           repairs.forEach(function(r) { if(r.branch === oldVal) r.branch = newVal; }); stockItems.forEach(function(s) { if(s.branch === oldVal) s.branch = newVal; }); sales.forEach(function(s) { if(s.branch === oldVal) s.branch = newVal; }); cashMovements.forEach(function(c) { if(c.branch === oldVal) c.branch = newVal; }); cashClosures.forEach(function(c) { if(c.branch === oldVal) c.branch = newVal; });
           if(localBranch === oldVal) window.setLocalBranch(newVal, true);
-          StorageShield.save('settings', workshopSettings); StorageShield.save('repairs', repairs); StorageShield.save('stock', stockItems); StorageShield.save('sales', sales); StorageShield.save('cash', cashMovements); StorageShield.save('cashClosures', cashClosures);
-          window.renderConfigBranches(); window.renderBranchTabs(); window.showToast('Actualizado', 'Sucursal editada.');
+          StorageShield.save('repairs', repairs); StorageShield.save('stock', stockItems); StorageShield.save('sales', sales); StorageShield.save('cash', cashMovements); StorageShield.save('cashClosures', cashClosures);
+          window.applyWorkshopSettings(workshopSettings);
+          window.publishSettingsMQTT();
+          window.showToast('Actualizado', 'Sucursal editada.');
         }
       });
     };
@@ -1218,7 +1282,9 @@
     window.deleteConfigBranch = function(idx) {
       if(workshopSettings.branches.length <= 1) return;
       window.appConfirm("Eliminar Sucursal", "¿Estás seguro de eliminar esta sucursal?", function() { 
-        workshopSettings.branches.splice(idx, 1); StorageShield.save('settings', workshopSettings); window.renderConfigBranches(); window.renderBranchTabs(); 
+        workshopSettings.branches.splice(idx, 1); 
+        window.applyWorkshopSettings(workshopSettings);
+        window.publishSettingsMQTT();
       });
     };
 
@@ -1227,30 +1293,32 @@
         var r = new FileReader();
         r.onload = function(e) {
           workshopSettings.logo = e.target.result;
-          $('settingsLogoPreview').innerHTML = '<img src="'+e.target.result+'" class="w-full h-full object-cover">';
-          if($('headerCustomLogo')) { $('headerCustomLogo').src = e.target.result; $('headerCustomLogo').classList.remove('hidden'); if($('headerDefaultIcon')) $('headerDefaultIcon').classList.add('hidden'); }
+          window.applyWorkshopSettings(workshopSettings);
+          window.publishSettingsMQTT();
+          window.showToast("Logo Actualizado", "Logo adoptado en toda la red.");
         };
         r.readAsDataURL(input.files[0]);
       }
     };
     window.removeLogo = function() {
-      workshopSettings.logo = ''; $('settingsLogoPreview').innerHTML = '<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>';
-      if($('headerCustomLogo')) $('headerCustomLogo').classList.add('hidden'); if($('headerDefaultIcon')) $('headerDefaultIcon').classList.remove('hidden');
+      workshopSettings.logo = ''; 
+      window.applyWorkshopSettings(workshopSettings);
+      window.publishSettingsMQTT();
     };
 
     window.shareAppWA = function() { var url = window.location.origin + window.location.pathname; var msg = "🚀 *OpenLine - Gestión de Taller Profesional*\n\nAccede a la plataforma aquí:\n\n" + url; window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank'); };
     window.copyAppUrl = function() { var url = window.location.origin + window.location.pathname; if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(function() { window.showToast("Copiado", "Enlace copiado al portapapeles."); }).catch(function() { window.fallbackCopyText(url); }); } else { window.fallbackCopyText(url); } };
     window.fallbackCopyText = function(text) { var textArea = document.createElement("textarea"); textArea.value = text; document.body.appendChild(textArea); textArea.select(); try { document.execCommand('copy'); window.showToast("Copiado", "Enlace copiado al portapapeles."); } catch (err) { window.showToast("Error", "No se pudo copiar."); } document.body.removeChild(textArea); };
     
-    // --- VINCULACIÓN CON HERENCIA DE LICENCIA ---
+    // --- VINCULACIÓN CON HERENCIA TOTAL DE CONFIGURACIÓN Y LICENCIA ---
     window.joinWorkshop = function() { 
-      window.appPrompt("Vincular a Red de Taller", "Ingresa el Código del Taller Maestro (ej: TALLER-9572):\n\nEste equipo heredará la Licencia y los Datos de ese taller.", "text", "", function(code) {
+      window.appPrompt("Vincular a Red de Taller", "Ingresa el Código del Taller Maestro (ej: TALLER-9572):\n\nEste equipo heredará la Licencia, Logo, Sucursales y Datos de ese taller.", "text", "", function(code) {
         if(code) {
             code = code.trim().toUpperCase();
             localStorage.setItem(WORKSHOP_ID_KEY, code);
             localStorage.removeItem(LOCAL_BRANCH_KEY);
-            // Marcar adopción para solicitar licencia al broker
             localStorage.setItem('openline_pending_license_sync', 'TRUE');
+            localStorage.setItem('openline_pending_settings_sync', 'TRUE');
             window.location.reload(); 
         }
       });
@@ -1494,7 +1562,7 @@
             posScanner.start({ facingMode: "environment" }, config, function(decodedText) { window.addPosItemByCode(decodedText); window.showToast("Escaneado", decodedText); if (navigator.vibrate) navigator.vibrate(80);
             }).catch(function(err){ 
               window.showToast("Aviso", "Iniciando frontal...");
-              posScanner.start({ facingMode: "user" }, config, function(text) { window.addPosItemByCode(text); window.showToast("Escaneado", text); }
+              posScanner.start({ facingMode: "user" }, { fps: 15, qrbox: {width: 250, height: 250} }, function(text) { window.addPosItemByCode(text); window.showToast("Escaneado", text); }
               ).catch(function(e) { window.showToast("Error", "Cámara no disponible."); window.stopPosCam(); });
             });
           } catch(e) { window.showToast("Error", "Cámara no soportada."); window.stopPosCam(); }
@@ -1645,7 +1713,7 @@
       });
     };
 
-    // --- RECEPTOR MQTT (SINCRONIZACIÓN INMEDIATA Y HERENCIA) ---
+    // --- RECEPTOR MQTT (SINCRONIZACIÓN INMEDIATA Y HERENCIA TOTAL) ---
     function mergeByDate(localArr, remoteArr) {
       if (!Array.isArray(remoteArr)) return localArr || [];
       if (!Array.isArray(localArr)) localArr = [];
@@ -1655,12 +1723,18 @@
       return Object.values(map).sort(function(a, b) { return (b.date || b.timestamp || b.createdAt || 0) - (a.date || a.timestamp || a.createdAt || 0); });
     }
 
+    window.publishSettingsMQTT = function() {
+      if (mqttClient && mqttClient.connected) {
+        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/settings', JSON.stringify(workshopSettings), { retain: true, qos: 1 });
+      }
+      if (window.publishMQTT) window.publishMQTT();
+    };
+
     window.publishMQTT = function(force) {
       if(mqttClient && mqttClient.connected) {
         var isPro = (window.checkLicenseStatus() === 'PRO');
         var hasData = (repairs.length > 0 || stockItems.length > 0 || cashMovements.length > 0);
         
-        // Bloqueo: dispositivos nuevos vacíos y en DEMO no deben sobreescribir el broker
         if (!force && !isPro && !hasData) return;
 
         var lic = StorageShield.load('license', null);
@@ -1677,9 +1751,11 @@
         };
         mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', JSON.stringify(payload), { retain: true });
         
-        // Publicar licencia en canal persistente si es PRO
         if (isPro && lic) {
            mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/license', JSON.stringify(lic), { retain: true, qos: 1 });
+        }
+        if (workshopSettings) {
+           mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/settings', JSON.stringify(workshopSettings), { retain: true, qos: 1 });
         }
       }
     };
@@ -1694,6 +1770,7 @@
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/sync', { qos: 1 });
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/sync/request', { qos: 1 });
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/license', { qos: 1 });
+        mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/settings', { qos: 1 });
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/heartbeat', { qos: 0 });
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/command', { qos: 1 });
         mqttClient.subscribe('openline/v4/global/telemetry/ping', { qos: 0 });
@@ -1701,15 +1778,16 @@
 
         window.broadcastPresence();
 
-        // Solicitar sincronización a la red por si es un nuevo dispositivo
+        // Solicitar sincronización total inicial
         mqttClient.publish('openline/v4/workshop/' + wsCode + '/sync/request', JSON.stringify({ requesterId: myDeviceId }));
 
-        // Si este taller ya es PRO, asegurar publicación de la licencia retenida
+        // Publicar retenidos si este taller es maestro
         if (window.checkLicenseStatus() === 'PRO') {
            var currentLic = StorageShield.load('license', null);
            if (currentLic) {
               mqttClient.publish('openline/v4/workshop/' + wsCode + '/license', JSON.stringify(currentLic), { retain: true, qos: 1 });
            }
+           mqttClient.publish('openline/v4/workshop/' + wsCode + '/settings', JSON.stringify(workshopSettings), { retain: true, qos: 1 });
         }
 
         setInterval(function() {
@@ -1728,22 +1806,31 @@
           var payload = JSON.parse(message.toString());
           var wsCode = currentWorkshopId.toUpperCase();
 
-          // 1. HERENCIA INMEDIATA DE LICENCIA VÍA TÓPICO DEDICADO
+          // 1. HERENCIA INMEDIATA DE LICENCIA
           if (topic.endsWith('/license')) {
             if (payload && (payload.status === 'PRO' || payload.type === 'LIFETIME' || payload.type === 'PRO' || payload.type === 'SEM6')) {
                StorageShield.save('license', payload, true);
                localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + wsCode, 'TRUE');
                localStorage.removeItem('openline_pending_license_sync');
                window.updateLicenseUI();
-               window.showToast("Licencia Heredada", "Este equipo ha heredado la Licencia Vitalicia del taller.");
+               window.showToast("Licencia Heredada", "Este equipo adoptó la Licencia Vitalicia del taller.");
             }
             return;
           }
 
-          // 2. PETICIÓN DE SINCRONIZACIÓN DE OTROS DISPOSITIVOS
+          // 2. HERENCIA INMEDIATA DE AJUSTES (LOGO, SUCURSALES, DATOS ADMIN)
+          if (topic.endsWith('/settings')) {
+            if (payload && typeof payload === 'object') {
+               window.applyWorkshopSettings(payload);
+               localStorage.removeItem('openline_pending_settings_sync');
+               window.showToast("Ajustes Adoptados", "Logo, sucursales y ajustes del taller sincronizados.");
+            }
+            return;
+          }
+
+          // 3. PETICIÓN DE SINCRONIZACIÓN DE OTROS DISPOSITIVOS
           if (topic.endsWith('/sync/request')) {
             if (payload && payload.requesterId !== myDeviceId) {
-               // Responder si tenemos licencia PRO o información
                if (window.checkLicenseStatus() === 'PRO' || repairs.length > 0 || stockItems.length > 0) {
                   window.publishMQTT(true);
                }
@@ -1751,7 +1838,7 @@
             return;
           }
 
-          // 3. COMANDOS REMOTOS (CAMBIO DE SUCURSAL / ACTIVACIÓN)
+          // 4. COMANDOS REMOTOS
           if (topic.endsWith('/command')) {
             if (payload && payload.targetDevId === myDeviceId && payload.command === 'SET_BRANCH') {
                 localStorage.setItem(LOCAL_BRANCH_KEY, payload.branch);
@@ -1767,7 +1854,7 @@
             return;
           }
 
-          // 4. HEARTBEATS Y PRESENCIA
+          // 5. HEARTBEATS
           if (topic.endsWith('/heartbeat')) {
             if (payload && payload.devId) {
                 window.activeDevicesMap[payload.devId] = { time: Date.now(), user: payload.user || 'Admin', branch: payload.branch || 'Central' };
@@ -1778,11 +1865,11 @@
             return;
           }
 
-          // 5. TELEMETRÍA GLOBAL
+          // 6. TELEMETRÍA GLOBAL
           if (topic.endsWith('/telemetry/ping')) { window.broadcastPresence(); return; }
           if (topic.endsWith('/telemetry/report')) { window.saveTelemetryData(payload); return; }
 
-          // 6. SINCRONIZACIÓN GENERAL DE DATOS
+          // 7. SINCRONIZACIÓN GENERAL DE DATOS
           if (topic.includes('/sync') && payload && payload.senderId !== myDeviceId) {
             if(payload.repairs && Array.isArray(payload.repairs)) { repairs = mergeByDate(repairs, payload.repairs); StorageShield.save('repairs', repairs, true); window.renderRepairsList(); window.updateCounters(); }
             if(payload.cashMovements && Array.isArray(payload.cashMovements)) { cashMovements = mergeByDate(cashMovements, payload.cashMovements); StorageShield.save('cash', cashMovements, true); window.updateCashBalanceUI(); }
@@ -1796,28 +1883,8 @@
               if(currentPosTab === 'CATALOG') window.renderPosCatalog();
             }
             if(payload.settings) {
-              if(payload.settings.bannedDevices) {
-                workshopSettings.bannedDevices = payload.settings.bannedDevices;
-                StorageShield.save('settings', workshopSettings, true);
-                window.checkBannedStatus();
-              }
-              if(payload.settings.branches && Array.isArray(payload.settings.branches)) {
-                workshopSettings.branches = payload.settings.branches;
-                StorageShield.save('settings', workshopSettings, true);
-                window.renderBranchTabs();
-              }
-              if(payload.settings.usersByBranch) {
-                workshopSettings.usersByBranch = payload.settings.usersByBranch;
-                StorageShield.save('settings', workshopSettings, true);
-                if(typeof window.renderUnifiedUsersAndDevices === 'function') window.renderUnifiedUsersAndDevices();
-              }
-              if(payload.settings.isCreatorPinSet !== undefined) {
-                workshopSettings.isCreatorPinSet = payload.settings.isCreatorPinSet;
-                StorageShield.save('settings', workshopSettings, true);
-              }
+              window.applyWorkshopSettings(payload.settings);
             }
-            
-            // Adopción de licencia si viene en el payload de sincronización
             if(payload.license && (payload.license.type === 'LIFETIME' || payload.license.type === 'PRO' || payload.license.type === 'SEM6')) {
               StorageShield.save('license', payload.license, true);
               localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + wsCode, 'TRUE');
@@ -1852,16 +1919,13 @@
           window.checkLocalBranch();
           
           if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser || 'Admin';
-          if($('appHeaderTitle')) $('appHeaderTitle').textContent = workshopSettings.name || 'OpenLine';
           if($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
           
-          window.checkBannedStatus();
-          
+          // Aplicar ajustes y logo almacenados
+          window.applyWorkshopSettings(workshopSettings);
           window.updateLicenseUI();
-          window.renderBranchTabs(); 
-          window.renderRepairsList(); 
-          window.updateCounters(); 
-          window.updateCashBalanceUI();
+
+          window.checkBannedStatus();
           
           // Registro de telemetría propio con estado de licencia real
           window.saveTelemetryData({ 
@@ -1873,6 +1937,11 @@
             licenseType: window.checkLicenseStatus() 
           });
 
+          window.renderBranchTabs(); 
+          window.renderRepairsList(); 
+          window.updateCounters(); 
+          window.updateCashBalanceUI();
+          
           // Mostrar banner animado de sincronización
           setTimeout(function() {
             var banner = $('realtimeSyncBanner');
