@@ -69,10 +69,10 @@
     </div>
     <div class="flex-1">
       <div class="flex items-center gap-1.5 mb-0.5">
-        <h4 class="font-bold text-emerald-300 text-xs uppercase tracking-wider">Sincronización en Tiempo Real</h4>
+        <h4 class="font-bold text-emerald-300 text-xs uppercase tracking-wider">Sincronización Activa</h4>
         <span class="text-[9px] font-mono bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded-full font-bold">1s LIVE</span>
       </div>
-      <p class="text-[10px] text-zinc-200 leading-relaxed">Red de talleres conectada. Cambios de stock, ingresos, caja y ventas se sincronizan segundo a segundo.</p>
+      <p class="text-[10px] text-zinc-200 leading-relaxed">Red conectada. Los cambios de stock, caja, ingresos y ajustes se sincronizan remotamente.</p>
     </div>
     <button type="button" onclick="window.dismissRealtimeBanner()" class="bg-emerald-900/60 p-1.5 rounded-lg text-emerald-300 hover:text-white transition active:scale-95">
       <i class="ph-bold ph-x text-sm"></i>
@@ -140,11 +140,12 @@
     </div>
   </header>
 
+  <!-- CUERPO PRINCIPAL -->
   <main class="flex-1 w-full max-w-5xl mx-auto px-3 py-2 space-y-2 pb-safe overflow-y-auto z-10 relative">
     <div id="branchFilterContainer" class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 shadow-sm space-y-1">
       <div class="flex items-center justify-between px-1">
         <span class="text-[9px] font-bold uppercase text-zinc-400 flex items-center gap-1"><i class="ph-bold ph-eye text-rose-400 text-xs"></i> Vista Global:</span>
-        <span id="currentBranchDisplayTag" class="text-[10px] font-mono text-zinc-300">Todas</span>
+        <span id="currentBranchDisplayTag" class="text-[10px] font-mono text-zinc-300">Central</span>
       </div>
       <div id="branchTabsButtonsList" class="flex gap-1 overflow-x-auto no-scrollbar text-xs font-medium pb-0.5"></div>
     </div>
@@ -193,7 +194,7 @@
   <div class="fixed bottom-12 left-1/2 -translate-x-1/2 z-[9000] pointer-events-none w-max">
     <div class="bg-emerald-950/90 border border-emerald-600/70 text-emerald-300 text-[10px] px-3.5 py-1 rounded-full flex items-center gap-1.5 shadow-[0_0_15px_rgba(52,211,153,0.2)] backdrop-blur-md">
       <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-      <span class="font-bold tracking-wide">Sincronizando con dispositivos en tiempo real</span>
+      <span class="font-bold tracking-wide">Sincronizando con red en tiempo real</span>
     </div>
   </div>
 
@@ -204,7 +205,7 @@
   </div>
 
   <!-- MODALES DE ALERTA INTERNOS (SIN BLOQUEOS NATIVOS) -->
-  <div id="appPromptModal" style="display: none;" class="hidden fixed inset-0 z-[100001] bg-black/95 backdrop-blur-sm items-center justify-center p-4">
+  <div id="appPromptModal" style="display: none;" class="app-modal" style="z-index: 100001;">
     <div class="bg-zinc-900 border border-zinc-700 rounded-3xl w-full max-w-xs p-5 space-y-4 shadow-2xl text-center">
       <h3 class="font-black text-white text-sm" id="appPromptTitle">Mensaje</h3>
       <p class="text-[11px] text-zinc-400 leading-tight whitespace-pre-line" id="appPromptDesc"></p>
@@ -218,7 +219,7 @@
     </div>
   </div>
 
-  <div id="appConfirmModal" style="display: none;" class="hidden fixed inset-0 z-[100001] bg-black/95 backdrop-blur-sm items-center justify-center p-4">
+  <div id="appConfirmModal" style="display: none;" class="app-modal" style="z-index: 100001;">
     <div class="bg-zinc-900 border border-rose-800/50 rounded-3xl w-full max-w-xs p-5 space-y-4 shadow-2xl text-center">
       <div class="w-10 h-10 bg-rose-500/20 text-rose-400 rounded-full flex items-center justify-center mx-auto text-lg"><i class="ph-bold ph-warning"></i></div>
       <h3 class="font-black text-white text-sm" id="appConfirmTitle">¿Estás seguro?</h3>
@@ -233,13 +234,6 @@
   <!-- =================================================================================== -->
   <!-- MODALES DE LA APLICACIÓN                                                            -->
   <!-- =================================================================================== -->
-
-  <div id="startupBranchModal" style="display: none;" class="app-modal" style="z-index: 100000;">
-    <div class="bg-zinc-900 border border-zinc-800 rounded-3xl w-full max-w-sm p-5 space-y-4 text-xs text-zinc-300 shadow-2xl">
-      <div class="text-center space-y-1.5"><div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-full flex items-center justify-center mx-auto text-xl shadow-lg"><i class="ph-bold ph-storefront"></i></div><h3 class="font-black text-white text-base">Ubicación del Equipo</h3><p class="text-[11px] text-zinc-400 leading-tight">Por favor, asigna la sucursal a la que pertenece este dispositivo.</p></div>
-      <div id="startupBranchList" class="space-y-2 max-h-48 overflow-y-auto no-scrollbar"></div>
-    </div>
-  </div>
 
   <div id="newRepairModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs">
@@ -445,17 +439,24 @@
     </div>
   </div>
 
+  <!-- PANEL DE PERSONAL Y DISPOSITIVOS (CON RESTRICCIONES) -->
   <div id="switchUserModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3.5 text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Personal & Dispositivos</h3><button type="button" onclick="window.closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       
       <div class="space-y-1.5">
-        <div class="flex items-center justify-between"><label class="text-[10px] text-zinc-400 uppercase font-bold block">👤 Personal del Taller:</label><span class="text-[9px] text-zinc-500">Toca el nombre para operar</span></div>
+        <div class="flex items-center justify-between">
+          <label class="text-[10px] text-zinc-400 uppercase font-bold block">👤 Personal del Taller:</label>
+          <span class="text-[9px] text-zinc-500">Toca el nombre para operar</span>
+        </div>
         <div id="usersUnifiedList" class="space-y-1.5 max-h-36 overflow-y-auto pr-1"></div>
       </div>
 
-      <div class="pt-2 border-t border-zinc-800/80 space-y-1.5">
-        <div class="flex items-center justify-between"><label class="text-[10px] text-rose-400 uppercase font-bold block">📱 Dispositivos Conectados:</label><span class="text-[9px] text-zinc-500">Reasignar sucursal o expulsar</span></div>
+      <div id="sectionDevices" class="pt-2 border-t border-zinc-800/80 space-y-1.5 hidden">
+        <div class="flex items-center justify-between">
+          <label class="text-[10px] text-rose-400 uppercase font-bold block">📱 Dispositivos Conectados:</label>
+          <span class="text-[9px] text-zinc-500">Reasignar sucursal o expulsar</span>
+        </div>
         <div id="devicesUnifiedList" class="space-y-1.5 max-h-28 overflow-y-auto pr-1"></div>
       </div>
 
@@ -465,7 +466,18 @@
         </button>
       </div>
 
-      <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2">
+      <div id="adminPinConfigSection" class="p-3 bg-zinc-950 rounded-2xl border border-amber-600/50 space-y-2 hidden">
+        <div id="setupPinBox">
+          <span class="text-[10px] font-bold text-amber-400 uppercase block">🔑 Configurar Clave Maestra (Una sola vez):</span>
+          <div class="flex gap-1.5 mt-1">
+            <input type="password" id="inpNewAdminPin" placeholder="Crear PIN nuevo" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+            <button type="button" onclick="window.saveNewAdminPin()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs active:scale-95 transition">Guardar</button>
+          </div>
+          <p class="text-[8px] text-zinc-500 mt-1 text-center">Configura la clave una sola vez. Luego quedará oculta.</p>
+        </div>
+      </div>
+
+      <div id="sectionAddStaff" class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 hidden">
         <span class="text-[10px] font-bold text-zinc-300 uppercase block">+ Agregar Personal:</span>
         <div class="flex gap-1.5">
           <select id="inpNewStaffBranch" class="w-[110px] shrink-0 bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs outline-none"></select>
@@ -473,6 +485,7 @@
           <button type="button" onclick="window.addNewStaffMember()" class="px-3.5 py-2 bg-iosBlue text-white font-bold rounded-xl text-xs active:scale-95 transition">Agregar</button>
         </div>
       </div>
+      
       <button type="button" onclick="window.closeModal('switchUserModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-2">Cerrar</button>
     </div>
   </div>
@@ -503,7 +516,7 @@
     </div>
   </div>
 
-  <!-- LICENCIA Y PANEL MAESTRO CREADOR (BLINDADO) -->
+  <!-- LICENCIA Y PANEL MAESTRO CREADOR (CON FORM CIEGO Y INPUT PASSWORD) -->
   <div id="licenseModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg p-4 space-y-3.5 pb-safe shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -514,7 +527,7 @@
           <div id="licenseStatusText" class="font-mono text-base font-black text-amber-400 py-1 select-none">DEMO</div>
           <span id="licenseDetailCountdown" class="text-[11px] text-zinc-400 font-mono block mt-0.5">Versión activa en este equipo</span>
 
-          <!-- CAJA DE ACCESO A PANEL MAESTRO -->
+          <!-- CAJA DE ACCESO (FORMULARIO CIEGO PARA PREVENIR RECARGA EN MÓVIL) -->
           <div id="masterAccessTriggerBox" class="mt-4 p-3 bg-zinc-900 rounded-2xl border border-indigo-700/60 text-center space-y-2">
             <span class="text-[10px] font-bold text-indigo-300 uppercase tracking-wider flex items-center justify-center gap-1">
               <i class="ph-bold ph-key text-base"></i> Acceso Creador (Panel Maestro)
@@ -530,8 +543,8 @@
           </div>
         </div>
 
-        <!-- PANEL MAESTRO CREADOR -->
-        <div id="masterAdminUnlockedView" style="display: none;" class="p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3 hidden">
+        <!-- PANEL MAESTRO CREADOR (SE MUESTRA AL PONER PIN CORRECTO) -->
+        <div id="masterAdminUnlockedView" class="hidden p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3">
           <div class="flex items-center justify-between border-b border-indigo-900 pb-2">
             <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide">Panel Maestro Creador</span></div>
             <button type="button" onclick="window.requestTelemetryBroadcast()" class="text-[9px] bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 active:scale-95"><i class="ph-bold ph-arrows-clockwise"></i> Sondear Red</button>
@@ -571,7 +584,7 @@
   <div id="printArea" class="hidden"></div>
 
   <!-- =================================================================================== -->
-  <!-- SISTEMA JAVASCRIPT GLOBAL BLINDADO (NÚCLEO REACTIVO)                                -->
+  <!-- SISTEMA JAVASCRIPT GLOBAL BLINDADO                                                  -->
   <!-- =================================================================================== -->
   <script>
     var APP_CODE_VERSION = 'v23.0.0'; 
@@ -601,35 +614,17 @@
     function $(id) { return document.getElementById(id); }
 
     window.openModal = function(id) { 
-      try { 
-        var el = $(id); 
-        if (el) { 
-          el.classList.remove('hidden');
-          el.classList.add('active'); 
-          el.style.display = 'flex'; 
-        } 
-      } catch(e) {} 
+      try { var el = $(id); if (el) { el.classList.remove('hidden'); el.classList.add('flex'); el.style.display = 'flex'; } } catch(e) {} 
     };
     
     window.closeModal = function(id) { 
-      try { 
-        var el = $(id); 
-        if (el) { 
-          el.classList.remove('active'); 
-          el.classList.add('hidden');
-          el.style.display = 'none'; 
-        } 
-      } catch(e) {} 
+      try { var el = $(id); if (el) { el.classList.remove('flex'); el.classList.add('hidden'); el.style.display = 'none'; } } catch(e) {} 
     };
 
     window.dismissRealtimeBanner = function() {
       try {
         var banner = $('realtimeSyncBanner');
-        if (banner) {
-          banner.classList.remove('opacity-100', 'translate-y-0');
-          banner.classList.add('opacity-0', '-translate-y-[150%]');
-          setTimeout(function() { banner.style.display = 'none'; }, 700);
-        }
+        if (banner) { banner.classList.remove('opacity-100', 'translate-y-0'); banner.classList.add('opacity-0', '-translate-y-[150%]'); setTimeout(function() { banner.style.display = 'none'; }, 700); }
       } catch(e){}
     };
 
@@ -640,8 +635,7 @@
            var t = document.createElement('div');
            t.className = 'bg-zinc-800 border border-zinc-700 text-white px-4 py-2.5 rounded-xl shadow-lg text-xs mb-2 w-full text-center pointer-events-none transition-all z-[100000]';
            t.innerHTML = '<b>'+title+'</b><br>'+msg;
-           tc.appendChild(t);
-           setTimeout(function(){ try { t.remove(); } catch(e){} }, 3500);
+           tc.appendChild(t); setTimeout(function(){ try { t.remove(); } catch(e){} }, 3500);
         } else { alert(title + "\n" + msg); }
       } catch(e) { alert(title + "\n" + msg); }
     };
@@ -735,7 +729,7 @@
       }
     };
 
-    // --- DESBLOQUEO INFALIBLE PANEL MAESTRO CREADOR ---
+    // --- DESBLOQUEO PANEL MAESTRO CREADOR ---
     window.unlockMasterCreator = function(e) {
       if(e && e.preventDefault) e.preventDefault(); 
       var input = $('inpMasterCreatorPin');
@@ -794,9 +788,7 @@
       reg[data.workshopId].licenseType = data.licenseType || reg[data.workshopId].licenseType;
       if(data.deviceId) { reg[data.workshopId].devices[data.deviceId] = { user: data.user || 'Admin', branch: data.branch || 'Central', lastSeen: Date.now() }; }
       StorageShield.save(TELEMETRY_REGISTRY_KEY, reg, true);
-      if($('masterAdminUnlockedView') && $('masterAdminUnlockedView').style.display === 'block') {
-         window.renderMasterTelemetry();
-      }
+      if($('masterAdminUnlockedView') && $('masterAdminUnlockedView').style.display === 'block') { window.renderMasterTelemetry(); }
     };
 
     window.renderMasterTelemetry = function() {
@@ -867,16 +859,9 @@
       var stored = localStorage.getItem(LOCAL_BRANCH_KEY);
       var branches = workshopSettings.branches || ['Central'];
       
+      // AUTO-ASIGNAR siempre por defecto. El admin lo cambia remotamente. Elimina modal inicial.
       if (!stored || !branches.includes(stored)) {
-        if (branches.length === 1) {
-           window.setLocalBranch(branches[0], true); 
-        } else {
-           var html = branches.map(function(b) { 
-             return '<button type="button" onclick="window.setLocalBranch(\''+b+'\', true)" class="w-full p-3 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl border border-zinc-700 transition active:scale-95">'+b+'</button>'; 
-           }).join('');
-           $('startupBranchList').innerHTML = html; 
-           window.openModal('startupBranchModal');
-        }
+        window.setLocalBranch(branches[0], true); 
       }
     };
 
@@ -902,6 +887,11 @@
       var devicesContainer = $('devicesUnifiedList');
       var branchSelect = $('inpNewStaffBranch');
       var branches = workshopSettings.branches || ['Central'];
+      var isAdmin = (activeUser === 'Admin');
+
+      // Mostrar/Ocultar secciones según el rol
+      if($('sectionDevices')) $('sectionDevices').style.display = isAdmin ? 'block' : 'none';
+      if($('sectionAddStaff')) $('sectionAddStaff').style.display = isAdmin ? 'block' : 'none';
 
       if (branchSelect) {
         branchSelect.innerHTML = branches.map(function(b) { return '<option value="' + b + '">' + b + '</option>'; }).join('');
@@ -911,29 +901,44 @@
         if (!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {};
         var allUsers = []; allUsers.push({ name: 'Admin', branch: 'Global' });
 
-        branches.forEach(function(b) {
+        var visibleBranches = isAdmin ? branches : [localBranch];
+        visibleBranches.forEach(function(b) {
           var list = workshopSettings.usersByBranch[b] || [];
           list.forEach(function(u) { if (u !== 'Admin') allUsers.push({ name: u, branch: b }); });
         });
 
         usersContainer.innerHTML = allUsers.map(function(u) {
-          var isCurrent = (u.name === activeUser); var isMainAdmin = (u.name === 'Admin');
-          var branchOptions = branches.map(function(b) { return '<option value="' + b + '" ' + (u.branch === b ? 'selected' : '') + '>' + b + '</option>'; }).join('');
-          var branchControl = isMainAdmin ? '<span class="text-[9px] font-mono font-bold text-iosBlue bg-iosBlue/10 px-2 py-0.5 rounded">GLOBAL</span>' : '<select onchange="window.changeUserBranch(\'' + u.name + '\', \'' + u.branch + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + branchOptions + '</select>';
-          var deleteButton = isMainAdmin ? '' : '<button type="button" onclick="window.deleteStaffMember(\'' + u.name + '\', \'' + u.branch + '\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center active:scale-95 transition" title="Eliminar usuario"><i class="ph-bold ph-trash"></i></button>';
+          var isCurrent = (u.name === activeUser); 
+          var isMainAdminUser = (u.name === 'Admin');
+
+          var branchControl = '';
+          var deleteButton = '';
+
+          if (isAdmin) {
+             if (isMainAdminUser) {
+                branchControl = '<span class="text-[9px] font-mono font-bold text-iosBlue bg-iosBlue/10 px-2 py-0.5 rounded">GLOBAL</span>';
+             } else {
+                var branchOptions = branches.map(function(b) { return '<option value="' + b + '" ' + (u.branch === b ? 'selected' : '') + '>' + b + '</option>'; }).join('');
+                branchControl = '<select onchange="window.changeUserBranch(\'' + u.name + '\', \'' + u.branch + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + branchOptions + '</select>';
+                deleteButton = '<button type="button" onclick="window.deleteStaffMember(\'' + u.name + '\', \'' + u.branch + '\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center active:scale-95 transition" title="Eliminar usuario"><i class="ph-bold ph-trash"></i></button>';
+             }
+          } else {
+             branchControl = '<span class="text-[9px] text-zinc-500 font-bold px-1">' + u.branch + '</span>';
+          }
 
           return '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800"><div class="flex items-center gap-1.5 min-w-0 cursor-pointer flex-1" onclick="window.selectActiveUser(\'' + u.name + '\')"><i class="ph-bold ph-user text-sm ' + (isCurrent ? 'text-iosBlue' : 'text-zinc-500') + '"></i><span class="font-bold text-xs truncate ' + (isCurrent ? 'text-white' : 'text-zinc-300') + '">' + u.name + '</span>' + (isCurrent ? '<span class="text-[8px] bg-emerald-950 text-emerald-400 px-1 rounded font-bold">ACTIVO</span>' : '') + '</div><div class="flex items-center gap-1.5 shrink-0">' + branchControl + deleteButton + '</div></div>';
         }).join('');
       }
 
-      if (devicesContainer) {
+      if (devicesContainer && isAdmin) {
         var now = Date.now(); var devHtml = ''; var count = 0;
         for (var d in window.activeDevicesMap) {
           var info = window.activeDevicesMap[d];
           if (info && (now - info.time < 25000)) {
             var isMe = (d === myDeviceId);
             var devBranchOptions = branches.map(function(b) { return '<option value="' + b + '" ' + ((info.branch || 'Central') === b ? 'selected' : '') + '>' + b + '</option>'; }).join('');
-            var devBranchSelect = isMe ? '<span class="text-[9px] font-mono text-emerald-400 font-bold px-1 uppercase">' + (info.branch || 'Central') + '</span>' : '<select onchange="window.changeRemoteDeviceBranch(\'' + d + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + devBranchOptions + '</select>';
+            
+            var devBranchSelect = '<select onchange="window.changeRemoteDeviceBranch(\'' + d + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + devBranchOptions + '</select>';
             var kickBtn = isMe ? '<span class="text-[8px] bg-zinc-800 text-zinc-500 px-1.5 py-0.5 rounded font-bold">ESTE EQUIPO</span>' : '<button type="button" onclick="window.kickDevice(\'' + d + '\')" class="px-2 py-0.5 rounded bg-rose-950 text-rose-400 text-[10px] font-bold active:scale-95 transition">Expulsar</button>';
 
             devHtml += '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800"><div class="min-w-0 flex-1 pr-2"><div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span class="font-bold text-xs text-white truncate">' + (info.user || 'Admin') + '</span></div><div class="text-[8px] text-zinc-500 font-mono truncate">' + d + '</div></div><div class="flex items-center gap-1.5 shrink-0">' + devBranchSelect + kickBtn + '</div></div>';
@@ -958,7 +963,7 @@
     };
 
     window.deleteStaffMember = function(userName, branch) {
-      if (userName === 'Admin') { window.showToast("Denegado", "No se puede eliminar la cuenta de Administrador."); return; }
+      if (userName === 'Admin') { window.showToast("Denegado", "No se puede eliminar la cuenta principal de Administrador."); return; }
       if (activeUser !== 'Admin') { window.showToast("Denegado", "Solo el Administrador puede eliminar usuarios."); return; }
       window.requestAdminPinAuth("Eliminar usuario " + userName, function() {
         if (workshopSettings.usersByBranch && workshopSettings.usersByBranch[branch]) {
@@ -972,7 +977,9 @@
 
     window.changeRemoteDeviceBranch = function(devId, newBranch) {
       window.requestAdminPinAuth("Asignar nueva sucursal al dispositivo", function() {
-        if (mqttClient && mqttClient.connected) {
+        if (devId === myDeviceId) {
+           window.setLocalBranch(newBranch, true);
+        } else if (mqttClient && mqttClient.connected) {
           mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/command', JSON.stringify({ targetDevId: devId, command: 'SET_BRANCH', branch: newBranch }));
           window.showToast("Comando Enviado", "El dispositivo fue reasignado a " + newBranch);
         }
@@ -987,7 +994,7 @@
     };
 
     window.kickDevice = function(devId) {
-      window.requestAdminPinAuth("Desvincular este dispositivo", function() {
+      window.requestAdminPinAuth("Desvincular este dispositivo permanentemente", function() {
         if(!workshopSettings.bannedDevices) workshopSettings.bannedDevices = [];
         if(!workshopSettings.bannedDevices.includes(devId)) workshopSettings.bannedDevices.push(devId);
         StorageShield.save('settings', workshopSettings);
@@ -1028,13 +1035,23 @@
 
     window.renderBranchTabs = function() {
       var branches = workshopSettings.branches || ['Central'];
+      var isAdmin = (activeUser === 'Admin');
+
+      if (!isAdmin && currentBranchFilter === 'ALL') currentBranchFilter = localBranch;
+      if (!isAdmin && currentCashBranch !== localBranch) currentCashBranch = localBranch;
+
       var mainContainer = $('branchTabsButtonsList');
       if (mainContainer) {
-        var allBtn = '<button type="button" onclick="window.setBranchFilter(\'ALL\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition '+(currentBranchFilter==='ALL'?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas</button>';
-        var bBtns = branches.map(function(b) { return '<button type="button" onclick="window.setBranchFilter(\''+b+'\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition '+(currentBranchFilter===b?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">'+b+'</button>'; }).join('');
-        mainContainer.innerHTML = allBtn + bBtns;
+        if (isAdmin) {
+          var allBtn = '<button type="button" onclick="window.setBranchFilter(\'ALL\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition '+(currentBranchFilter==='ALL'?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas</button>';
+          var bBtns = branches.map(function(b) { return '<button type="button" onclick="window.setBranchFilter(\''+b+'\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition '+(currentBranchFilter===b?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">'+b+'</button>'; }).join('');
+          mainContainer.innerHTML = allBtn + bBtns;
+        } else {
+          mainContainer.innerHTML = '<button type="button" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition bg-rose-600 text-white shadow cursor-default">'+localBranch+'</button>';
+        }
         if($('currentBranchDisplayTag')) $('currentBranchDisplayTag').textContent = currentBranchFilter === 'ALL' ? 'Todas' : currentBranchFilter;
       }
+      
       if($('cashModalTitleBranch')) $('cashModalTitleBranch').textContent = currentCashBranch;
       if($('posModalBranchTag')) $('posModalBranchTag').textContent = localBranch;
       if($('posBtnBranchNameCart')) $('posBtnBranchNameCart').textContent = localBranch;
@@ -1043,14 +1060,27 @@
       if($('headerCashBranchTag')) $('headerCashBranchTag').textContent = localBranch;
 
       var opts = branches.map(function(b) { return '<option value="'+b+'">'+b+'</option>'; }).join('');
-      if($('cshBranch')) $('cshBranch').innerHTML = opts; if($('stkBranch')) $('stkBranch').innerHTML = opts;
+      if($('cshBranch')) $('cshBranch').innerHTML = opts; 
+      if($('stkBranch')) {
+         if (isAdmin) {
+             $('stkBranch').innerHTML = opts;
+             $('stkBranch').disabled = false;
+         } else {
+             $('stkBranch').innerHTML = '<option value="'+localBranch+'">'+localBranch+'</option>';
+             $('stkBranch').disabled = true;
+         }
+      }
 
       var cashBranchList = $('cashBranchSelectorList');
       if(cashBranchList) {
-        cashBranchList.innerHTML = branches.map(function(b) {
-          var isSel = (b === currentCashBranch);
-          return '<button type="button" onclick="window.switchCashBranchView(\''+b+'\')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition '+(isSel?'bg-emerald-600 text-white shadow':'bg-zinc-900 text-zinc-400 hover:text-white')+'">'+b+'</button>';
-        }).join('');
+        if (isAdmin) {
+          cashBranchList.innerHTML = branches.map(function(b) {
+            var isSel = (b === currentCashBranch);
+            return '<button type="button" onclick="window.switchCashBranchView(\''+b+'\')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition '+(isSel?'bg-emerald-600 text-white shadow':'bg-zinc-900 text-zinc-400 hover:text-white')+'">'+b+'</button>';
+          }).join('');
+        } else {
+          cashBranchList.innerHTML = '<button type="button" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow cursor-default">'+localBranch+'</button>';
+        }
       }
     };
 
@@ -1062,6 +1092,17 @@
       setTimeout(function() {
         try {
           window.renderUnifiedUsersAndDevices();
+          var adminSect = $('adminPinConfigSection');
+          if(adminSect) {
+            if(activeUser === 'Admin') { 
+              adminSect.classList.remove('hidden'); adminSect.style.display = 'block';
+              var setupBox = $('setupPinBox');
+              if (setupBox) {
+                  if (workshopSettings.isCreatorPinSet || (workshopSettings.adminPin && workshopSettings.adminPin !== '1234')) { setupBox.style.display = 'none'; } 
+                  else { setupBox.style.display = 'block'; }
+              }
+            } else { adminSect.classList.add('hidden'); adminSect.style.display = 'none'; }
+          }
         } catch(e) {}
       }, 50);
     };
@@ -1175,12 +1216,14 @@
     window.fallbackCopyText = function(text) { var textArea = document.createElement("textarea"); textArea.value = text; document.body.appendChild(textArea); textArea.select(); try { document.execCommand('copy'); window.showToast("Copiado", "Enlace copiado al portapapeles."); } catch (err) { window.showToast("Error", "No se pudo copiar."); } document.body.removeChild(textArea); };
     
     window.joinWorkshop = function() { 
-      var code = $('inpJoinWorkshopCode').value.trim().toUpperCase(); if (!code) return; 
-      window.appConfirm("Vincular a Red", "¿Vincular a la red " + code + "?\n\nEste dispositivo se reseteará y tomará los datos y la licencia del taller maestro.", function() { 
-        localStorage.setItem(WORKSHOP_ID_KEY, code);
-        localStorage.removeItem(LOCAL_BRANCH_KEY); // Fuerza a re-seleccionar sucursal al iniciar
-        window.location.reload(); 
-      }); 
+      window.appPrompt("Vincular a Red", "Ingresa el Código del Taller Maestro (ej: TALLER-8291).\n\nEste dispositivo se reseteará y tomará los datos y la licencia de ese taller.", "text", "", function(code) {
+        if(code) {
+            code = code.trim().toUpperCase();
+            localStorage.setItem(WORKSHOP_ID_KEY, code);
+            localStorage.removeItem(LOCAL_BRANCH_KEY); // Fuerza al admin a reasignar
+            window.location.reload(); 
+        }
+      });
     };
 
     // --- PATRÓN TÁCTIL ---
@@ -1817,7 +1860,7 @@
       }).join('');
     };
 
-    // --- RECEPTOR MQTT (Sincronización Inmediata y Comandos) ---
+    // --- RECEPTOR MQTT Y SINCRONIZACIÓN EN TIEMPO REAL ---
     function mergeByDate(localArr, remoteArr) {
       if (!Array.isArray(remoteArr)) return localArr || [];
       if (!Array.isArray(localArr)) localArr = [];
@@ -1848,6 +1891,7 @@
 
         window.broadcastPresence();
 
+        // Heartbeat y actualización cada 3 segundos
         setInterval(function() {
           window.broadcastPresence();
           var now = Date.now(); var count = 0;
@@ -1918,7 +1962,8 @@
                 StorageShield.save('settings', workshopSettings, true);
               }
             }
-            // Adopción automática si el taller sincronizado es PRO
+            
+            // Adopción automática de Licencia desde el Taller Maestro
             if(payload.license && (payload.license.type === 'LIFETIME' || payload.license.type === 'PRO' || payload.license.type === 'SEM6')) {
               StorageShield.save('license', payload.license, true);
               localStorage.setItem(PERMANENT_LICENSE_KEY, 'TRUE');
@@ -1929,34 +1974,21 @@
       });
     }
 
-    window.broadcastPresence = function() {
-      if (mqttClient && mqttClient.connected) {
-        var payload = { 
-          workshopId: currentWorkshopId.toUpperCase(), 
-          deviceId: myDeviceId, 
-          user: activeUser, 
-          branch: localBranch, 
-          name: workshopSettings.name || currentWorkshopId, 
-          licenseType: window.checkLicenseStatus(), 
-          time: Date.now() 
-        };
-        mqttClient.publish('openline/v4/global/telemetry/report', JSON.stringify(payload));
-        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', JSON.stringify({ devId: myDeviceId, user: activeUser, branch: localBranch }));
-      }
-    };
-
     // --- BOOT MAESTRO BLINDADO ---
     document.addEventListener('DOMContentLoaded', function() {
       try {
           window.activeDevicesMap[myDeviceId] = { time: Date.now(), user: activeUser, branch: localBranch };
+          
+          // Omite elegir sucursal en el arranque. El Admin gestiona esto remotamente.
           window.checkLocalBranch();
+          
           if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser || 'Admin';
           if($('appHeaderTitle')) $('appHeaderTitle').textContent = workshopSettings.name || 'OpenLine';
           if($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
           
           window.checkBannedStatus();
           
-          // Registro de telemetría propio
+          // Registro de telemetría inicial
           window.saveTelemetryData({ 
             workshopId: currentWorkshopId.toUpperCase(), 
             deviceId: myDeviceId, 
