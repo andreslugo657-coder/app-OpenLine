@@ -43,7 +43,7 @@
     ::-webkit-scrollbar { display: none; width: 0; height: 0; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Modales adaptados a iPhone */
+    /* Modales adaptados a iPhone (Altura estricta para evitar bloqueos visuales) */
     .app-modal {
       display: none;
       position: fixed;
@@ -88,10 +88,10 @@
       </div>
       <div class="min-w-0">
         <h4 class="text-[11px] font-bold text-white tracking-wide flex items-center gap-1">
-          <span>Sistema Actualizado y Blindado</span>
+          <span>Sistema Actualizado y Purgado</span>
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
         </h4>
-        <p class="text-[9px] text-indigo-200">Duplicados eliminados. Módulos táctiles y cámara reparados.</p>
+        <p class="text-[9px] text-indigo-200">Duplicados eliminados. Módulo táctil reparado al 100%.</p>
       </div>
     </div>
     <button type="button" onclick="window.dismissUpdateBanner()" class="w-6 h-6 rounded-md bg-indigo-900/80 text-indigo-300 flex items-center justify-center shrink-0">
@@ -99,6 +99,7 @@
     </button>
   </div>
 
+  <!-- ENCABEZADO -->
   <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
     <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full">
       <div class="flex items-center gap-2 min-w-0">
@@ -198,7 +199,7 @@
         <input id="searchInput" type="text" oninput="window.handleSearch()" placeholder="Buscar orden, cliente, modelo..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-8 pr-8 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-iosBlue shadow-sm">
         <button type="button" id="clearSearchBtn" onclick="window.clearSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 p-1"><i class="ph-bold ph-x-circle text-sm"></i></button>
       </div>
-      <div class="flex items-center gap-1 overflow-x-auto no-scrollbar text-xs pb-0.5">
+      <div class="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0.5">
         <button type="button" onclick="window.setFilter('ALL')" id="tabALL" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-800 text-white font-bold shrink-0 transition text-xs">Todos</button>
         <button type="button" onclick="window.setFilter('WAITING')" id="tabWAITING" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Espera</button>
         <button type="button" onclick="window.setFilter('IN_PROGRESS')" id="tabIN_PROGRESS" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Taller</button>
@@ -223,13 +224,13 @@
   </div>
 
   <div class="ticker-wrap pb-safe border-t border-zinc-800">
-    <div class="ticker text-[10px] font-bold text-zinc-500 tracking-widest uppercase">
-      🚀 DESARROLLADO POR OPENLINE • INDUSTRIA ARGENTINA 🇦🇷 • SINCRONIZACIÓN EN TIEMPO REAL • SOFTWARE PARA TALLERES PROFESIONALES 🚀 DESARROLLADO POR OPENLINE • INDUSTRIA ARGENTINA 🇦🇷
+    <div class="ticker text-[10px] font-bold text-zinc-500 tracking-widest uppercase flex items-center gap-3">
+      <span>🚀 DESARROLLADO POR OPENLINE • INDUSTRIA ARGENTINA 🇦🇷 • SOFTWARE PARA TALLERES PROFESIONALES 🚀</span>
     </div>
   </div>
 
   <!-- =================================================================================== -->
-  <!-- MODALES DE LA APLICACIÓN (CADA UNO DECLARADO EXACTAMENTE UNA SOLA VEZ)              -->
+  <!-- MODALES DE LA APLICACIÓN (ÚNICOS)                                                   -->
   <!-- =================================================================================== -->
 
   <!-- 1. MODAL: SUCURSAL INICIAL -->
@@ -300,11 +301,11 @@
           <div class="flex items-center gap-2">
             <label class="relative flex-1 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-xs flex items-center justify-center gap-1.5 shadow cursor-pointer transition active:scale-95 border border-zinc-700 overflow-hidden">
               <i class="ph-bold ph-camera text-iosBlue text-base"></i> Tomar Foto
-              <input type="file" accept="image/*" capture="environment" onchange="window.handleNewPhotoUpload(this)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
+              <input type="file" id="cameraPhotoInput" accept="image/*" capture="environment" onchange="window.handleNewPhotoUpload(this)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
             </label>
             <label class="relative flex-1 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-xs flex items-center justify-center gap-1.5 shadow cursor-pointer transition active:scale-95 border border-zinc-700 overflow-hidden">
               <i class="ph-bold ph-image text-emerald-400 text-base"></i> Galería
-              <input type="file" accept="image/*" multiple onchange="window.handleNewPhotoUpload(this)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
+              <input type="file" id="galleryPhotoInput" accept="image/*" multiple onchange="window.handleNewPhotoUpload(this)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
             </label>
           </div>
           <div id="newPhotosGrid" class="flex gap-2 overflow-x-auto py-1 no-scrollbar min-h-[65px]"></div>
@@ -328,7 +329,7 @@
     </div>
   </div>
 
-  <!-- 3. MODAL: CONTROL DE STOCK (REDISEÑADO CON PESTAÑAS DEDICADAS) -->
+  <!-- 3. MODAL: CONTROL DE STOCK (REDISEÑADO CON PESTAÑAS) -->
   <div id="stockModal" class="app-modal">
     <div class="bg-zinc-900 sm:border border-purple-800 sm:rounded-3xl w-full max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
       
@@ -343,6 +344,7 @@
           </button>
         </div>
 
+        <!-- PESTAÑAS DEDICADAS DE STOCK -->
         <div class="grid grid-cols-3 gap-1 p-1 bg-zinc-950 rounded-xl border border-zinc-800">
           <button type="button" id="stockTabListBtn" onclick="window.switchStockTab('LIST')" class="py-1.5 rounded-lg font-bold text-xs transition bg-purple-700 text-white shadow flex items-center justify-center gap-1">
             <i class="ph-bold ph-list-dashes"></i> Inventario
@@ -358,12 +360,12 @@
 
       <div class="flex-1 overflow-hidden relative flex flex-col p-3 min-h-0">
         
-        <!-- PESTAÑA A: INVENTARIO + BOTÓN DE SUBA MASIVA -->
+        <!-- PESTAÑA A: INVENTARIO + % SUBA -->
         <div id="stockViewList" class="flex-1 flex flex-col space-y-2.5 overflow-hidden min-h-0">
           <div class="flex gap-2 shrink-0">
             <div class="relative flex-1">
               <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i>
-              <input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-2 text-xs text-white">
+              <input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo de todas las sucursales..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-2 text-xs text-white">
             </div>
             <button type="button" onclick="window.bulkIncreasePrices()" class="px-3 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs flex items-center gap-1 shrink-0 shadow active:scale-95 transition">
               <i class="ph-bold ph-trend-up"></i> % Suba
@@ -372,7 +374,7 @@
           <div id="stockListContainer" class="space-y-1.5 overflow-y-auto flex-1 pb-4 min-h-[260px]"></div>
         </div>
 
-        <!-- PESTAÑA B: CARGA DE PRODUCTO (LIMPIA, ORDENADA Y ESPACIOSA) -->
+        <!-- PESTAÑA B: CARGA DE PRODUCTO -->
         <div id="stockViewForm" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6 min-h-0">
           <div class="p-3.5 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
             <span class="text-xs font-bold text-purple-300 uppercase block flex items-center gap-1.5">
@@ -388,13 +390,13 @@
             </div>
 
             <div class="space-y-1">
-              <label class="text-[10px] text-zinc-400 font-bold block">Nombre del Repuesto *</label>
-              <input type="text" id="stkName" placeholder="Ej: Módulo Pantalla iPhone 13" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
+              <label class="text-[10px] text-zinc-400 font-bold block">Nombre del Repuesto / Accesorio *</label>
+              <input type="text" id="stkName" placeholder="Ej: Módulo Pantalla iPhone 13 Original" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
             </div>
 
             <div class="grid grid-cols-2 gap-2">
               <div class="space-y-1">
-                <label class="text-[10px] text-zinc-400 font-bold block">Sucursal:</label>
+                <label class="text-[10px] text-zinc-400 font-bold block">Sucursal de Destino:</label>
                 <select id="stkBranch" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-2 text-white text-xs font-medium"></select>
               </div>
               <div class="space-y-1">
@@ -410,7 +412,7 @@
 
             <div class="grid grid-cols-3 gap-2">
               <div class="space-y-1">
-                <label class="text-[10px] text-zinc-400 font-bold block">Cantidad:</label>
+                <label class="text-[10px] text-zinc-400 font-bold block">Cantidad Inicial:</label>
                 <input type="number" id="stkQuantity" value="1" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-bold text-xs text-center">
               </div>
               <div class="space-y-1">
@@ -434,7 +436,7 @@
           <div class="p-3 bg-zinc-950 border border-purple-800/80 rounded-2xl space-y-2">
             <div class="flex items-center justify-between">
               <span class="text-[11px] font-bold text-purple-300 uppercase flex items-center gap-1">
-                <i class="ph-bold ph-barcode text-sm"></i> Lector QR / Códigos de Barra
+                <i class="ph-bold ph-barcode text-sm"></i> Lector QR y Barras
               </span>
               <button type="button" id="btnToggleStockScanner" onclick="window.toggleStockCam()" class="px-3 py-1.5 bg-purple-900 text-purple-200 rounded-xl font-bold text-xs flex items-center gap-1 active:scale-95">
                 <i class="ph-bold ph-camera"></i> Iniciar Cámara
@@ -452,7 +454,7 @@
     </div>
   </div>
 
-  <!-- 4. MODAL: VENTAS POS (MOSTRADOR) -->
+  <!-- 4. MODAL: VENTAS POS (CATÁLOGO GLOBAL + CÁMARA DESPEJADA) -->
   <div id="salesModal" class="app-modal">
     <div class="bg-zinc-900 sm:border border-amber-600/70 sm:rounded-3xl w-full max-w-4xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
       
@@ -497,7 +499,7 @@
           </div>
         </div>
 
-        <!-- PESTAÑA 2: ESCÁNER Y MANUAL -->
+        <!-- PESTAÑA 2: ESCÁNER Y MANUAL SEPARADO -->
         <div id="posViewScanManual" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6 min-h-0">
           <div class="p-3 bg-zinc-950 rounded-2xl border border-purple-800/80 space-y-2 shrink-0">
             <div class="flex items-center justify-between">
@@ -529,7 +531,7 @@
           </div>
         </div>
 
-        <!-- PESTAÑA 3: CARRITO -->
+        <!-- PESTAÑA 3: CARRITO COMPLETO Y COBRO -->
         <div id="posViewCart" class="hidden flex-1 flex-col space-y-2.5 overflow-y-auto pb-4 min-h-0">
           <div class="flex items-center justify-between pb-1 border-b border-zinc-800">
             <span class="font-bold text-white text-xs uppercase">Artículos cargados</span>
@@ -560,7 +562,7 @@
             </div>
 
             <button type="button" onclick="window.completePosSale()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-xs shadow active:scale-95 transition">
-              Cobrar Venta a Caja
+              Cobrar Venta a Caja de <span id="posBtnBranchNameCart">Central</span>
             </button>
           </div>
         </div>
@@ -569,19 +571,7 @@
     </div>
   </div>
 
-  <!-- 5. MODAL: PREVIEW DE TICKET DE VENTA -->
-  <div id="saleTicketModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300">
-      <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Comprobante de Venta</h3><button type="button" onclick="window.closeModal('saleTicketModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
-      <div id="saleTicketPreviewBox" class="p-3 bg-white text-black rounded-xl overflow-hidden font-mono text-[11px] leading-snug"></div>
-      <div class="grid grid-cols-2 gap-2 pt-1">
-        <button type="button" onclick="window.sendSaleTicketWA()" class="py-2.5 bg-emerald-600 text-white font-bold rounded-xl flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-whatsapp-logo text-base"></i> WhatsApp</button>
-        <button type="button" onclick="window.executePrintSaleTicket()" class="py-2.5 bg-iosBlue text-white font-bold rounded-xl flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-printer text-base"></i> Imprimir</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 6. MODAL: HISTORIAL VENTAS -->
+  <!-- 5. MODAL: HISTORIAL VENTAS -->
   <div id="ventasModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-indigo-700/80 sm:rounded-3xl w-full max-w-3xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
@@ -606,6 +596,18 @@
         </div>
         <input type="text" id="ventasSearchInput" oninput="window.renderVentasList()" placeholder="Buscar por código, cliente o vendedor..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-white">
         <div id="ventasListContainer" class="space-y-2 max-h-[42vh] overflow-y-auto pr-1"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. MODAL: PREVIEW DE TICKET DE VENTA -->
+  <div id="saleTicketModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300">
+      <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Comprobante de Venta</h3><button type="button" onclick="window.closeModal('saleTicketModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div id="saleTicketPreviewBox" class="p-3 bg-white text-black rounded-xl overflow-hidden font-mono text-[11px] leading-snug"></div>
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button type="button" onclick="window.sendSaleTicketWA()" class="py-2.5 bg-emerald-600 text-white font-bold rounded-xl flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-whatsapp-logo text-base"></i> WhatsApp</button>
+        <button type="button" onclick="window.executePrintSaleTicket()" class="py-2.5 bg-iosBlue text-white font-bold rounded-xl flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-printer text-base"></i> Imprimir</button>
       </div>
     </div>
   </div>
@@ -698,7 +700,7 @@
             </div>
             <div class="grid grid-cols-2 gap-2 pt-2">
               <button type="button" onclick="window.sendTechnicalReportWA()" class="py-2 rounded-xl bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-whatsapp-logo text-sm"></i> WhatsApp Informe</button>
-              <button type="button" onclick="window.printTechnicalReport()" class="py-2 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-printer text-sm"></i> Imprimir</button>
+              <button type="button" onclick="window.printTechnicalReport()" class="py-2 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-printer text-sm"></i> Imprimir Informe</button>
             </div>
           </div>
 
@@ -928,6 +930,14 @@
             </div>
           </div>
         </div>
+
+        <div class="space-y-1.5 pt-1">
+          <label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar o Renovar Licencia:</label>
+          <div class="flex gap-1.5">
+            <input type="text" id="inpActivationKey" placeholder="Pega tu clave aquí..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs">
+            <button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs active:scale-95">Activar</button>
+          </div>
+        </div>
       </div>
       <button type="button" onclick="window.closeModal('licenseModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1 shrink-0">Cerrar</button>
     </div>
@@ -940,7 +950,7 @@
   <!-- SISTEMA JAVASCRIPT BLINDADO, SINCRONIZADO Y PURGADO DE DUPLICADOS                   -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v17.0.0'; 
+    var APP_CODE_VERSION = 'v16.5.0'; 
 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
@@ -1180,7 +1190,7 @@
       }).join('');
     };
 
-    // --- INITIAL BOOT ---
+    // --- INICIALIZACIÓN GENERAL ---
     document.addEventListener('DOMContentLoaded', function() {
       try {
           window.checkLocalBranch();
