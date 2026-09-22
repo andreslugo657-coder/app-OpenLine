@@ -140,7 +140,6 @@
     </div>
   </header>
 
-  <!-- CUERPO PRINCIPAL -->
   <main class="flex-1 w-full max-w-5xl mx-auto px-3 py-2 space-y-2 pb-safe overflow-y-auto z-10 relative">
     <div id="branchFilterContainer" class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 shadow-sm space-y-1">
       <div class="flex items-center justify-between px-1">
@@ -204,10 +203,7 @@
     </div>
   </div>
 
-  <!-- =================================================================================== -->
-  <!-- MODALES DE ALERTA INTERNOS (SIN BLOQUEOS NATIVOS)                                   -->
-  <!-- =================================================================================== -->
-
+  <!-- MODALES DE ALERTA INTERNOS (SIN BLOQUEOS NATIVOS) -->
   <div id="appPromptModal" style="display: none;" class="hidden fixed inset-0 z-[100001] bg-black/95 backdrop-blur-sm items-center justify-center p-4">
     <div class="bg-zinc-900 border border-zinc-700 rounded-3xl w-full max-w-xs p-5 space-y-4 shadow-2xl text-center">
       <h3 class="font-black text-white text-sm" id="appPromptTitle">Mensaje</h3>
@@ -238,9 +234,9 @@
   <!-- MODALES DE LA APLICACIÓN                                                            -->
   <!-- =================================================================================== -->
 
-  <div id="startupBranchModal" style="display: none;" class="app-modal">
+  <div id="startupBranchModal" style="display: none;" class="app-modal" style="z-index: 100000;">
     <div class="bg-zinc-900 border border-zinc-800 rounded-3xl w-full max-w-sm p-5 space-y-4 text-xs text-zinc-300 shadow-2xl">
-      <div class="text-center space-y-1.5"><div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-full flex items-center justify-center mx-auto text-xl shadow-lg"><i class="ph-bold ph-storefront"></i></div><h3 class="font-black text-white text-base">Configuración de Sucursal</h3><p class="text-[11px] text-zinc-400 leading-tight">Selecciona la sucursal física de este equipo.</p></div>
+      <div class="text-center space-y-1.5"><div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-full flex items-center justify-center mx-auto text-xl shadow-lg"><i class="ph-bold ph-storefront"></i></div><h3 class="font-black text-white text-base">Ubicación del Equipo</h3><p class="text-[11px] text-zinc-400 leading-tight">Por favor, asigna la sucursal a la que pertenece este dispositivo.</p></div>
       <div id="startupBranchList" class="space-y-2 max-h-48 overflow-y-auto no-scrollbar"></div>
     </div>
   </div>
@@ -507,7 +503,7 @@
     </div>
   </div>
 
-  <!-- LICENCIA Y PANEL MAESTRO CREADOR (CON FORM CIEGO Y INPUT PASSWORD) -->
+  <!-- LICENCIA Y PANEL MAESTRO CREADOR (BLINDADO) -->
   <div id="licenseModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg p-4 space-y-3.5 pb-safe shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -518,7 +514,7 @@
           <div id="licenseStatusText" class="font-mono text-base font-black text-amber-400 py-1 select-none">DEMO</div>
           <span id="licenseDetailCountdown" class="text-[11px] text-zinc-400 font-mono block mt-0.5">Versión activa en este equipo</span>
 
-          <!-- CAJA DE ACCESO (FORMULARIO CIEGO PARA PREVENIR RECARGA EN MÓVIL) -->
+          <!-- CAJA DE ACCESO A PANEL MAESTRO -->
           <div id="masterAccessTriggerBox" class="mt-4 p-3 bg-zinc-900 rounded-2xl border border-indigo-700/60 text-center space-y-2">
             <span class="text-[10px] font-bold text-indigo-300 uppercase tracking-wider flex items-center justify-center gap-1">
               <i class="ph-bold ph-key text-base"></i> Acceso Creador (Panel Maestro)
@@ -534,8 +530,8 @@
           </div>
         </div>
 
-        <!-- PANEL MAESTRO CREADOR (SE MUESTRA AL PONER PIN CORRECTO) -->
-        <div id="masterAdminUnlockedView" class="hidden p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3">
+        <!-- PANEL MAESTRO CREADOR -->
+        <div id="masterAdminUnlockedView" style="display: none;" class="p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3 hidden">
           <div class="flex items-center justify-between border-b border-indigo-900 pb-2">
             <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide">Panel Maestro Creador</span></div>
             <button type="button" onclick="window.requestTelemetryBroadcast()" class="text-[9px] bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 active:scale-95"><i class="ph-bold ph-arrows-clockwise"></i> Sondear Red</button>
@@ -558,7 +554,7 @@
               <select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold"><option value="SEM6">6 Meses</option><option value="LIFETIME" selected>Vitalicio</option></select>
             </div>
             <button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow active:scale-95">Emitir Clave Segura</button>
-            <div id="genResultBox" class="hidden p-2.5 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800">
+            <div id="genResultBox" style="display: none;" class="hidden p-2.5 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800">
               <span id="genGeneratedKey" class="font-mono text-emerald-400 font-bold text-xs"></span>
               <button type="button" onclick="window.copyKey()" class="px-2.5 py-1 bg-zinc-800 rounded text-[10px] text-white font-bold">Copiar</button>
             </div>
@@ -575,10 +571,10 @@
   <div id="printArea" class="hidden"></div>
 
   <!-- =================================================================================== -->
-  <!-- SISTEMA JAVASCRIPT GLOBAL BLINDADO (GESTIÓN COMPLETA Y SEGURIDAD)                   -->
+  <!-- SISTEMA JAVASCRIPT GLOBAL BLINDADO (NÚCLEO REACTIVO)                                -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v22.5.0'; 
+    var APP_CODE_VERSION = 'v23.0.0'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var VERSION_STORAGE_KEY = 'openline_code_installed_version';
@@ -608,6 +604,7 @@
       try { 
         var el = $(id); 
         if (el) { 
+          el.classList.remove('hidden');
           el.classList.add('active'); 
           el.style.display = 'flex'; 
         } 
@@ -619,22 +616,12 @@
         var el = $(id); 
         if (el) { 
           el.classList.remove('active'); 
+          el.classList.add('hidden');
           el.style.display = 'none'; 
         } 
       } catch(e) {} 
     };
 
-    window.dismissBetaBanner = function() {
-      try {
-        var banner = $('devBanner');
-        if (banner) {
-          banner.classList.remove('opacity-100', 'translate-y-0');
-          banner.classList.add('opacity-0', '-translate-y-[150%]');
-          setTimeout(function() { banner.style.display = 'none'; }, 700);
-        }
-      } catch(e){}
-    };
-    
     window.dismissRealtimeBanner = function() {
       try {
         var banner = $('realtimeSyncBanner');
@@ -659,7 +646,7 @@
       } catch(e) { alert(title + "\n" + msg); }
     };
 
-    // --- ALERTAS UNIVERSALES MODERNAS (EVITA BLOQUEO DE NAVEGADOR EN MÓVILES) ---
+    // --- ALERTAS INTERNAS SIN BLOQUEO DEL NAVEGADOR ---
     var activePromptCallback = null;
     window.appPrompt = function(title, desc, inputType, defaultVal, callback) {
       var m = $('appPromptModal');
@@ -718,7 +705,9 @@
     var cashMovements = StorageShield.load('cash', []); if(!Array.isArray(cashMovements)) cashMovements = [];
     var cashClosures = StorageShield.load('cashClosures', []); if(!Array.isArray(cashClosures)) cashClosures = [];
     var sales = StorageShield.load('sales', []); if(!Array.isArray(sales)) sales = [];
-    var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPin: '1234', adminPhone: '', branches: ['Central'], usersByBranch: {} }, StorageShield.load('settings', {}));
+    
+    var loadedSettings = StorageShield.load('settings', {}); if (typeof loadedSettings !== 'object' || loadedSettings === null) loadedSettings = {};
+    var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPin: '1234', adminPhone: '', branches: ['Central'], usersByBranch: {}, isCreatorPinSet: false }, loadedSettings);
     if(!Array.isArray(workshopSettings.branches)) workshopSettings.branches = ['Central'];
     
     var activeUser = 'Admin'; try { activeUser = localStorage.getItem(ACTIVE_USER_KEY) || 'Admin'; } catch(e){}
@@ -746,46 +735,9 @@
       }
     };
 
-    // --- RECUPERACIÓN DE CLAVE VÍA WHATSAPP ---
-    window.recoverAdminPinWA = function() {
-      var pin = (workshopSettings.adminPin || '1234').trim();
-      var phone = (workshopSettings.adminPhone || '').replace(/[^0-9]/g, '');
-      if (!phone) {
-        window.appPrompt("📱 RECUPERACIÓN DE CLAVE", "No tienes un WhatsApp configurado en Ajustes.\n\nIngresa tu número con código de país (ej: 5493777123456):", "tel", "", function(val) {
-           if(val) {
-              phone = val.replace(/[^0-9]/g, '');
-              workshopSettings.adminPhone = phone; StorageShield.save('settings', workshopSettings);
-              sendRecoveryMessage(phone, pin);
-           }
-        });
-      } else { sendRecoveryMessage(phone, pin); }
-      
-      function sendRecoveryMessage(p, k) {
-        var msg = `*${(workshopSettings.name || 'OPENLINE').toUpperCase()} - RECUPERACIÓN DE CLAVE MAESTRA* 🔑\n\nHola Administrador, solicitaste recuperar tu acceso.\n\n🔐 Tu Clave Maestra actual es: *${k}*\n\nPuedes modificarla en cualquier momento desde el menú de Ajustes.`;
-        window.open('https://wa.me/' + p + '?text=' + encodeURIComponent(msg), '_blank');
-        window.showToast("WhatsApp", "Abriendo WhatsApp para enviar la clave.");
-      }
-    };
-
-    window.requestAdminPinAuth = function(actionDesc, onSuccessCallback) {
-      var correctPin = (workshopSettings.adminPin || '1234').trim();
-      window.appPrompt("🔑 ACCIÓN PROTEGIDA", actionDesc + "\n\nIngresa Clave Maestra (o escribe 'RECUPERAR'):", "password", "", function(entered) {
-        if (entered === null) return;
-        entered = entered.trim();
-        if (entered === correctPin) { 
-          onSuccessCallback(); 
-        } else if (entered.toUpperCase() === 'RECUPERAR') {
-          window.recoverAdminPinWA();
-        } else { 
-          window.showToast("Error", "Clave incorrecta."); 
-        }
-      });
-    };
-
-    // --- DESBLOQUEO INFALIBLE PANEL MAESTRO CREADOR (CON FORMULARIO CIEGO) ---
+    // --- DESBLOQUEO INFALIBLE PANEL MAESTRO CREADOR ---
     window.unlockMasterCreator = function(e) {
-      if(e && e.preventDefault) e.preventDefault(); // Evita recarga de página al dar ENTER
-      
+      if(e && e.preventDefault) e.preventDefault(); 
       var input = $('inpMasterCreatorPin');
       var pin = input ? input.value.trim() : '';
       
@@ -808,10 +760,7 @@
         }, 150);
       } else {
         window.showToast("Error", "Clave maestra incorrecta.");
-        if (input) {
-          input.value = '';
-          input.focus();
-        }
+        if (input) { input.value = ''; input.focus(); }
       }
     };
 
@@ -819,7 +768,8 @@
       var code = $('genTargetWorkshopCode').value.trim().toUpperCase(); if (!code) return;
       var key = 'OL-LIFETIME-' + Math.abs((code + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
       if($('genGeneratedKey')) $('genGeneratedKey').textContent = key;
-      if($('genResultBox')) { $('genResultBox').classList.remove('hidden'); $('genResultBox').style.display = 'flex'; }
+      var box = $('genResultBox');
+      if(box) { box.classList.remove('hidden'); box.style.display = 'flex'; }
     };
 
     window.copyKey = function() { window.fallbackCopyText($('genGeneratedKey').textContent); };
@@ -844,7 +794,9 @@
       reg[data.workshopId].licenseType = data.licenseType || reg[data.workshopId].licenseType;
       if(data.deviceId) { reg[data.workshopId].devices[data.deviceId] = { user: data.user || 'Admin', branch: data.branch || 'Central', lastSeen: Date.now() }; }
       StorageShield.save(TELEMETRY_REGISTRY_KEY, reg, true);
-      window.renderMasterTelemetry();
+      if($('masterAdminUnlockedView') && $('masterAdminUnlockedView').style.display === 'block') {
+         window.renderMasterTelemetry();
+      }
     };
 
     window.renderMasterTelemetry = function() {
@@ -875,7 +827,76 @@
       }
     };
 
-    // --- GESTIÓN UNIFICADA: USUARIOS Y DISPOSITIVOS ---
+    // --- SEGURIDAD ADMIN Y SUCURSALES ---
+    window.recoverAdminPinWA = function() {
+      var pin = (workshopSettings.adminPin || '1234').trim();
+      var phone = (workshopSettings.adminPhone || '').replace(/[^0-9]/g, '');
+      if (!phone) {
+        window.appPrompt("📱 RECUPERACIÓN DE CLAVE", "No tienes un WhatsApp configurado en Ajustes.\n\nIngresa tu número con código de país (ej: 5491123456789):", "tel", "", function(val) {
+           if(val) {
+              phone = val.replace(/[^0-9]/g, '');
+              workshopSettings.adminPhone = phone; StorageShield.save('settings', workshopSettings);
+              sendRecoveryMessage(phone, pin);
+           }
+        });
+      } else { sendRecoveryMessage(phone, pin); }
+      
+      function sendRecoveryMessage(p, k) {
+        var msg = `*${(workshopSettings.name || 'OPENLINE').toUpperCase()} - RECUPERACIÓN DE CLAVE MAESTRA* 🔑\n\nHola Administrador, solicitaste recuperar tu acceso.\n\n🔐 Tu Clave Maestra actual es: *${k}*\n\nPuedes modificarla en cualquier momento desde el menú de Ajustes.`;
+        window.open('https://wa.me/' + p + '?text=' + encodeURIComponent(msg), '_blank');
+        window.showToast("WhatsApp", "Abriendo WhatsApp para enviar la clave.");
+      }
+    };
+
+    window.requestAdminPinAuth = function(actionDesc, onSuccessCallback) {
+      var correctPin = (workshopSettings.adminPin || '1234').trim();
+      window.appPrompt("🔑 ACCIÓN PROTEGIDA", actionDesc + "\n\nIngresa Clave Maestra (o escribe 'RECUPERAR'):", "password", "", function(entered) {
+        if (entered === null) return;
+        entered = entered.trim();
+        if (entered === correctPin) { 
+          onSuccessCallback(); 
+        } else if (entered.toUpperCase() === 'RECUPERAR') {
+          window.recoverAdminPinWA();
+        } else { 
+          window.showToast("Error", "Clave incorrecta."); 
+        }
+      });
+    };
+
+    window.checkLocalBranch = function() {
+      var stored = localStorage.getItem(LOCAL_BRANCH_KEY);
+      var branches = workshopSettings.branches || ['Central'];
+      
+      if (!stored || !branches.includes(stored)) {
+        if (branches.length === 1) {
+           window.setLocalBranch(branches[0], true); 
+        } else {
+           var html = branches.map(function(b) { 
+             return '<button type="button" onclick="window.setLocalBranch(\''+b+'\', true)" class="w-full p-3 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl border border-zinc-700 transition active:scale-95">'+b+'</button>'; 
+           }).join('');
+           $('startupBranchList').innerHTML = html; 
+           window.openModal('startupBranchModal');
+        }
+      }
+    };
+
+    window.setLocalBranch = function(b, skipAuth) {
+      var executeAssign = function() {
+        localBranch = b; currentCashBranch = b; try { localStorage.setItem(LOCAL_BRANCH_KEY, b); } catch(e){}
+        window.closeModal('startupBranchModal');
+        if(!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {};
+        if(!workshopSettings.usersByBranch[localBranch]) { workshopSettings.usersByBranch[localBranch] = ['Admin']; StorageShield.save('settings', workshopSettings); }
+        window.setBranchFilter(b); window.renderBranchTabs(); window.updateCashBalanceUI(); window.showToast("Sucursal Vinculada", "Operando en: " + b);
+        window.broadcastPresence();
+      };
+
+      if (!skipAuth && b !== localBranch && localStorage.getItem(LOCAL_BRANCH_KEY)) {
+        window.requestAdminPinAuth("Asignar Sucursal a este Dispositivo", executeAssign);
+      } else {
+        executeAssign();
+      }
+    };
+
     window.renderUnifiedUsersAndDevices = function() {
       var usersContainer = $('usersUnifiedList');
       var devicesContainer = $('devicesUnifiedList');
@@ -883,15 +904,12 @@
       var branches = workshopSettings.branches || ['Central'];
 
       if (branchSelect) {
-        branchSelect.innerHTML = branches.map(function(b) {
-          return '<option value="' + b + '">' + b + '</option>';
-        }).join('');
+        branchSelect.innerHTML = branches.map(function(b) { return '<option value="' + b + '">' + b + '</option>'; }).join('');
       }
 
       if (usersContainer) {
         if (!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {};
-        var allUsers = [];
-        allUsers.push({ name: 'Admin', branch: 'Global' });
+        var allUsers = []; allUsers.push({ name: 'Admin', branch: 'Global' });
 
         branches.forEach(function(b) {
           var list = workshopSettings.usersByBranch[b] || [];
@@ -899,25 +917,12 @@
         });
 
         usersContainer.innerHTML = allUsers.map(function(u) {
-          var isCurrent = (u.name === activeUser);
-          var isMainAdmin = (u.name === 'Admin');
-
+          var isCurrent = (u.name === activeUser); var isMainAdmin = (u.name === 'Admin');
           var branchOptions = branches.map(function(b) { return '<option value="' + b + '" ' + (u.branch === b ? 'selected' : '') + '>' + b + '</option>'; }).join('');
-          var branchControl = isMainAdmin ? 
-            '<span class="text-[9px] font-mono font-bold text-iosBlue bg-iosBlue/10 px-2 py-0.5 rounded">GLOBAL</span>' :
-            '<select onchange="window.changeUserBranch(\'' + u.name + '\', \'' + u.branch + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + branchOptions + '</select>';
-          var deleteButton = isMainAdmin ? 
-            '' : 
-            '<button type="button" onclick="window.deleteStaffMember(\'' + u.name + '\', \'' + u.branch + '\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center active:scale-95 transition" title="Eliminar usuario"><i class="ph-bold ph-trash"></i></button>';
+          var branchControl = isMainAdmin ? '<span class="text-[9px] font-mono font-bold text-iosBlue bg-iosBlue/10 px-2 py-0.5 rounded">GLOBAL</span>' : '<select onchange="window.changeUserBranch(\'' + u.name + '\', \'' + u.branch + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + branchOptions + '</select>';
+          var deleteButton = isMainAdmin ? '' : '<button type="button" onclick="window.deleteStaffMember(\'' + u.name + '\', \'' + u.branch + '\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center active:scale-95 transition" title="Eliminar usuario"><i class="ph-bold ph-trash"></i></button>';
 
-          return '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800">' +
-                   '<div class="flex items-center gap-1.5 min-w-0 cursor-pointer flex-1" onclick="window.selectActiveUser(\'' + u.name + '\')">' +
-                     '<i class="ph-bold ph-user text-sm ' + (isCurrent ? 'text-iosBlue' : 'text-zinc-500') + '"></i>' +
-                     '<span class="font-bold text-xs truncate ' + (isCurrent ? 'text-white' : 'text-zinc-300') + '">' + u.name + '</span>' +
-                     (isCurrent ? '<span class="text-[8px] bg-emerald-950 text-emerald-400 px-1 rounded font-bold">ACTIVO</span>' : '') +
-                   '</div>' +
-                   '<div class="flex items-center gap-1.5 shrink-0">' + branchControl + deleteButton + '</div>' +
-                 '</div>';
+          return '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800"><div class="flex items-center gap-1.5 min-w-0 cursor-pointer flex-1" onclick="window.selectActiveUser(\'' + u.name + '\')"><i class="ph-bold ph-user text-sm ' + (isCurrent ? 'text-iosBlue' : 'text-zinc-500') + '"></i><span class="font-bold text-xs truncate ' + (isCurrent ? 'text-white' : 'text-zinc-300') + '">' + u.name + '</span>' + (isCurrent ? '<span class="text-[8px] bg-emerald-950 text-emerald-400 px-1 rounded font-bold">ACTIVO</span>' : '') + '</div><div class="flex items-center gap-1.5 shrink-0">' + branchControl + deleteButton + '</div></div>';
         }).join('');
       }
 
@@ -928,20 +933,10 @@
           if (info && (now - info.time < 25000)) {
             var isMe = (d === myDeviceId);
             var devBranchOptions = branches.map(function(b) { return '<option value="' + b + '" ' + ((info.branch || 'Central') === b ? 'selected' : '') + '>' + b + '</option>'; }).join('');
-            var devBranchSelect = isMe ?
-              '<span class="text-[9px] font-mono text-emerald-400 font-bold px-1 uppercase">' + (info.branch || 'Central') + '</span>' :
-              '<select onchange="window.changeRemoteDeviceBranch(\'' + d + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + devBranchOptions + '</select>';
-            var kickBtn = isMe ?
-              '<span class="text-[8px] bg-zinc-800 text-zinc-500 px-1.5 py-0.5 rounded font-bold">ESTE EQUIPO</span>' :
-              '<button type="button" onclick="window.kickDevice(\'' + d + '\')" class="px-2 py-0.5 rounded bg-rose-950 text-rose-400 text-[10px] font-bold active:scale-95 transition">Expulsar</button>';
+            var devBranchSelect = isMe ? '<span class="text-[9px] font-mono text-emerald-400 font-bold px-1 uppercase">' + (info.branch || 'Central') + '</span>' : '<select onchange="window.changeRemoteDeviceBranch(\'' + d + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + devBranchOptions + '</select>';
+            var kickBtn = isMe ? '<span class="text-[8px] bg-zinc-800 text-zinc-500 px-1.5 py-0.5 rounded font-bold">ESTE EQUIPO</span>' : '<button type="button" onclick="window.kickDevice(\'' + d + '\')" class="px-2 py-0.5 rounded bg-rose-950 text-rose-400 text-[10px] font-bold active:scale-95 transition">Expulsar</button>';
 
-            devHtml += '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800">' +
-                         '<div class="min-w-0 flex-1 pr-2">' +
-                           '<div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span class="font-bold text-xs text-white truncate">' + (info.user || 'Admin') + '</span></div>' +
-                           '<div class="text-[8px] text-zinc-500 font-mono truncate">' + d + '</div>' +
-                         '</div>' +
-                         '<div class="flex items-center gap-1.5 shrink-0">' + devBranchSelect + kickBtn + '</div>' +
-                       '</div>';
+            devHtml += '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800"><div class="min-w-0 flex-1 pr-2"><div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span class="font-bold text-xs text-white truncate">' + (info.user || 'Admin') + '</span></div><div class="text-[8px] text-zinc-500 font-mono truncate">' + d + '</div></div><div class="flex items-center gap-1.5 shrink-0">' + devBranchSelect + kickBtn + '</div></div>';
             count++;
           }
         }
@@ -963,7 +958,7 @@
     };
 
     window.deleteStaffMember = function(userName, branch) {
-      if (userName === 'Admin') { window.showToast("Denegado", "No se puede eliminar la cuenta principal de Administrador."); return; }
+      if (userName === 'Admin') { window.showToast("Denegado", "No se puede eliminar la cuenta de Administrador."); return; }
       if (activeUser !== 'Admin') { window.showToast("Denegado", "Solo el Administrador puede eliminar usuarios."); return; }
       window.requestAdminPinAuth("Eliminar usuario " + userName, function() {
         if (workshopSettings.usersByBranch && workshopSettings.usersByBranch[branch]) {
@@ -992,18 +987,17 @@
     };
 
     window.kickDevice = function(devId) {
-      window.requestAdminPinAuth("Desvincular este dispositivo permanentemente", function() {
+      window.requestAdminPinAuth("Desvincular este dispositivo", function() {
         if(!workshopSettings.bannedDevices) workshopSettings.bannedDevices = [];
         if(!workshopSettings.bannedDevices.includes(devId)) workshopSettings.bannedDevices.push(devId);
         StorageShield.save('settings', workshopSettings);
-        window.renderUnifiedUsersAndDevices();
-        window.showToast("Desvinculado", "El dispositivo ha sido expulsado.");
+        window.renderUnifiedUsersAndDevices(); window.showToast("Desvinculado", "El dispositivo ha sido expulsado.");
       });
     };
     
     window.leaveWorkshop = function() {
-      window.requestAdminPinAuth("Desvincular ESTE dispositivo de la red actual", function() {
-        window.appConfirm("Desvincular Red", "⚠️ ¿Confirmas desvincular este dispositivo?\n\nIniciará con un taller en blanco independiente y se desconectará de la red " + currentWorkshopId, function() {
+      window.requestAdminPinAuth("Desvincular ESTE dispositivo", function() {
+        window.appConfirm("Desvincular Red", "⚠️ ¿Confirmas desvincular este dispositivo?\n\nIniciará con un taller en blanco independiente y se desconectará de la red actual.", function() {
            localStorage.removeItem(WORKSHOP_ID_KEY); window.location.reload();
         });
       });
@@ -1031,34 +1025,6 @@
     window.openTeamModal = function() { window.openModal('teamModal'); };
     window.openLicenseModal = function() { window.openModal('licenseModal'); };
     window.openInstallModal = function() { window.openModal('installModal'); };
-
-    // --- SUCURSALES (CON PIN PARA CAMBIOS) ---
-    window.checkLocalBranch = function() {
-      if (!localStorage.getItem(LOCAL_BRANCH_KEY) || !workshopSettings.branches.includes(localBranch)) {
-        var html = workshopSettings.branches.map(function(b) { return '<button type="button" onclick="window.setLocalBranch(\''+b+'\')" class="w-full p-3 bg-zinc-800 hover:bg-zinc-700 text-white font-bold rounded-xl border border-zinc-700 transition">'+b+'</button>'; }).join('');
-        if($('startupBranchList')) $('startupBranchList').innerHTML = html; window.openModal('startupBranchModal');
-      }
-    };
-
-    window.setLocalBranch = function(b) {
-      if (b !== localBranch && localStorage.getItem(LOCAL_BRANCH_KEY)) {
-        window.requestAdminPinAuth("Asignar Sucursal a este Dispositivo", function() {
-          localBranch = b; currentCashBranch = b; try { localStorage.setItem(LOCAL_BRANCH_KEY, b); } catch(e){}
-          window.closeModal('startupBranchModal');
-          if(!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {};
-          if(!workshopSettings.usersByBranch[localBranch]) { workshopSettings.usersByBranch[localBranch] = ['Admin']; StorageShield.save('settings', workshopSettings); }
-          window.setBranchFilter(b); window.renderBranchTabs(); window.updateCashBalanceUI(); window.showToast("Sucursal Vinculada", "Operando en: " + b);
-          window.broadcastPresence();
-        });
-      } else {
-        localBranch = b; currentCashBranch = b; try { localStorage.setItem(LOCAL_BRANCH_KEY, b); } catch(e){}
-        window.closeModal('startupBranchModal');
-        if(!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {};
-        if(!workshopSettings.usersByBranch[localBranch]) { workshopSettings.usersByBranch[localBranch] = ['Admin']; StorageShield.save('settings', workshopSettings); }
-        window.setBranchFilter(b); window.renderBranchTabs(); window.updateCashBalanceUI(); window.showToast("Sucursal Vinculada", "Operando en: " + b);
-        window.broadcastPresence();
-      }
-    };
 
     window.renderBranchTabs = function() {
       var branches = workshopSettings.branches || ['Central'];
@@ -1174,7 +1140,7 @@
         if(newVal && newVal.trim() !== '') {
           newVal = newVal.trim(); workshopSettings.branches[idx] = newVal;
           repairs.forEach(function(r) { if(r.branch === oldVal) r.branch = newVal; }); stockItems.forEach(function(s) { if(s.branch === oldVal) s.branch = newVal; }); sales.forEach(function(s) { if(s.branch === oldVal) s.branch = newVal; }); cashMovements.forEach(function(c) { if(c.branch === oldVal) c.branch = newVal; }); cashClosures.forEach(function(c) { if(c.branch === oldVal) c.branch = newVal; });
-          if(localBranch === oldVal) window.setLocalBranch(newVal);
+          if(localBranch === oldVal) window.setLocalBranch(newVal, true);
           StorageShield.save('settings', workshopSettings); StorageShield.save('repairs', repairs); StorageShield.save('stock', stockItems); StorageShield.save('sales', sales); StorageShield.save('cash', cashMovements); StorageShield.save('cashClosures', cashClosures);
           window.renderConfigBranches(); window.renderBranchTabs(); window.showToast('Actualizado', 'Sucursal editada.');
         }
@@ -1207,10 +1173,13 @@
     window.shareAppWA = function() { var url = window.location.origin + window.location.pathname; var msg = "🚀 *OpenLine - Gestión de Taller Profesional*\n\nAccede a la plataforma aquí:\n\n" + url; window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank'); };
     window.copyAppUrl = function() { var url = window.location.origin + window.location.pathname; if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(function() { window.showToast("Copiado", "Enlace copiado al portapapeles."); }).catch(function() { window.fallbackCopyText(url); }); } else { window.fallbackCopyText(url); } };
     window.fallbackCopyText = function(text) { var textArea = document.createElement("textarea"); textArea.value = text; document.body.appendChild(textArea); textArea.select(); try { document.execCommand('copy'); window.showToast("Copiado", "Enlace copiado al portapapeles."); } catch (err) { window.showToast("Error", "No se pudo copiar."); } document.body.removeChild(textArea); };
+    
     window.joinWorkshop = function() { 
       var code = $('inpJoinWorkshopCode').value.trim().toUpperCase(); if (!code) return; 
-      window.appConfirm("Vincular a Red", "¿Vincular a la red " + code + "? Se sincronizará todo.", function() { 
-        localStorage.setItem(WORKSHOP_ID_KEY, code); window.location.reload(); 
+      window.appConfirm("Vincular a Red", "¿Vincular a la red " + code + "?\n\nEste dispositivo se reseteará y tomará los datos y la licencia del taller maestro.", function() { 
+        localStorage.setItem(WORKSHOP_ID_KEY, code);
+        localStorage.removeItem(LOCAL_BRANCH_KEY); // Fuerza a re-seleccionar sucursal al iniciar
+        window.location.reload(); 
       }); 
     };
 
@@ -1404,7 +1373,7 @@
       StorageShield.save('cash', cashMovements);
       
       window.updateCashBalanceUI(); window.clearPosCart(); window.closeModal('salesModal');
-      window.switchPosTab('CATALOG'); window.showToast("Venta Exitosa", "Registrada en caja de " + localBranch); window.openSaleTicketModal(saleId);
+      window.switchPosTab('CATALOG'); window.showToast("Venta Exitosa", "Registrada en caja local."); window.openSaleTicketModal(saleId);
     };
 
     window.renderPosCatalog = function() {
@@ -1562,9 +1531,12 @@
 
     window.sendTechnicalReportWA = function() {
       var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
-      var phone = r.clientPhone ? r.clientPhone.replace(/[^0-9]/g, '') : prompt("WhatsApp del cliente:"); if(!phone) return;
-      var msg = `*${workshopSettings.name.toUpperCase()} - INFORME TÉCNICO* 🛠️\n\n🔖 *Orden:* #${r.id}\n📱 *Equipo:* ${r.deviceBrand} ${r.deviceModel}\n👤 *Cliente:* ${r.clientName}\n\n📋 *Diagnóstico:*\n${r.fault || '-'}\n\n✅ *Trabajo Realizado:*\n${r.repairDetails || '-'}\n\n💰 *Total:* $${r.budget||0}\n💵 *Abonado:* $${r.advance||0}\n❗️ *Resta:* $${(r.budget||0)-(r.advance||0)}\n\n¡Gracias por confiar en nosotros!`;
-      window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
+      var phone = r.clientPhone ? r.clientPhone.replace(/[^0-9]/g, '') : null;
+      var send = function(p) {
+        var msg = `*${workshopSettings.name.toUpperCase()} - INFORME TÉCNICO* 🛠️\n\n🔖 *Orden:* #${r.id}\n📱 *Equipo:* ${r.deviceBrand} ${r.deviceModel}\n👤 *Cliente:* ${r.clientName}\n\n📋 *Diagnóstico:*\n${r.fault || '-'}\n\n✅ *Trabajo Realizado:*\n${r.repairDetails || '-'}\n\n💰 *Total:* $${r.budget||0}\n💵 *Abonado:* $${r.advance||0}\n❗️ *Resta:* $${(r.budget||0)-(r.advance||0)}\n\n¡Gracias por confiar en nosotros!`;
+        window.open('https://wa.me/' + p.replace(/[^0-9]/g,'') + '?text=' + encodeURIComponent(msg), '_blank');
+      };
+      if(!phone) { window.appPrompt("WhatsApp", "Ingresa el WhatsApp del cliente:", "tel", "", function(val){ if(val) send(val); }); } else { send(phone); }
     };
 
     window.printTechnicalReport = function() {
@@ -1584,7 +1556,7 @@
       var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
       var balance = (parseFloat(r.budget)||0) - (parseFloat(r.advance)||0);
       if(balance <= 0) { window.showToast("Aviso", "Esta orden ya está pagada."); return; }
-      window.appConfirm("Cobro a Caja Local", "¿Cobrar a Caja el saldo de $" + balance + " de esta reparación?", function() {
+      window.appConfirm("Cobro de Reparación", "¿Cobrar a Caja el saldo de $" + balance + " de esta reparación?", function() {
          cashMovements.unshift({ id: 'CSH-REP-' + Date.now(), branch: localBranch, type: 'INCOME', amount: balance, concept: 'Cobro Final Orden #' + r.id, method: 'Efectivo', date: Date.now(), user: activeUser, closed: false });
          StorageShield.save('cash', cashMovements);
          r.advance = r.budget; StorageShield.save('repairs', repairs);
@@ -1876,7 +1848,6 @@
 
         window.broadcastPresence();
 
-        // Heartbeat y actualización cada 3 segundos
         setInterval(function() {
           window.broadcastPresence();
           var now = Date.now(); var count = 0;
@@ -1907,7 +1878,7 @@
           if (topic.endsWith('/heartbeat')) {
             if (payload && payload.devId) {
                 window.activeDevicesMap[payload.devId] = { time: Date.now(), user: payload.user || 'Admin', branch: payload.branch || 'Central' };
-                if (typeof window.renderUnifiedUsersAndDevices === 'function' && $('switchUserModal') && !$('switchUserModal').classList.contains('hidden')) {
+                if (typeof window.renderUnifiedUsersAndDevices === 'function' && $('switchUserModal') && $('switchUserModal').classList.contains('active')) {
                   window.renderUnifiedUsersAndDevices();
                 }
             }
@@ -1985,7 +1956,7 @@
           
           window.checkBannedStatus();
           
-          // Registro de telemetría propio con estado de licencia real
+          // Registro de telemetría propio
           window.saveTelemetryData({ 
             workshopId: currentWorkshopId.toUpperCase(), 
             deviceId: myDeviceId, 
