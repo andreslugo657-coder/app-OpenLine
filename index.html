@@ -72,7 +72,7 @@
         <h4 class="font-bold text-emerald-300 text-xs uppercase tracking-wider">Red Sincronizada</h4>
         <span class="text-[9px] font-mono bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded-full font-bold">1s LIVE</span>
       </div>
-      <p class="text-[10px] text-zinc-200 leading-relaxed">Órdenes, catálogo y stock vinculados en toda la red. Caja y cierres operando de forma individual por sucursal.</p>
+      <p class="text-[10px] text-zinc-200 leading-relaxed">Catálogo compartido, stock y órdenes vinculadas en vivo. Cajas locales operando de forma independiente.</p>
     </div>
     <button type="button" onclick="window.dismissRealtimeBanner()" class="bg-emerald-900/60 p-1.5 rounded-lg text-emerald-300 hover:text-white transition active:scale-95">
       <i class="ph-bold ph-x text-sm"></i>
@@ -298,11 +298,17 @@
     </div>
   </div>
 
-  <!-- MODAL VENTAS POS CON CATÁLOGO COMPARTIDO -->
+  <!-- MODAL VENTAS POS CON CATÁLOGO INTERACTIVO COMPARTIDO -->
   <div id="salesModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 sm:border border-amber-600/70 rounded-t-3xl sm:rounded-3xl w-full max-w-4xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
       <div class="p-3 border-b border-zinc-800 shrink-0 space-y-2">
-        <div class="flex items-center justify-between"><div class="flex items-center gap-2"><i class="ph-bold ph-shopping-cart-simple text-amber-400 text-lg"></i><h3 class="font-bold text-white text-sm">Venta Mostrador (<span id="posModalBranchTag" class="text-amber-400 font-bold">Central</span>)</h3></div><button type="button" onclick="window.closeModal('salesModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-xs"></i></button></div>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i class="ph-bold ph-shopping-cart-simple text-amber-400 text-lg"></i>
+            <h3 class="font-bold text-white text-sm">Venta Mostrador (<span id="posModalBranchTag" class="text-amber-400 font-bold">Central</span>)</h3>
+          </div>
+          <button type="button" onclick="window.closeModal('salesModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-xs"></i></button>
+        </div>
         <div class="grid grid-cols-3 gap-1 p-1 bg-zinc-950 rounded-xl border border-zinc-800">
           <button type="button" id="posTabCatalogBtn" onclick="window.switchPosTab('CATALOG')" class="py-1.5 rounded-lg font-bold text-xs transition bg-amber-600 text-white shadow flex items-center justify-center gap-1"><i class="ph-bold ph-package"></i> Catálogo</button>
           <button type="button" id="posTabScanBtn" onclick="window.switchPosTab('SCAN_MANUAL')" class="py-1.5 rounded-lg font-bold text-xs transition bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center gap-1"><i class="ph-bold ph-camera"></i> Escáner / Manual</button>
@@ -310,15 +316,29 @@
         </div>
       </div>
       <div class="flex-1 overflow-hidden relative flex flex-col p-3 min-h-0">
-        <div id="posViewCatalog" class="flex-1 flex flex-col space-y-2.5 overflow-hidden min-h-0">
-          <div class="relative shrink-0"><i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i><input type="text" id="posSearchProduct" oninput="window.renderPosCatalog()" placeholder="Buscar en catálogo compartido..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white"></div>
+        <!-- VISTA CATÁLOGO INTERACTIVO -->
+        <div id="posViewCatalog" class="flex-1 flex flex-col space-y-2 overflow-hidden min-h-0">
+          <div class="space-y-1.5 shrink-0">
+            <div class="relative">
+              <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i>
+              <input type="text" id="posSearchProduct" oninput="window.renderPosCatalog()" placeholder="Buscar en catálogo compartido de la red..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white">
+            </div>
+            <!-- FILTROS INTERACTIVOS: SUCURSALES Y CATEGORÍAS -->
+            <div class="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0.5" id="posCatalogBranchPills"></div>
+            <div class="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0.5" id="posCatalogCategoryPills"></div>
+          </div>
           <div id="posCatalogGrid" class="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-2 content-start pb-12 min-h-[260px]"></div>
-          <div id="posCatalogCartBar" class="hidden absolute bottom-2 inset-x-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-xl p-2.5 shadow-2xl items-center justify-between cursor-pointer active:scale-95 transition" onclick="window.switchPosTab('CART')"><span class="font-bold flex items-center gap-1.5 text-xs"><i class="ph-bold ph-shopping-cart text-base"></i> <span id="posBarItemCount">0 items en carrito</span></span><span class="font-mono font-black text-xs bg-black/30 px-2.5 py-0.5 rounded-lg" id="posBarTotal">$0</span></div>
+          <div id="posCatalogCartBar" class="hidden absolute bottom-2 inset-x-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-xl p-2.5 shadow-2xl items-center justify-between cursor-pointer active:scale-95 transition" onclick="window.switchPosTab('CART')">
+            <span class="font-bold flex items-center gap-1.5 text-xs"><i class="ph-bold ph-shopping-cart text-base"></i> <span id="posBarItemCount">0 items en carrito</span></span>
+            <span class="font-mono font-black text-xs bg-black/30 px-2.5 py-0.5 rounded-lg" id="posBarTotal">$0</span>
+          </div>
         </div>
+        <!-- VISTA ESCÁNER / MANUAL -->
         <div id="posViewScanManual" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6 min-h-0">
           <div class="p-3 bg-zinc-950 rounded-2xl border border-purple-800/80 space-y-2 shrink-0"><div class="flex items-center justify-between"><span class="text-[10px] font-bold text-purple-300 uppercase flex items-center gap-1"><i class="ph-bold ph-barcode text-sm"></i> Lector de Códigos</span><button type="button" id="btnToggleScanner" onclick="window.togglePosCam()" class="px-2.5 py-1 bg-purple-900 text-purple-200 rounded-lg font-bold text-xs flex items-center gap-1 active:scale-95"><i class="ph-bold ph-camera"></i> Iniciar</button></div><div id="posScannerBox" class="hidden flex-col p-2 bg-black rounded-xl border border-purple-800 gap-1.5"><button type="button" onclick="window.stopPosCam()" class="text-rose-400 font-bold self-end bg-rose-950/40 px-2.5 py-0.5 rounded text-[10px] active:scale-95">Cerrar</button><div id="pos-qr-reader" class="w-full bg-black rounded-xl overflow-hidden"></div></div></div>
           <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 shrink-0"><span class="text-[10px] font-bold text-amber-400 uppercase flex items-center gap-1"><i class="ph-bold ph-tag text-sm"></i> Venta Manual Rápida</span><input type="text" id="posManualName" placeholder="Descripción (Funda, Cable, etc)..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white"><div class="flex gap-2"><input type="number" id="posManualPrice" placeholder="Precio ($)" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono font-bold"><button type="button" onclick="window.addManualPosItem()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shadow active:scale-95 transition">+ Agregar</button></div></div>
         </div>
+        <!-- VISTA CARRITO -->
         <div id="posViewCart" class="hidden flex-1 flex-col space-y-2.5 overflow-y-auto pb-4 min-h-0">
           <div class="flex items-center justify-between pb-1 border-b border-zinc-800"><span class="font-bold text-white text-xs uppercase">Artículos cargados</span><button type="button" onclick="window.clearPosCart()" class="text-[10px] text-rose-400 font-bold px-2 py-0.5 bg-rose-950/40 rounded">Vaciar</button></div><div id="posCartContainer" class="flex-1 space-y-1.5 overflow-y-auto min-h-[120px]"></div>
           <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 shrink-0">
@@ -359,13 +379,24 @@
         </div>
       </div>
       <div class="flex-1 overflow-hidden relative flex flex-col p-3 min-h-0">
-        <div id="stockViewList" class="flex-1 flex flex-col space-y-2.5 overflow-hidden min-h-0"><div class="flex gap-2 shrink-0"><div class="relative flex-1"><i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i><input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-2 text-xs text-white"></div><button type="button" onclick="window.bulkIncreasePrices()" class="px-3 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs flex items-center gap-1 shrink-0 shadow active:scale-95 transition"><i class="ph-bold ph-trend-up"></i> % Suba</button></div><div id="stockListContainer" class="space-y-1.5 overflow-y-auto flex-1 pb-4 min-h-[260px]"></div></div>
+        <div id="stockViewList" class="flex-1 flex flex-col space-y-2.5 overflow-hidden min-h-0">
+          <div class="flex gap-2 shrink-0">
+            <div class="relative flex-1">
+              <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i>
+              <input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-2 text-xs text-white">
+            </div>
+            <button type="button" onclick="window.bulkIncreasePrices()" class="px-3 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs flex items-center gap-1 shrink-0 shadow active:scale-95 transition"><i class="ph-bold ph-trend-up"></i> % Suba</button>
+          </div>
+          <!-- FILTRO INTERACTIVO DE SUCURSAL PARA INVENTARIO -->
+          <div class="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0.5 shrink-0" id="stockBranchFilterPills"></div>
+          <div id="stockListContainer" class="space-y-1.5 overflow-y-auto flex-1 pb-4 min-h-[260px]"></div>
+        </div>
         <div id="stockViewForm" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6 min-h-0">
           <div class="p-3.5 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
             <span class="text-xs font-bold text-purple-300 uppercase block flex items-center gap-1.5"><i class="ph-bold ph-tag"></i> Datos del Repuesto</span>
             <div class="space-y-1"><label class="text-[10px] text-zinc-400 font-bold block">Código / SKU *</label><div class="flex gap-1.5"><input type="text" id="stkCode" placeholder="Código *" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono text-xs"><button type="button" onclick="window.autoBarcode()" class="px-3 bg-zinc-800 border border-zinc-700 text-zinc-300 rounded-xl text-xs font-bold active:scale-95">Auto</button></div></div>
             <div class="space-y-1"><label class="text-[10px] text-zinc-400 font-bold block">Nombre *</label><input type="text" id="stkName" placeholder="Ej: Módulo Pantalla" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"></div>
-            <div class="grid grid-cols-2 gap-2"><div class="space-y-1"><label class="text-[10px] text-zinc-400 font-bold block">Sucursal:</label><select id="stkBranch" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-2 text-white text-xs font-medium"></select></div><div class="space-y-1"><label class="text-[10px] text-zinc-400 font-bold block">Categoría:</label><select id="stkCategory" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-2 text-white text-xs font-medium"><option value="Pantallas">Pantallas</option><option value="Baterías">Baterías</option><option value="Pines">Pines</option><option value="Otros">Otros</option></select></div></div>
+            <div class="grid grid-cols-2 gap-2"><div class="space-y-1"><label class="text-[10px] text-zinc-400 font-bold block">Sucursal:</label><select id="stkBranch" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-2 text-white text-xs font-medium"></select></div><div class="space-y-1"><label class="text-[10px] text-zinc-400 font-bold block">Categoría:</label><select id="stkCategory" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-2 text-white text-xs font-medium"><option value="Pantallas">Pantallas</option><option value="Baterías">Baterías</option><option value="Pines">Pines</option><option value="Accesorios">Accesorios</option><option value="Otros">Otros</option></select></div></div>
             <div class="grid grid-cols-3 gap-2"><div class="space-y-1"><label class="text-[10px] text-zinc-400 font-bold block">Cant:</label><input type="number" id="stkQuantity" value="1" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-2 text-white font-bold text-xs text-center"></div><div class="space-y-1"><label class="text-[10px] text-zinc-400 font-bold block">Costo ($):</label><input type="number" id="stkCostPrice" placeholder="0" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-2 text-zinc-300 font-mono text-xs"></div><div class="space-y-1"><label class="text-[10px] text-emerald-400 font-bold block">Venta ($) *:</label><input type="number" id="stkSalePrice" placeholder="0" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-2.5 py-2 text-emerald-400 font-bold font-mono text-xs"></div></div>
             <button type="button" onclick="window.saveStockItem()" class="w-full py-3 mt-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow active:scale-95 transition">Guardar en Inventario</button>
           </div>
@@ -377,10 +408,10 @@
     </div>
   </div>
 
-  <!-- MODAL CAJA LOCAL INDEPENDIENTE -->
+  <!-- MODAL CAJA LOCAL AISLADA POR SUCURSAL -->
   <div id="cashModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><div class="flex items-center gap-2"><i class="ph-bold ph-currency-dollar-simple text-emerald-400 text-lg"></i><div><h3 class="font-bold text-white text-sm">Caja Local</h3><span class="text-[10px] text-zinc-400">Sucursal: <b id="cashModalTitleBranch" class="text-emerald-400">Central</b></span></div></div><button type="button" onclick="window.closeModal('cashModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><div class="flex items-center gap-2"><i class="ph-bold ph-currency-dollar-simple text-emerald-400 text-lg"></i><div><h3 class="font-bold text-white text-sm">Caja Local</h3><span class="text-[10px] text-zinc-400">Sucursal: <b id="cashModalTitleBranch" class="text-emerald-400">(Central)</b></span></div></div><button type="button" onclick="window.closeModal('cashModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="p-3.5 overflow-y-auto space-y-3 flex-1 pb-8">
         <div id="cashBranchSelectorContainer" class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl flex items-center justify-between gap-2"><span class="text-[9px] uppercase font-bold text-zinc-400 flex items-center gap-1 shrink-0"><i class="ph-bold ph-storefront text-emerald-400"></i> Ver Caja de:</span><div id="cashBranchSelectorList" class="flex gap-1 overflow-x-auto no-scrollbar"></div></div>
         <div class="grid grid-cols-3 gap-1.5 text-center"><div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[8px] text-emerald-400 font-bold block uppercase">Ingresos Turno</span><span id="cashTotalIncome" class="text-sm font-bold text-emerald-400 font-mono mt-0.5 block">$0</span></div><div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[8px] text-rose-400 font-bold block uppercase">Egresos Turno</span><span id="cashTotalExpense" class="text-sm font-bold text-rose-400 font-mono mt-0.5 block">$0</span></div><div class="p-2 bg-gradient-to-b from-zinc-900 to-indigo-950 border border-indigo-700/60 rounded-xl"><span class="text-[8px] text-indigo-300 font-bold block uppercase">Saldo Final</span><span id="cashNetBalance" class="text-sm font-bold text-white font-mono mt-0.5 block">$0</span></div></div>
@@ -595,7 +626,7 @@
   <!-- SISTEMA JAVASCRIPT GLOBAL BLINDADO (GESTIÓN COMPLETA Y SEGURIDAD)                   -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v26.0.0'; 
+    var APP_CODE_VERSION = 'v27.0.0'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var VERSION_STORAGE_KEY = 'openline_code_installed_version';
@@ -731,7 +762,10 @@
     
     var activeUser = 'Admin'; try { activeUser = localStorage.getItem(ACTIVE_USER_KEY) || 'Admin'; } catch(e){}
     var currentFilter = 'ALL'; 
-    var currentBranchFilter = 'ALL'; // Por defecto, todas las sucursales pueden ver todas las órdenes de trabajo
+    var currentBranchFilter = 'ALL'; // Vista de órdenes compartida entre todas las sucursales
+    var currentStockBranchFilter = 'ALL'; // Filtro de inventario
+    var currentPosBranchFilter = 'ALL'; // Filtro de catálogo
+    var currentPosCategoryFilter = 'ALL'; // Filtro de categoría en catálogo
     var currentVentasPeriod = 'HOY'; 
     var selectedRepairId = null;
 
@@ -1105,7 +1139,12 @@
       }, 50);
     };
 
-    window.openSalesModal = function() { window.openModal('salesModal'); setTimeout(function() { window.switchPosTab('CATALOG'); }, 50); };
+    window.openSalesModal = function() { 
+      window.openModal('salesModal'); 
+      setTimeout(function() { 
+        window.switchPosTab('CATALOG'); 
+      }, 50); 
+    };
     window.openVentasHistoryModal = function() { window.openModal('ventasModal'); setTimeout(function() { window.setVentasPeriod('HOY'); }, 50); };
     window.openStockModal = function() { window.openModal('stockModal'); setTimeout(function() { window.switchStockTab('LIST'); window.renderStockList(); }, 50); };
     window.openCashModal = function() { 
@@ -1164,10 +1203,65 @@
           cashBranchList.innerHTML = '<button type="button" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow cursor-default">('+localBranch+')</button>';
         }
       }
+
+      window.renderInteractiveCatalogFilters();
+      window.renderStockBranchFilters();
     };
 
     window.switchCashBranchView = function(b) { currentCashBranch = b; window.renderBranchTabs(); window.updateCashBalanceUI(); };
     window.setBranchFilter = function(b) { currentBranchFilter = b; window.renderBranchTabs(); window.renderRepairsList(); window.updateCounters(); };
+
+    // --- FILTROS INTERACTIVOS DEL CATÁLOGO ---
+    window.renderInteractiveCatalogFilters = function() {
+      var branches = workshopSettings.branches || ['Central'];
+      var bContainer = $('posCatalogBranchPills');
+      if (bContainer) {
+        var bAll = '<button type="button" onclick="window.setPosBranchFilter(\'ALL\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentPosBranchFilter==='ALL'?'bg-amber-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas las Sucursales</button>';
+        var bList = branches.map(function(b) {
+          return '<button type="button" onclick="window.setPosBranchFilter(\''+b+'\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentPosBranchFilter===b?'bg-amber-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">('+b+')</button>';
+        }).join('');
+        bContainer.innerHTML = bAll + bList;
+      }
+
+      var cContainer = $('posCatalogCategoryPills');
+      if (cContainer) {
+        var categories = ['ALL', 'Pantallas', 'Baterías', 'Pines', 'Accesorios', 'Otros'];
+        cContainer.innerHTML = categories.map(function(cat) {
+          var label = (cat === 'ALL') ? 'Todas las Categorías' : cat;
+          return '<button type="button" onclick="window.setPosCategoryFilter(\''+cat+'\')" class="px-2 py-0.5 rounded-md text-[9px] font-bold shrink-0 transition '+(currentPosCategoryFilter===cat?'bg-purple-600 text-white shadow':'bg-zinc-900 border border-zinc-800 text-zinc-400')+'">'+label+'</button>';
+        }).join('');
+      }
+    };
+
+    window.setPosBranchFilter = function(b) {
+      currentPosBranchFilter = b;
+      window.renderInteractiveCatalogFilters();
+      window.renderPosCatalog();
+    };
+
+    window.setPosCategoryFilter = function(c) {
+      currentPosCategoryFilter = c;
+      window.renderInteractiveCatalogFilters();
+      window.renderPosCatalog();
+    };
+
+    window.renderStockBranchFilters = function() {
+      var branches = workshopSettings.branches || ['Central'];
+      var container = $('stockBranchFilterPills');
+      if (container) {
+        var allBtn = '<button type="button" onclick="window.setStockBranchFilter(\'ALL\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentStockBranchFilter==='ALL'?'bg-purple-700 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas</button>';
+        var bList = branches.map(function(b) {
+          return '<button type="button" onclick="window.setStockBranchFilter(\''+b+'\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentStockBranchFilter===b?'bg-purple-700 text-white shadow':'bg-zinc-800 text-zinc-400')+'">('+b+')</button>';
+        }).join('');
+        container.innerHTML = allBtn + bList;
+      }
+    };
+
+    window.setStockBranchFilter = function(b) {
+      currentStockBranchFilter = b;
+      window.renderStockBranchFilters();
+      window.renderStockList();
+    };
 
     window.openSwitchUserModal = function() {
       window.openModal('switchUserModal');
@@ -1290,6 +1384,7 @@
           StorageShield.save('repairs', repairs); StorageShield.save('stock', stockItems); StorageShield.save('sales', sales); StorageShield.save('cash', cashMovements); StorageShield.save('cashClosures', cashClosures);
           window.applyWorkshopSettings(workshopSettings);
           window.publishSettingsMQTT();
+          window.publishStockMQTT();
           window.showToast('Actualizado', 'Sucursal editada.');
         }
       });
@@ -1547,15 +1642,43 @@
       window.renderPosCart(); window.showToast("Agregado", "Artículo manual cargado."); window.switchPosTab('CART');
     };
 
-    window.addPosItemByCode = function(code) {
-      var st = stockItems.find(function(i) { return String(i.code) === String(code) && i.branch === localBranch; });
-      if(!st || st.qty <= 0) { window.showToast("Sin Stock", "El producto no tiene stock en (" + localBranch + ")"); return; }
-      var cartItem = posCart.find(function(c) { return String(c.code) === String(code) && c.branch === localBranch; });
+    // Agregar repuesto al carrito indicando la sucursal de donde procede la pieza
+    window.addPosItemByCodeAndBranch = function(code, branch) {
+      var targetBranch = branch || localBranch;
+      var st = stockItems.find(function(i) { return String(i.code) === String(code) && (i.branch || 'Central') === targetBranch; });
+      if(!st || st.qty <= 0) { 
+        window.showToast("Sin Stock", "No hay unidades disponibles en (" + targetBranch + ")"); 
+        return; 
+      }
+      var cartItem = posCart.find(function(c) { return String(c.code) === String(code) && c.branch === targetBranch; });
       if(cartItem) {
-        if(cartItem.qty < st.qty) { cartItem.qty++; window.showToast("Agregado", st.name + " (" + cartItem.qty + ")"); } 
-        else { window.showToast("Límite", "No hay más unidades en stock."); }
-      } else { posCart.push({ code: st.code, branch: st.branch, name: st.name, price: st.price, qty: 1 }); window.showToast("Agregado", st.name); }
+        if(cartItem.qty < st.qty) { 
+          cartItem.qty++; 
+          window.showToast("Agregado", st.name + " (" + cartItem.qty + ") [" + targetBranch + "]"); 
+        } else { 
+          window.showToast("Límite", "No hay más unidades en (" + targetBranch + ")"); 
+        }
+      } else { 
+        posCart.push({ code: st.code, branch: st.branch || targetBranch, name: st.name, price: st.price, qty: 1 }); 
+        window.showToast("Agregado", st.name + " (" + (st.branch || targetBranch) + ")"); 
+      }
       window.renderPosCart();
+    };
+
+    window.addPosItemByCode = function(code) {
+      // Si hay stock local, agregar de la sucursal local
+      var localSt = stockItems.find(function(i) { return String(i.code) === String(code) && (i.branch || 'Central') === localBranch; });
+      if (localSt && localSt.qty > 0) {
+        window.addPosItemByCodeAndBranch(code, localBranch);
+        return;
+      }
+      // Si no hay stock local pero existe en otra sucursal, tomar la primera con stock
+      var anySt = stockItems.find(function(i) { return String(i.code) === String(code) && i.qty > 0; });
+      if (anySt) {
+        window.addPosItemByCodeAndBranch(code, anySt.branch || 'Central');
+      } else {
+        window.showToast("Sin Stock", "Producto sin stock en toda la red.");
+      }
     };
 
     window.addManualPosItemQty = function(idx) { posCart[idx].qty++; window.renderPosCart(); };
@@ -1576,12 +1699,23 @@
       if (bar) { if (countItems > 0) { bar.classList.remove('hidden'); bar.classList.add('flex'); } else { bar.classList.add('hidden'); bar.classList.remove('flex'); } }
 
       if(!container) return;
-      if(posCart.length === 0) { container.innerHTML = '<div class="text-center text-zinc-600 text-xs p-6">El carrito está vacío. Agrega repuestos.</div>'; return; }
+      if(posCart.length === 0) { container.innerHTML = '<div class="text-center text-zinc-600 text-xs p-6">El carrito está vacío. Agrega repuestos del catálogo.</div>'; return; }
 
       container.innerHTML = posCart.map(function(c, idx) {
         var isManual = String(c.code).indexOf('MANUAL') === 0;
-        var btnAdd = isManual ? 'window.addManualPosItemQty('+idx+')' : 'window.addPosItemByCode(\''+c.code+'\')';
-        return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl shadow-sm"><div class="text-xs text-white flex-1 min-w-0 pr-2"><div class="font-bold truncate">'+c.name+'</div><div class="text-amber-400 font-mono text-[11px]">$'+c.price.toLocaleString()+' x '+c.qty+' = <b>$'+(c.price*c.qty).toLocaleString()+'</b> ('+c.branch+')</div></div><div class="flex gap-1 items-center"><button type="button" onclick="window.removePosItem('+idx+')" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center active:scale-95"><i class="ph-bold ph-minus"></i></button><span class="text-xs font-bold w-4 text-center text-white">'+c.qty+'</span><button type="button" onclick="'+btnAdd+'" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center active:scale-95"><i class="ph-bold ph-plus"></i></button><button type="button" onclick="window.deletePosItemRow('+idx+')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex justify-center items-center ml-1 active:scale-95"><i class="ph-bold ph-trash"></i></button></div></div>';
+        var btnAdd = isManual ? 'window.addManualPosItemQty('+idx+')' : 'window.addPosItemByCodeAndBranch(\''+c.code+'\', \''+c.branch+'\')';
+        return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl shadow-sm">' +
+                 '<div class="text-xs text-white flex-1 min-w-0 pr-2">' +
+                   '<div class="font-bold truncate">'+c.name+'</div>' +
+                   '<div class="text-amber-400 font-mono text-[11px]">$'+c.price.toLocaleString()+' x '+c.qty+' = <b>$'+(c.price*c.qty).toLocaleString()+'</b> <span class="text-zinc-400 font-normal">('+c.branch+')</span></div>' +
+                 '</div>' +
+                 '<div class="flex gap-1 items-center">' +
+                   '<button type="button" onclick="window.removePosItem('+idx+')" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center active:scale-95"><i class="ph-bold ph-minus"></i></button>' +
+                   '<span class="text-xs font-bold w-4 text-center text-white">'+c.qty+'</span>' +
+                   '<button type="button" onclick="'+btnAdd+'" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center active:scale-95"><i class="ph-bold ph-plus"></i></button>' +
+                   '<button type="button" onclick="window.deletePosItemRow('+idx+')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex justify-center items-center ml-1 active:scale-95"><i class="ph-bold ph-trash"></i></button>' +
+                 '</div>' +
+               '</div>';
       }).join('');
     };
 
@@ -1591,7 +1725,7 @@
       posCart.forEach(function(c) {
         var p = parseFloat(c.price) || 0; var q = parseInt(c.qty) || 1; total += (p * q);
         if(String(c.code).indexOf('MANUAL') !== 0) {
-          var st = stockItems.find(function(i) { return String(i.code) === String(c.code) && i.branch === c.branch; });
+          var st = stockItems.find(function(i) { return String(i.code) === String(c.code) && (i.branch || 'Central') === c.branch; });
           if(st) st.qty = Math.max(0, (parseInt(st.qty) || 0) - q);
         }
       });
@@ -1604,6 +1738,7 @@
       sales.unshift(newSale); 
       StorageShield.save('sales', sales); 
       StorageShield.save('stock', stockItems);
+      window.publishStockMQTT();
       
       // La venta impacta en la caja de la sucursal que está vendiendo
       if (!Array.isArray(cashMovements)) cashMovements = [];
@@ -1628,7 +1763,7 @@
       window.openSaleTicketModal(saleId);
     };
 
-    // --- CATÁLOGO COMPARTIDO CON FORMATO (SUCURSAL) ---
+    // --- CATÁLOGO INTERACTIVO COMPARTIDO EN TODAS LAS SUCURSALES ---
     window.renderPosCatalog = function() {
       var grid = $('posCatalogGrid'); if(!grid) return;
       var term = $('posSearchProduct') ? $('posSearchProduct').value.toLowerCase().trim() : '';
@@ -1637,42 +1772,88 @@
       stockItems.forEach(function(item) {
           if(!item || !item.code) return; 
           if (!catalogMap[item.code]) { 
-            catalogMap[item.code] = { code: item.code, name: item.name || 'S/N', price: parseFloat(item.price) || 0, localQty: 0, branchesStock: {}, branchPrices: {} }; 
+            catalogMap[item.code] = { 
+              code: item.code, 
+              name: item.name || 'S/N', 
+              category: item.category || 'Otros',
+              localQty: 0, 
+              branchesStock: {}, 
+              branchPrices: {},
+              totalQty: 0
+            }; 
           }
           var itemBranch = item.branch || 'Central'; 
           var qty = parseInt(item.qty) || 0;
           catalogMap[item.code].branchesStock[itemBranch] = (catalogMap[item.code].branchesStock[itemBranch] || 0) + qty;
           catalogMap[item.code].branchPrices[itemBranch] = parseFloat(item.price) || 0;
+          catalogMap[item.code].totalQty += qty;
 
           if (itemBranch === localBranch) { 
             catalogMap[item.code].localQty += qty; 
-            if (item.price) catalogMap[item.code].price = parseFloat(item.price); 
           }
       });
 
-      var displayItems = Object.values(catalogMap).filter(function(i) { return i.name.toLowerCase().includes(term) || String(i.code).toLowerCase().includes(term); });
-      if(displayItems.length === 0) { grid.innerHTML = '<div class="col-span-2 sm:col-span-3 text-zinc-500 text-center p-8">No hay repuestos registrados en el catálogo.</div>'; return; }
+      var displayItems = Object.values(catalogMap).filter(function(i) { 
+        var matchSearch = !term || i.name.toLowerCase().includes(term) || String(i.code).toLowerCase().includes(term);
+        var matchCategory = (currentPosCategoryFilter === 'ALL' || i.category === currentPosCategoryFilter);
+        var matchBranch = true;
+        if (currentPosBranchFilter !== 'ALL') {
+          matchBranch = (i.branchesStock[currentPosBranchFilter] !== undefined);
+        }
+        return matchSearch && matchCategory && matchBranch;
+      });
+
+      if(displayItems.length === 0) { 
+        grid.innerHTML = '<div class="col-span-2 sm:col-span-3 text-zinc-500 text-center p-8">No se encontraron repuestos en el catálogo para el filtro seleccionado.</div>'; 
+        return; 
+      }
       
       grid.innerHTML = displayItems.map(function(i) {
-        var stockLabel = '', actionBtn = '', borderClass = 'border-zinc-800 hover:border-amber-500/70';
+        var localPrice = i.branchPrices[localBranch] || Object.values(i.branchPrices)[0] || 0;
         
-        var otherBranchesWithStock = Object.keys(i.branchesStock)
-          .filter(function(b) { return b !== localBranch && i.branchesStock[b] > 0; })
-          .map(function(b) { return '(' + b + ': ' + i.branchesStock[b] + ')'; });
+        // Desglose de stock en todas las sucursales con formato (Sucursal: Cant)
+        var stockBreakdown = Object.keys(i.branchesStock).map(function(b) {
+          var isCurrent = (b === localBranch);
+          var color = i.branchesStock[b] > 0 ? (isCurrent ? 'text-emerald-400 font-bold' : 'text-zinc-300') : 'text-zinc-600 line-through';
+          return '<span class="text-[9px] font-mono ' + color + '">(' + b + ': ' + i.branchesStock[b] + ')</span>';
+        }).join(' ');
 
-        var otherBranchesText = otherBranchesWithStock.length > 0 ? 
-          '<div class="text-[9px] text-indigo-300 font-mono mt-0.5 truncate">' + otherBranchesWithStock.join(' ') + '</div>' : '';
-
-        if (i.localQty <= 0) {
-          stockLabel = '<span class="text-[9px] text-rose-500 font-bold">Sin Stock (' + localBranch + ')</span>'; 
-          borderClass = 'border-rose-900/50 bg-rose-950/10';
-          actionBtn = '<button type="button" onclick="window.requestStockWA(\'' + i.name.replace(/'/g, "\\'") + '\', \'' + i.code + '\')" class="px-2 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-[10px] flex items-center justify-center gap-1 active:scale-95 shadow w-full"><i class="ph-bold ph-whatsapp-logo text-xs"></i> Pedir a Sucursal</button>';
+        // Botones de acción interactivos
+        var actionsHtml = '';
+        if (i.localQty > 0) {
+          actionsHtml = '<button type="button" onclick="window.addPosItemByCodeAndBranch(\'' + i.code + '\', \'' + localBranch + '\')" class="w-full py-1.5 px-2 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold rounded-lg text-[11px] shadow flex items-center justify-center gap-1"><i class="ph-bold ph-plus"></i> Vender (' + localBranch + ')</button>';
         } else {
-          if (i.localQty <= 3) { stockLabel = '<span class="text-[9px] text-amber-500 font-bold">Stock: ' + i.localQty + ' (' + localBranch + ')</span>'; } 
-          else { stockLabel = '<span class="text-[9px] text-emerald-400 font-bold">Stock: ' + i.localQty + ' (' + localBranch + ')</span>'; }
-          actionBtn = '<div class="flex items-center justify-between w-full"><span class="text-emerald-400 font-bold font-mono text-sm">$' + i.price.toLocaleString() + ' <span class="text-[10px] text-zinc-400 font-normal">(' + localBranch + ')</span></span><button type="button" onclick="window.addPosItemByCode(\'' + i.code + '\')" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg text-xs flex items-center gap-1 active:scale-95 shadow">+ Agregar</button></div>';
+          // Si no hay local, permitir vender de otra sucursal que sí tenga stock o pedir por WhatsApp
+          var branchesWithStock = Object.keys(i.branchesStock).filter(function(b) { return i.branchesStock[b] > 0; });
+          if (branchesWithStock.length > 0) {
+            actionsHtml = '<div class="flex flex-col gap-1 w-full">' +
+                            branchesWithStock.map(function(b) {
+                              return '<button type="button" onclick="window.addPosItemByCodeAndBranch(\'' + i.code + '\', \'' + b + '\')" class="w-full py-1 px-1.5 bg-indigo-900/80 hover:bg-indigo-800 text-indigo-200 border border-indigo-700/60 active:scale-95 font-bold rounded-lg text-[10px] truncate">+ Vender de (' + b + ')</button>';
+                            }).join('') +
+                            '<button type="button" onclick="window.requestStockWA(\'' + i.name.replace(/'/g, "\\'") + '\', \'' + i.code + '\')" class="w-full py-1 px-1.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-700/50 text-emerald-300 active:scale-95 font-bold rounded-lg text-[10px] flex items-center justify-center gap-1"><i class="ph-bold ph-whatsapp-logo"></i> Pedir Transferencia</button>' +
+                          '</div>';
+          } else {
+            actionsHtml = '<span class="text-rose-500 font-bold text-[10px] text-center block py-1 bg-rose-950/20 rounded-lg border border-rose-900/30">Sin stock en toda la red</span>';
+          }
         }
-        return '<div class="p-2.5 bg-zinc-900 border '+borderClass+' rounded-xl flex flex-col justify-between transition shadow-sm"><div><div class="font-bold text-white text-xs leading-tight mb-0.5 line-clamp-2">'+i.name+'</div><div class="font-mono text-[9px] text-zinc-500 mb-0.5">'+i.code+'</div>'+otherBranchesText+'</div><div class="flex flex-col gap-1.5 pt-1.5 border-t border-zinc-800/80 mt-1"><div class="flex justify-between items-center w-full">' + (i.localQty <= 0 ? '<span class="text-zinc-500 font-bold font-mono text-sm">$' + i.price.toLocaleString() + ' <span class="text-[10px] text-zinc-600 font-normal">(' + localBranch + ')</span></span>' : '') + stockLabel + '</div>' + actionBtn + '</div></div>';
+
+        return '<div class="p-2.5 bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-xl flex flex-col justify-between transition shadow-sm">' +
+                 '<div>' +
+                   '<div class="flex items-start justify-between gap-1 mb-0.5">' +
+                     '<h4 class="font-bold text-white text-xs leading-tight line-clamp-2">' + i.name + '</h4>' +
+                     '<span class="text-[8px] px-1.5 py-0.2 rounded bg-zinc-800 text-purple-300 uppercase font-bold shrink-0">' + i.category + '</span>' +
+                   '</div>' +
+                   '<div class="font-mono text-[9px] text-zinc-500 mb-1">' + i.code + '</div>' +
+                   '<div class="flex flex-wrap gap-1 py-1 border-t border-zinc-800/80">' + stockBreakdown + '</div>' +
+                 '</div>' +
+                 '<div class="pt-1.5 border-t border-zinc-800/80 mt-1.5 space-y-1.5">' +
+                   '<div class="flex justify-between items-center">' +
+                     '<span class="text-[10px] text-zinc-400 font-bold">Precio (' + localBranch + '):</span>' +
+                     '<b class="text-emerald-400 font-mono text-xs">$' + localPrice.toLocaleString() + '</b>' +
+                   '</div>' +
+                   actionsHtml +
+                 '</div>' +
+               '</div>';
       }).join('');
     };
 
@@ -1706,7 +1887,7 @@
 
     window.requestStockWA = function(productName, productCode) {
       var targetBranches = (workshopSettings.branches || []).filter(function(b) { return b !== localBranch; }).map(function(b){ return '('+b+')'; }).join(' o ');
-      var msg = `*${workshopSettings.name.toUpperCase()} - SOLICITUD DE STOCK* 📦\n\nHola, necesitamos en (${localBranch}) el siguiente repuesto:\n\n🔹 *${productName}*\n🔖 Código: ${productCode || 'S/C'}\n\n¿Tienen disponibilidad en ${targetBranches || 'otra sucursal'} para enviarlo?`;
+      var msg = `*${workshopSettings.name.toUpperCase()} - SOLICITUD DE STOCK* 📦\n\nHola, necesitamos en (${localBranch}) el siguiente repuesto del catálogo:\n\n🔹 *${productName}*\n🔖 Código: ${productCode || 'S/C'}\n\n¿Tienen disponibilidad en ${targetBranches || 'otra sucursal'} para enviarlo?`;
       var phone = workshopSettings.adminPhone;
       if(!phone) { window.showToast("Aviso", "Abriendo WhatsApp. (Configura el número en Ajustes)."); window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
       } else { window.open('https://wa.me/' + phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg), '_blank'); }
@@ -1876,17 +2057,20 @@
     };
 
     window.autoBarcode = function() { if($('stkCode')) $('stkCode').value = Math.floor(100000000000 + Math.random() * 900000000000).toString(); };
+    
     window.saveStockItem = function() {
       var code = $('stkCode').value.trim() || Math.floor(100000000000 + Math.random() * 900000000000).toString();
       var name = $('stkName').value.trim(); var branch = $('stkBranch') ? $('stkBranch').value : localBranch;
       var cat = $('stkCategory').value; var qty = parseInt($('stkQuantity').value) || 1; var price = parseFloat($('stkSalePrice').value) || 0; var cost = parseFloat($('stkCostPrice').value) || 0;
       
       if(!name) { window.showToast('Error', 'Ingrese nombre'); return; }
-      var existing = stockItems.find(function(i) { return String(i.code) === String(code) && i.branch === branch; });
-      if(existing) { existing.qty += qty; existing.price = price; existing.cost = cost; } 
+      var existing = stockItems.find(function(i) { return String(i.code) === String(code) && (i.branch || 'Central') === branch; });
+      if(existing) { existing.qty += qty; existing.price = price; existing.cost = cost; existing.category = cat; } 
       else { stockItems.push({ code: code, name: name, category: cat, qty: qty, price: price, cost: cost, branch: branch }); }
       
-      StorageShield.save('stock', stockItems); window.showToast('Guardado', 'Stock registrado en (' + branch + ')');
+      StorageShield.save('stock', stockItems); 
+      window.publishStockMQTT();
+      window.showToast('Guardado', 'Stock registrado en (' + branch + ')');
       $('stkName').value = ''; $('stkCode').value = ''; $('stkSalePrice').value = ''; $('stkCostPrice').value = ''; window.switchStockTab('LIST');
     };
 
@@ -1897,8 +2081,11 @@
           if(pct !== null) {
             var p = parseFloat(pct);
             if(!isNaN(p) && p > 0) {
-              var count = 0; stockItems.forEach(function(i) { if(i.branch === localBranch) { i.price = Math.round(i.price * (1 + (p / 100))); count++; } });
-              StorageShield.save('stock', stockItems); window.renderStockList(); window.showToast("Actualizado", "Precios subieron " + p + "% en " + count + " repuestos.");
+              var count = 0; stockItems.forEach(function(i) { if((i.branch || 'Central') === localBranch) { i.price = Math.round(i.price * (1 + (p / 100))); count++; } });
+              StorageShield.save('stock', stockItems); 
+              window.publishStockMQTT();
+              window.renderStockList(); 
+              window.showToast("Actualizado", "Precios subieron " + p + "% en " + count + " repuestos.");
             } else { window.showToast("Error", "Porcentaje no válido"); }
           }
         });
@@ -1906,39 +2093,60 @@
     };
 
     window.updateStockQty = function(code, branch, delta) {
-      var st = stockItems.find(function(i) { return String(i.code) === String(code) && i.branch === branch; });
-      if(st) { st.qty += delta; if(st.qty < 0) st.qty = 0; StorageShield.save('stock', stockItems); window.renderStockList(); }
+      var st = stockItems.find(function(i) { return String(i.code) === String(code) && (i.branch || 'Central') === branch; });
+      if(st) { 
+        st.qty += delta; 
+        if(st.qty < 0) st.qty = 0; 
+        StorageShield.save('stock', stockItems); 
+        window.publishStockMQTT();
+        window.renderStockList(); 
+        window.renderPosCatalog();
+      }
     };
 
     window.deleteStockItem = function(code, branch) {
       if(activeUser !== 'Admin') { window.showToast('Denegado', 'Solo Admin puede eliminar'); return; }
       window.requestAdminPinAuth("Eliminar producto", function() {
-          stockItems = stockItems.filter(function(i){ return !(String(i.code) === String(code) && i.branch === branch); });
-          StorageShield.save('stock', stockItems); window.renderStockList(); window.showToast("Eliminado", "Producto removido.");
+          stockItems = stockItems.filter(function(i){ return !(String(i.code) === String(code) && (i.branch || 'Central') === branch); });
+          StorageShield.save('stock', stockItems); 
+          window.publishStockMQTT();
+          window.renderStockList(); 
+          window.renderPosCatalog();
+          window.showToast("Eliminado", "Producto removido.");
       });
     };
 
     window.editStockPrice = function(code, branch) {
       if(activeUser !== 'Admin') { window.showToast('Denegado', 'Solo Admin edita precios.'); return; }
       window.requestAdminPinAuth("Modificar precio", function() {
-          var st = stockItems.find(function(i) { return String(i.code) === String(code) && i.branch === branch; });
+          var st = stockItems.find(function(i) { return String(i.code) === String(code) && (i.branch || 'Central') === branch; });
           if(!st) return;
           window.appPrompt("Nuevo Precio", "Precio de Venta para " + st.name + " (" + branch + "):", "number", st.price, function(newPrice) {
             if(newPrice !== null && !isNaN(parseFloat(newPrice))) {
-                st.price = parseFloat(newPrice); StorageShield.save('stock', stockItems); window.renderStockList(); window.showToast("Actualizado", "Precio modificado.");
+                st.price = parseFloat(newPrice); 
+                StorageShield.save('stock', stockItems); 
+                window.publishStockMQTT();
+                window.renderStockList(); 
+                window.renderPosCatalog();
+                window.showToast("Actualizado", "Precio modificado.");
             }
           });
       });
     };
 
-    // --- LISTADO DE STOCK CON MARCAJE (SUCURSAL) ---
+    // --- LISTADO DE STOCK CON MARCAJE (SUCURSAL) Y FILTRO INTERACTIVO ---
     window.renderStockList = function() {
       var container = $('stockListContainer'); if(!container) return;
       var term = ($('stkSearchInput') ? $('stkSearchInput').value.toLowerCase() : '');
-      var filtered = stockItems.filter(function(i) { return i && (i.name.toLowerCase().includes(term) || String(i.code).includes(term)); });
+      var filtered = stockItems.filter(function(i) { 
+        if (!i) return false;
+        var matchTerm = i.name.toLowerCase().includes(term) || String(i.code).includes(term);
+        var matchBranch = (currentStockBranchFilter === 'ALL' || (i.branch || 'Central') === currentStockBranchFilter);
+        return matchTerm && matchBranch;
+      });
       var isAdmin = (activeUser === 'Admin');
 
-      if(filtered.length === 0) { container.innerHTML = '<div class="text-center p-8 text-zinc-500">No hay repuestos registrados en el inventario.</div>'; return; }
+      if(filtered.length === 0) { container.innerHTML = '<div class="text-center p-8 text-zinc-500">No hay repuestos registrados en el inventario para esta sucursal.</div>'; return; }
       container.innerHTML = filtered.map(function(i) {
         var editPriceHtml = isAdmin ? '<button type="button" onclick="window.editStockPrice(\''+i.code+'\', \''+i.branch+'\')" class="ml-1 text-zinc-400 hover:text-amber-400"><i class="ph-bold ph-pencil-simple"></i></button>' : '';
         var qtyClass = 'text-emerald-400';
@@ -2002,7 +2210,7 @@
       if (stockScanner) { try { stockScanner.stop().catch(function(){}); stockScanner.clear(); stockScanner=null;} catch(e){} } 
     };
 
-    // --- CAJA LOCAL AISLADA POR SUCURSAL ---
+    // --- CAJA LOCAL INDEPENDIENTE ---
     window.showCashIncome = function() { $('cshType').value = 'INCOME'; $('cashFormTitle').textContent = 'Registrar Ingreso'; $('cashMovementForm').classList.remove('hidden'); };
     window.showCashExpense = function() { $('cshType').value = 'EXPENSE'; $('cashFormTitle').textContent = 'Registrar Egreso'; $('cashMovementForm').classList.remove('hidden'); };
     window.hideCashForm = function() { $('cashMovementForm').classList.add('hidden'); };
@@ -2191,6 +2399,15 @@
       return Object.values(map).sort(function(a, b) { return (b.date || b.timestamp || b.createdAt || 0) - (a.date || a.timestamp || a.createdAt || 0); });
     }
 
+    // Publicador exclusivo de stock/catálogo para garantizar sincronización rápida y retenida
+    window.publishStockMQTT = function() {
+      if (mqttClient && mqttClient.connected) {
+        var wsCode = currentWorkshopId.toUpperCase();
+        mqttClient.publish('openline/v4/workshop/' + wsCode + '/stock', JSON.stringify(stockItems), { retain: true, qos: 1 });
+      }
+      if (window.publishMQTT) window.publishMQTT();
+    };
+
     window.publishSettingsMQTT = function() {
       if (mqttClient && mqttClient.connected) {
         mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/settings', JSON.stringify(workshopSettings), { retain: true, qos: 1 });
@@ -2237,6 +2454,7 @@
         
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/sync', { qos: 1 });
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/sync/request', { qos: 1 });
+        mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/stock', { qos: 1 });
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/license', { qos: 1 });
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/settings', { qos: 1 });
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/heartbeat', { qos: 0 });
@@ -2255,6 +2473,9 @@
               mqttClient.publish('openline/v4/workshop/' + wsCode + '/license', JSON.stringify(currentLic), { retain: true, qos: 1 });
            }
            mqttClient.publish('openline/v4/workshop/' + wsCode + '/settings', JSON.stringify(workshopSettings), { retain: true, qos: 1 });
+           if (stockItems.length > 0) {
+              mqttClient.publish('openline/v4/workshop/' + wsCode + '/stock', JSON.stringify(stockItems), { retain: true, qos: 1 });
+           }
         }
 
         setInterval(function() {
@@ -2273,35 +2494,54 @@
           var payload = JSON.parse(message.toString());
           var wsCode = currentWorkshopId.toUpperCase();
 
-          // 1. HERENCIA SILENCIOSA DE LICENCIA
+          // 1. SINCRONIZACIÓN INMEDIATA DEL CATÁLOGO Y STOCK COMPARTIDO
+          if (topic.endsWith('/stock')) {
+            if (payload && Array.isArray(payload)) {
+               var stockMap = {};
+               stockItems.forEach(function(s){ stockMap[s.code + '_' + (s.branch || 'Central')] = s; });
+               payload.forEach(function(s){ stockMap[s.code + '_' + (s.branch || 'Central')] = s; });
+               stockItems = Object.values(stockMap);
+               StorageShield.save('stock', stockItems, true);
+               window.renderStockList();
+               window.renderPosCatalog();
+            }
+            return;
+          }
+
+          // 2. HERENCIA SILENCIOSA DE LICENCIA
           if (topic.endsWith('/license')) {
             if (payload && (payload.status === 'PRO' || payload.type === 'LIFETIME' || payload.type === 'PRO' || payload.type === 'SEM6')) {
                StorageShield.save('license', payload, true);
                localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + wsCode, 'TRUE');
+               localStorage.removeItem('openline_pending_license_sync');
                window.updateLicenseUI();
             }
             return;
           }
 
-          // 2. HERENCIA SILENCIOSA DE AJUSTES (LOGO, SUCURSALES, DATOS ADMIN)
+          // 3. HERENCIA SILENCIOSA DE AJUSTES (LOGO, SUCURSALES, DATOS ADMIN)
           if (topic.endsWith('/settings')) {
             if (payload && typeof payload === 'object') {
                window.applyWorkshopSettings(payload);
+               localStorage.removeItem('openline_pending_settings_sync');
             }
             return;
           }
 
-          // 3. PETICIÓN DE SINCRONIZACIÓN DE OTROS DISPOSITIVOS
+          // 4. PETICIÓN DE SINCRONIZACIÓN DE OTROS DISPOSITIVOS
           if (topic.endsWith('/sync/request')) {
             if (payload && payload.requesterId !== myDeviceId) {
                if (window.checkLicenseStatus() === 'PRO' || repairs.length > 0 || stockItems.length > 0) {
                   window.publishMQTT(true);
+                  if (stockItems.length > 0) {
+                    mqttClient.publish('openline/v4/workshop/' + wsCode + '/stock', JSON.stringify(stockItems), { retain: true, qos: 1 });
+                  }
                }
             }
             return;
           }
 
-          // 4. COMANDOS REMOTOS
+          // 5. COMANDOS REMOTOS
           if (topic.endsWith('/command')) {
             if (payload && payload.targetDevId === myDeviceId && payload.command === 'SET_BRANCH') {
                 localStorage.setItem(LOCAL_BRANCH_KEY, payload.branch);
@@ -2316,7 +2556,7 @@
             return;
           }
 
-          // 5. HEARTBEATS
+          // 6. HEARTBEATS
           if (topic.endsWith('/heartbeat')) {
             if (payload && payload.devId) {
                 window.activeDevicesMap[payload.devId] = { time: Date.now(), user: payload.user || 'Admin', branch: payload.branch || 'Central' };
@@ -2327,11 +2567,11 @@
             return;
           }
 
-          // 6. TELEMETRÍA GLOBAL
+          // 7. TELEMETRÍA GLOBAL
           if (topic.endsWith('/telemetry/ping')) { window.broadcastPresence(); return; }
           if (topic.endsWith('/telemetry/report')) { window.saveTelemetryData(payload); return; }
 
-          // 7. SINCRONIZACIÓN GENERAL DE DATOS (CATÁLOGO, STOCK, CAJAS, REPARACIONES)
+          // 8. SINCRONIZACIÓN GENERAL DE DATOS (ÓRDENES, VENTAS, STOCK, REPARACIONES)
           if (topic.includes('/sync') && payload && payload.senderId !== myDeviceId) {
             if(payload.repairs && Array.isArray(payload.repairs)) { 
               repairs = mergeByDate(repairs, payload.repairs); 
