@@ -231,7 +231,7 @@
     </div>
   </div>
 
-  <!-- MODAL DE INGRESO CON PAÍSES DE TODA AMÉRICA -->
+  <!-- MODAL DE INGRESO CON PAÍSES DE HABLA HISPANA -->
   <div id="newRepairModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0">
@@ -243,21 +243,19 @@
           <label class="font-bold text-zinc-300 uppercase text-[9px]">1. Datos del Cliente</label>
           <input type="text" id="inpClientName" placeholder="Nombre y Apellido *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
           <div class="flex gap-2">
-            <!-- SELECTOR COMPLETO DE PAÍSES DE TODA AMÉRICA -->
-            <select id="inpClientCountryCode" class="bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-2 text-white font-bold w-[130px] shrink-0 text-xs">
+            <!-- SELECTOR DE PAÍSES DE HABLA HISPANA -->
+            <select id="inpClientCountryCode" class="bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-2 text-white font-bold w-[135px] shrink-0 text-xs">
               <option value="549" selected>🇦🇷 +54 9 (Argentina)</option>
               <option value="591">🇧🇴 +591 (Bolivia)</option>
-              <option value="55">🇧🇷 +55 (Brasil)</option>
-              <option value="1">🇨🇦 +1 (Canadá)</option>
               <option value="56">🇨🇱 +56 (Chile)</option>
               <option value="57">🇨🇴 +57 (Colombia)</option>
               <option value="506">🇨🇷 +506 (Costa Rica)</option>
               <option value="53">🇨🇺 +53 (Cuba)</option>
               <option value="593">🇪🇨 +593 (Ecuador)</option>
               <option value="503">🇸🇻 +503 (El Salvador)</option>
-              <option value="1">🇺🇸 +1 (EE.UU.)</option>
+              <option value="34">🇪🇸 +34 (España)</option>
               <option value="502">🇬🇹 +502 (Guatemala)</option>
-              <option value="509">🇭🇹 +509 (Haití)</option>
+              <option value="240">🇬🇶 +240 (Guinea Ecuat.)</option>
               <option value="504">🇭🇳 +504 (Honduras)</option>
               <option value="52">🇲🇽 +52 (México)</option>
               <option value="505">🇳🇮 +505 (Nicaragua)</option>
@@ -268,11 +266,6 @@
               <option value="1809">🇩🇴 +1 809 (Rep. Dominicana)</option>
               <option value="598">🇺🇾 +598 (Uruguay)</option>
               <option value="58">🇻🇪 +58 (Venezuela)</option>
-              <option value="501">🇧🇿 +501 (Belice)</option>
-              <option value="592">🇬🇾 +592 (Guyana)</option>
-              <option value="597">🇸🇷 +597 (Surinam)</option>
-              <option value="1876">🇯🇲 +1 876 (Jamaica)</option>
-              <option value="1868">🇹🇹 +1 868 (Trinidad y Tobago)</option>
             </select>
             <input type="tel" id="inpClientPhone" placeholder="Número celular *" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
           </div>
@@ -1514,6 +1507,553 @@
             }
           }, 5000);
         });
+      });
+    };
+
+    // --- PATRÓN TÁCTIL ---
+    var currentPhotos = []; var activeUnlockType = 'pin'; var patternCtx = null; var isDrawingPattern = false; var selectedPatternSequence = []; var patternNodes = [];
+    window.setUnlockType = function(type) {
+      activeUnlockType = type;
+      ['btnUnlockPin', 'btnUnlockPattern', 'btnUnlockNone'].forEach(function(id) { if($(id)) $(id).className = 'px-2 py-0.5 rounded text-zinc-400 transition'; });
+      if($('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1))) $('btnUnlock' + type.charAt(0).toUpperCase() + type.slice(1)).className = 'px-2 py-0.5 rounded bg-iosBlue text-white font-medium transition';
+      if($('unlockViewPin')) $('unlockViewPin').style.display = type === 'pin' ? 'block' : 'none';
+      if($('unlockViewPattern')) $('unlockViewPattern').style.display = type === 'pattern' ? 'block' : 'none';
+      if($('unlockViewNone')) $('unlockViewNone').style.display = type === 'none' ? 'block' : 'none';
+      if(type === 'pattern') setTimeout(window.initPatternCanvas, 150);
+    };
+
+    window.initPatternCanvas = function() {
+      var cvs = $('patternCanvas'); if(!cvs) return;
+      var clone = cvs.cloneNode(true); cvs.parentNode.replaceChild(clone, cvs); cvs = clone;
+      patternCtx = cvs.getContext('2d'); patternNodes = [];
+      for(var i=0; i<3; i++) { for(var j=0; j<3; j++) { patternNodes.push({x: 40 + j*70, y: 40 + i*70, id: i*3 + j + 1}); } }
+      window.drawPatternGrid();
+      function getPos(e) { var rect = cvs.getBoundingClientRect(); var cx = e.touches ? e.touches[0].clientX : e.clientX; var cy = e.touches ? e.touches[0].clientY : e.clientY; return { x: cx - rect.left, y: cy - rect.top }; }
+      function checkHit(p) { patternNodes.forEach(function(n) { if(Math.hypot(n.x - p.x, n.y - p.y) < 26 && !selectedPatternSequence.includes(n.id)) { selectedPatternSequence.push(n.id); if($('inpUnlockPin')) $('inpUnlockPin').value = selectedPatternSequence.join(''); } }); }
+      var onDown = function(e) { e.preventDefault(); isDrawingPattern = true; selectedPatternSequence = []; if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Trazando...'; $('patternStatusLabel').className = 'text-amber-400 font-bold'; } var p = getPos(e); checkHit(p); window.drawPatternGrid(p.x, p.y); };
+      var onMove = function(e) { e.preventDefault(); if(!isDrawingPattern) return; var p = getPos(e); checkHit(p); window.drawPatternGrid(p.x, p.y); };
+      var onUp = function(e) { e.preventDefault(); if(!isDrawingPattern) return; isDrawingPattern = false; window.drawPatternGrid(); if($('patternStatusLabel')) { $('patternStatusLabel').textContent = selectedPatternSequence.length > 0 ? 'Patrón: ' + selectedPatternSequence.join('-') : 'Dibuja el patrón'; $('patternStatusLabel').className = selectedPatternSequence.length > 0 ? 'text-emerald-400 font-bold' : 'text-zinc-400 mt-1'; } };
+      cvs.addEventListener('mousedown', onDown, {passive: false}); cvs.addEventListener('mousemove', onMove, {passive: false}); cvs.addEventListener('mouseup', onUp, {passive: false}); cvs.addEventListener('mouseleave', onUp, {passive: false});
+      cvs.addEventListener('touchstart', onDown, {passive: false}); cvs.addEventListener('touchmove', onMove, {passive: false}); cvs.addEventListener('touchend', onUp, {passive: false});
+    };
+
+    window.drawPatternGrid = function(cX, cY) {
+      if(!patternCtx || !$('patternCanvas')) return;
+      var cvs = $('patternCanvas'); patternCtx.clearRect(0,0,cvs.width,cvs.height);
+      if(selectedPatternSequence.length > 0) {
+        patternCtx.beginPath(); patternCtx.lineWidth = 4; patternCtx.strokeStyle = '#007AFF'; patternCtx.lineCap = 'round'; patternCtx.lineJoin = 'round';
+        var first = patternNodes[selectedPatternSequence[0] - 1]; patternCtx.moveTo(first.x, first.y);
+        for(var k=1; k<selectedPatternSequence.length; k++) { var n = patternNodes[selectedPatternSequence[k] - 1]; patternCtx.lineTo(n.x, n.y); }
+        if(isDrawingPattern && cX !== undefined && cY !== undefined) { patternCtx.lineTo(cX, cY); }
+        patternCtx.stroke();
+      }
+      patternNodes.forEach(function(n) { var isSel = selectedPatternSequence.includes(n.id); patternCtx.beginPath(); patternCtx.arc(n.x, n.y, isSel ? 11 : 7, 0, Math.PI*2); patternCtx.fillStyle = isSel ? '#007AFF' : '#52525b'; patternCtx.fill(); });
+    };
+    window.resetPatternCanvas = function() { selectedPatternSequence = []; isDrawingPattern = false; if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Dibuja el patrón en los puntos'; $('patternStatusLabel').className = 'text-zinc-400 mt-1'; } window.drawPatternGrid(); };
+
+    // --- FOTOS DE INGRESO ---
+    window.handleNewPhotoUpload = function(input) {
+      if (input.files && input.files[0]) {
+        Array.from(input.files).forEach(function(file) {
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            var img = new Image();
+            img.onload = function() {
+              var cvs = document.createElement('canvas'); var ctx = cvs.getContext('2d'); var maxW = 500;
+              var scale = Math.min(maxW / img.width, 1); cvs.width = img.width * scale; cvs.height = img.height * scale;
+              ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
+              currentPhotos.push(cvs.toDataURL('image/jpeg', 0.7)); window.renderNewPhotos();
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
+        input.value = '';
+      }
+    };
+    window.renderNewPhotos = function() {
+      if($('photoCountBadge')) $('photoCountBadge').textContent = currentPhotos.length + (currentPhotos.length === 1 ? ' foto' : ' fotos');
+      var grid = $('newPhotosGrid'); if(!grid) return;
+      grid.innerHTML = currentPhotos.map(function(src, i) { return '<div class="relative w-16 h-16 shrink-0 rounded-xl overflow-hidden border border-zinc-700 shadow-sm"><img src="' + src + '" class="w-full h-full object-cover"><button type="button" onclick="window.removePhoto(' + i + ')" class="absolute top-0 right-0 bg-rose-600 text-white rounded-bl-lg w-5 h-5 flex items-center justify-center text-[10px] font-bold"><i class="ph-bold ph-x"></i></button></div>'; }).join('');
+    };
+    window.removePhoto = function(i) { currentPhotos.splice(i, 1); window.renderNewPhotos(); };
+
+    // --- INGRESOS (Impacta en caja local del dispositivo) ---
+    window.calcBalance = function(type) {
+      if(type === 'new') {
+        var total = parseFloat($('inpDeviceBudget').value) || 0; var advance = parseFloat($('inpDeviceAdvance').value) || 0;
+        if($('newCalculatedBalance')) $('newCalculatedBalance').textContent = '$' + (total - advance);
+      }
+    };
+
+    window.guardarIngresoDirecto = function() {
+      var id = 'OL-' + Math.floor(1000 + Math.random() * 9000);
+      var advanceAmt = parseFloat($('inpDeviceAdvance').value) || 0;
+      var r = {
+        id: id, 
+        branch: localBranch, 
+        clientName: $('inpClientName').value, 
+        clientPhone: $('inpClientCountryCode').value + $('inpClientPhone').value,
+        deviceType: $('inpDeviceType').value, 
+        deviceBrand: $('inpDeviceBrand').value, 
+        deviceModel: $('inpDeviceModel').value,
+        fault: $('inpDeviceFault').value, 
+        budget: parseFloat($('inpDeviceBudget').value) || 0, 
+        advance: advanceAmt,
+        unlockType: activeUnlockType, 
+        unlockPin: $('inpUnlockPin').value, 
+        photos: currentPhotos.slice(),
+        status: 'WAITING', 
+        createdAt: Date.now(), 
+        createdBy: activeUser
+      };
+      if(!r.clientName || !r.deviceBrand || !r.deviceModel) { window.showToast("Error", "Completa los campos obligatorios (*)"); return; }
+      repairs.unshift(r); 
+      StorageShield.save('repairs', repairs);
+
+      // La seña ingresa estrictamente a la caja de la sucursal que recibe el equipo
+      if (advanceAmt > 0) {
+        if (!Array.isArray(cashMovements)) cashMovements = [];
+        cashMovements.unshift({ 
+          id: 'CSH-ADV-' + Date.now(), 
+          branch: localBranch, 
+          type: 'INCOME', 
+          amount: advanceAmt, 
+          concept: 'Seña Orden #' + id + ' (' + r.deviceBrand + ' ' + r.deviceModel + ')', 
+          method: 'Efectivo', 
+          date: Date.now(), 
+          user: activeUser, 
+          closed: false 
+        });
+        StorageShield.save('cash', cashMovements); 
+        window.updateCashBalanceUI();
+      }
+      window.closeModal('newRepairModal'); 
+      window.showToast("Éxito", "Orden creada: " + id);
+      window.renderRepairsList(); 
+      window.updateCounters();
+    };
+
+    // --- POS VENTAS (Impacta en caja local del dispositivo) ---
+    var posCart = []; var posScanner = null; var currentPosTab = 'CATALOG';
+
+    window.switchPosTab = function(tab) {
+      currentPosTab = tab;
+      var views = { 'CATALOG': $('posViewCatalog'), 'SCAN_MANUAL': $('posViewScanManual'), 'CART': $('posViewCart') };
+      var btns = { 'CATALOG': $('posTabCatalogBtn'), 'SCAN_MANUAL': $('posTabScanBtn'), 'CART': $('posTabCartBtn') };
+
+      for (var k in views) {
+        if (views[k]) {
+          if (k === tab) { views[k].classList.remove('hidden'); views[k].classList.add('flex'); } 
+          else { views[k].classList.add('hidden'); views[k].classList.remove('flex'); }
+        }
+        if (btns[k]) {
+          if (k === tab) btns[k].className = 'py-1.5 rounded-lg font-bold text-xs transition bg-amber-600 text-white shadow flex items-center justify-center gap-1';
+          else btns[k].className = 'py-1.5 rounded-lg font-bold text-xs transition bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center gap-1';
+        }
+      }
+      if (tab === 'CATALOG') { window.stopPosCam(); window.renderPosCatalog(); }
+      else if (tab === 'CART') { window.stopPosCam(); window.renderPosCart(); }
+      else if (tab === 'SCAN_MANUAL') { window.stopPosCam(); }
+    };
+
+    window.addManualPosItem = function() {
+      var name = $('posManualName').value.trim(); var price = parseFloat($('posManualPrice').value) || 0;
+      if(!name || price <= 0) { window.showToast('Aviso', 'Ingresa descripción y precio'); return; }
+      posCart.push({ code: 'MANUAL-' + Date.now(), branch: localBranch, name: name, price: price, qty: 1 });
+      $('posManualName').value = ''; $('posManualPrice').value = '';
+      window.renderPosCart(); window.showToast("Agregado", "Artículo manual cargado."); window.switchPosTab('CART');
+    };
+
+    // Agregar repuesto al carrito indicando la sucursal de donde procede la pieza
+    window.addPosItemByCodeAndBranch = function(code, branch) {
+      var targetBranch = branch || localBranch;
+      var st = stockItems.find(function(i) { return String(i.code) === String(code) && (i.branch || 'Central') === targetBranch; });
+      if(!st || st.qty <= 0) { 
+        window.showToast("Sin Stock", "No hay unidades disponibles en (" + targetBranch + ")"); 
+        return; 
+      }
+      var cartItem = posCart.find(function(c) { return String(c.code) === String(code) && c.branch === targetBranch; });
+      if(cartItem) {
+        if(cartItem.qty < st.qty) { 
+          cartItem.qty++; 
+          window.showToast("Agregado", st.name + " (" + cartItem.qty + ") [" + targetBranch + "]"); 
+        } else { 
+          window.showToast("Límite", "No hay más unidades en (" + targetBranch + ")"); 
+        }
+      } else { 
+        posCart.push({ code: st.code, branch: st.branch || targetBranch, name: st.name, price: st.price, qty: 1 }); 
+        window.showToast("Agregado", st.name + " (" + (st.branch || targetBranch) + ")"); 
+      }
+      window.renderPosCart();
+    };
+
+    window.addPosItemByCode = function(code) {
+      // Si hay stock local, agregar de la sucursal local
+      var localSt = stockItems.find(function(i) { return String(i.code) === String(code) && (i.branch || 'Central') === localBranch; });
+      if (localSt && localSt.qty > 0) {
+        window.addPosItemByCodeAndBranch(code, localBranch);
+        return;
+      }
+      // Si no hay stock local pero existe en otra sucursal, tomar la primera con stock
+      var anySt = stockItems.find(function(i) { return String(i.code) === String(code) && i.qty > 0; });
+      if (anySt) {
+        window.addPosItemByCodeAndBranch(code, anySt.branch || 'Central');
+      } else {
+        window.showToast("Sin Stock", "Producto sin stock en toda la red.");
+      }
+    };
+
+    window.addManualPosItemQty = function(idx) { posCart[idx].qty++; window.renderPosCart(); };
+    window.removePosItem = function(idx) { if(posCart[idx].qty > 1) posCart[idx].qty--; else posCart.splice(idx, 1); window.renderPosCart(); };
+    window.deletePosItemRow = function(idx) { posCart.splice(idx, 1); window.renderPosCart(); };
+    window.clearPosCart = function() { posCart = []; window.renderPosCart(); };
+
+    window.renderPosCart = function() {
+      var container = $('posCartContainer'); var total = 0; var countItems = 0;
+      posCart.forEach(function(c){ countItems += c.qty; total += (c.price * c.qty); });
+
+      if($('posCartBadge')) $('posCartBadge').textContent = countItems;
+      if($('posBarItemCount')) $('posBarItemCount').textContent = countItems + (countItems === 1 ? ' item' : ' items');
+      if($('posBarTotal')) $('posBarTotal').textContent = '$' + total.toLocaleString();
+      if($('posTotalAmount')) $('posTotalAmount').textContent = '$' + total.toLocaleString();
+
+      var bar = $('posCatalogCartBar');
+      if (bar) { if (countItems > 0) { bar.classList.remove('hidden'); bar.classList.add('flex'); } else { bar.classList.add('hidden'); bar.classList.remove('flex'); } }
+
+      if(!container) return;
+      if(posCart.length === 0) { container.innerHTML = '<div class="text-center text-zinc-600 text-xs p-6">El carrito está vacío. Agrega repuestos del catálogo.</div>'; return; }
+
+      container.innerHTML = posCart.map(function(c, idx) {
+        var isManual = String(c.code).indexOf('MANUAL') === 0;
+        var btnAdd = isManual ? 'window.addManualPosItemQty('+idx+')' : 'window.addPosItemByCodeAndBranch(\''+c.code+'\', \''+c.branch+'\')';
+        return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl shadow-sm">' +
+                 '<div class="text-xs text-white flex-1 min-w-0 pr-2">' +
+                   '<div class="font-bold truncate">'+c.name+'</div>' +
+                   '<div class="text-amber-400 font-mono text-[11px]">$'+c.price.toLocaleString()+' x '+c.qty+' = <b>$'+(c.price*c.qty).toLocaleString()+'</b> <span class="text-zinc-400 font-normal">('+c.branch+')</span></div>' +
+                 '</div>' +
+                 '<div class="flex gap-1 items-center">' +
+                   '<button type="button" onclick="window.removePosItem('+idx+')" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center active:scale-95"><i class="ph-bold ph-minus"></i></button>' +
+                   '<span class="text-xs font-bold w-4 text-center text-white">'+c.qty+'</span>' +
+                   '<button type="button" onclick="'+btnAdd+'" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center active:scale-95"><i class="ph-bold ph-plus"></i></button>' +
+                   '<button type="button" onclick="window.deletePosItemRow('+idx+')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex justify-center items-center ml-1 active:scale-95"><i class="ph-bold ph-trash"></i></button>' +
+                 '</div>' +
+               '</div>';
+      }).join('');
+    };
+
+    window.completePosSale = function() {
+      if(posCart.length === 0) { window.showToast("Aviso", "No hay artículos en el carrito"); return; }
+      var total = 0;
+      posCart.forEach(function(c) {
+        var p = parseFloat(c.price) || 0; var q = parseInt(c.qty) || 1; total += (p * q);
+        if(String(c.code).indexOf('MANUAL') !== 0) {
+          var st = stockItems.find(function(i) { return String(i.code) === String(c.code) && (i.branch || 'Central') === c.branch; });
+          if(st) st.qty = Math.max(0, (parseInt(st.qty) || 0) - q);
+        }
+      });
+
+      var saleId = 'VTA-' + Math.floor(10000 + Math.random() * 90000);
+      var method = $('posPaymentMethod') ? $('posPaymentMethod').value : 'Efectivo';
+      var custName = $('posCustomerName') ? $('posCustomerName').value.trim() : '';
+
+      var newSale = { id: saleId, branch: localBranch, timestamp: Date.now(), total: total, paymentMethod: method, items: JSON.parse(JSON.stringify(posCart)), soldBy: activeUser, customerName: custName };
+      sales.unshift(newSale); 
+      StorageShield.save('sales', sales); 
+      StorageShield.save('stock', stockItems);
+      window.publishStockMQTT();
+      
+      // La venta impacta en la caja de la sucursal que está vendiendo
+      if (!Array.isArray(cashMovements)) cashMovements = [];
+      cashMovements.unshift({ 
+        id: 'CSH-VTA-' + Date.now(), 
+        branch: localBranch, 
+        type: 'INCOME', 
+        amount: total, 
+        concept: 'Venta #' + saleId + (custName ? ' (' + custName + ')' : ''), 
+        method: method, 
+        date: Date.now(), 
+        user: activeUser, 
+        closed: false 
+      });
+      StorageShield.save('cash', cashMovements);
+      
+      window.updateCashBalanceUI(); 
+      window.clearPosCart(); 
+      window.closeModal('salesModal');
+      window.switchPosTab('CATALOG'); 
+      window.showToast("Venta Exitosa", "Registrada en caja (" + localBranch + ")"); 
+      window.openSaleTicketModal(saleId);
+    };
+
+    // --- CATÁLOGO INTERACTIVO COMPARTIDO EN TODAS LAS SUCURSALES ---
+    window.renderPosCatalog = function() {
+      var grid = $('posCatalogGrid'); if(!grid) return;
+      var term = $('posSearchProduct') ? $('posSearchProduct').value.toLowerCase().trim() : '';
+      var catalogMap = {};
+
+      stockItems.forEach(function(item) {
+          if(!item || !item.code) return; 
+          if (!catalogMap[item.code]) { 
+            catalogMap[item.code] = { 
+              code: item.code, 
+              name: item.name || 'S/N', 
+              category: item.category || 'Otros',
+              localQty: 0, 
+              branchesStock: {}, 
+              branchPrices: {},
+              totalQty: 0
+            }; 
+          }
+          var itemBranch = item.branch || 'Central'; 
+          var qty = parseInt(item.qty) || 0;
+          catalogMap[item.code].branchesStock[itemBranch] = (catalogMap[item.code].branchesStock[itemBranch] || 0) + qty;
+          catalogMap[item.code].branchPrices[itemBranch] = parseFloat(item.price) || 0;
+          catalogMap[item.code].totalQty += qty;
+
+          if (itemBranch === localBranch) { 
+            catalogMap[item.code].localQty += qty; 
+          }
+      });
+
+      var displayItems = Object.values(catalogMap).filter(function(i) { 
+        var matchSearch = !term || i.name.toLowerCase().includes(term) || String(i.code).toLowerCase().includes(term);
+        var matchCategory = (currentPosCategoryFilter === 'ALL' || i.category === currentPosCategoryFilter);
+        var matchBranch = true;
+        if (currentPosBranchFilter !== 'ALL') {
+          matchBranch = (i.branchesStock[currentPosBranchFilter] !== undefined);
+        }
+        return matchSearch && matchCategory && matchBranch;
+      });
+
+      if(displayItems.length === 0) { 
+        grid.innerHTML = '<div class="col-span-2 sm:col-span-3 text-zinc-500 text-center p-8">No se encontraron repuestos en el catálogo para el filtro seleccionado.</div>'; 
+        return; 
+      }
+      
+      grid.innerHTML = displayItems.map(function(i) {
+        var localPrice = i.branchPrices[localBranch] || Object.values(i.branchPrices)[0] || 0;
+        
+        // Desglose de stock en todas las sucursales con formato (Sucursal: Cant)
+        var stockBreakdown = Object.keys(i.branchesStock).map(function(b) {
+          var isCurrent = (b === localBranch);
+          var color = i.branchesStock[b] > 0 ? (isCurrent ? 'text-emerald-400 font-bold' : 'text-zinc-300') : 'text-zinc-600 line-through';
+          return '<span class="text-[9px] font-mono ' + color + '">(' + b + ': ' + i.branchesStock[b] + ')</span>';
+        }).join(' ');
+
+        // Botones de acción interactivos
+        var actionsHtml = '';
+        if (i.localQty > 0) {
+          actionsHtml = '<button type="button" onclick="window.addPosItemByCodeAndBranch(\'' + i.code + '\', \'' + localBranch + '\')" class="w-full py-1.5 px-2 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold rounded-lg text-[11px] shadow flex items-center justify-center gap-1"><i class="ph-bold ph-plus"></i> Vender (' + localBranch + ')</button>';
+        } else {
+          var branchesWithStock = Object.keys(i.branchesStock).filter(function(b) { return i.branchesStock[b] > 0; });
+          if (branchesWithStock.length > 0) {
+            actionsHtml = '<div class="flex flex-col gap-1 w-full">' +
+                            branchesWithStock.map(function(b) {
+                              return '<button type="button" onclick="window.addPosItemByCodeAndBranch(\'' + i.code + '\', \'' + b + '\')" class="w-full py-1 px-1.5 bg-indigo-900/80 hover:bg-indigo-800 text-indigo-200 border border-indigo-700/60 active:scale-95 font-bold rounded-lg text-[10px] truncate">+ Vender de (' + b + ')</button>';
+                            }).join('') +
+                            '<button type="button" onclick="window.requestStockWA(\'' + i.name.replace(/'/g, "\\'") + '\', \'' + i.code + '\')" class="w-full py-1 px-1.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-700/50 text-emerald-300 active:scale-95 font-bold rounded-lg text-[10px] flex items-center justify-center gap-1"><i class="ph-bold ph-whatsapp-logo"></i> Pedir Transferencia</button>' +
+                          '</div>';
+          } else {
+            actionsHtml = '<span class="text-rose-500 font-bold text-[10px] text-center block py-1 bg-rose-950/20 rounded-lg border border-rose-900/30">Sin stock en toda la red</span>';
+          }
+        }
+
+        return '<div class="p-2.5 bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-xl flex flex-col justify-between transition shadow-sm">' +
+                 '<div>' +
+                   '<div class="flex items-start justify-between gap-1 mb-0.5">' +
+                     '<h4 class="font-bold text-white text-xs leading-tight line-clamp-2">' + i.name + '</h4>' +
+                     '<span class="text-[8px] px-1.5 py-0.2 rounded bg-zinc-800 text-purple-300 uppercase font-bold shrink-0">' + i.category + '</span>' +
+                   '</div>' +
+                   '<div class="font-mono text-[9px] text-zinc-500 mb-1">' + i.code + '</div>' +
+                   '<div class="flex flex-wrap gap-1 py-1 border-t border-zinc-800/80">' + stockBreakdown + '</div>' +
+                 '</div>' +
+                 '<div class="pt-1.5 border-t border-zinc-800/80 mt-1.5 space-y-1.5">' +
+                   '<div class="flex justify-between items-center">' +
+                     '<span class="text-[10px] text-zinc-400 font-bold">Precio (' + localBranch + '):</span>' +
+                     '<b class="text-emerald-400 font-mono text-xs">$' + localPrice.toLocaleString() + '</b>' +
+                   '</div>' +
+                   actionsHtml +
+                 '</div>' +
+               '</div>';
+      }).join('');
+    };
+
+    window.togglePosCam = function() {
+      var box = $('posScannerBox'); var btn = $('btnToggleScanner');
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden'); box.classList.add('flex');
+        if (btn) btn.innerHTML = '<i class="ph-bold ph-stop"></i> Detener Cámara';
+        setTimeout(function() {
+          try {
+            if (posScanner) { posScanner.clear(); posScanner = null; }
+            posScanner = new Html5Qrcode("pos-qr-reader");
+            var config = { fps: 15, qrbox: function(w, h) { var m = Math.min(w, h); var edge = Math.floor(m * 0.7); return { width: edge, height: edge }; } };
+            posScanner.start({ facingMode: "environment" }, config, function(decodedText) { window.addPosItemByCode(decodedText); window.showToast("Escaneado", decodedText); if (navigator.vibrate) navigator.vibrate(80);
+            }).catch(function(err){ 
+              window.showToast("Aviso", "Iniciando frontal...");
+              posScanner.start({ facingMode: "user" }, { fps: 15, qrbox: {width: 250, height: 250} }, function(text) { window.addPosItemByCode(text); window.showToast("Escaneado", text); }
+              ).catch(function(e) { window.showToast("Error", "Cámara no disponible."); window.stopPosCam(); });
+            });
+          } catch(e) { window.showToast("Error", "Cámara no soportada."); window.stopPosCam(); }
+        }, 300);
+      } else { window.stopPosCam(); }
+    };
+
+    window.stopPosCam = function() { 
+      var box = $('posScannerBox'); var btn = $('btnToggleScanner');
+      if(box) { box.classList.add('hidden'); box.classList.remove('flex'); }
+      if (btn) btn.innerHTML = '<i class="ph-bold ph-camera"></i> Iniciar Cámara';
+      if (posScanner) { try { posScanner.stop().catch(function(){}); posScanner.clear(); posScanner = null; } catch(e){} } 
+    };
+
+    window.requestStockWA = function(productName, productCode) {
+      var targetBranches = (workshopSettings.branches || []).filter(function(b) { return b !== localBranch; }).map(function(b){ return '('+b+')'; }).join(' o ');
+      var msg = `*${workshopSettings.name.toUpperCase()} - SOLICITUD DE STOCK* 📦\n\nHola, necesitamos en (${localBranch}) el siguiente repuesto del catálogo:\n\n🔹 *${productName}*\n🔖 Código: ${productCode || 'S/C'}\n\n¿Tienen disponibilidad en ${targetBranches || 'otra sucursal'} para enviarlo?`;
+      var phone = workshopSettings.adminPhone;
+      if(!phone) { window.showToast("Aviso", "Abriendo WhatsApp. (Configura el número en Ajustes)."); window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+      } else { window.open('https://wa.me/' + phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg), '_blank'); }
+    };
+
+    // --- REPARACIONES Y FILTROS (VINCULADOS ENTRE TODAS LAS SUCURSALES) ---
+    window.handleSearch = function() { window.renderRepairsList(); };
+    window.clearSearch = function() { if($('searchInput')) $('searchInput').value = ''; window.renderRepairsList(); };
+    window.setFilter = function(f) {
+      currentFilter = f;
+      ['ALL','WAITING','IN_PROGRESS','IN_TRANSIT','READY'].forEach(function(id) {
+        var el = $('tab'+id); if(el) el.className = (id === f) ? 'filter-tab px-2.5 py-1 rounded-lg bg-zinc-800 text-white font-bold shrink-0 transition text-xs' : 'filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs';
+      });
+      window.renderRepairsList();
+    };
+
+    window.renderRepairsList = function() {
+      var container = $('repairsList'); if(!container) return;
+      var term = ($('searchInput') ? $('searchInput').value.toLowerCase().trim() : '');
+      var filtered = repairs.filter(function(r) {
+        if(!r) return false;
+        var matchBranch = currentBranchFilter === 'ALL' || r.branch === currentBranchFilter;
+        var matchStatus = currentFilter === 'ALL' || r.status === currentFilter;
+        var matchSearch = !term || (r.id && r.id.toLowerCase().includes(term)) || (r.clientName && r.clientName.toLowerCase().includes(term)) || (r.deviceBrand && r.deviceBrand.toLowerCase().includes(term)) || (r.branch && r.branch.toLowerCase().includes(term));
+        return matchBranch && matchStatus && matchSearch;
+      });
+
+      if(filtered.length === 0) {
+        if($('emptyState')) $('emptyState').classList.remove('hidden'); container.innerHTML = '';
+      } else {
+        if($('emptyState')) $('emptyState').classList.add('hidden');
+        container.innerHTML = filtered.map(function(r) {
+          var stColor = r.status === 'READY' ? 'text-emerald-400' : (r.status === 'IN_PROGRESS' ? 'text-amber-400' : 'text-zinc-300');
+          return '<div onclick="window.openDetailModal(\''+r.id+'\')" class="bg-zinc-900 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between shadow-sm active:scale-[0.98] transition cursor-pointer">' +
+                 '<div><div class="flex items-center gap-1.5"><span class="font-mono text-xs font-bold text-iosBlue">'+r.id+'</span><span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-zinc-800 '+stColor+'">'+r.status+'</span><span class="text-[9px] text-zinc-400 font-bold">('+(r.branch||'Central')+')</span></div>' +
+                 '<h4 class="text-xs font-bold text-white mt-0.5">'+r.deviceBrand+' '+r.deviceModel+'</h4><div class="text-[10px] text-zinc-400 mt-0.5">'+r.clientName+'</div></div>' +
+                 '<i class="ph-bold ph-caret-right text-zinc-600 text-base"></i></div>';
+        }).join('');
+      }
+    };
+
+    window.updateCounters = function() {
+      var wait=0, prog=0, trans=0, ready=0;
+      repairs.forEach(function(r) {
+        if(!r) return; if(currentBranchFilter !== 'ALL' && r.branch !== currentBranchFilter) return;
+        if(r.status === 'WAITING') wait++; if(r.status === 'IN_PROGRESS') prog++; if(r.status === 'IN_TRANSIT') trans++; if(r.status === 'READY') ready++;
+      });
+      if($('counterReceived')) $('counterReceived').textContent = wait; if($('counterInProgress')) $('counterInProgress').textContent = prog;
+      if($('counterTransit')) $('counterTransit').textContent = trans; if($('counterReady')) $('counterReady').textContent = ready;
+    };
+
+    window.openDetailModal = function(id) {
+      var r = repairs.find(function(x) { return x.id === id; }); if(!r) return; selectedRepairId = id;
+      if($('dtlOrderId')) $('dtlOrderId').textContent = r.id;
+      if($('dtlDeviceTitle')) $('dtlDeviceTitle').textContent = r.deviceBrand + ' ' + r.deviceModel;
+      if($('dtlClientName')) $('dtlClientName').textContent = r.clientName;
+      if($('dtlClientPhone')) $('dtlClientPhone').textContent = r.clientPhone;
+      if($('dtlDeviceFault')) $('dtlDeviceFault').textContent = r.fault || 'Sin descripción';
+      if($('dtlRepairDetailsText')) $('dtlRepairDetailsText').textContent = r.repairDetails || 'Ningún trabajo detallado aún.';
+      if($('dtlOperationalStatusBadge')) $('dtlOperationalStatusBadge').textContent = r.status;
+      if($('dtlBudgetTotal')) $('dtlBudgetTotal').textContent = '$' + (r.budget || 0);
+      if($('dtlAdvancePaid')) $('dtlAdvancePaid').textContent = '$' + (r.advance || 0);
+      if($('dtlBalanceDue')) $('dtlBalanceDue').textContent = '$' + ((r.budget || 0) - (r.advance || 0));
+
+      var dtlGrid = $('dtlPhotosGrid'); var dtlSec = $('dtlPhotosSection');
+      if (dtlGrid && dtlSec) {
+        if (r.photos && r.photos.length > 0) {
+          dtlSec.style.display = 'block';
+          dtlGrid.innerHTML = r.photos.map(function(src) { return '<div class="w-14 h-14 shrink-0 rounded-xl overflow-hidden border border-zinc-700 shadow-sm cursor-pointer" onclick="window.open(\''+src+'\', \'_blank\')"><img src="' + src + '" class="w-full h-full object-cover"></div>'; }).join('');
+        } else { dtlSec.style.display = 'none'; }
+      }
+      window.openModal('detailModal');
+    };
+
+    window.openEditRepairModal = function() {
+      var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
+      if($('editClientName')) $('editClientName').value = r.clientName || ''; if($('editDeviceBrand')) $('editDeviceBrand').value = r.deviceBrand || '';
+      if($('editDeviceModel')) $('editDeviceModel').value = r.deviceModel || ''; if($('editDeviceFault')) $('editDeviceFault').value = r.fault || '';
+      if($('editRepairDetails')) $('editRepairDetails').value = r.repairDetails || '';
+      window.openModal('editRepairModal');
+    };
+
+    window.saveEditedRepair = function(e) {
+      e.preventDefault(); var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
+      r.clientName = $('editClientName').value; r.deviceBrand = $('editDeviceBrand').value; r.deviceModel = $('editDeviceModel').value;
+      r.fault = $('editDeviceFault').value; r.repairDetails = $('editRepairDetails').value;
+      StorageShield.save('repairs', repairs);
+      window.closeModal('editRepairModal'); window.openDetailModal(r.id); window.renderRepairsList(); window.showToast("Guardado", "Orden actualizada.");
+    };
+
+    window.sendTechnicalReportWA = function() {
+      var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
+      var phone = r.clientPhone ? r.clientPhone.replace(/[^0-9]/g, '') : null;
+      var send = function(p) {
+        var msg = `*${workshopSettings.name.toUpperCase()} - INFORME TÉCNICO* 🛠️\n\n🔖 *Orden:* #${r.id}\n📱 *Equipo:* ${r.deviceBrand} ${r.deviceModel}\n👤 *Cliente:* ${r.clientName}\n\n📋 *Diagnóstico:*\n${r.fault || '-'}\n\n✅ *Trabajo Realizado:*\n${r.repairDetails || '-'}\n\n💰 *Total:* $${r.budget||0}\n💵 *Abonado:* $${r.advance||0}\n❗️ *Resta:* $${(r.budget||0)-(r.advance||0)}\n\n¡Gracias por confiar en nosotros!`;
+        window.open('https://wa.me/' + p.replace(/[^0-9]/g,'') + '?text=' + encodeURIComponent(msg), '_blank');
+      };
+      if(!phone) { window.appPrompt("WhatsApp", "Ingresa el WhatsApp del cliente:", "tel", "", function(val){ if(val) send(val); }); } else { send(phone); }
+    };
+
+    window.printTechnicalReport = function() {
+      var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
+      var html = `<div style="width:230px;margin:auto;font-family:monospace;line-height:1.25;color:#000;"><div style="text-align:center;border-bottom:1px dashed #000;padding-bottom:4px;margin-bottom:4px;"><b style="font-size:12px;">${workshopSettings.name.toUpperCase()}</b><br><b style="font-size:10px;">INFORME TÉCNICO #${r.id}</b></div><div style="font-size:10px;margin-bottom:6px;"><b>Fecha:</b> ${new Date().toLocaleDateString('es-AR')}<br><b>Cliente:</b> ${r.clientName}<br><b>Equipo:</b> ${r.deviceBrand} ${r.deviceModel}</div><div style="border-top:1px dashed #000;padding-top:4px;font-size:10px;"><b>DIAGNÓSTICO:</b><br>${r.fault || '-'}<br><br><b>TRABAJO REALIZADO:</b><br>${r.repairDetails || '-'}</div><div style="border-top:1px dashed #000;margin-top:6px;padding-top:4px;font-size:11px;font-weight:bold;">TOTAL: $${r.budget||0}<br>ABONADO: $${r.advance||0}<br>RESTA: $${(r.budget||0)-(r.advance||0)}</div></div>`;
+      $('printArea').innerHTML = html; $('printArea').style.display = 'block'; window.print(); setTimeout(function(){ $('printArea').style.display = 'none'; }, 500);
+    };
+
+    window.updateDeviceOperationalStatus = function(st) {
+      var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
+      r.status = st; StorageShield.save('repairs', repairs);
+      if($('dtlOperationalStatusBadge')) $('dtlOperationalStatusBadge').textContent = st;
+      window.renderRepairsList(); window.updateCounters(); window.showToast("Estado", "Actualizado a " + st);
+    };
+
+    // Cobrar saldo a la caja local del operador actual
+    window.chargeRepairToCash = function() {
+      var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
+      var balance = (parseFloat(r.budget)||0) - (parseFloat(r.advance)||0);
+      if(balance <= 0) { window.showToast("Aviso", "Esta orden ya está pagada."); return; }
+      window.appConfirm("Cobro de Reparación", "¿Cobrar a Caja el saldo de $" + balance + " de esta reparación?\n\nIngresará en la caja local (" + localBranch + ")", function() {
+         cashMovements.unshift({ 
+           id: 'CSH-REP-' + Date.now(), 
+           branch: localBranch, 
+           type: 'INCOME', 
+           amount: balance, 
+           concept: 'Cobro Final Orden #' + r.id + ' (' + r.deviceBrand + ' ' + r.deviceModel + ')', 
+           method: 'Efectivo', 
+           date: Date.now(), 
+           user: activeUser, 
+           closed: false 
+         });
+         StorageShield.save('cash', cashMovements);
+         r.advance = r.budget; 
+         StorageShield.save('repairs', repairs);
+         window.openDetailModal(r.id); 
+         window.updateCashBalanceUI(); 
+         window.showToast("Cobro Exitoso", "Ingresado en Caja (" + localBranch + ")");
+      });
+    };
+
+    window.deleteCurrentRepair = function() {
+      if(activeUser !== 'Admin') { window.showToast("Denegado", "Solo Admin puede eliminar."); return; }
+      window.requestAdminPinAuth("Eliminar orden permanentemente", function() {
+        repairs = repairs.filter(function(r) { return r.id !== selectedRepairId; }); StorageShield.save('repairs', repairs);
+        window.closeModal('detailModal'); window.renderRepairsList(); window.updateCounters(); window.showToast("Eliminado", "Orden removida.");
       });
     };
 
