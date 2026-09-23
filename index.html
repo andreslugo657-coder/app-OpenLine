@@ -321,6 +321,31 @@
     </div>
   </div>
 
+  <!-- MODAL COMPROBANTE / ETIQUETA DE INGRESO -->
+  <div id="repairTicketModal" style="display: none;" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-iosBlue/70 rounded-t-3xl sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300 modal-card flex flex-col shadow-2xl">
+      <div class="flex items-center justify-between pb-1 shrink-0">
+        <div class="flex items-center gap-1.5">
+          <i class="ph-bold ph-tag text-iosBlue text-base"></i>
+          <h3 class="font-bold text-white text-sm">Comprobante de Ingreso</h3>
+        </div>
+        <button type="button" onclick="window.closeModal('repairTicketModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button>
+      </div>
+      <div class="overflow-y-auto flex-1 pr-0.5 space-y-2.5">
+        <div id="repairTicketPreviewBox" class="p-3 bg-white text-black rounded-xl overflow-hidden font-mono text-[11px] leading-snug shadow-inner"></div>
+      </div>
+      <div class="grid grid-cols-2 gap-2 pt-1 shrink-0">
+        <button type="button" onclick="window.sendRepairTicketWA()" class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl flex items-center justify-center gap-1 shadow active:scale-95 transition">
+          <i class="ph-bold ph-whatsapp-logo text-base"></i> WhatsApp
+        </button>
+        <button type="button" onclick="window.executePrintRepairLabel()" class="py-2.5 bg-iosBlue hover:bg-blue-600 text-white font-bold rounded-xl flex items-center justify-center gap-1 shadow active:scale-95 transition">
+          <i class="ph-bold ph-printer text-base"></i> Etiqueta
+        </button>
+      </div>
+      <button type="button" onclick="window.closeModal('repairTicketModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl shrink-0 active:scale-95 transition">Listo / Cerrar</button>
+    </div>
+  </div>
+
   <!-- MODAL VENTAS POS CON CATÁLOGO INTERACTIVO COMPARTIDO -->
   <div id="salesModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 sm:border border-amber-600/70 rounded-t-3xl sm:rounded-3xl w-full max-w-4xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
@@ -453,7 +478,22 @@
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0"><div><div class="flex items-center gap-1.5"><span id="dtlOrderId" class="text-xs font-mono font-bold text-iosBlue">#OL-0000</span></div><h3 id="dtlDeviceTitle" class="text-sm font-bold text-white mt-0.5">Dispositivo</h3></div><div class="flex items-center gap-2"><button type="button" onclick="window.openEditRepairModal()" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-[10px] border border-zinc-700 flex items-center gap-1 active:scale-95 transition"><i class="ph-bold ph-pencil-simple text-amber-400"></i> Editar</button><button type="button" onclick="window.closeModal('detailModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div></div>
       <div class="overflow-y-auto p-4 space-y-3.5 flex-1 pb-10">
           <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1"><span class="text-[9px] text-zinc-500 uppercase block mb-0.5">Cliente:</span><b class="text-white text-sm" id="dtlClientName"></b><div class="text-zinc-400 font-mono text-xs mt-0.5" id="dtlClientPhone"></div></div>
-          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2"><div><span class="text-[9px] text-zinc-500 uppercase block mb-0.5">Diagnóstico / Falla:</span><p id="dtlDeviceFault" class="text-zinc-200 text-xs leading-relaxed"></p></div><div id="dtlRepairDetailsBox" class="pt-2 border-t border-zinc-800/80"><span class="text-[9px] text-indigo-400 uppercase font-bold block mb-0.5">Reparación Realizada:</span><p id="dtlRepairDetailsText" class="text-zinc-200 text-xs whitespace-pre-line leading-relaxed"></p></div><div class="grid grid-cols-2 gap-2 pt-2"><button type="button" onclick="window.sendTechnicalReportWA()" class="py-2 rounded-xl bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-whatsapp-logo text-sm"></i> WhatsApp Informe</button><button type="button" onclick="window.printTechnicalReport()" class="py-2 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-printer text-sm"></i> Imprimir Informe</button></div></div>
+          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
+            <div><span class="text-[9px] text-zinc-500 uppercase block mb-0.5">Diagnóstico / Falla:</span><p id="dtlDeviceFault" class="text-zinc-200 text-xs leading-relaxed"></p></div>
+            <div id="dtlRepairDetailsBox" class="pt-2 border-t border-zinc-800/80"><span class="text-[9px] text-indigo-400 uppercase font-bold block mb-0.5">Reparación Realizada:</span><p id="dtlRepairDetailsText" class="text-zinc-200 text-xs whitespace-pre-line leading-relaxed"></p></div>
+            
+            <!-- ACCIONES DE INFORME TÉCNICO -->
+            <div class="grid grid-cols-2 gap-2 pt-2">
+              <button type="button" onclick="window.sendTechnicalReportWA()" class="py-2 rounded-xl bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-whatsapp-logo text-sm"></i> WhatsApp Informe</button>
+              <button type="button" onclick="window.printTechnicalReport()" class="py-2 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-printer text-sm"></i> Imprimir Informe</button>
+            </div>
+            
+            <!-- ACCIONES DE COMPROBANTE Y ETIQUETA DE INGRESO -->
+            <div class="grid grid-cols-2 gap-2 pt-1.5">
+              <button type="button" onclick="window.sendRepairTicketWA(selectedRepairId)" class="py-2 rounded-xl bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95 transition"><i class="ph-bold ph-whatsapp-logo text-sm text-emerald-400"></i> WA Comprobante</button>
+              <button type="button" onclick="window.executePrintRepairLabel(selectedRepairId)" class="py-2 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95 transition"><i class="ph-bold ph-tag text-sm text-iosBlue"></i> Etiqueta Ingreso</button>
+            </div>
+          </div>
           <div id="dtlPhotosSection" class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2"><span class="text-[9px] text-zinc-500 uppercase block font-bold">Fotos de Ingreso:</span><div id="dtlPhotosGrid" class="flex gap-2 overflow-x-auto py-1 no-scrollbar"></div></div>
           <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl flex items-center justify-between"><div><span class="text-[10px] text-zinc-400 uppercase font-bold block">Cobro de Reparación</span><span class="text-xs text-zinc-300">Ingresar saldo a caja local</span></div><button type="button" onclick="window.chargeRepairToCash()" class="py-1.5 px-3 rounded-xl bg-emerald-950 border border-emerald-600/70 text-emerald-300 font-bold text-xs flex items-center gap-1 active:scale-95 transition"><i class="ph-bold ph-wallet text-sm"></i> Cobrar a Caja</button></div>
           <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
@@ -794,6 +834,7 @@
     var currentPosCategoryFilter = 'ALL'; 
     var currentVentasPeriod = 'HOY'; 
     var selectedRepairId = null;
+    var currentTicketRepairId = null;
 
     // --- APLICACIÓN DE AJUSTES EN VIVO (LOGO, SUCURSALES, DATOS) ---
     window.applyWorkshopSettings = function(newSettings) {
@@ -853,7 +894,7 @@
       }
     };
 
-    // --- GESTIÓN MAESTRA DE TALLERES (SELECCIONAR, ACTIVAR DIRECTO Y EXPULSAR) ---
+    // --- GESTIÓN MAESTRA DE TALLERES ---
     window.selectWorkshopForMaster = function(code) {
       var target = (code || '').trim().toUpperCase();
       if ($('genTargetWorkshopCode')) {
@@ -1731,6 +1772,137 @@
       window.showToast("Éxito", "Orden creada: " + id);
       window.renderRepairsList(); 
       window.updateCounters();
+
+      // Abrir comprobante / etiqueta automáticamente tras el ingreso
+      setTimeout(function() {
+        window.openRepairTicketModal(id);
+      }, 150);
+    };
+
+    // --- COMPROBANTE Y ETIQUETA DE INGRESO ---
+    window.openRepairTicketModal = function(id) {
+      var r = repairs.find(function(x) { return x.id === id; });
+      if (!r) return;
+      currentTicketRepairId = id;
+
+      var box = $('repairTicketPreviewBox');
+      if (box) {
+        var balance = (parseFloat(r.budget) || 0) - (parseFloat(r.advance) || 0);
+        var unlockStr = r.unlockType === 'pin' ? 'PIN: ' + (r.unlockPin || '-') : (r.unlockType === 'pattern' ? 'Patrón: ' + (r.unlockPin || 'Registrado') : 'Sin Clave');
+
+        box.innerHTML = `
+          <div style="text-align:center; border-bottom:1px dashed #000; padding-bottom:6px; margin-bottom:6px;">
+            <b style="font-size:13px; letter-spacing:0.5px;">${(workshopSettings.name || 'OPENLINE').toUpperCase()}</b><br>
+            <span style="font-size:9px; color:#444;">${workshopSettings.subtitle || 'Servicio Técnico Profesional'}</span><br>
+            ${workshopSettings.adminPhone ? `<span style="font-size:9px;">WhatsApp: ${workshopSettings.adminPhone}</span><br>` : ''}
+            <div style="margin-top:5px; font-size:13px; font-weight:bold; background:#000; color:#fff; padding:3px 8px; display:inline-block; border-radius:6px;">
+              ORDEN #${r.id}
+            </div>
+          </div>
+          <div style="font-size:10px; margin-bottom:6px; line-height:1.35;">
+            <b>Fecha:</b> ${new Date(r.createdAt || Date.now()).toLocaleDateString('es-AR')} ${new Date(r.createdAt || Date.now()).toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'})}<br>
+            <b>Sucursal:</b> (${r.branch || 'Central'})<br>
+            <b>Cliente:</b> ${r.clientName}<br>
+            <b>Tel:</b> ${r.clientPhone || 'S/N'}<br>
+            <b>Equipo:</b> ${r.deviceType || 'Equipo'} ${r.deviceBrand} ${r.deviceModel}<br>
+            <b>Seguridad:</b> ${unlockStr}
+          </div>
+          <div style="border-top:1px dashed #000; border-bottom:1px dashed #000; padding:6px 0; margin-bottom:6px; font-size:10px; line-height:1.3;">
+            <b>FALLA DECLARADA:</b><br>
+            <span>${r.fault || 'Revisión y diagnóstico técnico'}</span>
+          </div>
+          <div style="font-size:10px; margin-bottom:6px; line-height:1.4;">
+            <div style="display:flex; justify-content:space-between;"><span>Presupuesto Estimado:</span> <b>$${(r.budget || 0).toLocaleString()}</b></div>
+            <div style="display:flex; justify-content:space-between;"><span>Seña Abonada:</span> <b style="color:#059669;">$${(r.advance || 0).toLocaleString()}</b></div>
+            <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:bold; border-top:1px solid #ccc; padding-top:2px; margin-top:2px;">
+              <span>RESTA ABONAR:</span> <span>$${balance.toLocaleString()}</span>
+            </div>
+          </div>
+          <div style="text-align:center; font-size:8px; line-height:1.2; color:#555; border-top:1px dashed #000; padding-top:5px;">
+            Conserve este comprobante para retirar el equipo.<br>
+            Pasados los 60 días corridos el equipo se considerará en abandono.
+          </div>
+        `;
+      }
+
+      window.openModal('repairTicketModal');
+    };
+
+    window.sendRepairTicketWA = function(orderId) {
+      var id = orderId || currentTicketRepairId;
+      var r = repairs.find(function(x) { return x.id === id; });
+      if (!r) return;
+
+      var phone = (r.clientPhone || '').replace(/[^0-9]/g, '');
+      var balance = (parseFloat(r.budget) || 0) - (parseFloat(r.advance) || 0);
+      var unlockStr = r.unlockType === 'pin' ? 'PIN: ' + (r.unlockPin || '-') : (r.unlockType === 'pattern' ? 'Patrón Registrado' : 'Sin Clave');
+
+      var msg = `*${(workshopSettings.name || 'OPENLINE').toUpperCase()}* 🛠️\n` +
+                `*COMPROBANTE DE INGRESO AL TALLER*\n\n` +
+                `🔖 *Orden:* #${r.id}\n` +
+                `📅 *Fecha:* ${new Date(r.createdAt || Date.now()).toLocaleDateString('es-AR')} ${new Date(r.createdAt || Date.now()).toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'})}\n` +
+                `📍 *Sucursal:* (${r.branch || 'Central'})\n\n` +
+                `👤 *Cliente:* ${r.clientName}\n` +
+                `📱 *Equipo:* ${r.deviceType || 'Equipo'} ${r.deviceBrand} ${r.deviceModel}\n` +
+                `🔒 *Seguridad:* ${unlockStr}\n\n` +
+                `📋 *Falla declarada:* \n${r.fault || 'Revisión y diagnóstico'}\n\n` +
+                `💰 *Ppto Estimado:* $${(r.budget || 0).toLocaleString()}\n` +
+                `💵 *Seña Abonada:* $${(r.advance || 0).toLocaleString()}\n` +
+                `❗️ *Resta Abonar:* $${balance.toLocaleString()}\n\n` +
+                `📌 *Aviso importante:* Conserva este comprobante para retirar tu dispositivo. Te notificaremos cuando tu equipo esté listo para entrega.\n` +
+                `¡Muchas gracias por confiar en nuestro servicio técnico!`;
+
+      if (!phone) {
+        window.appPrompt("WhatsApp", "Ingresa el WhatsApp del cliente:", "tel", "", function(val) {
+          if (val) window.open('https://wa.me/' + val.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg), '_blank');
+        });
+      } else {
+        window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
+      }
+    };
+
+    window.executePrintRepairLabel = function(orderId) {
+      var id = orderId || currentTicketRepairId;
+      var r = repairs.find(function(x) { return x.id === id; });
+      if (!r) return;
+
+      var balance = (parseFloat(r.budget) || 0) - (parseFloat(r.advance) || 0);
+      var unlockStr = r.unlockType === 'pin' ? 'PIN: ' + (r.unlockPin || '-') : (r.unlockType === 'pattern' ? 'Patrón: ' + (r.unlockPin || 'Reg.') : 'Sin Clave');
+
+      var html = `
+        <div style="width:220px; margin:0 auto; padding:6px; font-family:monospace; font-size:10px; color:#000; line-height:1.25; background:#fff;">
+          <div style="text-align:center; border-bottom:1px dashed #000; padding-bottom:4px; margin-bottom:5px;">
+            <b style="font-size:12px;">${(workshopSettings.name || 'OPENLINE').toUpperCase()}</b><br>
+            <span style="font-size:9px;">ETIQUETA DE RECEPCIÓN</span><br>
+            <div style="margin:4px 0; font-size:14px; font-weight:900; letter-spacing:1px; border:2px solid #000; padding:2px 4px; display:inline-block;">
+              ORDEN #${r.id}
+            </div>
+          </div>
+          <div style="font-size:10px; line-height:1.3; margin-bottom:4px;">
+            <b>Fecha:</b> ${new Date(r.createdAt || Date.now()).toLocaleDateString('es-AR')}<br>
+            <b>Cliente:</b> ${r.clientName}<br>
+            <b>Tel:</b> ${r.clientPhone || 'S/N'}<br>
+            <b>Equipo:</b> ${r.deviceBrand} ${r.deviceModel}<br>
+            <b>Seguridad:</b> ${unlockStr}
+          </div>
+          <div style="border-top:1px dashed #000; border-bottom:1px dashed #000; padding:4px 0; margin-bottom:4px; font-size:9.5px;">
+            <b>FALLA:</b><br>${r.fault || 'Revisión técnica'}
+          </div>
+          <div style="font-size:10px; line-height:1.3;">
+            <b>TOTAL:</b> $${(r.budget || 0).toLocaleString()}<br>
+            <b>SEÑA:</b> $${(r.advance || 0).toLocaleString()}<br>
+            <b>RESTA:</b> $${balance.toLocaleString()}
+          </div>
+          <div style="text-align:center; font-size:8px; margin-top:6px; border-top:1px dashed #000; padding-top:4px;">
+            * Conservar comprobante para retiro *
+          </div>
+        </div>
+      `;
+
+      $('printArea').innerHTML = html;
+      $('printArea').style.display = 'block';
+      window.print();
+      setTimeout(function() { $('printArea').style.display = 'none'; }, 500);
     };
 
     // --- CONTROL DE STOCK E INVENTARIO ---
