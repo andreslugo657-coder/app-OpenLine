@@ -1634,6 +1634,166 @@
       window.updateCounters();
     };
 
+    // --- CONTROL DE STOCK E INVENTARIO ---
+    var currentStockTab = 'LIST';
+    var stockScanner = null;
+
+    window.switchStockTab = function(tab) {
+      currentStockTab = tab;
+      var views = { 'LIST': $('stockViewList'), 'FORM': $('stockViewForm'), 'SCANNER': $('stockViewScanner') };
+      var btns = { 'LIST': $('stockTabListBtn'), 'FORM': $('stockTabFormBtn'), 'SCANNER': $('stockTabScannerBtn') };
+
+      for (var k in views) {
+        if (views[k]) {
+          if (k === tab) { views[k].classList.remove('hidden'); views[k].classList.add('flex'); } 
+          else { views[k].classList.add('hidden'); views[k].classList.remove('flex'); }
+        }
+        if (btns[k]) {
+          if (k === tab) btns[k].className = 'py-1.5 rounded-lg font-bold text-xs transition bg-purple-700 text-white shadow flex items-center justify-center gap-1';
+          else btns[k].className = 'py-1.5 rounded-lg font-bold text-xs transition bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center gap-1';
+        }
+      }
+      if (tab === 'LIST') { window.stopStockCam(); window.renderStockList(); }
+      else if (tab === 'FORM') { window.stopStockCam(); }
+      else if (tab === 'SCANNER') { window.stopStockCam(); }
+    };
+
+    window.renderStockList = function() {
+      var container = $('stockListContainer'); if(!container) return;
+      var term = $('stkSearchInput') ? $('stkSearchInput').value.toLowerCase().trim() : '';
+
+      var filtered = stockItems.filter(function(s) {
+        if(!s) return false;
+        var matchBranch = (currentStockBranchFilter === 'ALL' || (s.branch || 'Central') === currentStockBranchFilter);
+        var matchSearch = !term || (s.name && s.name.toLowerCase().includes(term)) || (s.code && String(s.code).toLowerCase().includes(term));
+        return matchBranch && matchSearch;
+      });
+
+      if(filtered.length === 0) {
+        container.innerHTML = '<div class="text-center text-zinc-500 text-xs p-6">Inventario vacío o sin coincidencias.</div>';
+        return;
+      }
+
+      container.innerHTML = filtered.map(function(s) {
+        var bColor = s.qty > 0 ? 'text-emerald-400' : 'text-rose-400';
+        return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl shadow-sm">' +
+                 '<div class="flex-1 min-w-0 pr-2">' +
+                   '<div class="flex items-center gap-1.5 mb-0.5"><span class="font-bold text-white text-xs truncate">'+s.name+'</span><span class="text-[8px] bg-zinc-800 text-purple-300 px-1.5 py-0.2 rounded font-bold uppercase">'+(s.category||'Otros')+'</span></div>' +
+                   '<div class="font-mono text-[9px] text-zinc-500">'+s.code+' • ('+(s.branch||'Central')+')</div>' +
+                   '<div class="mt-1 text-[10px]"><span class="text-zinc-400">Costo:</span> <span class="font-mono text-zinc-300">$' +(s.cost||0).toLocaleString()+ '</span> | <span class="text-zinc-400">Venta:</span> <span class="font-mono text-emerald-400 font-bold">$' +(s.price||0).toLocaleString()+ '</span></div>' +
+                 '</div>' +
+                 '<div class="flex flex-col items-end gap-1.5 shrink-0">' +
+                   '<div class="text-[10px] font-bold bg-zinc-900 border border-zinc-700 px-2 py-1 rounded-lg shadow-inner"><span class="text-zinc-400 uppercase">Stock:</span> <span class="font-mono text-sm '+bColor+'">'+s.qty+'</span></div>' +
+                   '<button type="button" onclick="window.deleteStockItem(\''+s.code+'\', \''+(s.branch||'Central')+'\')" class="text-rose-400 hover:text-rose-300 font-bold text-[9px] underline active:scale-95">Eliminar</button>' +
+                 '</div>' +
+               '</div>';
+      }).join('');
+    };
+
+    window.deleteStockItem = function(code, branch) {
+      window.requestAdminPinAuth("Eliminar producto del inventario", function() {
+         stockItems = stockItems.filter(function(s) { return !(String(s.code) === String(code) && (s.branch || 'Central') === branch); });
+         StorageShield.save('stock', stockItems);
+         window.publishStockMQTT();
+         window.renderStockList();
+         window.showToast("Eliminado", "Producto removido del inventario.");
+      });
+    };
+
+    window.autoBarcode = function() {
+       var input = $('stkCode');
+       if(input) input.value = 'SKU-' + Math.floor(100000 + Math.random() * 900000);
+    };
+
+    window.saveStockItem = function() {
+       var code = $('stkCode').value.trim();
+       var name = $('stkName').value.trim();
+       var branch = $('stkBranch').value;
+       var category = $('stkCategory').value;
+       var qty = parseInt($('stkQuantity').value) || 0;
+       var cost = parseFloat($('stkCostPrice').value) || 0;
+       var price = parseFloat($('stkSalePrice').value) || 0;
+
+       if(!code || !name || price <= 0) { window.showToast("Error", "Completa código, nombre y precio de venta."); return; }
+
+       var existingIndex = stockItems.findIndex(function(s) { return String(s.code) === String(code) && (s.branch || 'Central') === branch; });
+       
+       if(existingIndex >= 0) {
+          stockItems[existingIndex].name = name;
+          stockItems[existingIndex].category = category;
+          stockItems[existingIndex].qty += qty; 
+          stockItems[existingIndex].cost = cost;
+          stockItems[existingIndex].price = price;
+          window.showToast("Actualizado", "Stock sumado al producto existente.");
+       } else {
+          stockItems.unshift({ code: code, name: name, branch: branch, category: category, qty: qty, cost: cost, price: price });
+          window.showToast("Guardado", "Nuevo producto agregado al inventario.");
+       }
+       
+       StorageShield.save('stock', stockItems);
+       window.publishStockMQTT();
+       
+       $('stkCode').value = ''; $('stkName').value = ''; $('stkQuantity').value = '1'; $('stkCostPrice').value = ''; $('stkSalePrice').value = '';
+       window.switchStockTab('LIST');
+    };
+
+    window.bulkIncreasePrices = function() {
+       window.requestAdminPinAuth("Aumento Masivo de Precios", function() {
+         window.appPrompt("Suba Masiva (%)", "Ingresa el porcentaje a aumentar (ej: 15):", "number", "", function(val) {
+           var perc = parseFloat(val);
+           if(perc > 0) {
+             stockItems.forEach(function(s) {
+               if (currentStockBranchFilter === 'ALL' || (s.branch || 'Central') === currentStockBranchFilter) {
+                  s.price = Math.round(s.price * (1 + (perc/100)));
+                  s.cost = Math.round(s.cost * (1 + (perc/100)));
+               }
+             });
+             StorageShield.save('stock', stockItems);
+             window.publishStockMQTT();
+             window.renderStockList();
+             window.showToast("Precios Actualizados", "Se aplicó un +" + perc + "% a los productos.");
+           }
+         });
+       });
+    };
+
+    window.toggleStockCam = function() {
+      var box = $('stockScannerContainer'); var btn = $('btnToggleStockScanner');
+      if (box.classList.contains('hidden')) {
+        box.classList.remove('hidden'); box.classList.add('flex');
+        if (btn) btn.innerHTML = '<i class="ph-bold ph-stop"></i> Detener Cámara';
+        setTimeout(function() {
+          try {
+            if (stockScanner) { stockScanner.clear(); stockScanner = null; }
+            stockScanner = new Html5Qrcode("stock-qr-reader");
+            var config = { fps: 15, qrbox: function(w, h) { var m = Math.min(w, h); var edge = Math.floor(m * 0.7); return { width: edge, height: edge }; } };
+            stockScanner.start({ facingMode: "environment" }, config, function(decodedText) { 
+              window.showToast("Escaneado", decodedText); 
+              if (navigator.vibrate) navigator.vibrate(80);
+              window.stopStockCam();
+              window.switchStockTab('FORM');
+              if($('stkCode')) $('stkCode').value = decodedText;
+            }).catch(function(err){ 
+              window.showToast("Aviso", "Iniciando frontal...");
+              stockScanner.start({ facingMode: "user" }, { fps: 15, qrbox: {width: 250, height: 250} }, function(text) { 
+                window.showToast("Escaneado", text); 
+                window.stopStockCam();
+                window.switchStockTab('FORM');
+                if($('stkCode')) $('stkCode').value = text;
+              }).catch(function(e) { window.showToast("Error", "Cámara no disponible."); window.stopStockCam(); });
+            });
+          } catch(e) { window.showToast("Error", "Cámara no soportada."); window.stopStockCam(); }
+        }, 300);
+      } else { window.stopStockCam(); }
+    };
+
+    window.stopStockCam = function() { 
+      var box = $('stockScannerContainer'); var btn = $('btnToggleStockScanner');
+      if(box) { box.classList.add('hidden'); box.classList.remove('flex'); }
+      if (btn) btn.innerHTML = '<i class="ph-bold ph-camera"></i> Iniciar';
+      if (stockScanner) { try { stockScanner.stop().catch(function(){}); stockScanner.clear(); stockScanner = null; } catch(e){} } 
+    };
+
     // --- POS VENTAS (Impacta en caja local del dispositivo) ---
     var posCart = []; var posScanner = null; var currentPosTab = 'CATALOG';
 
