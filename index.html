@@ -430,7 +430,7 @@
               <label class="text-[10px] text-zinc-400 font-bold block">Código / SKU *</label>
               <div class="flex gap-1.5">
                 <input type="text" id="stkCode" placeholder="Código *" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono text-xs">
-                <button type="button" onclick="window.autoBarcode()" class="px-3 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 rounded-xl text-xs font-bold active:scale-95">Auto</button>
+                <button type="button" onclick="window.autoBarcode()" class="px-3 bg-zinc-800 border border-zinc-700 text-zinc-300 rounded-xl text-xs font-bold active:scale-95">Auto</button>
               </div>
             </div>
             <div class="space-y-1">
@@ -1226,14 +1226,13 @@
       }, 50); 
     };
     window.openVentasHistoryModal = function() { window.openModal('ventasModal'); setTimeout(function() { window.setVentasPeriod('HOY'); }, 50); };
-    
     window.openStockModal = function() { 
       window.openModal('stockModal'); 
       setTimeout(function() { 
         window.switchStockTab('LIST'); 
+        window.renderStockList(); 
       }, 50); 
     };
-
     window.openCashModal = function() { 
       currentCashBranch = localBranch; 
       window.openModal('cashModal'); 
@@ -1609,15 +1608,11 @@
 
       if (tab === 'LIST') { 
         window.stopStockCam(); 
-        window.renderStockBranchFilters();
         window.renderStockList(); 
       } else if (tab === 'FORM') { 
         window.stopStockCam(); 
-        var branches = workshopSettings.branches || ['Central'];
-        var opts = branches.map(function(b) { return '<option value="' + b + '" ' + (b === localBranch ? 'selected' : '') + '>' + b + '</option>'; }).join('');
-        if ($('stkBranch')) $('stkBranch').innerHTML = opts;
       } else if (tab === 'SCANNER') { 
-        window.stopStockCam(); 
+        window.toggleStockCam(); 
       }
     };
 
@@ -1879,6 +1874,7 @@
 
           window.checkBannedStatus();
           
+          // Registro de telemetría propio con estado de licencia real
           window.saveTelemetryData({ 
             workshopId: currentWorkshopId.toUpperCase(), 
             deviceId: myDeviceId, 
