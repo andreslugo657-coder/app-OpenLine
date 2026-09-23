@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es" class="bg-black">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Seguimiento de Reparación | OpenLine</title>
+
+  <!-- Tailwind CSS & Phosphor Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { iosBlue: '#007AFF', iosGreen: '#34C759', iosOrange: '#FF9500', iosRed: '#FF3B30' } } }
+    };
+  </script>
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+  <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
+
+  <style>
+    body { min-height: 100vh; min-height: 100dvh; -webkit-tap-highlight-color: transparent; }
+    .pt-safe { padding-top: max(env(safe-area-inset-top), 12px); }
+    .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 20px); }
+  </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col items-center justify-center p-4 pt-safe pb-safe">
+
+  <div class="w-full max-w-md space-y-4 my-auto py-4">
+    
+    <!-- Encabezado Taller -->
+    <div class="text-center space-y-1.5">
+      <div id="trkLogoBox" class="w-14 h-14 mx-auto rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center overflow-hidden shadow-xl">
+        <i class="ph-bold ph-wrench text-2xl text-iosBlue"></i>
+      </div>
+      <h1 id="trkWorkshopName" class="text-base font-black text-white tracking-tight">Servicio Técnico</h1>
+      <p id="trkWorkshopSubtitle" class="text-[11px] text-zinc-400">Seguimiento de Reparación en Vivo</p>
+    </div>
+
+    <!-- Buscador manual si entra sin orden -->
+    <div id="manualSearchBox" class="hidden bg-zinc-900 border border-zinc-800 rounded-2xl p-4 space-y-2 shadow-xl">
+      <label class="text-[11px] font-bold text-zinc-300 block">Consulta el estado de tu equipo:</label>
+      <form onsubmit="consultarManual(event)" class="flex gap-2">
+        <input type="text" id="manualOrderInput" placeholder="Ej: OL-1234" class="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs outline-none focus:border-iosBlue">
+        <button type="submit" class="px-4 py-2 bg-iosBlue hover:bg-blue-600 text-white font-bold text-xs rounded-xl shadow active:scale-95 transition">Buscar</button>
+      </form>
+    </div>
+
+    <!-- Tarjeta Principal de Seguimiento -->
+    <div id="orderCard" class="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+        <div>
+          <span class="text-[9px] text-zinc-500 font-bold uppercase tracking-wider block">Orden de Servicio</span>
+          <span id="trkOrderId" class="font-mono text-base font-black text-iosBlue">#OL-0000</span>
+        </div>
+        <div class="text-right">
+          <span class="text-[9px] text-zinc-500 block">Última actualización:</span>
+          <span id="trkOrderDate" class="text-[10px] text-zinc-300 font-mono">Conectando...</span>
+        </div>
+      </div>
+
+      <!-- Badge de Estado Destacado -->
+      <div id="trkBadgeContainer" class="p-4 rounded-2xl text-center space-y-1 bg-amber-950/40 border border-amber-500/40 transition-colors">
+        <div id="trkStatusIcon" class="text-2xl text-amber-400 mb-0.5"><i class="ph-bold ph-clock"></i></div>
+        <h2 id="trkStatusTitle" class="text-sm font-black text-white uppercase tracking-wide">Recibido en Taller</h2>
+        <p id="trkStatusDesc" class="text-[11px] text-zinc-300 leading-snug">El equipo ingresó al taller y está a la espera de diagnóstico técnico.</p>
+      </div>
+
+      <!-- Línea de Progreso -->
+      <div class="space-y-2">
+        <span class="text-[10px] uppercase font-bold text-zinc-400 tracking-wider block">Progreso de la reparación</span>
+        <div class="grid grid-cols-4 gap-1 text-center text-[10px] font-bold">
+          <div id="stepReceived" class="p-2 rounded-xl bg-zinc-800 text-zinc-400 border border-zinc-700/50 flex flex-col items-center gap-1">
+            <i class="ph-bold ph-clipboard-text text-sm"></i>
+            <span class="text-[9px]">Ingreso</span>
+          </div>
+          <div id="stepWorkshop" class="p-2 rounded-xl bg-zinc-800 text-zinc-400 border border-zinc-700/50 flex flex-col items-center gap-1">
+            <i class="ph-bold ph-wrench text-sm"></i>
+            <span class="text-[9px]">Taller</span>
+          </div>
+          <div id="stepTransit" class="p-2 rounded-xl bg-zinc-800 text-zinc-400 border border-zinc-700/50 flex flex-col items-center gap-1">
+            <i class="ph-bold ph-truck text-sm"></i>
+            <span class="text-[9px]">Viaje</span>
+          </div>
+          <div id="stepReady" class="p-2 rounded-xl bg-zinc-800 text-zinc-400 border border-zinc-700/50 flex flex-col items-center gap-1">
+            <i class="ph-bold ph-check-circle text-sm"></i>
+            <span class="text-[9px]">¡Listo!</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ficha del Dispositivo -->
+      <div class="p-3.5 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2 text-xs">
+        <div class="flex justify-between items-center pb-2 border-b border-zinc-800">
+          <span class="text-zinc-400">Equipo:</span>
+          <b id="trkDeviceModel" class="text-white font-bold">-</b>
+        </div>
+        <div>
+          <span class="text-zinc-500 text-[10px] uppercase font-bold block mb-0.5">Falla reportada:</span>
+          <p id="trkDeviceFault" class="text-zinc-300 text-[11px] leading-snug">-</p>
+        </div>
+        <div id="trkRepairDoneBox" class="hidden pt-2 border-t border-zinc-800">
+          <span class="text-emerald-400 text-[10px] uppercase font-bold block mb-0.5">Trabajo realizado:</span>
+          <p id="trkRepairDetails" class="text-zinc-200 text-[11px] leading-snug">-</p>
+        </div>
+      </div>
+
+      <!-- Estado Financiero -->
+      <div class="p-3.5 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-1.5 text-xs">
+        <div class="flex justify-between items-center text-zinc-400">
+          <span>Presupuesto total:</span>
+          <span id="trkBudgetTotal" class="font-mono text-zinc-200 font-bold">$0</span>
+        </div>
+        <div class="flex justify-between items-center text-zinc-400">
+          <span>Seña entregada:</span>
+          <span id="trkAdvancePaid" class="font-mono text-emerald-400 font-bold">$0</span>
+        </div>
+        <div class="flex justify-between items-center pt-2 border-t border-zinc-800 font-bold">
+          <span class="text-white uppercase text-[10px]">Resta abonar al retirar:</span>
+          <span id="trkBalanceDue" class="font-mono text-sm text-amber-400">$0</span>
+        </div>
+      </div>
+
+      <!-- Botón de Contacto por WhatsApp -->
+      <a id="trkBtnContactWA" href="#" target="_blank" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl flex items-center justify-center gap-1.5 shadow active:scale-95 transition text-xs">
+        <i class="ph-bold ph-whatsapp-logo text-base"></i> Consultar al Taller por WhatsApp
+      </a>
+    </div>
+
+    <!-- Indicador En Vivo -->
+    <div class="text-center space-y-1 text-zinc-500 text-[10px]">
+      <div class="flex items-center justify-center gap-1.5 text-emerald-400 font-bold">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>Conexión en Vivo con el Banco de Trabajo</span>
+      </div>
+      <p>OpenLine • Sistema de Gestión de Taller Profesional</p>
+    </div>
+
+  </div>
+
+  <script>
+    function $(id) { return document.getElementById(id); }
+
+    var urlParams = new URLSearchParams(window.location.search);
+    var targetOrderId = (urlParams.get('orden') || '').trim().toUpperCase();
+
+    function consultarManual(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      var inputVal = $('manualOrderInput').value.trim().toUpperCase();
+      if (!inputVal) return;
+      window.location.search = '?orden=' + encodeURIComponent(inputVal);
+    }
+
+    function renderTrackingData(data) {
+      if (!data) return;
+      if ($('trkWorkshopName')) $('trkWorkshopName').textContent = data.workshopName || 'Servicio Técnico';
+      if ($('trkWorkshopSubtitle')) $('trkWorkshopSubtitle').textContent = data.workshopSubtitle || 'Servicio Técnico Profesional';
+      if ($('trkOrderId')) $('trkOrderId').textContent = '#' + (data.id || targetOrderId);
+      if ($('trkDeviceModel')) $('trkDeviceModel').textContent = (data.brand || '') + ' ' + (data.model || '');
+      if ($('trkDeviceFault')) $('trkDeviceFault').textContent = data.fault || 'Diagnóstico general';
+
+      var dateStr = data.updatedAt ? new Date(data.updatedAt).toLocaleDateString('es-AR') + ' ' + new Date(data.updatedAt).toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'}) : 'Hoy';
+      if ($('trkOrderDate')) $('trkOrderDate').textContent = dateStr;
+
+      if (data.workshopLogo && $('trkLogoBox')) {
+        $('trkLogoBox').innerHTML = '<img src="' + data.workshopLogo + '" class="w-full h-full object-cover">';
+      }
+
+      var bTotal = parseFloat(data.budget) || 0;
+      var bAdvance = parseFloat(data.advance) || 0;
+      var bDue = Math.max(0, bTotal - bAdvance);
+
+      if ($('trkBudgetTotal')) $('trkBudgetTotal').textContent = '$' + bTotal.toLocaleString();
+      if ($('trkAdvancePaid')) $('trkAdvancePaid').textContent = '$' + bAdvance.toLocaleString();
+      if ($('trkBalanceDue')) $('trkBalanceDue').textContent = '$' + bDue.toLocaleString();
+
+      if (data.repairDetails && data.repairDetails.trim() !== '') {
+        $('trkRepairDoneBox').classList.remove('hidden');
+        $('trkRepairDetails').textContent = data.repairDetails;
+      } else {
+        $('trkRepairDoneBox').classList.add('hidden');
+      }
+
+      var phone = (data.workshopPhone || '').replace(/[^0-9]/g, '');
+      var btnWA = $('trkBtnContactWA');
+      if (btnWA) {
+        var msg = encodeURIComponent('Hola ' + (data.workshopName || 'Taller') + ', me comunico para consultar por mi orden #' + (data.id || targetOrderId) + ' (' + (data.brand || '') + ' ' + (data.model || '') + ').');
+        btnWA.href = phone ? ('https://wa.me/' + phone + '?text=' + msg) : ('https://wa.me/?text=' + msg);
+      }
+
+      // Estados y pasos visuales
+      var st = data.status || 'WAITING';
+      var badgeBox = $('trkBadgeContainer');
+      var badgeIcon = $('trkStatusIcon');
+      var badgeTitle = $('trkStatusTitle');
+      var badgeDesc = $('trkStatusDesc');
+
+      ['stepReceived', 'stepWorkshop', 'stepTransit', 'stepReady'].forEach(function(elId) {
+        var el = $(elId);
+        if (el) el.className = 'p-2 rounded-xl bg-zinc-800 text-zinc-500 border border-zinc-700/30 flex flex-col items-center gap-1';
+      });
+
+      if (st === 'WAITING') {
+        badgeBox.className = 'p-4 rounded-2xl text-center space-y-1 bg-amber-950/40 border border-amber-500/50';
+        badgeIcon.innerHTML = '<i class="ph-bold ph-clock text-amber-400"></i>';
+        badgeTitle.textContent = 'En Espera de Revisión';
+        badgeDesc.textContent = 'Tu equipo fue recepcionado en nuestro taller y espera turno de mesa técnica.';
+        $('stepReceived').className = 'p-2 rounded-xl bg-amber-600 text-white border border-amber-400 font-bold flex flex-col items-center gap-1 shadow-lg';
+      } else if (st === 'IN_PROGRESS') {
+        badgeBox.className = 'p-4 rounded-2xl text-center space-y-1 bg-blue-950/50 border border-blue-500/50';
+        badgeIcon.innerHTML = '<i class="ph-bold ph-wrench animate-spin text-iosBlue"></i>';
+        badgeTitle.textContent = 'En Reparación / Taller';
+        badgeDesc.textContent = 'El equipo se encuentra actualmente en mesa de trabajo siendo revisado o reparado.';
+        $('stepReceived').className = 'p-2 rounded-xl bg-zinc-800 text-emerald-400 font-bold flex flex-col items-center gap-1';
+        $('stepWorkshop').className = 'p-2 rounded-xl bg-iosBlue text-white border border-blue-400 font-bold flex flex-col items-center gap-1 shadow-lg';
+      } else if (st === 'IN_TRANSIT') {
+        badgeBox.className = 'p-4 rounded-2xl text-center space-y-1 bg-indigo-950/50 border border-indigo-500/50';
+        badgeIcon.innerHTML = '<i class="ph-bold ph-truck animate-pulse text-indigo-400"></i>';
+        badgeTitle.textContent = 'En Traslado Seguro';
+        badgeDesc.textContent = 'Tu equipo está siendo derivado entre sucursales de nuestro servicio técnico.';
+        $('stepReceived').className = 'p-2 rounded-xl bg-zinc-800 text-emerald-400 font-bold flex flex-col items-center gap-1';
+        $('stepWorkshop').className = 'p-2 rounded-xl bg-zinc-800 text-emerald-400 font-bold flex flex-col items-center gap-1';
+        $('stepTransit').className = 'p-2 rounded-xl bg-indigo-600 text-white border border-indigo-400 font-bold flex flex-col items-center gap-1 shadow-lg';
+      } else if (st === 'READY') {
+        badgeBox.className = 'p-4 rounded-2xl text-center space-y-1 bg-emerald-950/60 border border-emerald-500 shadow-[0_0_20px_rgba(52,199,89,0.2)]';
+        badgeIcon.innerHTML = '<i class="ph-bold ph-check-circle text-emerald-400"></i>';
+        badgeTitle.textContent = '¡EQUIPO LISTO PARA RETIRAR!';
+        badgeDesc.textContent = 'La reparación ha finalizado con éxito. Puedes pasar por el taller a retirarlo presentando tu comprobante.';
+        $('stepReceived').className = 'p-2 rounded-xl bg-zinc-800 text-emerald-400 font-bold flex flex-col items-center gap-1';
+        $('stepWorkshop').className = 'p-2 rounded-xl bg-zinc-800 text-emerald-400 font-bold flex flex-col items-center gap-1';
+        $('stepTransit').className = 'p-2 rounded-xl bg-zinc-800 text-emerald-400 font-bold flex flex-col items-center gap-1';
+        $('stepReady').className = 'p-2 rounded-xl bg-emerald-600 text-white border border-emerald-400 font-bold flex flex-col items-center gap-1 shadow-lg animate-pulse';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!targetOrderId) {
+        $('manualSearchBox').classList.remove('hidden');
+        $('orderCard').classList.add('hidden');
+        return;
+      }
+
+      $('trkOrderId').textContent = '#' + targetOrderId;
+
+      var clientId = 'track_' + Math.random().toString(36).substring(2, 9);
+      var mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: clientId, clean: true });
+
+      var topic = 'openline/v4/track/' + targetOrderId;
+
+      mqttClient.on('connect', function() {
+        mqttClient.subscribe(topic, { qos: 1 });
+      });
+
+      mqttClient.on('message', function(t, message) {
+        if (t === topic) {
+          try {
+            var data = JSON.parse(message.toString());
+            renderTrackingData(data);
+          } catch(e) {}
+        }
+      });
+    });
+  </script>
+</body>
+</html>
