@@ -728,7 +728,8 @@
         if($('emptyState')) $('emptyState').classList.add('hidden');
         container.innerHTML = filtered.map(function(r) {
           var stColor = r.status === 'READY' ? 'text-emerald-400' : (r.status === 'IN_PROGRESS' ? 'text-amber-400' : 'text-zinc-
-window.openDetailModal = function(id) {
+      
+      window.openDetailModal = function(id) {
       var r = repairs.find(function(x) { return x.id === id; }); if(!r) return; selectedRepairId = id;
       if($('dtlOrderId'))$('dtlOrderId').textContent = r.id;
       if($('dtlDeviceTitle'))$('dtlDeviceTitle').textContent = r.deviceBrand + ' ' + r.deviceModel;
