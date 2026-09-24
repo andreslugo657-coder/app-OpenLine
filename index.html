@@ -727,15 +727,45 @@
       } else {
         if($('emptyState')) $('emptyState').classList.add('hidden');
         container.innerHTML = filtered.map(function(r) {
-          var stColor = r.status === 'READY' ? 'text-emerald-400' : (r.status === 'IN_PROGRESS' ? 'text-amber-400' : 'text-zinc-300');
-          return '<div onclick="window.openDetailModal(\''+r.id+'\')" class="bg-zinc-900 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between shadow-sm active:scale-[0.98] transition cursor-pointer">' +
-                 '<div><div class="flex items-center gap-1.5"><span class="font-mono text-xs font-bold text-iosBlue">'+r.id+'</span><span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-zinc-800 '+stColor+'">'+r.status+'</span><span class="text-[9px] text-zinc-400 font-bold">('+(r.branch||'Central')+')</span></div>' +
-                 '<h4 class="text-xs font-bold text-white mt-0.5">'+r.deviceBrand+' '+r.deviceModel+'</h4><div class="text-[10px] text-zinc-400 mt-0.5">'+r.clientName+'</div></div>' +
-                 '<i class="ph-bold ph-caret-right text-zinc-600 text-base"></i></div>';
-        }).join('');
-      }
-    };
+          var stColor = r.status === 'READY' ? 'text-emerald-400' : (r.status === 'IN_PROGRESS' ? 'text-amber-400' : 'text-zinc-
+window.openDetailModal = function(id) {
+      var r = repairs.find(function(x) { return x.id === id; }); if(!r) return; selectedRepairId = id;
+      if($('dtlOrderId'))$('dtlOrderId').textContent = r.id;
+      if($('dtlDeviceTitle'))$('dtlDeviceTitle').textContent = r.deviceBrand + ' ' + r.deviceModel;
+      if($('dtlClientName'))$('dtlClientName').textContent = r.clientName;
+      if($('dtlClientPhone'))$('dtlClientPhone').textContent = r.clientPhone;
+      if($('dtlDeviceFault'))$('dtlDeviceFault').textContent = r.fault || 'Sin descripción';
+      if($('dtlRepairDetailsText'))$('dtlRepairDetailsText').textContent = r.repairDetails || 'Ningún trabajo detallado aún.';
+      if($('dtlOperationalStatusBadge'))$('dtlOperationalStatusBadge').textContent = r.status;
+      if($('dtlBudgetTotal')) $('dtlBudgetTotal').textContent = '$' + (r.budget || 0);
+      if($('dtlAdvancePaid')) $('dtlAdvancePaid').textContent = '$' + (r.advance || 0);
+      if($('dtlBalanceDue')) $('dtlBalanceDue').textContent = '$' + ((r.budget || 0) - (r.advance || 0));
 
+      var dtlGrid = $('dtlPhotosGrid'); var dtlSec =$('dtlPhotosSection');
+      if (dtlGrid && dtlSec) {
+        if (r.photos && r.photos.length > 0) {
+          dtlSec.style.display = 'block';
+          dtlGrid.innerHTML = r.photos.map(function(src) { return '<div class="w-14 h-14 shrink-0 rounded-xl overflow-hidden border border-zinc-700 shadow-sm cursor-pointer" onclick="window.open(\''+src+'\', \'_blank\')"><img src="' + src + '" class="w-full h-full object-cover"></div>'; }).join('');
+        } else { dtlSec.style.display = 'none'; }
+      }
+
+      // Inyección automática de los botones de seguimiento si aún no están en pantalla
+      if (!$('btnAutoTrackingWA')) {
+        var reportBox = $('dtlRepairDetailsBox') ?$('dtlRepairDetailsBox').parentElement : null;
+        if (reportBox) {
+          var container = document.createElement('div');
+          container.id = 'btnAutoTrackingWA';
+          container.className = 'grid grid-cols-2 gap-2 pt-1.5 border-t border-zinc-800/60 mt-2';
+          container.innerHTML = `
+            <button type="button" onclick="window.sendTrackingWA()" class="py-2.5 rounded-xl bg-indigo-950 hover:bg-indigo-900 border border-indigo-600/80 text-indigo-300 font-bold text-[10px] flex items-center justify-center gap-1.5 shadow active:scale-95 transition"><i class="ph-bold ph-globe text-sm text-iosBlue"></i> Enviar Seguimiento WA</button>
+            <button type="button" onclick="window.copyTrackingLink()" class="py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 font-bold text-[10px] flex items-center justify-center gap-1.5 shadow active:scale-95 transition"><i class="ph-bold ph-link text-sm text-emerald-400"></i> Copiar Link Cliente</button>
+          `;
+          reportBox.appendChild(container);
+        }
+      }
+
+      window.openModal('detailModal');
+    };
     window.updateCounters = function() {
       var wait=0, prog=0, trans=0, ready=0;
       repairs.forEach(function(r) {
