@@ -1755,6 +1755,7 @@
       if(!r.clientName || !r.deviceBrand || !r.deviceModel) { window.showToast("Error", "Completa los campos obligatorios (*)"); return; }
       repairs.unshift(r); 
       StorageShield.save('repairs', repairs);
+      window.publishOrderTracking(r);
 
       if (advanceAmt > 0) {
         if (!Array.isArray(cashMovements)) cashMovements = [];
@@ -2410,6 +2411,7 @@
           dtlGrid.innerHTML = r.photos.map(function(src) { return '<div class="w-14 h-14 shrink-0 rounded-xl overflow-hidden border border-zinc-700 shadow-sm cursor-pointer" onclick="window.open(\''+src+'\', \'_blank\')"><img src="' + src + '" class="w-full h-full object-cover"></div>'; }).join('');
         } else { dtlSec.style.display = 'none'; }
       }
+      window.publishOrderTracking(r);
       window.openModal('detailModal');
     };
 
@@ -2426,6 +2428,7 @@
       r.clientName = $('editClientName').value; r.deviceBrand = $('editDeviceBrand').value; r.deviceModel = $('editDeviceModel').value;
       r.fault = $('editDeviceFault').value; r.repairDetails = $('editRepairDetails').value;
       StorageShield.save('repairs', repairs);
+      window.publishOrderTracking(r);
       window.closeModal('editRepairModal'); window.openDetailModal(r.id); window.renderRepairsList(); window.showToast("Guardado", "Orden actualizada.");
     };
 
@@ -2470,20 +2473,29 @@
       };
     };
 
-    window.publishOrderStatusMQTT = function(r) {
+    window.publishOrderTracking = function(r) {
       if (!mqttClient || !mqttClient.connected || !r || !r.id) return;
       var payload = window.buildPublicOrderStatus(r);
-      mqttClient.publish('openline/v4/order/' + r.id + '/status', JSON.stringify(payload), { retain: true, qos: 1 });
+      mqttClient.publish('openline/v4/track/' + String(r.id).toUpperCase(), JSON.stringify(payload), { retain: true, qos: 1 });
+    };
+
+    window.publishAllOrdersTracking = function() {
+      if (!Array.isArray(repairs)) return;
+      repairs.forEach(function(r) { window.publishOrderTracking(r); });
+    };
+
+    window.publishOrderStatusMQTT = function(r) {
+      window.publishOrderTracking(r);
     };
 
     window.clearOrderStatusMQTT = function(orderId) {
       if (!mqttClient || !mqttClient.connected || !orderId) return;
-      mqttClient.publish('openline/v4/order/' + orderId + '/status', '', { retain: true, qos: 1 });
+      mqttClient.publish('openline/v4/track/' + String(orderId).toUpperCase(), '', { retain: true, qos: 1 });
     };
 
     window.sendTrackingLinkWA = function() {
       var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if (!r) return;
-      window.publishOrderStatusMQTT(r);
+      window.publishOrderTracking(r);
       var url = window.getTrackingUrl(r.id);
       var phone = r.clientPhone ? r.clientPhone.replace(/[^0-9]/g, '') : null;
       var msg = '*' + ((workshopSettings.name || 'OpenLine').toUpperCase()) + '* 🔍\n' +
@@ -2500,7 +2512,7 @@
 
     window.copyTrackingLink = function() {
       var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if (!r) return;
-      window.publishOrderStatusMQTT(r);
+      window.publishOrderTracking(r);
       var url = window.getTrackingUrl(r.id);
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(url).then(function() { window.showToast("Copiado", "Link de seguimiento copiado."); }).catch(function() { window.fallbackCopyText(url); });
@@ -2512,7 +2524,7 @@
     window.updateDeviceOperationalStatus = function(st) {
       var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
       r.status = st; StorageShield.save('repairs', repairs);
-      window.publishOrderStatusMQTT(r);
+      window.publishOrderTracking(r);
       if($('dtlOperationalStatusBadge')) $('dtlOperationalStatusBadge').textContent = st;
       window.renderRepairsList(); window.updateCounters(); window.showToast("Estado", "Actualizado a " + st);
     };
@@ -2598,9 +2610,7 @@
         };
         mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', JSON.stringify(payload), { retain: true });
 
-        if (Array.isArray(repairs)) {
-          repairs.forEach(function(r) { window.publishOrderStatusMQTT(r); });
-        }
+        if (window.publishAllOrdersTracking) window.publishAllOrdersTracking();
         
         if (isPro && lic) {
            mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/license', JSON.stringify(lic), { retain: true, qos: 1 });
@@ -2616,6 +2626,7 @@
       
       mqttClient.on('connect', function() {
         if($('livePulseDot')) $('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
+        window.publishAllOrdersTracking();
         var wsCode = currentWorkshopId.toUpperCase();
         
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/sync', { qos: 1 });
