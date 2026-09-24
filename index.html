@@ -150,7 +150,7 @@
       <div id="branchTabsButtonsList" class="flex gap-1 overflow-x-auto no-scrollbar text-xs font-medium pb-0.5"></div>
     </div>
 
-    <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5">
       <button type="button" onclick="window.openCashModal()" class="w-full text-center bg-gradient-to-br from-zinc-900 to-emerald-950/40 border border-emerald-900/40 rounded-xl p-2 shadow-sm active:scale-95 transition">
         <span class="text-[9px] text-emerald-400 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-wallet"></i> Saldo Caja (<span id="headerCashBranchTag">Central</span>)</span>
         <span id="headerCashBalance" class="text-sm font-extrabold text-emerald-300 font-mono mt-0.5 block">$0</span>
@@ -161,10 +161,13 @@
       <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center shadow-sm">
         <span class="text-[9px] text-amber-400 block font-bold uppercase">Taller</span><span id="counterInProgress" class="text-sm font-bold text-amber-400 mt-0.5 block">0</span>
       </div>
+      <div class="bg-zinc-900 border border-violet-800/60 rounded-xl p-2 text-center shadow-sm">
+        <span class="text-[9px] text-violet-400 block font-bold uppercase">Repuestos</span><span id="counterWaitingParts" class="text-sm font-bold text-violet-300 mt-0.5 block">0</span>
+      </div>
       <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center shadow-sm">
         <span class="text-[9px] text-indigo-400 block font-bold uppercase">En Viaje</span><span id="counterTransit" class="text-sm font-bold text-indigo-400 mt-0.5 block">0</span>
       </div>
-      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center shadow-sm col-span-2 sm:col-span-1">
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center shadow-sm">
         <span class="text-[9px] text-emerald-400 block font-bold uppercase">Listos</span><span id="counterReady" class="text-sm font-bold text-emerald-400 mt-0.5 block">0</span>
       </div>
     </div>
@@ -179,6 +182,7 @@
         <button type="button" onclick="window.setFilter('ALL')" id="tabALL" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-800 text-white font-bold shrink-0 transition text-xs">Todos</button>
         <button type="button" onclick="window.setFilter('WAITING')" id="tabWAITING" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Espera</button>
         <button type="button" onclick="window.setFilter('IN_PROGRESS')" id="tabIN_PROGRESS" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Taller</button>
+        <button type="button" onclick="window.setFilter('WAITING_PARTS')" id="tabWAITING_PARTS" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Repuestos</button>
         <button type="button" onclick="window.setFilter('IN_TRANSIT')" id="tabIN_TRANSIT" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Viaje</button>
         <button type="button" onclick="window.setFilter('READY')" id="tabREADY" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Listos</button>
       </div>
@@ -498,7 +502,7 @@
           <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl flex items-center justify-between"><div><span class="text-[10px] text-zinc-400 uppercase font-bold block">Cobro de Reparación</span><span class="text-xs text-zinc-300">Ingresar saldo a caja local</span></div><button type="button" onclick="window.chargeRepairToCash()" class="py-1.5 px-3 rounded-xl bg-emerald-950 border border-emerald-600/70 text-emerald-300 font-bold text-xs flex items-center gap-1 active:scale-95 transition"><i class="ph-bold ph-wallet text-sm"></i> Cobrar a Caja</button></div>
           <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
             <div class="flex items-center justify-between"><span class="text-[10px] text-zinc-400 font-bold uppercase">Estado Operativo:</span><span id="dtlOperationalStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-950 text-amber-300">Espera</span></div>
-            <div class="grid grid-cols-4 gap-1.5"><button type="button" onclick="window.updateDeviceOperationalStatus('WAITING')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-clock text-amber-400 text-base mb-1 block"></i> Espera</button><button type="button" onclick="window.updateDeviceOperationalStatus('IN_PROGRESS')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-wrench text-iosBlue text-base mb-1 block"></i> Taller</button><button type="button" onclick="window.updateDeviceOperationalStatus('IN_TRANSIT')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-truck text-indigo-400 text-base mb-1 block"></i> Viaje</button><button type="button" onclick="window.updateDeviceOperationalStatus('READY')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-check-circle text-emerald-400 text-base mb-1 block"></i> Listo</button></div>
+            <div class="grid grid-cols-5 gap-1"><button type="button" onclick="window.updateDeviceOperationalStatus('WAITING')" class="p-2 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[9px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-clock text-amber-400 text-base mb-1 block"></i> Espera</button><button type="button" onclick="window.updateDeviceOperationalStatus('IN_PROGRESS')" class="p-2 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[9px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-wrench text-iosBlue text-base mb-1 block"></i> Taller</button><button type="button" onclick="window.updateDeviceOperationalStatus('WAITING_PARTS')" class="p-2 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[9px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-package text-violet-400 text-base mb-1 block"></i> Repuesto</button><button type="button" onclick="window.updateDeviceOperationalStatus('IN_TRANSIT')" class="p-2 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[9px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-truck text-indigo-400 text-base mb-1 block"></i> Viaje</button><button type="button" onclick="window.updateDeviceOperationalStatus('READY')" class="p-2 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[9px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-check-circle text-emerald-400 text-base mb-1 block"></i> Listo</button></div>
             <div class="grid grid-cols-2 gap-2 pt-1">
               <button type="button" onclick="window.sendTrackingLinkWA()" class="py-2 rounded-xl bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-whatsapp-logo text-sm"></i> WA Seguimiento</button>
               <button type="button" onclick="window.copyTrackingLink()" class="py-2 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-link text-sm text-iosBlue"></i> Copiar Link</button>
@@ -519,6 +523,13 @@
         <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Equipo</label><div class="grid grid-cols-2 gap-2"><input type="text" id="editDeviceBrand" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white"><input type="text" id="editDeviceModel" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white"></div></div>
         <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Diagnóstico / Falla</label><textarea id="editDeviceFault" rows="2" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"></textarea></div>
         <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Reparación / Trabajo Realizado</label><textarea id="editRepairDetails" rows="3" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"></textarea></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Presupuesto Total ($)</label><input type="number" id="editDeviceBudget" min="0" step="0.01" oninput="window.calcBalance('edit')" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></div>
+          <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Seña / Adelanto ($)</label><input type="number" id="editDeviceAdvance" min="0" step="0.01" oninput="window.calcBalance('edit')" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold"></div>
+        </div>
+        <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2">
+          <span class="text-zinc-400 font-bold uppercase text-[10px]">Saldo Restante ($)</span><span id="editCalculatedBalance" class="font-mono font-bold text-amber-400 text-sm">$0</span>
+        </div>
         <div class="grid grid-cols-2 gap-2 pt-2"><button type="button" onclick="window.closeModal('editRepairModal')" class="py-2.5 bg-zinc-800 text-white font-bold rounded-xl">Cancelar</button><button type="submit" class="py-2.5 bg-iosBlue text-white font-bold rounded-xl">Guardar</button></div>
       </form>
     </div>
@@ -1729,6 +1740,10 @@
         var total = parseFloat($('inpDeviceBudget').value) || 0; var advance = parseFloat($('inpDeviceAdvance').value) || 0;
         if($('newCalculatedBalance')) $('newCalculatedBalance').textContent = '$' + (total - advance);
       }
+      if(type === 'edit') {
+        var editTotal = parseFloat($('editDeviceBudget').value) || 0; var editAdvance = parseFloat($('editDeviceAdvance').value) || 0;
+        if($('editCalculatedBalance')) $('editCalculatedBalance').textContent = '$' + (editTotal - editAdvance);
+      }
     };
 
     window.guardarIngresoDirecto = function() {
@@ -2350,10 +2365,18 @@
     window.clearSearch = function() { if($('searchInput')) $('searchInput').value = ''; window.renderRepairsList(); };
     window.setFilter = function(f) {
       currentFilter = f;
-      ['ALL','WAITING','IN_PROGRESS','IN_TRANSIT','READY'].forEach(function(id) {
+      ['ALL','WAITING','IN_PROGRESS','WAITING_PARTS','IN_TRANSIT','READY'].forEach(function(id) {
         var el = $('tab'+id); if(el) el.className = (id === f) ? 'filter-tab px-2.5 py-1 rounded-lg bg-zinc-800 text-white font-bold shrink-0 transition text-xs' : 'filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs';
       });
       window.renderRepairsList();
+    };
+
+    window.getOperationalStatusMeta = function(st) {
+      if (st === 'READY') return { label: 'Listo', badge: 'bg-emerald-950 text-emerald-300', list: 'bg-emerald-950 text-emerald-400' };
+      if (st === 'IN_PROGRESS') return { label: 'Taller', badge: 'bg-amber-950 text-amber-300', list: 'bg-amber-950 text-amber-400' };
+      if (st === 'IN_TRANSIT') return { label: 'Viaje', badge: 'bg-indigo-950 text-indigo-300', list: 'bg-indigo-950 text-indigo-400' };
+      if (st === 'WAITING_PARTS') return { label: 'Espera de Repuesto', badge: 'bg-violet-950 text-violet-300', list: 'bg-violet-950 text-violet-300' };
+      return { label: 'Espera', badge: 'bg-amber-950 text-amber-300', list: 'bg-zinc-800 text-zinc-300' };
     };
 
     window.renderRepairsList = function() {
@@ -2372,9 +2395,9 @@
       } else {
         if($('emptyState')) $('emptyState').classList.add('hidden');
         container.innerHTML = filtered.map(function(r) {
-          var stColor = r.status === 'READY' ? 'text-emerald-400' : (r.status === 'IN_PROGRESS' ? 'text-amber-400' : 'text-zinc-300');
+          var meta = window.getOperationalStatusMeta(r.status);
           return '<div onclick="window.openDetailModal(\''+r.id+'\')" class="bg-zinc-900 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between shadow-sm active:scale-[0.98] transition cursor-pointer">' +
-                 '<div><div class="flex items-center gap-1.5"><span class="font-mono text-xs font-bold text-iosBlue">'+r.id+'</span><span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-zinc-800 '+stColor+'">'+r.status+'</span><span class="text-[9px] text-zinc-400 font-bold">('+(r.branch||'Central')+')</span></div>' +
+                 '<div><div class="flex items-center gap-1.5"><span class="font-mono text-xs font-bold text-iosBlue">'+r.id+'</span><span class="text-[9px] px-1.5 py-0.5 rounded font-bold '+meta.list+'">'+meta.label+'</span><span class="text-[9px] text-zinc-400 font-bold">('+(r.branch||'Central')+')</span></div>' +
                  '<h4 class="text-xs font-bold text-white mt-0.5">'+r.deviceBrand+' '+r.deviceModel+'</h4><div class="text-[10px] text-zinc-400 mt-0.5">'+r.clientName+'</div></div>' +
                  '<i class="ph-bold ph-caret-right text-zinc-600 text-base"></i></div>';
         }).join('');
@@ -2382,12 +2405,13 @@
     };
 
     window.updateCounters = function() {
-      var wait=0, prog=0, trans=0, ready=0;
+      var wait=0, prog=0, parts=0, trans=0, ready=0;
       repairs.forEach(function(r) {
         if(!r) return; if(currentBranchFilter !== 'ALL' && r.branch !== currentBranchFilter) return;
-        if(r.status === 'WAITING') wait++; if(r.status === 'IN_PROGRESS') prog++; if(r.status === 'IN_TRANSIT') trans++; if(r.status === 'READY') ready++;
+        if(r.status === 'WAITING') wait++; if(r.status === 'IN_PROGRESS') prog++; if(r.status === 'WAITING_PARTS') parts++; if(r.status === 'IN_TRANSIT') trans++; if(r.status === 'READY') ready++;
       });
       if($('counterReceived')) $('counterReceived').textContent = wait; if($('counterInProgress')) $('counterInProgress').textContent = prog;
+      if($('counterWaitingParts')) $('counterWaitingParts').textContent = parts;
       if($('counterTransit')) $('counterTransit').textContent = trans; if($('counterReady')) $('counterReady').textContent = ready;
     };
 
@@ -2399,7 +2423,11 @@
       if($('dtlClientPhone')) $('dtlClientPhone').textContent = r.clientPhone;
       if($('dtlDeviceFault')) $('dtlDeviceFault').textContent = r.fault || 'Sin descripción';
       if($('dtlRepairDetailsText')) $('dtlRepairDetailsText').textContent = r.repairDetails || 'Ningún trabajo detallado aún.';
-      if($('dtlOperationalStatusBadge')) $('dtlOperationalStatusBadge').textContent = r.status;
+      if($('dtlOperationalStatusBadge')) {
+        var dtlMeta = window.getOperationalStatusMeta(r.status);
+        $('dtlOperationalStatusBadge').textContent = dtlMeta.label;
+        $('dtlOperationalStatusBadge').className = 'text-[10px] font-bold px-2 py-0.5 rounded-md ' + dtlMeta.badge;
+      }
       if($('dtlBudgetTotal')) $('dtlBudgetTotal').textContent = '$' + (r.budget || 0);
       if($('dtlAdvancePaid')) $('dtlAdvancePaid').textContent = '$' + (r.advance || 0);
       if($('dtlBalanceDue')) $('dtlBalanceDue').textContent = '$' + ((r.budget || 0) - (r.advance || 0));
@@ -2420,6 +2448,9 @@
       if($('editClientName')) $('editClientName').value = r.clientName || ''; if($('editDeviceBrand')) $('editDeviceBrand').value = r.deviceBrand || '';
       if($('editDeviceModel')) $('editDeviceModel').value = r.deviceModel || ''; if($('editDeviceFault')) $('editDeviceFault').value = r.fault || '';
       if($('editRepairDetails')) $('editRepairDetails').value = r.repairDetails || '';
+      if($('editDeviceBudget')) $('editDeviceBudget').value = r.budget != null ? r.budget : 0;
+      if($('editDeviceAdvance')) $('editDeviceAdvance').value = r.advance != null ? r.advance : 0;
+      window.calcBalance('edit');
       window.openModal('editRepairModal');
     };
 
@@ -2427,6 +2458,8 @@
       e.preventDefault(); var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
       r.clientName = $('editClientName').value; r.deviceBrand = $('editDeviceBrand').value; r.deviceModel = $('editDeviceModel').value;
       r.fault = $('editDeviceFault').value; r.repairDetails = $('editRepairDetails').value;
+      r.budget = parseFloat($('editDeviceBudget').value) || 0;
+      r.advance = parseFloat($('editDeviceAdvance').value) || 0;
       StorageShield.save('repairs', repairs);
       window.publishOrderTracking(r);
       window.closeModal('editRepairModal'); window.openDetailModal(r.id); window.renderRepairsList(); window.showToast("Guardado", "Orden actualizada.");
@@ -2525,8 +2558,12 @@
       var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
       r.status = st; StorageShield.save('repairs', repairs);
       window.publishOrderTracking(r);
-      if($('dtlOperationalStatusBadge')) $('dtlOperationalStatusBadge').textContent = st;
-      window.renderRepairsList(); window.updateCounters(); window.showToast("Estado", "Actualizado a " + st);
+      if($('dtlOperationalStatusBadge')) {
+        var stMeta = window.getOperationalStatusMeta(st);
+        $('dtlOperationalStatusBadge').textContent = stMeta.label;
+        $('dtlOperationalStatusBadge').className = 'text-[10px] font-bold px-2 py-0.5 rounded-md ' + stMeta.badge;
+      }
+      window.renderRepairsList(); window.updateCounters(); window.showToast("Estado", "Actualizado a " + window.getOperationalStatusMeta(st).label);
     };
 
     window.chargeRepairToCash = function() {
