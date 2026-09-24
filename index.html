@@ -8,14 +8,18 @@
   <meta name="apple-mobile-web-app-title" content="OpenLine">
   <meta name="theme-color" content="#09090b">
   <title>OpenLine - Gestión de Taller Profesional</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config = { theme: { extend: { colors: { iosBlue: '#007AFF', iosGreen: '#34C759', iosOrange: '#FF9500', iosRed: '#FF3B30', iosPurple: '#AF52DE' } } } };</script>
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
   <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  
+  <!-- LIBRERÍAS DE SEGURIDAD (Encriptación E2EE y Sanitización XSS) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
+
   <style>
     body { min-height: 100vh; min-height: 100dvh; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
     .pt-safe { padding-top: max(env(safe-area-inset-top), 8px); }
@@ -39,6 +43,7 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen relative z-0">
 
+  <!-- AVISO ANIMADO -->
   <div id="realtimeSyncBanner" style="display: none;" class="fixed top-4 left-1/2 -translate-x-1/2 z-[100000] bg-emerald-950/95 border border-emerald-500/60 text-white px-4 py-3 rounded-2xl shadow-[0_10px_35px_rgba(16,185,129,0.25)] flex items-start gap-3 w-[92%] max-w-md transition-all duration-700 ease-out transform -translate-y-[150%] opacity-0 pointer-events-auto backdrop-blur-xl">
     <div class="mt-0.5 w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center shrink-0"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span></div>
     <div class="flex-1"><div class="flex items-center gap-1.5 mb-0.5"><h4 class="font-bold text-emerald-300 text-xs uppercase tracking-wider">Red Protegida E2EE</h4><span class="text-[9px] font-mono bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded-full font-bold">AES-256</span></div><p class="text-[10px] text-zinc-200 leading-relaxed">Catálogo compartido, stock y órdenes vinculadas en vivo mediante encriptación militar.</p></div>
@@ -96,6 +101,7 @@
     <div id="repairsList" class="space-y-2 pb-6"></div>
     <div id="emptyState" class="hidden text-center py-8 px-4"><div class="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto mb-2 text-zinc-600"><i class="ph-bold ph-clipboard-text text-xl"></i></div><h3 class="text-xs font-semibold text-zinc-400">No hay órdenes registradas</h3></div>
   </main>
+
   <div class="ticker-wrap pb-safe border-t border-zinc-800"><div class="ticker text-[10px] font-bold text-zinc-500 tracking-widest uppercase flex items-center gap-3"><span>🚀 DESARROLLADO POR OPENLINE • INDUSTRIA ARGENTINA 🇦🇷 • SOFTWARE PARA TALLERES PROFESIONALES 🚀</span></div></div>
 
   <!-- MODALES DE ALERTA -->
@@ -151,7 +157,7 @@
     </div>
   </div>
 
-  <!-- MODAL COMPROBANTE / ETIQUETA -->
+  <!-- MODAL COMPROBANTE -->
   <div id="repairTicketModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-iosBlue/70 rounded-t-3xl sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300 modal-card flex flex-col shadow-2xl">
       <div class="flex items-center justify-between pb-1 shrink-0"><div class="flex items-center gap-1.5"><i class="ph-bold ph-tag text-iosBlue text-base"></i><h3 class="font-bold text-white text-sm">Comprobante de Ingreso</h3></div><button type="button" onclick="window.closeModal('repairTicketModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -342,7 +348,7 @@
 
   <!-- SCRIPT GLOBAL BLINDADO -->
   <script>
-    var APP_CODE_VERSION = 'v29.1.0-SECURE-FULL'; 
+    var APP_CODE_VERSION = 'v29.2.0-SECURE-FULL'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var ACTIVE_USER_KEY = 'openline_current_active_user';
@@ -434,9 +440,45 @@
     window.requestAdminPinAuth = function(actionDesc, onSuccessCallback) { var correctPin = (workshopSettings.adminPin || '1234').trim(); window.appPrompt("🔑 ACCIÓN PROTEGIDA", actionDesc + "\n\nIngresa Clave Maestra (o escribe 'RECUPERAR'):", "password", "", function(entered) { if (entered === null) return; entered = entered.trim(); if (entered === correctPin) { onSuccessCallback(); } else if (entered.toUpperCase() === 'RECUPERAR') { window.recoverAdminPinWA(); } else { window.showToast("Error", "Clave incorrecta."); } }); };
 
     window.checkLocalBranch = function() { var stored = localStorage.getItem(LOCAL_BRANCH_KEY); var branches = workshopSettings.branches || ['Central']; if (!stored || !branches.includes(stored)) { window.setLocalBranch(branches[0], true); } };
-    window.setLocalBranch = function(b, skipAuth) { var executeAssign = function() { localBranch = b; currentCashBranch = b; try { localStorage.setItem(LOCAL_BRANCH_KEY, b); } catch(e){} if(!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {}; if(!workshopSettings.usersByBranch[localBranch]) { workshopSettings.usersByBranch[localBranch] = ['Admin']; StorageShield.save('settings', workshopSettings); } window.renderBranchTabs(); window.updateCashBalanceUI(); window.broadcastPresence(); }; if (!skipAuth && b !== localBranch && localStorage.getItem(LOCAL_BRANCH_KEY)) { window.requestAdminPinAuth("Asignar Sucursal a este Dispositivo", executeAssign); } else { executeAssign(); } };
+    window.setLocalBranch = function(b, skipAuth) { var executeAssign = function() { localBranch = b; currentCashBranch = b; try { localStorage.setItem(LOCAL_BRANCH_KEY, b); } catch(e){} if(!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {}; if(!workshopSettings.usersByBranch[localBranch]) { workshopSettings.usersByBranch[localBranch] = ['Admin']; StorageShield.save('settings', workshopSettings); } window.renderBranchTabs(); if(typeof window.updateCashBalanceUI === 'function') window.updateCashBalanceUI(); window.broadcastPresence(); }; if (!skipAuth && b !== localBranch && localStorage.getItem(LOCAL_BRANCH_KEY)) { window.requestAdminPinAuth("Asignar Sucursal a este Dispositivo", executeAssign); } else { executeAssign(); } };
 
-    window.renderUnifiedUsersAndDevices = function() { var usersContainer = $('usersUnifiedList'); var devicesContainer = $('devicesUnifiedList'); var branchSelect = $('inpNewStaffBranch'); var branches = workshopSettings.branches || ['Central']; var isAdmin = (activeUser === 'Admin'); if($('sectionDevices')) $('sectionDevices').style.display = isAdmin ? 'block' : 'none'; if($('sectionAddStaff')) $('sectionAddStaff').style.display = isAdmin ? 'block' : 'none'; if (branchSelect) { branchSelect.innerHTML = branches.map(function(b) { return '<option value="' + S(b) + '">' + S(b) + '</option>'; }).join(''); } if (usersContainer) { if (!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {}; var allUsers = []; allUsers.push({ name: 'Admin', branch: 'Global' }); var visibleBranches = isAdmin ? branches : [localBranch]; visibleBranches.forEach(function(b) { var list = workshopSettings.usersByBranch[b] || []; list.forEach(function(u) { if (u !== 'Admin') allUsers.push({ name: u, branch: b }); }); }); usersContainer.innerHTML = allUsers.map(function(u) { var isCurrent = (u.name === activeUser); var isMainAdminUser = (u.name === 'Admin'); var branchControl = ''; var deleteButton = ''; if (isAdmin) { if (isMainAdminUser) { branchControl = '<span class="text-[9px] font-mono font-bold text-iosBlue bg-iosBlue/10 px-2 py-0.5 rounded">GLOBAL</span>'; } else { var branchOptions = branches.map(function(b) { return '<option value="' + S(b) + '" ' + (u.branch === b ? 'selected' : '') + '>' + S(b) + '</option>'; }).join(''); branchControl = '<select onchange="window.changeUserBranch(\'' + S(u.name) + '\', \'' + S(u.branch) + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + branchOptions + '</select>'; deleteButton = '<button type="button" onclick="window.deleteStaffMember(\'' + S(u.name) + '\', \'' + S(u.branch) + '\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center active:scale-95 transition" title="Eliminar usuario"><i class="ph-bold ph-trash"></i></button>'; } } else { branchControl = '<span class="text-[9px] text-zinc-500 font-bold px-1">(' + S(u.branch) + ')</span>'; } return '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800"><div class="flex items-center gap-1.5 min-w-0 cursor-pointer flex-1" onclick="window.selectActiveUser(\'' + S(u.name) + '\')"><i class="ph-bold ph-user text-sm ' + (isCurrent ? 'text-iosBlue' : 'text-zinc-500') + '"></i><span class="font-bold text-xs truncate ' + (isCurrent ? 'text-white' : 'text-zinc-300') + '">' + S(u.name) + '</span>' + (isCurrent ? '<span class="text-[8px] bg-emerald-950 text-emerald-400 px-1 rounded font-bold">ACTIVO</span>' : '') + '</div><div class="flex items-center gap-1.5 shrink-0">' + branchControl + deleteButton + '</div></div>'; }).join(''); } if (devicesContainer && isAdmin) { var now = Date.now(); var devHtml = ''; var count = 0; for (var d in window.activeDevicesMap) { var info = window.activeDevicesMap[d]; if (info && (now - info.time < 25000)) { var isMe = (d === myDeviceId); var devBranchOptions = branches.map(function(b) { return '<option value="' + S(b) + '" ' + ((info.branch || 'Central') === b ? 'selected' : '') + '>' + S(b) + '</option>'; }).join(''); var devBranchSelect = '<select onchange="window.changeRemoteDeviceBranch(\'' + S(d) + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + devBranchOptions + '</select>'; var kickBtn = isMe ? '<span class="text-[8px] bg-zinc-800 text-zinc-500 px-1.5 py-0.5 rounded font-bold">ESTE EQUIPO</span>' : '<button type="button" onclick="window.kickDevice(\'' + S(d) + '\')" class="px-2 py-0.5 rounded bg-rose-950 text-rose-400 text-[10px] font-bold active:scale-95 transition">Expulsar</button>'; devHtml += '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800"><div class="min-w-0 flex-1 pr-2"><div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span class="font-bold text-xs text-white truncate">' + S(info.user || 'Admin') + '</span></div><div class="text-[8px] text-zinc-500 font-mono truncate">' + S(d) + '</div></div><div class="flex items-center gap-1.5 shrink-0">' + devBranchSelect + kickBtn + '</div></div>'; count++; } } if (count === 0) { devHtml = '<div class="text-center text-zinc-500 text-xs p-3">No hay dispositivos en línea ahora mismo.</div>'; } devicesContainer.innerHTML = devHtml; } };
+    window.renderUnifiedUsersAndDevices = function() {
+      var usersContainer = $('usersUnifiedList'); var devicesContainer = $('devicesUnifiedList'); var branchSelect = $('inpNewStaffBranch'); var branches = workshopSettings.branches || ['Central']; var isAdmin = (activeUser === 'Admin');
+      if($('sectionDevices')) $('sectionDevices').style.display = isAdmin ? 'block' : 'none'; if($('sectionAddStaff')) $('sectionAddStaff').style.display = isAdmin ? 'block' : 'none';
+      if (branchSelect) { branchSelect.innerHTML = branches.map(function(b) { return '<option value="' + S(b) + '">' + S(b) + '</option>'; }).join(''); }
+      if (usersContainer) {
+        if (!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {}; var allUsers = []; allUsers.push({ name: 'Admin', branch: 'Global' });
+        var visibleBranches = isAdmin ? branches : [localBranch];
+        visibleBranches.forEach(function(b) { var list = workshopSettings.usersByBranch[b] || []; list.forEach(function(u) { if (u !== 'Admin') allUsers.push({ name: u, branch: b }); }); });
+        usersContainer.innerHTML = allUsers.map(function(u) {
+          var isCurrent = (u.name === activeUser); var isMainAdminUser = (u.name === 'Admin'); var branchControl = ''; var deleteButton = '';
+          if (isAdmin) {
+             if (isMainAdminUser) { branchControl = '<span class="text-[9px] font-mono font-bold text-iosBlue bg-iosBlue/10 px-2 py-0.5 rounded">GLOBAL</span>'; } else {
+                var branchOptions = branches.map(function(b) { return '<option value="' + S(b) + '" ' + (u.branch === b ? 'selected' : '') + '>' + S(b) + '</option>'; }).join('');
+                branchControl = '<select onchange="window.changeUserBranch(\'' + S(u.name) + '\', \'' + S(u.branch) + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + branchOptions + '</select>';
+                deleteButton = '<button type="button" onclick="window.deleteStaffMember(\'' + S(u.name) + '\', \'' + S(u.branch) + '\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center active:scale-95 transition" title="Eliminar usuario"><i class="ph-bold ph-trash"></i></button>';
+             }
+          } else { branchControl = '<span class="text-[9px] text-zinc-500 font-bold px-1">(' + S(u.branch) + ')</span>'; }
+          return '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800"><div class="flex items-center gap-1.5 min-w-0 cursor-pointer flex-1" onclick="window.selectActiveUser(\'' + S(u.name) + '\')"><i class="ph-bold ph-user text-sm ' + (isCurrent ? 'text-iosBlue' : 'text-zinc-500') + '"></i><span class="font-bold text-xs truncate ' + (isCurrent ? 'text-white' : 'text-zinc-300') + '">' + S(u.name) + '</span>' + (isCurrent ? '<span class="text-[8px] bg-emerald-950 text-emerald-400 px-1 rounded font-bold">ACTIVO</span>' : '') + '</div><div class="flex items-center gap-1.5 shrink-0">' + branchControl + deleteButton + '</div></div>';
+        }).join('');
+      }
+      if (devicesContainer && isAdmin) {
+        var now = Date.now(); var devHtml = ''; var count = 0;
+        for (var d in window.activeDevicesMap) {
+          var info = window.activeDevicesMap[d];
+          if (info && (now - info.time < 25000)) {
+            var isMe = (d === myDeviceId);
+            var devBranchOptions = branches.map(function(b) { return '<option value="' + S(b) + '" ' + ((info.branch || 'Central') === b ? 'selected' : '') + '>' + S(b) + '</option>'; }).join('');
+            var devBranchSelect = '<select onchange="window.changeRemoteDeviceBranch(\'' + S(d) + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + devBranchOptions + '</select>';
+            var kickBtn = isMe ? '<span class="text-[8px] bg-zinc-800 text-zinc-500 px-1.5 py-0.5 rounded font-bold">ESTE EQUIPO</span>' : '<button type="button" onclick="window.kickDevice(\'' + S(d) + '\')" class="px-2 py-0.5 rounded bg-rose-950 text-rose-400 text-[10px] font-bold active:scale-95 transition">Expulsar</button>';
+            devHtml += '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800"><div class="min-w-0 flex-1 pr-2"><div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span class="font-bold text-xs text-white truncate">' + S(info.user || 'Admin') + '</span></div><div class="text-[8px] text-zinc-500 font-mono truncate">' + S(d) + '</div></div><div class="flex items-center gap-1.5 shrink-0">' + devBranchSelect + kickBtn + '</div></div>';
+            count++;
+          }
+        }
+        if (count === 0) { devHtml = '<div class="text-center text-zinc-500 text-xs p-3">No hay dispositivos en línea ahora mismo.</div>'; }
+        devicesContainer.innerHTML = devHtml;
+      }
+    };
 
     window.changeUserBranch = function(userName, oldBranch, newBranch) { if (oldBranch === newBranch) return; if (activeUser !== 'Admin') { window.showToast("Denegado", "Solo el Administrador puede reasignar sucursales."); window.renderUnifiedUsersAndDevices(); return; } window.requestAdminPinAuth("Reasignar sucursal a " + userName, function() { if (!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {}; if (workshopSettings.usersByBranch[oldBranch]) { workshopSettings.usersByBranch[oldBranch] = workshopSettings.usersByBranch[oldBranch].filter(function(u) { return u !== userName; }); } if (!workshopSettings.usersByBranch[newBranch]) workshopSettings.usersByBranch[newBranch] = []; if (!workshopSettings.usersByBranch[newBranch].includes(userName)) { workshopSettings.usersByBranch[newBranch].push(userName); } window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); window.showToast("Actualizado", userName + " asignado a (" + newBranch + ")"); }); };
     window.deleteStaffMember = function(userName, branch) { if (userName === 'Admin') { window.showToast("Denegado", "No se puede eliminar la cuenta principal de Administrador."); return; } if (activeUser !== 'Admin') { window.showToast("Denegado", "Solo el Administrador puede eliminar usuarios."); return; } window.requestAdminPinAuth("Eliminar usuario " + userName, function() { if (workshopSettings.usersByBranch && workshopSettings.usersByBranch[branch]) { workshopSettings.usersByBranch[branch] = workshopSettings.usersByBranch[branch].filter(function(u) { return u !== userName; }); if (activeUser === userName) { activeUser = 'Admin'; localStorage.setItem(ACTIVE_USER_KEY, 'Admin'); if ($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = 'Admin'; } window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); window.showToast("Eliminado", "Usuario " + userName + " eliminado del taller."); } }); };
@@ -473,12 +515,88 @@
     window.openSalesModal = function() { window.openModal('salesModal'); setTimeout(function() { window.switchPosTab('CATALOG'); }, 50); };
     window.openVentasHistoryModal = function() { window.openModal('ventasModal'); setTimeout(function() { window.setVentasPeriod('HOY'); }, 50); };
     window.openStockModal = function() { window.openModal('stockModal'); setTimeout(function() { window.switchStockTab('LIST'); window.renderStockList(); }, 50); };
-    window.openCashModal = function() { currentCashBranch = localBranch; window.openModal('cashModal'); setTimeout(function() { window.renderBranchTabs(); window.updateCashBalanceUI(); }, 50); };
+    window.openCashModal = function() { currentCashBranch = localBranch; window.openModal('cashModal'); setTimeout(function() { window.renderBranchTabs(); if(typeof window.updateCashBalanceUI === 'function') window.updateCashBalanceUI(); }, 50); };
     window.openTeamModal = function() { window.openModal('teamModal'); };
     window.openLicenseModal = function() { window.openModal('licenseModal'); };
     window.openInstallModal = function() { window.openModal('installModal'); };
 
-    // --- CAJA LOCAL Y VENTAS (RESTORED FULL LOGIC) ---
+    window.renderBranchTabs = function() {
+      var branches = workshopSettings.branches || ['Central']; var isAdmin = (activeUser === 'Admin');
+      var mainContainer = $('branchTabsButtonsList');
+      if (mainContainer) {
+        var allBtn = '<button type="button" onclick="window.setBranchFilter(\'ALL\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition '+(currentBranchFilter==='ALL'?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas</button>';
+        var bBtns = branches.map(function(b) { return '<button type="button" onclick="window.setBranchFilter(\''+S(b)+'\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition '+(currentBranchFilter===b?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">('+S(b)+')</button>'; }).join('');
+        mainContainer.innerHTML = allBtn + bBtns;
+        if($('currentBranchDisplayTag')) $('currentBranchDisplayTag').textContent = currentBranchFilter === 'ALL' ? 'Todas' : '(' + S(currentBranchFilter) + ')';
+      }
+      if($('cashModalTitleBranch')) $('cashModalTitleBranch').textContent = '(' + S(currentCashBranch) + ')'; if($('posModalBranchTag')) $('posModalBranchTag').textContent = '(' + S(localBranch) + ')'; if($('posBtnBranchNameCart')) $('posBtnBranchNameCart').textContent = '(' + S(localBranch) + ')'; if($('userModalBranchTag')) $('userModalBranchTag').textContent = '(' + S(localBranch) + ')'; if($('btnLabelCajaLocal')) $('btnLabelCajaLocal').textContent = S(localBranch).substring(0,3).toUpperCase(); if($('headerCashBranchTag')) $('headerCashBranchTag').textContent = S(localBranch);
+      var opts = branches.map(function(b) { return '<option value="'+S(b)+'">'+S(b)+'</option>'; }).join('');
+      if($('cshBranch')) $('cshBranch').innerHTML = opts; if($('stkBranch')) $('stkBranch').innerHTML = opts;
+      var cashBranchList = $('cashBranchSelectorList'); var cashSelectorBox = $('cashBranchSelectorContainer');
+      if(cashBranchList) {
+        if (isAdmin) {
+          if (cashSelectorBox) cashSelectorBox.style.display = 'flex';
+          cashBranchList.innerHTML = branches.map(function(b) { var isSel = (b === currentCashBranch); return '<button type="button" onclick="window.switchCashBranchView(\''+S(b)+'\')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition '+(isSel?'bg-emerald-600 text-white shadow':'bg-zinc-900 text-zinc-400 hover:text-white')+'">('+S(b)+')</button>'; }).join('');
+        } else {
+          if (cashSelectorBox) cashSelectorBox.style.display = 'none'; currentCashBranch = localBranch; cashBranchList.innerHTML = '<button type="button" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow cursor-default">('+S(localBranch)+')</button>';
+        }
+      }
+      window.renderInteractiveCatalogFilters(); window.renderStockBranchFilters();
+    };
+
+    window.switchCashBranchView = function(b) { currentCashBranch = b; window.renderBranchTabs(); if(typeof window.updateCashBalanceUI === 'function') window.updateCashBalanceUI(); };
+    window.setBranchFilter = function(b) { currentBranchFilter = b; window.renderBranchTabs(); window.renderRepairsList(); window.updateCounters(); };
+
+    window.renderInteractiveCatalogFilters = function() {
+      var branches = workshopSettings.branches || ['Central']; var bContainer = $('posCatalogBranchPills');
+      if (bContainer) {
+        var bAll = '<button type="button" onclick="window.setPosBranchFilter(\'ALL\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentPosBranchFilter==='ALL'?'bg-amber-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas las Sucursales</button>';
+        var bList = branches.map(function(b) { return '<button type="button" onclick="window.setPosBranchFilter(\''+S(b)+'\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentPosBranchFilter===b?'bg-amber-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">('+S(b)+')</button>'; }).join('');
+        bContainer.innerHTML = bAll + bList;
+      }
+      var cContainer = $('posCatalogCategoryPills');
+      if (cContainer) {
+        var categories = ['ALL', 'Pantallas', 'Baterías', 'Pines', 'Accesorios', 'Otros'];
+        cContainer.innerHTML = categories.map(function(cat) { var label = (cat === 'ALL') ? 'Todas las Categorías' : S(cat); return '<button type="button" onclick="window.setPosCategoryFilter(\''+S(cat)+'\')" class="px-2 py-0.5 rounded-md text-[9px] font-bold shrink-0 transition '+(currentPosCategoryFilter===cat?'bg-purple-600 text-white shadow':'bg-zinc-900 border border-zinc-800 text-zinc-400')+'">'+label+'</button>'; }).join('');
+      }
+    };
+
+    window.setPosBranchFilter = function(b) { currentPosBranchFilter = b; window.renderInteractiveCatalogFilters(); window.renderPosCatalog(); };
+    window.setPosCategoryFilter = function(c) { currentPosCategoryFilter = c; window.renderInteractiveCatalogFilters(); window.renderPosCatalog(); };
+
+    window.renderStockBranchFilters = function() {
+      var branches = workshopSettings.branches || ['Central']; var container = $('stockBranchFilterPills');
+      if (container) {
+        var allBtn = '<button type="button" onclick="window.setStockBranchFilter(\'ALL\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentStockBranchFilter==='ALL'?'bg-purple-700 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas</button>';
+        var bList = branches.map(function(b) { return '<button type="button" onclick="window.setStockBranchFilter(\''+S(b)+'\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentStockBranchFilter===b?'bg-purple-700 text-white shadow':'bg-zinc-800 text-zinc-400')+'">('+S(b)+')</button>'; }).join('');
+        container.innerHTML = allBtn + bList;
+      }
+    };
+
+    window.setStockBranchFilter = function(b) { currentStockBranchFilter = b; window.renderStockBranchFilters(); window.renderStockList(); };
+
+    window.openSwitchUserModal = function() { window.openModal('switchUserModal'); setTimeout(function() { try { window.renderUnifiedUsersAndDevices(); var adminSect = $('adminPinConfigSection'); if(adminSect) { if(activeUser === 'Admin') { adminSect.classList.remove('hidden'); adminSect.style.display = 'block'; var setupBox = $('setupPinBox'); if (setupBox) { if (workshopSettings.isCreatorPinSet || (workshopSettings.adminPin && workshopSettings.adminPin !== '1234')) { setupBox.style.display = 'none'; } else { setupBox.style.display = 'block'; } } } else { adminSect.classList.add('hidden'); adminSect.style.display = 'none'; } } } catch(e) {} }, 50); };
+    window.selectActiveUser = function(userName) { if (userName === 'Admin' && activeUser !== 'Admin') { window.requestAdminPinAuth("Ingresar como Administrador", function() { activeUser = userName; try { localStorage.setItem(ACTIVE_USER_KEY, activeUser); } catch(e){} if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = S(activeUser); window.closeModal('switchUserModal'); window.showToast("Usuario", "Operando como: " + activeUser); window.renderBranchTabs(); window.broadcastPresence(); }); } else { activeUser = userName; try { localStorage.setItem(ACTIVE_USER_KEY, activeUser); } catch(e){} if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = S(activeUser); window.closeModal('switchUserModal'); window.showToast("Usuario", "Operando como: " + activeUser); window.renderBranchTabs(); window.broadcastPresence(); } };
+    window.addNewStaffMember = function() { var name = $('inpNewStaffName').value.trim(); var branch = $('inpNewStaffBranch') ? $('inpNewStaffBranch').value : localBranch; if (!name || !branch) { window.showToast("Error", "Completa nombre y sucursal."); return; } if(!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {}; if(!workshopSettings.usersByBranch[branch]) workshopSettings.usersByBranch[branch] = []; if (!workshopSettings.usersByBranch[branch].includes(name)) { workshopSettings.usersByBranch[branch].push(name); window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); $('inpNewStaffName').value = ''; window.showToast("Personal", name + " agregado a (" + branch + ")"); } else { window.showToast("Aviso", "El usuario ya existe en esa sucursal."); } };
+    window.saveNewAdminPin = function() { var newPin = $('inpNewAdminPin').value.trim(); if(!newPin) return; window.appConfirm("Configurar Clave", "¿Confirmas que usarás [ " + newPin + " ] como Clave Maestra?\n\nAsegúrate de no olvidarla.", function() { workshopSettings.adminPin = newPin; workshopSettings.isCreatorPinSet = true; window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); $('inpNewAdminPin').value = ''; var setupBox = $('setupPinBox'); if(setupBox) setupBox.style.display = 'none'; window.showToast("Seguridad", "Clave Maestra protegida de por vida."); }); };
+    
+    window.openSettingsModal = function() { try { if($('cfgWorkshopName')) $('cfgWorkshopName').value = workshopSettings.name || ''; if($('cfgWorkshopSubtitle')) $('cfgWorkshopSubtitle').value = workshopSettings.subtitle || ''; if($('cfgAdminPhone')) $('cfgAdminPhone').value = workshopSettings.adminPhone || ''; window.renderConfigBranches(); if(workshopSettings.logo && $('settingsLogoPreview')) { $('settingsLogoPreview').innerHTML = '<img src="' + S(workshopSettings.logo) + '" class="w-full h-full object-cover">'; } else if($('settingsLogoPreview')) { $('settingsLogoPreview').innerHTML = '<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>'; } } catch(e) {} window.openModal('settingsModal'); };
+    window.saveSettings = function() { workshopSettings.name = $('cfgWorkshopName').value; workshopSettings.subtitle = $('cfgWorkshopSubtitle').value; if($('cfgAdminPhone')) workshopSettings.adminPhone = $('cfgAdminPhone').value.replace(/[^0-9]/g, ''); window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); window.showToast("Guardado", "Ajustes actualizados en toda la red."); window.closeModal('settingsModal'); };
+    window.renderConfigBranches = function() { var c = $('settingsBranchesList'); if(!c) return; var branches = workshopSettings.branches || ['Central']; c.innerHTML = branches.map(function(b, idx) { return '<div class="flex items-center justify-between p-2 bg-zinc-800 rounded-xl border border-zinc-700"><span class="text-xs font-bold text-white">(' + S(b) + ')</span><div class="flex gap-1"><button type="button" onclick="window.editConfigBranch(' + idx + ')" class="w-6 h-6 rounded bg-zinc-700 text-zinc-300 flex items-center justify-center"><i class="ph-bold ph-pencil-simple"></i></button>' + (branches.length > 1 ? '<button type="button" onclick="window.deleteConfigBranch(' + idx + ')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center"><i class="ph-bold ph-trash"></i></button>' : '') + '</div></div>'; }).join(''); };
+    window.addConfigBranch = function() { var val = $('inpNewConfigBranch').value.trim(); if(!val) return; if(!workshopSettings.branches) workshopSettings.branches = ['Central']; if(workshopSettings.branches.includes(val)) { window.showToast('Aviso', 'Ya existe esa sucursal'); return; } workshopSettings.branches.push(val); window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); $('inpNewConfigBranch').value = ''; };
+    window.editConfigBranch = function(idx) { var oldVal = workshopSettings.branches[idx]; window.appPrompt("Editar Sucursal", "Nuevo nombre para " + oldVal + ":", "text", oldVal, function(newVal) { if(newVal && newVal.trim() !== '') { newVal = newVal.trim(); workshopSettings.branches[idx] = newVal; repairs.forEach(function(r) { if(r.branch === oldVal) r.branch = newVal; }); stockItems.forEach(function(s) { if(s.branch === oldVal) s.branch = newVal; }); sales.forEach(function(s) { if(s.branch === oldVal) s.branch = newVal; }); cashMovements.forEach(function(c) { if(c.branch === oldVal) c.branch = newVal; }); cashClosures.forEach(function(c) { if(c.branch === oldVal) c.branch = newVal; }); if(localBranch === oldVal) window.setLocalBranch(newVal, true); StorageShield.save('repairs', repairs); StorageShield.save('stock', stockItems); StorageShield.save('sales', sales); StorageShield.save('cash', cashMovements); StorageShield.save('cashClosures', cashClosures); window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); window.publishStockMQTT(); window.showToast('Actualizado', 'Sucursal editada.'); } }); };
+    window.deleteConfigBranch = function(idx) { if(workshopSettings.branches.length <= 1) return; window.appConfirm("Eliminar Sucursal", "¿Estás seguro de eliminar esta sucursal?", function() { workshopSettings.branches.splice(idx, 1); window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); }); };
+    window.handleLogoUpload = function(input) { if(input.files && input.files[0]) { var r = new FileReader(); r.onload = function(e) { workshopSettings.logo = e.target.result; window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); window.showToast("Logo Actualizado", "Logo adoptado en toda la red."); }; r.readAsDataURL(input.files[0]); } };
+    window.removeLogo = function() { workshopSettings.logo = ''; window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); };
+    window.shareAppWA = function() { var url = window.location.origin + window.location.pathname; var msg = "🚀 *OpenLine - Gestión de Taller Profesional*\n\nAccede a la plataforma aquí:\n\n" + url; window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank'); };
+    window.copyAppUrl = function() { var url = window.location.origin + window.location.pathname; if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(function() { window.showToast("Copiado", "Enlace copiado al portapapeles."); }).catch(function() { window.fallbackCopyText(url); }); } else { window.fallbackCopyText(url); } };
+    window.fallbackCopyText = function(text) { var textArea = document.createElement("textarea"); textArea.value = text; document.body.appendChild(textArea); textArea.select(); try { document.execCommand('copy'); window.showToast("Copiado", "Enlace copiado al portapapeles."); } catch (err) { window.showToast("Error", "No se pudo copiar."); } document.body.removeChild(textArea); };
+    
+    window.initPatternCanvas = function() { var cvs = $('patternCanvas'); if(!cvs) return; var clone = cvs.cloneNode(true); cvs.parentNode.replaceChild(clone, cvs); cvs = clone; patternCtx = cvs.getContext('2d'); patternNodes = []; for(var i=0; i<3; i++) { for(var j=0; j<3; j++) { patternNodes.push({x: 40 + j*70, y: 40 + i*70, id: i*3 + j + 1}); } } window.drawPatternGrid(); function getPos(e) { var rect = cvs.getBoundingClientRect(); var cx = e.touches ? e.touches[0].clientX : e.clientX; var cy = e.touches ? e.touches[0].clientY : e.clientY; return { x: cx - rect.left, y: cy - rect.top }; } function checkHit(p) { patternNodes.forEach(function(n) { if(Math.hypot(n.x - p.x, n.y - p.y) < 26 && !selectedPatternSequence.includes(n.id)) { selectedPatternSequence.push(n.id); if($('inpUnlockPin')) $('inpUnlockPin').value = selectedPatternSequence.join(''); } }); } var onDown = function(e) { e.preventDefault(); isDrawingPattern = true; selectedPatternSequence = []; if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Trazando...'; $('patternStatusLabel').className = 'text-amber-400 font-bold'; } var p = getPos(e); checkHit(p); window.drawPatternGrid(p.x, p.y); }; var onMove = function(e) { e.preventDefault(); if(!isDrawingPattern) return; var p = getPos(e); checkHit(p); window.drawPatternGrid(p.x, p.y); }; var onUp = function(e) { e.preventDefault(); if(!isDrawingPattern) return; isDrawingPattern = false; window.drawPatternGrid(); if($('patternStatusLabel')) { $('patternStatusLabel').textContent = selectedPatternSequence.length > 0 ? 'Patrón: ' + selectedPatternSequence.join('-') : 'Dibuja el patrón'; $('patternStatusLabel').className = selectedPatternSequence.length > 0 ? 'text-emerald-400 font-bold' : 'text-zinc-400 mt-1'; } }; cvs.addEventListener('mousedown', onDown, {passive: false}); cvs.addEventListener('mousemove', onMove, {passive: false}); cvs.addEventListener('mouseup', onUp, {passive: false}); cvs.addEventListener('mouseleave', onUp, {passive: false}); cvs.addEventListener('touchstart', onDown, {passive: false}); cvs.addEventListener('touchmove', onMove, {passive: false}); cvs.addEventListener('touchend', onUp, {passive: false}); };
+    window.drawPatternGrid = function(cX, cY) { if(!patternCtx || !$('patternCanvas')) return; var cvs = $('patternCanvas'); patternCtx.clearRect(0,0,cvs.width,cvs.height); if(selectedPatternSequence.length > 0) { patternCtx.beginPath(); patternCtx.lineWidth = 4; patternCtx.strokeStyle = '#007AFF'; patternCtx.lineCap = 'round'; patternCtx.lineJoin = 'round'; var first = patternNodes[selectedPatternSequence[0] - 1]; patternCtx.moveTo(first.x, first.y); for(var k=1; k<selectedPatternSequence.length; k++) { var n = patternNodes[selectedPatternSequence[k] - 1]; patternCtx.lineTo(n.x, n.y); } if(isDrawingPattern && cX !== undefined && cY !== undefined) { patternCtx.lineTo(cX, cY); } patternCtx.stroke(); } patternNodes.forEach(function(n) { var isSel = selectedPatternSequence.includes(n.id); patternCtx.beginPath(); patternCtx.arc(n.x, n.y, isSel ? 11 : 7, 0, Math.PI*2); patternCtx.fillStyle = isSel ? '#007AFF' : '#52525b'; patternCtx.fill(); }); };
+    window.resetPatternCanvas = function() { selectedPatternSequence = []; isDrawingPattern = false; if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Dibuja el patrón en los puntos'; $('patternStatusLabel').className = 'text-zinc-400 mt-1'; } window.drawPatternGrid(); };
+
+    // --- CAJA LOCAL Y VENTAS ---
     window.updateCashBalanceUI = function() {
       var income = 0; var expense = 0; var cList = $('cashListContainer'); var html = '';
       cashMovements.forEach(function(m, idx) {
@@ -560,96 +678,56 @@
        container.innerHTML = filtered.map(function(s) { var itemsTxt = (s.items||[]).map(function(i){ return i.qty+'x '+S(i.name); }).join(', '); return '<div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl mb-1.5 shadow-sm"><div class="flex items-start justify-between mb-1"><div class="flex items-center gap-1.5"><i class="ph-bold ph-receipt text-indigo-400"></i><b class="text-white text-xs">'+s.id+'</b><span class="text-[8px] bg-zinc-800 text-zinc-400 px-1.5 py-0.5 rounded font-bold uppercase">'+S(s.paymentMethod)+'</span></div><b class="font-mono text-emerald-400 text-sm">$'+s.total.toLocaleString()+'</b></div><div class="text-[10px] text-zinc-400 mb-1">'+itemsTxt+'</div><div class="flex justify-between items-center text-[9px] text-zinc-500"><div class="flex gap-2"><span>👤 '+S(s.customerName||'Consumidor Final')+'</span><span>📍 ('+S(s.branch||'Central')+')</span></div><span>'+new Date(s.timestamp).toLocaleString('es-AR')+'</span></div></div>'; }).join('');
     };
 
-    window.renderBranchTabs = function() {
-      var branches = workshopSettings.branches || ['Central']; var isAdmin = (activeUser === 'Admin');
-      var mainContainer = $('branchTabsButtonsList');
-      if (mainContainer) {
-        var allBtn = '<button type="button" onclick="window.setBranchFilter(\'ALL\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition '+(currentBranchFilter==='ALL'?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas</button>';
-        var bBtns = branches.map(function(b) { return '<button type="button" onclick="window.setBranchFilter(\''+S(b)+'\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition '+(currentBranchFilter===b?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">('+S(b)+')</button>'; }).join('');
-        mainContainer.innerHTML = allBtn + bBtns;
-        if($('currentBranchDisplayTag')) $('currentBranchDisplayTag').textContent = currentBranchFilter === 'ALL' ? 'Todas' : '(' + S(currentBranchFilter) + ')';
-      }
-      if($('cashModalTitleBranch')) $('cashModalTitleBranch').textContent = '(' + S(currentCashBranch) + ')'; if($('posModalBranchTag')) $('posModalBranchTag').textContent = '(' + S(localBranch) + ')'; if($('posBtnBranchNameCart')) $('posBtnBranchNameCart').textContent = '(' + S(localBranch) + ')'; if($('userModalBranchTag')) $('userModalBranchTag').textContent = '(' + S(localBranch) + ')'; if($('btnLabelCajaLocal')) $('btnLabelCajaLocal').textContent = S(localBranch).substring(0,3).toUpperCase(); if($('headerCashBranchTag')) $('headerCashBranchTag').textContent = S(localBranch);
-      var opts = branches.map(function(b) { return '<option value="'+S(b)+'">'+S(b)+'</option>'; }).join('');
-      if($('cshBranch')) $('cshBranch').innerHTML = opts; if($('stkBranch')) $('stkBranch').innerHTML = opts;
-      var cashBranchList = $('cashBranchSelectorList'); var cashSelectorBox = $('cashBranchSelectorContainer');
-      if(cashBranchList) {
-        if (isAdmin) {
-          if (cashSelectorBox) cashSelectorBox.style.display = 'flex';
-          cashBranchList.innerHTML = branches.map(function(b) { var isSel = (b === currentCashBranch); return '<button type="button" onclick="window.switchCashBranchView(\''+S(b)+'\')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition '+(isSel?'bg-emerald-600 text-white shadow':'bg-zinc-900 text-zinc-400 hover:text-white')+'">('+S(b)+')</button>'; }).join('');
-        } else {
-          if (cashSelectorBox) cashSelectorBox.style.display = 'none'; currentCashBranch = localBranch; cashBranchList.innerHTML = '<button type="button" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow cursor-default">('+S(localBranch)+')</button>';
-        }
-      }
-      window.renderInteractiveCatalogFilters(); window.renderStockBranchFilters();
-    };
-
-    window.switchCashBranchView = function(b) { currentCashBranch = b; window.renderBranchTabs(); window.updateCashBalanceUI(); };
-    window.setBranchFilter = function(b) { currentBranchFilter = b; window.renderBranchTabs(); window.renderRepairsList(); window.updateCounters(); };
-
-    window.renderInteractiveCatalogFilters = function() {
-      var branches = workshopSettings.branches || ['Central']; var bContainer = $('posCatalogBranchPills');
-      if (bContainer) {
-        var bAll = '<button type="button" onclick="window.setPosBranchFilter(\'ALL\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentPosBranchFilter==='ALL'?'bg-amber-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas las Sucursales</button>';
-        var bList = branches.map(function(b) { return '<button type="button" onclick="window.setPosBranchFilter(\''+S(b)+'\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentPosBranchFilter===b?'bg-amber-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">('+S(b)+')</button>'; }).join('');
-        bContainer.innerHTML = bAll + bList;
-      }
-      var cContainer = $('posCatalogCategoryPills');
-      if (cContainer) {
-        var categories = ['ALL', 'Pantallas', 'Baterías', 'Pines', 'Accesorios', 'Otros'];
-        cContainer.innerHTML = categories.map(function(cat) { var label = (cat === 'ALL') ? 'Todas las Categorías' : S(cat); return '<button type="button" onclick="window.setPosCategoryFilter(\''+S(cat)+'\')" class="px-2 py-0.5 rounded-md text-[9px] font-bold shrink-0 transition '+(currentPosCategoryFilter===cat?'bg-purple-600 text-white shadow':'bg-zinc-900 border border-zinc-800 text-zinc-400')+'">'+label+'</button>'; }).join('');
-      }
-    };
-
-    window.setPosBranchFilter = function(b) { currentPosBranchFilter = b; window.renderInteractiveCatalogFilters(); window.renderPosCatalog(); };
-    window.setPosCategoryFilter = function(c) { currentPosCategoryFilter = c; window.renderInteractiveCatalogFilters(); window.renderPosCatalog(); };
-
-    window.renderStockBranchFilters = function() {
-      var branches = workshopSettings.branches || ['Central']; var container = $('stockBranchFilterPills');
-      if (container) {
-        var allBtn = '<button type="button" onclick="window.setStockBranchFilter(\'ALL\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentStockBranchFilter==='ALL'?'bg-purple-700 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas</button>';
-        var bList = branches.map(function(b) { return '<button type="button" onclick="window.setStockBranchFilter(\''+S(b)+'\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentStockBranchFilter===b?'bg-purple-700 text-white shadow':'bg-zinc-800 text-zinc-400')+'">('+S(b)+')</button>'; }).join('');
-        container.innerHTML = allBtn + bList;
-      }
-    };
-
-    window.setStockBranchFilter = function(b) { currentStockBranchFilter = b; window.renderStockBranchFilters(); window.renderStockList(); };
-
-    window.openSwitchUserModal = function() { window.openModal('switchUserModal'); setTimeout(function() { try { window.renderUnifiedUsersAndDevices(); var adminSect = $('adminPinConfigSection'); if(adminSect) { if(activeUser === 'Admin') { adminSect.classList.remove('hidden'); adminSect.style.display = 'block'; var setupBox = $('setupPinBox'); if (setupBox) { if (workshopSettings.isCreatorPinSet || (workshopSettings.adminPin && workshopSettings.adminPin !== '1234')) { setupBox.style.display = 'none'; } else { setupBox.style.display = 'block'; } } } else { adminSect.classList.add('hidden'); adminSect.style.display = 'none'; } } } catch(e) {} }, 50); };
-    window.selectActiveUser = function(userName) { if (userName === 'Admin' && activeUser !== 'Admin') { window.requestAdminPinAuth("Ingresar como Administrador", function() { activeUser = userName; try { localStorage.setItem(ACTIVE_USER_KEY, activeUser); } catch(e){} if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = S(activeUser); window.closeModal('switchUserModal'); window.showToast("Usuario", "Operando como: " + activeUser); window.renderBranchTabs(); window.broadcastPresence(); }); } else { activeUser = userName; try { localStorage.setItem(ACTIVE_USER_KEY, activeUser); } catch(e){} if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = S(activeUser); window.closeModal('switchUserModal'); window.showToast("Usuario", "Operando como: " + activeUser); window.renderBranchTabs(); window.broadcastPresence(); } };
-    window.addNewStaffMember = function() { var name = $('inpNewStaffName').value.trim(); var branch = $('inpNewStaffBranch') ? $('inpNewStaffBranch').value : localBranch; if (!name || !branch) { window.showToast("Error", "Completa nombre y sucursal."); return; } if(!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {}; if(!workshopSettings.usersByBranch[branch]) workshopSettings.usersByBranch[branch] = []; if (!workshopSettings.usersByBranch[branch].includes(name)) { workshopSettings.usersByBranch[branch].push(name); window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); $('inpNewStaffName').value = ''; window.showToast("Personal", name + " agregado a (" + branch + ")"); } else { window.showToast("Aviso", "El usuario ya existe en esa sucursal."); } };
-    window.saveNewAdminPin = function() { var newPin = $('inpNewAdminPin').value.trim(); if(!newPin) return; window.appConfirm("Configurar Clave", "¿Confirmas que usarás [ " + newPin + " ] como Clave Maestra?\n\nAsegúrate de no olvidarla.", function() { workshopSettings.adminPin = newPin; workshopSettings.isCreatorPinSet = true; window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); $('inpNewAdminPin').value = ''; var setupBox = $('setupPinBox'); if(setupBox) setupBox.style.display = 'none'; window.showToast("Seguridad", "Clave Maestra protegida de por vida."); }); };
-    window.openSettingsModal = function() { try { if($('cfgWorkshopName')) $('cfgWorkshopName').value = workshopSettings.name || ''; if($('cfgWorkshopSubtitle')) $('cfgWorkshopSubtitle').value = workshopSettings.subtitle || ''; if($('cfgAdminPhone')) $('cfgAdminPhone').value = workshopSettings.adminPhone || ''; window.renderConfigBranches(); if(workshopSettings.logo && $('settingsLogoPreview')) { $('settingsLogoPreview').innerHTML = '<img src="' + S(workshopSettings.logo) + '" class="w-full h-full object-cover">'; } else if($('settingsLogoPreview')) { $('settingsLogoPreview').innerHTML = '<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>'; } } catch(e) {} window.openModal('settingsModal'); };
-    window.saveSettings = function() { workshopSettings.name = $('cfgWorkshopName').value; workshopSettings.subtitle = $('cfgWorkshopSubtitle').value; if($('cfgAdminPhone')) workshopSettings.adminPhone = $('cfgAdminPhone').value.replace(/[^0-9]/g, ''); window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); window.showToast("Guardado", "Ajustes actualizados en toda la red."); window.closeModal('settingsModal'); };
-    window.renderConfigBranches = function() { var c = $('settingsBranchesList'); if(!c) return; var branches = workshopSettings.branches || ['Central']; c.innerHTML = branches.map(function(b, idx) { return '<div class="flex items-center justify-between p-2 bg-zinc-800 rounded-xl border border-zinc-700"><span class="text-xs font-bold text-white">(' + S(b) + ')</span><div class="flex gap-1"><button type="button" onclick="window.editConfigBranch(' + idx + ')" class="w-6 h-6 rounded bg-zinc-700 text-zinc-300 flex items-center justify-center"><i class="ph-bold ph-pencil-simple"></i></button>' + (branches.length > 1 ? '<button type="button" onclick="window.deleteConfigBranch(' + idx + ')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center"><i class="ph-bold ph-trash"></i></button>' : '') + '</div></div>'; }).join(''); };
-    window.addConfigBranch = function() { var val = $('inpNewConfigBranch').value.trim(); if(!val) return; if(!workshopSettings.branches) workshopSettings.branches = ['Central']; if(workshopSettings.branches.includes(val)) { window.showToast('Aviso', 'Ya existe esa sucursal'); return; } workshopSettings.branches.push(val); window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); $('inpNewConfigBranch').value = ''; };
-    window.editConfigBranch = function(idx) { var oldVal = workshopSettings.branches[idx]; window.appPrompt("Editar Sucursal", "Nuevo nombre para " + oldVal + ":", "text", oldVal, function(newVal) { if(newVal && newVal.trim() !== '') { newVal = newVal.trim(); workshopSettings.branches[idx] = newVal; repairs.forEach(function(r) { if(r.branch === oldVal) r.branch = newVal; }); stockItems.forEach(function(s) { if(s.branch === oldVal) s.branch = newVal; }); sales.forEach(function(s) { if(s.branch === oldVal) s.branch = newVal; }); cashMovements.forEach(function(c) { if(c.branch === oldVal) c.branch = newVal; }); cashClosures.forEach(function(c) { if(c.branch === oldVal) c.branch = newVal; }); if(localBranch === oldVal) window.setLocalBranch(newVal, true); StorageShield.save('repairs', repairs); StorageShield.save('stock', stockItems); StorageShield.save('sales', sales); StorageShield.save('cash', cashMovements); StorageShield.save('cashClosures', cashClosures); window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); window.publishStockMQTT(); window.showToast('Actualizado', 'Sucursal editada.'); } }); };
-    window.deleteConfigBranch = function(idx) { if(workshopSettings.branches.length <= 1) return; window.appConfirm("Eliminar Sucursal", "¿Estás seguro de eliminar esta sucursal?", function() { workshopSettings.branches.splice(idx, 1); window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); }); };
-    window.handleLogoUpload = function(input) { if(input.files && input.files[0]) { var r = new FileReader(); r.onload = function(e) { workshopSettings.logo = e.target.result; window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); window.showToast("Logo Actualizado", "Logo adoptado en toda la red."); }; r.readAsDataURL(input.files[0]); } };
-    window.removeLogo = function() { workshopSettings.logo = ''; window.applyWorkshopSettings(workshopSettings); window.publishSettingsMQTT(); };
-    window.shareAppWA = function() { var url = window.location.origin + window.location.pathname; var msg = "🚀 *OpenLine - Gestión de Taller Profesional*\n\nAccede a la plataforma aquí:\n\n" + url; window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank'); };
-    window.copyAppUrl = function() { var url = window.location.origin + window.location.pathname; if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(function() { window.showToast("Copiado", "Enlace copiado al portapapeles."); }).catch(function() { window.fallbackCopyText(url); }); } else { window.fallbackCopyText(url); } };
-    window.fallbackCopyText = function(text) { var textArea = document.createElement("textarea"); textArea.value = text; document.body.appendChild(textArea); textArea.select(); try { document.execCommand('copy'); window.showToast("Copiado", "Enlace copiado al portapapeles."); } catch (err) { window.showToast("Error", "No se pudo copiar."); } document.body.removeChild(textArea); };
-    
     function mergeByDate(localArr, remoteArr) {
       if (!Array.isArray(remoteArr)) return localArr || []; if (!Array.isArray(localArr)) localArr = [];
-      var map = {}; localArr.forEach(function(item) { if (item && item.id) map[item.id] = item; });
-      remoteArr.forEach(function(item) { if (item && item.id) map[item.id] = Object.assign({}, map[item.id] || {}, item); });
+      var map = {}; 
+      localArr.forEach(function(item) { if (item && item.id) map[item.id] = item; });
+      remoteArr.forEach(function(item) { 
+          if (item && item.id) {
+              var existingPhotos = (map[item.id] && map[item.id].photos) ? map[item.id].photos : [];
+              map[item.id] = Object.assign({}, map[item.id] || {}, item); 
+              if (existingPhotos.length > 0 && (!item.photos || item.photos.length === 0)) {
+                  map[item.id].photos = existingPhotos;
+              }
+          }
+      });
       return Object.values(map).sort(function(a, b) { return (b.date || b.timestamp || b.createdAt || 0) - (a.date || a.timestamp || a.createdAt || 0); });
     }
 
-    window.publishStockMQTT = function() { if (mqttClient && mqttClient.connected) { mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/stock', encryptData(stockItems), { retain: true, qos: 1 }); } if (window.publishMQTT) window.publishMQTT(); };
-    window.publishSettingsMQTT = function() { if (mqttClient && mqttClient.connected) { mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/settings', encryptData(workshopSettings), { retain: true, qos: 1 }); } if (window.publishMQTT) window.publishMQTT(); };
-
     window.publishMQTT = function(force) {
       if(mqttClient && mqttClient.connected) {
-        var isPro = (window.checkLicenseStatus() === 'PRO'); var hasData = (repairs.length > 0 || stockItems.length > 0 || cashMovements.length > 0);
+        var isPro = (window.checkLicenseStatus() === 'PRO'); 
+        var hasData = (repairs.length > 0 || stockItems.length > 0 || cashMovements.length > 0);
         if (!force && !isPro && !hasData) return;
+
+        // Se extraen las fotos del paquete de red para que pese menos de 1MB y el broker MQTT lo acepte siempre.
+        var safeRepairs = repairs.map(function(r) {
+            var copy = Object.assign({}, r);
+            copy.photos = []; 
+            return copy;
+        }).slice(0, 150);
+
         var lic = StorageShield.load('license', null);
-        var payload = { senderId: myDeviceId, timestamp: Date.now(), repairs: repairs, stockItems: stockItems, sales: sales, cashMovements: cashMovements, cashClosures: cashClosures, settings: workshopSettings, license: lic };
+        var payload = { 
+          senderId: myDeviceId, 
+          timestamp: Date.now(), 
+          repairs: safeRepairs, 
+          stockItems: stockItems, 
+          sales: sales.slice(0, 100), 
+          cashMovements: cashMovements.slice(0, 150), 
+          cashClosures: cashClosures.slice(0, 50), 
+          settings: workshopSettings, 
+          license: lic 
+        };
+        
         mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', encryptData(payload), { retain: true });
-        if (isPro && lic) { mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/license', JSON.stringify(lic), { retain: true, qos: 1 }); }
-        if (workshopSettings) { mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/settings', encryptData(workshopSettings), { retain: true, qos: 1 }); }
+        
+        if (isPro && lic) {
+           mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/license', JSON.stringify(lic), { retain: true, qos: 1 });
+        }
+        if (workshopSettings) {
+           mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/settings', encryptData(workshopSettings), { retain: true, qos: 1 });
+        }
       }
     };
 
@@ -659,7 +737,15 @@
       mqttClient.on('connect', function() {
         if($('livePulseDot')) $('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
         var wsCode = currentWorkshopId.toUpperCase();
-        mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/sync', { qos: 1 }); mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/sync/request', { qos: 1 }); mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/stock', { qos: 1 }); mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/license', { qos: 1 }); mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/settings', { qos: 1 }); mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/heartbeat', { qos: 0 }); mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/command', { qos: 1 });
+        
+        mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/sync', { qos: 1 }); 
+        mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/sync/request', { qos: 1 }); 
+        mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/stock', { qos: 1 }); 
+        mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/license', { qos: 1 }); 
+        mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/settings', { qos: 1 }); 
+        mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/heartbeat', { qos: 0 }); 
+        mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/command', { qos: 1 });
+
         window.broadcastPresence();
         mqttClient.publish('openline/v4/workshop/' + wsCode + '/sync/request', JSON.stringify({ requesterId: myDeviceId }));
 
@@ -669,9 +755,14 @@
            mqttClient.publish('openline/v4/workshop/' + wsCode + '/settings', encryptData(workshopSettings), { retain: true, qos: 1 });
            if (stockItems.length > 0) { mqttClient.publish('openline/v4/workshop/' + wsCode + '/stock', encryptData(stockItems), { retain: true, qos: 1 }); }
         }
+
         setInterval(function() {
-          window.broadcastPresence(); var now = Date.now(); var count = 0;
-          for (var d in window.activeDevicesMap) { if (now - window.activeDevicesMap[d].time < 20000) count++; else delete window.activeDevicesMap[d]; }
+          window.broadcastPresence(); 
+          var now = Date.now(); var count = 0;
+          for (var d in window.activeDevicesMap) { 
+             if (now - window.activeDevicesMap[d].time < 20000) count++; 
+             else delete window.activeDevicesMap[d]; 
+          }
           if($('onlineUsersCount')) $('onlineUsersCount').textContent = Math.max(1, count);
         }, 3000);
       });
@@ -679,49 +770,135 @@
       mqttClient.on('message', function(topic, message) {
         try {
           var payloadText = message.toString(); var wsCode = currentWorkshopId.toUpperCase();
+
           if (topic.endsWith('/stock')) {
             var stockPayload = decryptData(payloadText);
             if (stockPayload && Array.isArray(stockPayload)) {
-               var stockMap = {}; stockItems.forEach(function(s){ stockMap[s.code + '_' + (s.branch || 'Central')] = s; });
-               stockPayload.forEach(function(s){ var key = s.code + '_' + (s.branch || 'Central'); var existing = stockMap[key]; if (!existing || (s.updatedAt || 0) >= (existing.updatedAt || 0)) { stockMap[key] = s; } });
-               stockItems = Object.values(stockMap); StorageShield.save('stock', stockItems, true); window.renderStockList(); if(typeof window.renderPosCatalog === 'function') window.renderPosCatalog();
-            } return;
+               var stockMap = {}; 
+               stockItems.forEach(function(s){ stockMap[s.code + '_' + (s.branch || 'Central')] = s; });
+               stockPayload.forEach(function(s){ 
+                  var key = s.code + '_' + (s.branch || 'Central');
+                  var existing = stockMap[key];
+                  if (!existing || (s.updatedAt || 0) >= (existing.updatedAt || 0)) { stockMap[key] = s; }
+               });
+               stockItems = Object.values(stockMap);
+               StorageShield.save('stock', stockItems, true);
+               window.renderStockList();
+               if(typeof window.renderPosCatalog === 'function') window.renderPosCatalog();
+            }
+            return;
           }
+
           if (topic.endsWith('/license')) {
             var licPayload = JSON.parse(payloadText);
             if (licPayload && (licPayload.status === 'PRO' || licPayload.type === 'LIFETIME' || licPayload.type === 'PRO' || licPayload.type === 'SEM6')) {
-               StorageShield.save('license', licPayload, true); localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + wsCode, 'TRUE'); localStorage.removeItem('openline_pending_license_sync'); window.updateLicenseUI();
-            } return;
-          }
-          if (topic.endsWith('/settings')) {
-            var setPayload = decryptData(payloadText);
-            if (setPayload && typeof setPayload === 'object') { window.applyWorkshopSettings(setPayload); localStorage.removeItem('openline_pending_settings_sync'); } return;
-          }
-          if (topic.endsWith('/sync/request')) {
-            var reqPayload = JSON.parse(payloadText);
-            if (reqPayload && reqPayload.requesterId !== myDeviceId) { if (window.checkLicenseStatus() === 'PRO' || repairs.length > 0 || stockItems.length > 0) { window.publishMQTT(true); if (stockItems.length > 0) { mqttClient.publish('openline/v4/workshop/' + wsCode + '/stock', encryptData(stockItems), { retain: true, qos: 1 }); } } } return;
-          }
-          if (topic.endsWith('/command')) {
-            var cmdPayload = JSON.parse(payloadText);
-            if (cmdPayload && cmdPayload.targetDevId === myDeviceId && cmdPayload.command === 'SET_BRANCH') { localStorage.setItem(LOCAL_BRANCH_KEY, cmdPayload.branch); document.body.innerHTML = '<div style="color:white;padding:20px;text-align:center;font-size:18px;margin-top:20vh;font-weight:bold;">El Administrador te ha reasignado a la sucursal: (' + S(cmdPayload.branch) + ')</div>'; setTimeout(function(){ window.location.reload(); }, 2000); }
-            if (cmdPayload && cmdPayload.command === 'ACTIVATE_LICENSE' && cmdPayload.license) { StorageShield.save('license', cmdPayload.license, true); localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + wsCode, 'TRUE'); window.updateLicenseUI(); }
-            if (cmdPayload && cmdPayload.command === 'EXPEL_WORKSHOP' && cmdPayload.workshopId === wsCode) { localStorage.removeItem(WORKSHOP_ID_KEY); localStorage.removeItem(LOCAL_BRANCH_KEY); document.body.innerHTML = '<div style="color:#ef4444;padding:24px;text-align:center;font-size:18px;margin-top:20vh;font-weight:bold;line-height:1.4;">🚫 ACCESO REVOCADO<br><span style="font-size:12px;color:#a1a1aa;font-weight:normal;">Este taller ha sido desvinculado por el Administrador Maestro.</span></div>'; setTimeout(function() { window.location.reload(); }, 2500); return; }
+               StorageShield.save('license', licPayload, true);
+               localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + wsCode, 'TRUE');
+               localStorage.removeItem('openline_pending_license_sync');
+               window.updateLicenseUI();
+            }
             return;
           }
+
+          if (topic.endsWith('/settings')) {
+            var setPayload = decryptData(payloadText);
+            if (setPayload && typeof setPayload === 'object') {
+               window.applyWorkshopSettings(setPayload);
+               localStorage.removeItem('openline_pending_settings_sync');
+            }
+            return;
+          }
+
+          if (topic.endsWith('/sync/request')) {
+            var reqPayload = JSON.parse(payloadText);
+            if (reqPayload && reqPayload.requesterId !== myDeviceId) {
+               if (window.checkLicenseStatus() === 'PRO' || repairs.length > 0 || stockItems.length > 0) {
+                  window.publishMQTT(true);
+                  if (stockItems.length > 0) {
+                    mqttClient.publish('openline/v4/workshop/' + wsCode + '/stock', encryptData(stockItems), { retain: true, qos: 1 });
+                  }
+               }
+            }
+            return;
+          }
+
+          if (topic.endsWith('/command')) {
+            var cmdPayload = JSON.parse(payloadText);
+            if (cmdPayload && cmdPayload.targetDevId === myDeviceId && cmdPayload.command === 'SET_BRANCH') {
+                localStorage.setItem(LOCAL_BRANCH_KEY, cmdPayload.branch);
+                document.body.innerHTML = '<div style="color:white;padding:20px;text-align:center;font-size:18px;margin-top:20vh;font-weight:bold;">El Administrador te ha reasignado a la sucursal: (' + S(cmdPayload.branch) + ')</div>';
+                setTimeout(function(){ window.location.reload(); }, 2000);
+            }
+            if (cmdPayload && cmdPayload.command === 'ACTIVATE_LICENSE' && cmdPayload.license) {
+                StorageShield.save('license', cmdPayload.license, true);
+                localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + wsCode, 'TRUE');
+                window.updateLicenseUI();
+            }
+            if (cmdPayload && cmdPayload.command === 'EXPEL_WORKSHOP' && cmdPayload.workshopId === wsCode) {
+                localStorage.removeItem(WORKSHOP_ID_KEY);
+                localStorage.removeItem(LOCAL_BRANCH_KEY);
+                document.body.innerHTML = '<div style="color:#ef4444;padding:24px;text-align:center;font-size:18px;margin-top:20vh;font-weight:bold;line-height:1.4;">🚫 ACCESO REVOCADO<br><span style="font-size:12px;color:#a1a1aa;font-weight:normal;">Este taller ha sido desvinculado por el Administrador Maestro.</span></div>';
+                setTimeout(function() { window.location.reload(); }, 2500);
+            }
+            return;
+          }
+
           if (topic.endsWith('/heartbeat')) {
             var hbPayload = JSON.parse(payloadText);
-            if (hbPayload && hbPayload.devId) { window.activeDevicesMap[hbPayload.devId] = { time: Date.now(), user: hbPayload.user || 'Admin', branch: hbPayload.branch || 'Central' }; if (typeof window.renderUnifiedUsersAndDevices === 'function' && $('switchUserModal') && $('switchUserModal').classList.contains('active')) { window.renderUnifiedUsersAndDevices(); } } return;
+            if (hbPayload && hbPayload.devId) {
+                window.activeDevicesMap[hbPayload.devId] = { time: Date.now(), user: hbPayload.user || 'Admin', branch: hbPayload.branch || 'Central' };
+                if (typeof window.renderUnifiedUsersAndDevices === 'function' && $('switchUserModal') && $('switchUserModal').classList.contains('active')) {
+                  window.renderUnifiedUsersAndDevices();
+                }
+            }
+            return;
           }
+
           if (topic.includes('/sync')) {
             var syncPayload = decryptData(payloadText);
             if (syncPayload && syncPayload.senderId !== myDeviceId) {
-              if(syncPayload.repairs && Array.isArray(syncPayload.repairs)) { repairs = mergeByDate(repairs, syncPayload.repairs); StorageShield.save('repairs', repairs, true); window.renderRepairsList(); window.updateCounters(); }
-              if(syncPayload.cashMovements && Array.isArray(syncPayload.cashMovements)) { cashMovements = mergeByDate(cashMovements, syncPayload.cashMovements); StorageShield.save('cash', cashMovements, true); window.updateCashBalanceUI(); }
-              if(syncPayload.cashClosures && Array.isArray(syncPayload.cashClosures)) { cashClosures = mergeByDate(cashClosures, syncPayload.cashClosures); StorageShield.save('cashClosures', cashClosures, true); window.renderCashClosures(); }
-              if(syncPayload.sales && Array.isArray(syncPayload.sales)) { sales = mergeByDate(sales, syncPayload.sales); StorageShield.save('sales', sales, true); window.renderVentasList(); }
-              if(syncPayload.stockItems && Array.isArray(syncPayload.stockItems)) { var stockMapSync = {}; stockItems.forEach(function(s){ stockMapSync[s.code + '_' + (s.branch || 'Central')] = s; }); syncPayload.stockItems.forEach(function(s){ var key = s.code + '_' + (s.branch || 'Central'); var existing = stockMapSync[key]; if (!existing || (s.updatedAt || 0) >= (existing.updatedAt || 0)) { stockMapSync[key] = s; } }); stockItems = Object.values(stockMapSync); StorageShield.save('stock', stockItems, true); window.renderStockList(); if(currentPosTab === 'CATALOG') window.renderPosCatalog(); }
-              if(syncPayload.settings) { window.applyWorkshopSettings(syncPayload.settings); }
-              if(syncPayload.license && (syncPayload.license.type === 'LIFETIME' || syncPayload.license.type === 'PRO' || syncPayload.license.type === 'SEM6')) { StorageShield.save('license', syncPayload.license, true); localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + wsCode, 'TRUE'); window.updateLicenseUI(); }
+              if(syncPayload.repairs && Array.isArray(syncPayload.repairs)) { 
+                repairs = mergeByDate(repairs, syncPayload.repairs); 
+                StorageShield.save('repairs', repairs, true); 
+                window.renderRepairsList(); 
+                window.updateCounters(); 
+              }
+              if(syncPayload.cashMovements && Array.isArray(syncPayload.cashMovements)) { 
+                cashMovements = mergeByDate(cashMovements, syncPayload.cashMovements); 
+                StorageShield.save('cash', cashMovements, true); 
+                if(typeof window.updateCashBalanceUI === 'function') window.updateCashBalanceUI(); 
+              }
+              if(syncPayload.cashClosures && Array.isArray(syncPayload.cashClosures)) { 
+                cashClosures = mergeByDate(cashClosures, syncPayload.cashClosures); 
+                StorageShield.save('cashClosures', cashClosures, true); 
+                if(typeof window.renderCashClosures === 'function') window.renderCashClosures(); 
+              }
+              if(syncPayload.sales && Array.isArray(syncPayload.sales)) { 
+                sales = mergeByDate(sales, syncPayload.sales); 
+                StorageShield.save('sales', sales, true); 
+                if(typeof window.renderVentasList === 'function') window.renderVentasList(); 
+              }
+              if(syncPayload.stockItems && Array.isArray(syncPayload.stockItems)) {
+                var stockMapSync = {};
+                stockItems.forEach(function(s){ stockMapSync[s.code + '_' + (s.branch || 'Central')] = s; });
+                syncPayload.stockItems.forEach(function(s){ 
+                   var key = s.code + '_' + (s.branch || 'Central');
+                   var existing = stockMapSync[key];
+                   if (!existing || (s.updatedAt || 0) >= (existing.updatedAt || 0)) { stockMapSync[key] = s; }
+                });
+                stockItems = Object.values(stockMapSync); 
+                StorageShield.save('stock', stockItems, true); 
+                window.renderStockList();
+                if(currentPosTab === 'CATALOG' && typeof window.renderPosCatalog === 'function') window.renderPosCatalog();
+              }
+              if(syncPayload.settings) {
+                window.applyWorkshopSettings(syncPayload.settings);
+              }
+              if(syncPayload.license && (syncPayload.license.type === 'LIFETIME' || syncPayload.license.type === 'PRO' || syncPayload.license.type === 'SEM6')) {
+                StorageShield.save('license', syncPayload.license, true);
+                localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + wsCode, 'TRUE');
+                window.updateLicenseUI();
+              }
             }
           }
         } catch(e) {}
@@ -729,7 +906,9 @@
     }
 
     window.broadcastPresence = function() {
-      if (mqttClient && mqttClient.connected) { mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', JSON.stringify({ devId: myDeviceId, user: activeUser, branch: localBranch })); }
+      if (mqttClient && mqttClient.connected) {
+        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', JSON.stringify({ devId: myDeviceId, user: activeUser, branch: localBranch }));
+      }
     };
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -744,8 +923,19 @@
           window.renderBranchTabs(); 
           window.renderRepairsList(); 
           window.updateCounters(); 
-          window.updateCashBalanceUI();
-          setTimeout(function() { var banner = $('realtimeSyncBanner'); if (banner) { banner.style.display = 'flex'; void banner.offsetWidth; banner.classList.remove('opacity-0', '-translate-y-[150%]'); banner.classList.add('opacity-100', 'translate-y-0'); setTimeout(window.dismissRealtimeBanner, 6000); } }, 600);
+          if(typeof window.updateCashBalanceUI === 'function') window.updateCashBalanceUI();
+          
+          setTimeout(function() {
+            var banner = $('realtimeSyncBanner');
+            if (banner) {
+              banner.style.display = 'flex';
+              void banner.offsetWidth; 
+              banner.classList.remove('opacity-0', '-translate-y-[150%]');
+              banner.classList.add('opacity-100', 'translate-y-0');
+              setTimeout(window.dismissRealtimeBanner, 6000);
+            }
+          }, 600);
+
       } catch (criticalError) { console.error("Boot seguro interceptó un error."); }
     });
   </script>
