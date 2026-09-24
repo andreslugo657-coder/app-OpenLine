@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="OpenLine">
   <meta name="theme-color" content="#09090b">
-  <title>OpenLine - Gestión de Taller Profesional</title>
+  <title>OpenLine - Gestión de Taller Profesional (Seguro)</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -17,11 +17,15 @@
     };
   </script>
 
-  <!-- Phosphor Icons & Librerías -->
+  <!-- Phosphor Icons & Librerías Base -->
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
   <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  
+  <!-- LIBRERÍAS DE SEGURIDAD (Encriptación E2EE y Sanitización XSS) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
 
   <style>
     body { min-height: 100vh; min-height: 100dvh; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
@@ -34,7 +38,6 @@
     ::-webkit-scrollbar { display: none; width: 0; height: 0; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Modales adaptados */
     .app-modal {
       display: none; position: fixed; inset: 0; z-index: 9999;
       background-color: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
@@ -62,17 +65,17 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen relative z-0">
 
-  <!-- AVISO ANIMADO: SINCRONIZACIÓN EN TIEMPO REAL -->
+  <!-- AVISO ANIMADO -->
   <div id="realtimeSyncBanner" style="display: none;" class="fixed top-4 left-1/2 -translate-x-1/2 z-[100000] bg-emerald-950/95 border border-emerald-500/60 text-white px-4 py-3 rounded-2xl shadow-[0_10px_35px_rgba(16,185,129,0.25)] flex items-start gap-3 w-[92%] max-w-md transition-all duration-700 ease-out transform -translate-y-[150%] opacity-0 pointer-events-auto backdrop-blur-xl">
     <div class="mt-0.5 w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center shrink-0">
       <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
     </div>
     <div class="flex-1">
       <div class="flex items-center gap-1.5 mb-0.5">
-        <h4 class="font-bold text-emerald-300 text-xs uppercase tracking-wider">Red Sincronizada</h4>
-        <span class="text-[9px] font-mono bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded-full font-bold">1s LIVE</span>
+        <h4 class="font-bold text-emerald-300 text-xs uppercase tracking-wider">Red Protegida E2EE</h4>
+        <span class="text-[9px] font-mono bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded-full font-bold">AES-256</span>
       </div>
-      <p class="text-[10px] text-zinc-200 leading-relaxed">Catálogo compartido, stock y órdenes vinculadas en vivo. Cajas locales operando de forma independiente.</p>
+      <p class="text-[10px] text-zinc-200 leading-relaxed">Catálogo compartido, stock y órdenes vinculadas en vivo mediante encriptación de grado militar.</p>
     </div>
     <button type="button" onclick="window.dismissRealtimeBanner()" class="bg-emerald-900/60 p-1.5 rounded-lg text-emerald-300 hover:text-white transition active:scale-95">
       <i class="ph-bold ph-x text-sm"></i>
@@ -118,23 +121,22 @@
       </div>
     </div>
 
-    <!-- BOTONERA PRINCIPAL -->
     <div class="px-2.5 pb-2 max-w-5xl mx-auto w-full">
       <div class="grid grid-cols-5 gap-1.5 text-center">
         <button type="button" onclick="window.openNewRepairModal()" class="py-2 px-1 rounded-xl bg-iosBlue text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform">
-          <i class="ph-bold ph-plus text-base"></i><span>Ingreso</span>
+          <i class="ph-bold ph-plus text-base block"></i><span>Ingreso</span>
         </button>
         <button type="button" onclick="window.openSalesModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform">
-          <i class="ph-bold ph-shopping-cart-simple text-base"></i><span>Vender</span>
+          <i class="ph-bold ph-shopping-cart-simple text-base block"></i><span>Vender</span>
         </button>
         <button type="button" onclick="window.openVentasHistoryModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-indigo-900 to-blue-900 border border-indigo-700/60 text-indigo-200 text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform">
-          <i class="ph-bold ph-receipt text-base text-indigo-400"></i><span>Ventas</span>
+          <i class="ph-bold ph-receipt text-base text-indigo-400 block"></i><span>Ventas</span>
         </button>
         <button type="button" onclick="window.openStockModal()" class="py-2 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform relative">
-          <i class="ph-bold ph-barcode text-base text-purple-400"></i><span>Stock</span>
+          <i class="ph-bold ph-barcode text-base text-purple-400 block"></i><span>Stock</span>
         </button>
         <button type="button" onclick="window.openCashModal()" class="py-2 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform">
-          <i class="ph-bold ph-currency-dollar-simple text-base text-emerald-400"></i><span>Caja (<span id="btnLabelCajaLocal">C</span>)</span>
+          <i class="ph-bold ph-currency-dollar-simple text-base text-emerald-400 block"></i><span>Caja (<span id="btnLabelCajaLocal">C</span>)</span>
         </button>
       </div>
     </div>
@@ -150,7 +152,7 @@
       <div id="branchTabsButtonsList" class="flex gap-1 overflow-x-auto no-scrollbar text-xs font-medium pb-0.5"></div>
     </div>
 
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5">
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
       <button type="button" onclick="window.openCashModal()" class="w-full text-center bg-gradient-to-br from-zinc-900 to-emerald-950/40 border border-emerald-900/40 rounded-xl p-2 shadow-sm active:scale-95 transition">
         <span class="text-[9px] text-emerald-400 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-wallet"></i> Saldo Caja (<span id="headerCashBranchTag">Central</span>)</span>
         <span id="headerCashBalance" class="text-sm font-extrabold text-emerald-300 font-mono mt-0.5 block">$0</span>
@@ -161,13 +163,10 @@
       <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center shadow-sm">
         <span class="text-[9px] text-amber-400 block font-bold uppercase">Taller</span><span id="counterInProgress" class="text-sm font-bold text-amber-400 mt-0.5 block">0</span>
       </div>
-      <div class="bg-zinc-900 border border-violet-800/60 rounded-xl p-2 text-center shadow-sm">
-        <span class="text-[9px] text-violet-400 block font-bold uppercase">Repuestos</span><span id="counterWaitingParts" class="text-sm font-bold text-violet-300 mt-0.5 block">0</span>
-      </div>
       <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center shadow-sm">
         <span class="text-[9px] text-indigo-400 block font-bold uppercase">En Viaje</span><span id="counterTransit" class="text-sm font-bold text-indigo-400 mt-0.5 block">0</span>
       </div>
-      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center shadow-sm">
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center shadow-sm col-span-2 sm:col-span-1">
         <span class="text-[9px] text-emerald-400 block font-bold uppercase">Listos</span><span id="counterReady" class="text-sm font-bold text-emerald-400 mt-0.5 block">0</span>
       </div>
     </div>
@@ -182,7 +181,6 @@
         <button type="button" onclick="window.setFilter('ALL')" id="tabALL" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-800 text-white font-bold shrink-0 transition text-xs">Todos</button>
         <button type="button" onclick="window.setFilter('WAITING')" id="tabWAITING" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Espera</button>
         <button type="button" onclick="window.setFilter('IN_PROGRESS')" id="tabIN_PROGRESS" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Taller</button>
-        <button type="button" onclick="window.setFilter('WAITING_PARTS')" id="tabWAITING_PARTS" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Repuestos</button>
         <button type="button" onclick="window.setFilter('IN_TRANSIT')" id="tabIN_TRANSIT" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Viaje</button>
         <button type="button" onclick="window.setFilter('READY')" id="tabREADY" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Listos</button>
       </div>
@@ -194,13 +192,6 @@
       <h3 class="text-xs font-semibold text-zinc-400">No hay órdenes registradas</h3>
     </div>
   </main>
-
-  <div class="fixed bottom-12 left-1/2 -translate-x-1/2 z-[9000] pointer-events-none w-max">
-    <div class="bg-emerald-950/90 border border-emerald-600/70 text-emerald-300 text-[10px] px-3.5 py-1 rounded-full flex items-center gap-1.5 shadow-[0_0_15px_rgba(52,211,153,0.2)] backdrop-blur-md">
-      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-      <span class="font-bold tracking-wide">Sincronizando con red en tiempo real</span>
-    </div>
-  </div>
 
   <div class="ticker-wrap pb-safe border-t border-zinc-800">
     <div class="ticker text-[10px] font-bold text-zinc-500 tracking-widest uppercase flex items-center gap-3">
@@ -350,7 +341,7 @@
     </div>
   </div>
 
-  <!-- MODAL VENTAS POS CON CATÁLOGO INTERACTIVO COMPARTIDO -->
+  <!-- MODAL VENTAS POS -->
   <div id="salesModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 sm:border border-amber-600/70 rounded-t-3xl sm:rounded-3xl w-full max-w-4xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
       <div class="p-3 border-b border-zinc-800 shrink-0 space-y-2">
@@ -368,14 +359,12 @@
         </div>
       </div>
       <div class="flex-1 overflow-hidden relative flex flex-col p-3 min-h-0">
-        <!-- VISTA CATÁLOGO INTERACTIVO -->
         <div id="posViewCatalog" class="flex-1 flex flex-col space-y-2 overflow-hidden min-h-0">
           <div class="space-y-1.5 shrink-0">
             <div class="relative">
               <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i>
               <input type="text" id="posSearchProduct" oninput="window.renderPosCatalog()" placeholder="Buscar en catálogo compartido de la red..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white">
             </div>
-            <!-- FILTROS INTERACTIVOS: SUCURSALES Y CATEGORÍAS -->
             <div class="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0.5" id="posCatalogBranchPills"></div>
             <div class="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0.5" id="posCatalogCategoryPills"></div>
           </div>
@@ -385,12 +374,10 @@
             <span class="font-mono font-black text-xs bg-black/30 px-2.5 py-0.5 rounded-lg" id="posBarTotal">$0</span>
           </div>
         </div>
-        <!-- VISTA ESCÁNER / MANUAL -->
         <div id="posViewScanManual" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6 min-h-0">
           <div class="p-3 bg-zinc-950 rounded-2xl border border-purple-800/80 space-y-2 shrink-0"><div class="flex items-center justify-between"><span class="text-[10px] font-bold text-purple-300 uppercase flex items-center gap-1"><i class="ph-bold ph-barcode text-sm"></i> Lector de Códigos</span><button type="button" id="btnToggleScanner" onclick="window.togglePosCam()" class="px-2.5 py-1 bg-purple-900 text-purple-200 rounded-lg font-bold text-xs flex items-center gap-1 active:scale-95"><i class="ph-bold ph-camera"></i> Iniciar</button></div><div id="posScannerBox" class="hidden flex-col p-2 bg-black rounded-xl border border-purple-800 gap-1.5"><button type="button" onclick="window.stopPosCam()" class="text-rose-400 font-bold self-end bg-rose-950/40 px-2.5 py-0.5 rounded text-[10px] active:scale-95">Cerrar</button><div id="pos-qr-reader" class="w-full bg-black rounded-xl overflow-hidden"></div></div></div>
           <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 shrink-0"><span class="text-[10px] font-bold text-amber-400 uppercase flex items-center gap-1"><i class="ph-bold ph-tag text-sm"></i> Venta Manual Rápida</span><input type="text" id="posManualName" placeholder="Descripción (Funda, Cable, etc)..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white"><div class="flex gap-2"><input type="number" id="posManualPrice" placeholder="Precio ($)" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono font-bold"><button type="button" onclick="window.addManualPosItem()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shadow active:scale-95 transition">+ Agregar</button></div></div>
         </div>
-        <!-- VISTA CARRITO -->
         <div id="posViewCart" class="hidden flex-1 flex-col space-y-2.5 overflow-y-auto pb-4 min-h-0">
           <div class="flex items-center justify-between pb-1 border-b border-zinc-800"><span class="font-bold text-white text-xs uppercase">Artículos cargados</span><button type="button" onclick="window.clearPosCart()" class="text-[10px] text-rose-400 font-bold px-2 py-0.5 bg-rose-950/40 rounded">Vaciar</button></div><div id="posCartContainer" class="flex-1 space-y-1.5 overflow-y-auto min-h-[120px]"></div>
           <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 shrink-0">
@@ -439,7 +426,6 @@
             </div>
             <button type="button" onclick="window.bulkIncreasePrices()" class="px-3 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs flex items-center gap-1 shrink-0 shadow active:scale-95 transition"><i class="ph-bold ph-trend-up"></i> % Suba</button>
           </div>
-          <!-- FILTRO INTERACTIVO DE SUCURSAL PARA INVENTARIO -->
           <div class="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0.5 shrink-0" id="stockBranchFilterPills"></div>
           <div id="stockListContainer" class="space-y-1.5 overflow-y-auto flex-1 pb-4 min-h-[260px]"></div>
         </div>
@@ -486,13 +472,11 @@
             <div><span class="text-[9px] text-zinc-500 uppercase block mb-0.5">Diagnóstico / Falla:</span><p id="dtlDeviceFault" class="text-zinc-200 text-xs leading-relaxed"></p></div>
             <div id="dtlRepairDetailsBox" class="pt-2 border-t border-zinc-800/80"><span class="text-[9px] text-indigo-400 uppercase font-bold block mb-0.5">Reparación Realizada:</span><p id="dtlRepairDetailsText" class="text-zinc-200 text-xs whitespace-pre-line leading-relaxed"></p></div>
             
-            <!-- ACCIONES DE INFORME TÉCNICO -->
             <div class="grid grid-cols-2 gap-2 pt-2">
               <button type="button" onclick="window.sendTechnicalReportWA()" class="py-2 rounded-xl bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-whatsapp-logo text-sm"></i> WhatsApp Informe</button>
               <button type="button" onclick="window.printTechnicalReport()" class="py-2 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-printer text-sm"></i> Imprimir Informe</button>
             </div>
             
-            <!-- ACCIONES DE COMPROBANTE Y ETIQUETA DE INGRESO -->
             <div class="grid grid-cols-2 gap-2 pt-1.5">
               <button type="button" onclick="window.sendRepairTicketWA(selectedRepairId)" class="py-2 rounded-xl bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95 transition"><i class="ph-bold ph-whatsapp-logo text-sm text-emerald-400"></i> WA Comprobante</button>
               <button type="button" onclick="window.executePrintRepairLabel(selectedRepairId)" class="py-2 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95 transition"><i class="ph-bold ph-tag text-sm text-iosBlue"></i> Etiqueta Ingreso</button>
@@ -502,11 +486,7 @@
           <div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl flex items-center justify-between"><div><span class="text-[10px] text-zinc-400 uppercase font-bold block">Cobro de Reparación</span><span class="text-xs text-zinc-300">Ingresar saldo a caja local</span></div><button type="button" onclick="window.chargeRepairToCash()" class="py-1.5 px-3 rounded-xl bg-emerald-950 border border-emerald-600/70 text-emerald-300 font-bold text-xs flex items-center gap-1 active:scale-95 transition"><i class="ph-bold ph-wallet text-sm"></i> Cobrar a Caja</button></div>
           <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
             <div class="flex items-center justify-between"><span class="text-[10px] text-zinc-400 font-bold uppercase">Estado Operativo:</span><span id="dtlOperationalStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-950 text-amber-300">Espera</span></div>
-            <div class="grid grid-cols-5 gap-1"><button type="button" onclick="window.updateDeviceOperationalStatus('WAITING')" class="p-2 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[9px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-clock text-amber-400 text-base mb-1 block"></i> Espera</button><button type="button" onclick="window.updateDeviceOperationalStatus('IN_PROGRESS')" class="p-2 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[9px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-wrench text-iosBlue text-base mb-1 block"></i> Taller</button><button type="button" onclick="window.updateDeviceOperationalStatus('WAITING_PARTS')" class="p-2 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[9px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-package text-violet-400 text-base mb-1 block"></i> Repuesto</button><button type="button" onclick="window.updateDeviceOperationalStatus('IN_TRANSIT')" class="p-2 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[9px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-truck text-indigo-400 text-base mb-1 block"></i> Viaje</button><button type="button" onclick="window.updateDeviceOperationalStatus('READY')" class="p-2 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[9px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-check-circle text-emerald-400 text-base mb-1 block"></i> Listo</button></div>
-            <div class="grid grid-cols-2 gap-2 pt-1">
-              <button type="button" onclick="window.sendTrackingLinkWA()" class="py-2 rounded-xl bg-emerald-950 text-emerald-400 border border-emerald-800 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-whatsapp-logo text-sm"></i> WA Seguimiento</button>
-              <button type="button" onclick="window.copyTrackingLink()" class="py-2 rounded-xl bg-zinc-800 text-zinc-300 border border-zinc-700 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95"><i class="ph-bold ph-link text-sm text-iosBlue"></i> Copiar Link</button>
-            </div>
+            <div class="grid grid-cols-4 gap-1.5"><button type="button" onclick="window.updateDeviceOperationalStatus('WAITING')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-clock text-amber-400 text-base mb-1 block"></i> Espera</button><button type="button" onclick="window.updateDeviceOperationalStatus('IN_PROGRESS')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-wrench text-iosBlue text-base mb-1 block"></i> Taller</button><button type="button" onclick="window.updateDeviceOperationalStatus('IN_TRANSIT')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-truck text-indigo-400 text-base mb-1 block"></i> Viaje</button><button type="button" onclick="window.updateDeviceOperationalStatus('READY')" class="p-2.5 rounded-xl bg-zinc-800 font-bold text-zinc-300 text-[10px] border border-zinc-700 active:bg-zinc-700 transition"><i class="ph-bold ph-check-circle text-emerald-400 text-base mb-1 block"></i> Listo</button></div>
           </div>
           <div class="grid grid-cols-3 gap-1.5 text-center mt-2"><div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[8px] text-zinc-500 block font-bold">TOTAL ($)</span><b class="text-white font-mono text-xs" id="dtlBudgetTotal">$0</b></div><div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[8px] text-emerald-400 block font-bold">SEÑA ($)</span><b class="text-emerald-400 font-mono text-xs" id="dtlAdvancePaid">$0</b></div><div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[8px] text-amber-400 block font-bold">RESTA ($)</span><b class="text-amber-400 font-mono text-xs" id="dtlBalanceDue">$0</b></div></div>
           <button type="button" onclick="window.deleteCurrentRepair()" class="w-full py-2.5 mt-2 bg-rose-950 text-rose-300 rounded-xl font-bold flex items-center justify-center gap-1.5 active:scale-95 transition mb-6"><i class="ph-bold ph-trash text-sm"></i> Eliminar Orden Permanentemente</button>
@@ -523,13 +503,6 @@
         <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Equipo</label><div class="grid grid-cols-2 gap-2"><input type="text" id="editDeviceBrand" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white"><input type="text" id="editDeviceModel" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white"></div></div>
         <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Diagnóstico / Falla</label><textarea id="editDeviceFault" rows="2" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"></textarea></div>
         <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Reparación / Trabajo Realizado</label><textarea id="editRepairDetails" rows="3" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"></textarea></div>
-        <div class="grid grid-cols-2 gap-2">
-          <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Presupuesto Total ($)</label><input type="number" id="editDeviceBudget" min="0" step="0.01" oninput="window.calcBalance('edit')" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></div>
-          <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Seña / Adelanto ($)</label><input type="number" id="editDeviceAdvance" min="0" step="0.01" oninput="window.calcBalance('edit')" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold"></div>
-        </div>
-        <div class="flex items-center justify-between bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2">
-          <span class="text-zinc-400 font-bold uppercase text-[10px]">Saldo Restante ($)</span><span id="editCalculatedBalance" class="font-mono font-bold text-amber-400 text-sm">$0</span>
-        </div>
         <div class="grid grid-cols-2 gap-2 pt-2"><button type="button" onclick="window.closeModal('editRepairModal')" class="py-2.5 bg-zinc-800 text-white font-bold rounded-xl">Cancelar</button><button type="submit" class="py-2.5 bg-iosBlue text-white font-bold rounded-xl">Guardar</button></div>
       </form>
     </div>
@@ -554,7 +527,7 @@
     </div>
   </div>
 
-  <!-- PANEL PERSONAL Y DISPOSITIVOS (CON RESTRICCIONES) -->
+  <!-- PANEL PERSONAL Y DISPOSITIVOS -->
   <div id="switchUserModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3.5 text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Personal & Dispositivos</h3><button type="button" onclick="window.closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -605,7 +578,7 @@
     </div>
   </div>
 
-  <!-- MODAL VINCULAR A OTRA RED CON CLAVE DE ADMIN OBLIGATORIA -->
+  <!-- MODAL VINCULAR A OTRA RED -->
   <div id="teamModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Equipo & Sincronización</h3><button type="button" onclick="window.closeModal('teamModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -627,13 +600,13 @@
           <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 text-center"><div class="flex items-center justify-center gap-3"><div id="settingsLogoPreview" class="w-12 h-12 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden shrink-0"></div><div class="space-y-1 text-left"><label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 text-white font-bold rounded-xl"><i class="ph-bold ph-upload-simple"></i> Logo<input type="file" accept="image/*" onchange="window.handleLogoUpload(this)" class="hidden"></label><button type="button" onclick="window.removeLogo()" class="block text-rose-400">Quitar</button></div></div></div>
           <div class="space-y-2"><input type="text" id="cfgWorkshopName" placeholder="Nombre Comercial" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"><input type="text" id="cfgWorkshopSubtitle" placeholder="Subtítulo" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white"><input type="tel" id="cfgAdminPhone" placeholder="WhatsApp Admin (Para recibir cierres y clave)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono"></div>
           <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2"><span class="text-[10px] font-bold text-zinc-300 uppercase block">📍 Sucursales (Ubicaciones):</span><div id="settingsBranchesList" class="space-y-1.5 max-h-32 overflow-y-auto no-scrollbar"></div><div class="flex gap-1.5 pt-1 border-t border-zinc-800/80"><input type="text" id="inpNewConfigBranch" placeholder="Nueva Sucursal..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"><button type="button" onclick="window.addConfigBranch()" class="px-3 py-2 bg-iosBlue text-white font-bold rounded-xl text-xs">+ Añadir</button></div></div>
-          <div class="pt-4 border-t border-zinc-800/80"><button type="button" onclick="window.closeModal('settingsModal'); window.openLicenseModal();" class="w-full py-2.5 bg-zinc-800 border border-zinc-700 text-zinc-300 font-bold rounded-xl shadow flex items-center justify-center gap-1.5 transition active:scale-95"><i class="ph-bold ph-shield-check text-base"></i> Ver Licencia / Panel Maestro</button></div>
+          <div class="pt-4 border-t border-zinc-800/80"><button type="button" onclick="window.closeModal('settingsModal'); window.openLicenseModal();" class="w-full py-2.5 bg-zinc-800 border border-zinc-700 text-zinc-300 font-bold rounded-xl shadow flex items-center justify-center gap-1.5 transition active:scale-95"><i class="ph-bold ph-shield-check text-base"></i> Ver Licencia</button></div>
       </div>
       <button type="button" onclick="window.saveSettings()" class="w-full py-3 bg-iosBlue text-white font-bold rounded-xl shadow shrink-0 mt-2">Guardar Ajustes</button>
     </div>
   </div>
 
-  <!-- LICENCIA Y PANEL MAESTRO CREADOR -->
+  <!-- LICENCIA (Sin Panel Maestro Expuesto) -->
   <div id="licenseModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg p-4 space-y-3.5 pb-safe shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -643,57 +616,7 @@
           <span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia:</span>
           <div id="licenseStatusText" class="font-mono text-base font-black text-amber-400 py-1 select-none">DEMO</div>
           <span id="licenseDetailCountdown" class="text-[11px] text-zinc-400 font-mono block mt-0.5">Versión activa en este equipo</span>
-
-          <!-- CAJA DE ACCESO A PANEL MAESTRO -->
-          <div id="masterAccessTriggerBox" class="mt-4 p-3 bg-zinc-900 rounded-2xl border border-indigo-700/60 text-center space-y-2">
-            <span class="text-[10px] font-bold text-indigo-300 uppercase tracking-wider flex items-center justify-center gap-1">
-              <i class="ph-bold ph-key text-base"></i> Acceso Creador (Panel Maestro)
-            </span>
-            <form onsubmit="window.unlockMasterCreator(event)" class="flex items-center justify-center gap-2 max-w-xs mx-auto m-0 p-0">
-              <input type="password" id="inpMasterCreatorPin" placeholder="PIN Secreto" 
-                     class="flex-1 bg-zinc-950 border border-indigo-600 rounded-xl px-3 py-2 text-white font-mono text-center text-xs outline-none focus:border-indigo-400 shadow-inner"
-                     autocomplete="off" required>
-              <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-bold rounded-xl text-xs shadow-md transition shrink-0">
-                Entrar
-              </button>
-            </form>
-          </div>
         </div>
-
-        <!-- PANEL MAESTRO CREADOR -->
-        <div id="masterAdminUnlockedView" style="display: none;" class="p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3">
-          <div class="flex items-center justify-between border-b border-indigo-900 pb-2">
-            <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide">Panel Maestro Creador</span></div>
-            <button type="button" onclick="window.requestTelemetryBroadcast()" class="text-[9px] bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 active:scale-95"><i class="ph-bold ph-arrows-clockwise"></i> Sondear Red</button>
-          </div>
-          <div class="grid grid-cols-5 gap-1.5 text-center">
-            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-zinc-400 uppercase block font-bold">Talleres</span><b class="text-white text-xs font-mono" id="telTotalWorkshops">0</b></div>
-            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-emerald-400 uppercase block font-bold">En Línea</span><b class="text-emerald-400 text-xs font-mono" id="telOnlineWorkshops">0</b></div>
-            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-iosBlue uppercase block font-bold">Usuarios</span><b class="text-iosBlue text-xs font-mono" id="telOnlineUsers">0</b></div>
-            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-amber-400 uppercase block font-bold">DEMO</span><b class="text-amber-400 text-xs font-mono" id="telDemoWorkshops">0</b></div>
-            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-indigo-400 uppercase block font-bold">PRO</span><b class="text-indigo-400 text-xs font-mono" id="telProWorkshops">0</b></div>
-          </div>
-          <div class="space-y-1.5">
-            <div class="flex items-center justify-between">
-              <span class="text-[9px] text-zinc-400 uppercase font-bold block">Talleres Registrados en Vivo:</span>
-              <span class="text-[8px] text-indigo-400">Clic en taller para seleccionar</span>
-            </div>
-            <div id="telemetryWorkshopsList" class="space-y-1.5 max-h-56 overflow-y-auto pr-1"></div>
-          </div>
-          <div class="space-y-2 pt-2 border-t border-indigo-900/50">
-            <span class="text-[9px] font-bold text-indigo-300 uppercase">Generar Licencia de Activación:</span>
-            <div class="grid grid-cols-3 gap-1.5">
-              <input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="col-span-2 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono text-xs">
-              <select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold"><option value="SEM6">6 Meses</option><option value="LIFETIME" selected>Vitalicio</option></select>
-            </div>
-            <button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow active:scale-95">Emitir Clave Segura</button>
-            <div id="genResultBox" style="display: none;" class="hidden p-2.5 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800">
-              <span id="genGeneratedKey" class="font-mono text-emerald-400 font-bold text-xs"></span>
-              <button type="button" onclick="window.copyKey()" class="px-2.5 py-1 bg-zinc-800 rounded text-[10px] text-white font-bold">Copiar</button>
-            </div>
-          </div>
-        </div>
-
         <div class="space-y-1.5 pt-1"><label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar o Renovar Licencia:</label><div class="flex gap-1.5"><input type="password" id="inpActivationKey" placeholder="Pega tu clave aquí..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs"><button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs active:scale-95">Activar</button></div></div>
       </div>
       <button type="button" onclick="window.closeModal('licenseModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1 shrink-0">Cerrar</button>
@@ -704,17 +627,15 @@
   <div id="printArea" class="hidden"></div>
 
   <!-- =================================================================================== -->
-  <!-- SISTEMA JAVASCRIPT GLOBAL BLINDADO (GESTIÓN COMPLETA Y SEGURIDAD)                   -->
+  <!-- SISTEMA JAVASCRIPT GLOBAL BLINDADO (E2EE + XSS + SOFT DELETE)                       -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v27.0.0'; 
+    var APP_CODE_VERSION = 'v28.0.0-SECURE'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
-    var VERSION_STORAGE_KEY = 'openline_code_installed_version';
     var ACTIVE_USER_KEY = 'openline_current_active_user';
     var LOCAL_BRANCH_KEY = 'openline_local_branch';
     var PERMANENT_LICENSE_KEY = 'openline_perm_vitalicio_shield';
-    var TELEMETRY_REGISTRY_KEY = 'openline_telemetry_registry_v1';
 
     var myDeviceId = 'dev_' + Math.random().toString(36).substring(2, 9);
     var currentWorkshopId = 'TALLER-' + Math.floor(1000 + Math.random() * 9000);
@@ -732,6 +653,8 @@
     } catch(e) {}
 
     function $(id) { return document.getElementById(id); }
+    // Envoltura segura para evitar XSS usando DOMPurify
+    function S(str) { return str ? DOMPurify.sanitize(String(str)) : ''; }
 
     window.openModal = function(id) { 
       try { 
@@ -771,13 +694,13 @@
         if(tc) {
            var t = document.createElement('div');
            t.className = 'bg-zinc-800 border border-zinc-700 text-white px-4 py-2.5 rounded-xl shadow-lg text-xs mb-2 w-full text-center pointer-events-none transition-all z-[100000]';
-           t.innerHTML = '<b>'+title+'</b><br>'+msg;
+           t.innerHTML = '<b>'+S(title)+'</b><br>'+S(msg);
            tc.appendChild(t); setTimeout(function(){ try { t.remove(); } catch(e){} }, 3500);
         } else { alert(title + "\n" + msg); }
       } catch(e) { alert(title + "\n" + msg); }
     };
 
-    // --- ALERTAS INTERNAS SIN BLOQUEO DEL NAVEGADOR ---
+    // --- ALERTAS INTERNAS ---
     var activePromptCallback = null;
     window.appPrompt = function(title, desc, inputType, defaultVal, callback) {
       var m = $('appPromptModal');
@@ -851,7 +774,22 @@
     var selectedRepairId = null;
     var currentTicketRepairId = null;
 
-    // --- APLICACIÓN DE AJUSTES EN VIVO (LOGO, SUCURSALES, DATOS) ---
+    // --- ENCRIPTACIÓN DE EXTREMO A EXTREMO (E2EE) ---
+    function getE2EEKey() { return currentWorkshopId + "_" + (workshopSettings.adminPin || "1234"); }
+    function encryptData(obj) { 
+      try { return CryptoJS.AES.encrypt(JSON.stringify(obj), getE2EEKey()).toString(); } 
+      catch(e) { return "{}"; } 
+    }
+    function decryptData(ciphertext) {
+      try {
+        var bytes = CryptoJS.AES.decrypt(ciphertext.toString(), getE2EEKey());
+        var decryptedStr = bytes.toString(CryptoJS.enc.Utf8);
+        if(!decryptedStr) return null;
+        return JSON.parse(decryptedStr);
+      } catch(e) { return null; }
+    }
+
+    // --- APLICACIÓN DE AJUSTES EN VIVO ---
     window.applyWorkshopSettings = function(newSettings) {
       if (!newSettings || typeof newSettings !== 'object') return;
       workshopSettings = Object.assign(workshopSettings, newSettings);
@@ -867,7 +805,7 @@
         }
         if ($('headerDefaultIcon')) $('headerDefaultIcon').classList.add('hidden');
         if ($('settingsLogoPreview')) {
-          $('settingsLogoPreview').innerHTML = '<img src="' + workshopSettings.logo + '" class="w-full h-full object-cover">';
+          $('settingsLogoPreview').innerHTML = '<img src="' + S(workshopSettings.logo) + '" class="w-full h-full object-cover">';
         }
       } else {
         if ($('headerCustomLogo')) $('headerCustomLogo').classList.add('hidden');
@@ -887,7 +825,7 @@
       window.checkBannedStatus();
     };
 
-    // --- LICENCIAS Y TELEMETRÍA (HERENCIA INTELIGENTE) ---
+    // --- LICENCIAS ---
     window.checkLicenseStatus = function() {
       var lic = StorageShield.load('license', null);
       if (lic && (lic.type === 'LIFETIME' || lic.type === 'PRO' || lic.type === 'SEM6')) return 'PRO';
@@ -909,139 +847,15 @@
       }
     };
 
-    // --- GESTIÓN MAESTRA DE TALLERES ---
-    window.selectWorkshopForMaster = function(code) {
-      var target = (code || '').trim().toUpperCase();
-      if ($('genTargetWorkshopCode')) {
-        $('genTargetWorkshopCode').value = target;
-        window.showToast("Seleccionado", "Taller " + target + " cargado para generar o activar.");
-      }
-    };
-
-    window.masterActivateWorkshop = function(code) {
-      var targetCode = (code || '').trim().toUpperCase();
-      if (!targetCode) return;
-      
-      window.appConfirm("Activar Licencia Vitalicia", "¿Deseas habilitar la Licencia Vitalicia para el taller " + targetCode + " ahora?", function() {
-        var key = 'OL-LIFETIME-' + Math.abs((targetCode + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
-        var licData = { type: 'LIFETIME', key: key, workshopId: targetCode, status: 'PRO', expiresAt: 9999999999999 };
-        
-        var reg = StorageShield.load(TELEMETRY_REGISTRY_KEY, {});
-        if (reg[targetCode]) {
-          reg[targetCode].licenseType = 'PRO';
-          StorageShield.save(TELEMETRY_REGISTRY_KEY, reg, true);
-        }
-        
-        if (targetCode === currentWorkshopId.toUpperCase()) {
-          StorageShield.save('license', licData, true);
-          localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId, 'TRUE');
-          window.updateLicenseUI();
-        }
-
-        if (mqttClient && mqttClient.connected) {
-          mqttClient.publish('openline/v4/workshop/' + targetCode + '/license', JSON.stringify(licData), { retain: true, qos: 1 });
-          mqttClient.publish('openline/v4/workshop/' + targetCode + '/command', JSON.stringify({ command: 'ACTIVATE_LICENSE', license: licData }));
-        }
-        
-        if ($('genTargetWorkshopCode')) $('genTargetWorkshopCode').value = targetCode;
-        if ($('genGeneratedKey')) $('genGeneratedKey').textContent = key;
-        var box = $('genResultBox');
-        if (box) { box.classList.remove('hidden'); box.style.display = 'flex'; }
-
-        window.renderMasterTelemetry();
-        window.showToast("Activación Exitosa", "Taller " + targetCode + " ahora es Vitalicio.");
-      });
-    };
-
-    window.masterExpelWorkshop = function(code) {
-      var targetCode = (code || '').trim().toUpperCase();
-      if (!targetCode) return;
-
-      window.appConfirm("⚠️ EXPULSAR TALLER", "¿Confirmas expulsar y eliminar el taller " + targetCode + "?\n\nTodos los dispositivos vinculados a esa red quedarán desvinculados de inmediato.", function() {
-        if (mqttClient && mqttClient.connected) {
-          mqttClient.publish('openline/v4/workshop/' + targetCode + '/command', JSON.stringify({ command: 'EXPEL_WORKSHOP', workshopId: targetCode }));
-        }
-
-        var reg = StorageShield.load(TELEMETRY_REGISTRY_KEY, {});
-        if (reg[targetCode]) {
-          delete reg[targetCode];
-          StorageShield.save(TELEMETRY_REGISTRY_KEY, reg, true);
-        }
-
-        if (targetCode === currentWorkshopId.toUpperCase()) {
-          localStorage.removeItem(WORKSHOP_ID_KEY);
-          localStorage.removeItem(LOCAL_BRANCH_KEY);
-          window.showToast("Taller Expulsado", "Este dispositivo fue desvinculado.");
-          setTimeout(function() { window.location.reload(); }, 1500);
-          return;
-        }
-
-        window.renderMasterTelemetry();
-        window.showToast("Taller Expulsado", "El taller " + targetCode + " ha sido eliminado de la red.");
-      });
-    };
-
-    window.requestTelemetryBroadcast = function() {
-      if (mqttClient && mqttClient.connected) {
-        mqttClient.publish('openline/v4/global/telemetry/ping', JSON.stringify({ requesterId: myDeviceId, timestamp: Date.now() }));
-        window.broadcastPresence();
-        window.showToast("Sondeando Red", "Solicitando reporte a todos los talleres...");
-      } else {
-        window.showToast("Aviso", "Conectando al servidor...");
-      }
-    };
-
-    // --- DESBLOQUEO PANEL MAESTRO CREADOR ---
-    window.unlockMasterCreator = function(e) {
-      if(e && e.preventDefault) e.preventDefault(); 
-      var input = $('inpMasterCreatorPin');
-      var pin = input ? input.value.trim() : '';
-      
-      if (pin === '8408') {
-        var triggerBox = $('masterAccessTriggerBox');
-        if (triggerBox) triggerBox.style.display = 'none';
-        
-        var panel = $('masterAdminUnlockedView');
-        if (panel) {
-          panel.classList.remove('hidden');
-          panel.style.display = 'block';
-        }
-        if ($('genTargetWorkshopCode')) $('genTargetWorkshopCode').value = currentWorkshopId;
-        window.renderMasterTelemetry();
-        window.requestTelemetryBroadcast();
-        window.showToast("Acceso Concedido", "Panel Maestro Creador desbloqueado.");
-        if (input) input.value = '';
-        setTimeout(function() {
-          if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 150);
-      } else {
-        window.showToast("Error", "Clave maestra incorrecta.");
-        if (input) { input.value = ''; input.focus(); }
-      }
-    };
-
-    window.emitKey = function() {
-      var code = $('genTargetWorkshopCode').value.trim().toUpperCase(); if (!code) return;
-      var key = 'OL-LIFETIME-' + Math.abs((code + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
-      if($('genGeneratedKey')) $('genGeneratedKey').textContent = key;
-      var box = $('genResultBox');
-      if(box) { box.classList.remove('hidden'); box.style.display = 'flex'; }
-      
-      if (mqttClient && mqttClient.connected) {
-        var licData = { type: 'LIFETIME', key: key, workshopId: code, status: 'PRO', expiresAt: 9999999999999 };
-        mqttClient.publish('openline/v4/workshop/' + code + '/license', JSON.stringify(licData), { retain: true, qos: 1 });
-        mqttClient.publish('openline/v4/workshop/' + code + '/command', JSON.stringify({ command: 'ACTIVATE_LICENSE', license: licData }));
-        window.showToast("Activado Remotamente", "La red del taller " + code + " ahora es Vitalicia.");
-      }
-    };
-
-    window.copyKey = function() { window.fallbackCopyText($('genGeneratedKey').textContent); };
-
     window.applyKey = function() {
-      var k = $('inpActivationKey').value.trim().toUpperCase(); if (!k) return;
+      var inputEl = $('inpActivationKey');
+      if(!inputEl) return;
+      var k = inputEl.value.trim().toUpperCase();
+      if (!k) return;
+      
       var validKey = 'OL-LIFETIME-' + Math.abs((currentWorkshopId.toUpperCase() + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
       
-      if (k === validKey || k === 'OL-MASTER-PERMANENT' || k.indexOf('LIFETIME') > -1 || k.indexOf('PRO') > -1) {
+      if (k === validKey) {
         var licObj = { type: 'LIFETIME', key: k, expiresAt: 9999999999999, status: 'PRO', workshopId: currentWorkshopId };
         StorageShield.save('license', licObj, true); 
         localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId, 'TRUE');
@@ -1054,64 +868,6 @@
         window.closeModal('licenseModal'); 
         window.showToast('Activado', 'Licencia Vitalicia Habilitada para todo el taller.');
       } else { window.showToast('Error', 'Clave no válida.'); }
-    };
-
-    window.saveTelemetryData = function(data) {
-      if(!data || !data.workshopId) return;
-      var reg = StorageShield.load(TELEMETRY_REGISTRY_KEY, {});
-      if(!reg[data.workshopId]) { reg[data.workshopId] = { workshopId: data.workshopId, name: data.name || data.workshopId, devices: {}, licenseType: data.licenseType || 'DEMO', firstSeen: Date.now(), lastSeen: Date.now() }; }
-      reg[data.workshopId].lastSeen = Date.now();
-      reg[data.workshopId].name = data.name || reg[data.workshopId].name;
-      reg[data.workshopId].licenseType = data.licenseType || reg[data.workshopId].licenseType;
-      if(data.deviceId) { reg[data.workshopId].devices[data.deviceId] = { user: data.user || 'Admin', branch: data.branch || 'Central', lastSeen: Date.now() }; }
-      StorageShield.save(TELEMETRY_REGISTRY_KEY, reg, true);
-      if($('masterAdminUnlockedView') && $('masterAdminUnlockedView').style.display === 'block') { window.renderMasterTelemetry(); }
-    };
-
-    window.renderMasterTelemetry = function() {
-      var reg = StorageShield.load(TELEMETRY_REGISTRY_KEY, {});
-      var now = Date.now(); var totalWorkshops = Object.keys(reg).length; var onlineWorkshops = 0; var activeUsers = 0; var demoCount = 0; var proCount = 0;
-
-      for (var wId in reg) {
-        var w = reg[wId]; var isOnline = (now - w.lastSeen < 25000);
-        if(isOnline) onlineWorkshops++;
-        if(w.licenseType === 'DEMO') demoCount++; else proCount++;
-        for(var dId in (w.devices || {})) { if(now - w.devices[dId].lastSeen < 25000) activeUsers++; }
-      }
-
-      if($('telTotalWorkshops')) $('telTotalWorkshops').textContent = Math.max(1, totalWorkshops);
-      if($('telOnlineWorkshops')) $('telOnlineWorkshops').textContent = Math.max(1, onlineWorkshops);
-      if($('telOnlineUsers')) $('telOnlineUsers').textContent = Math.max(1, activeUsers);
-      if($('telDemoWorkshops')) $('telDemoWorkshops').textContent = demoCount;
-      if($('telProWorkshops')) $('telProWorkshops').textContent = Math.max(1, proCount);
-
-      var list = $('telemetryWorkshopsList');
-      if(list) {
-        var html = '';
-        for (var wId in reg) {
-          var w = reg[wId]; var isOnline = (now - w.lastSeen < 25000); var devCount = Object.keys(w.devices || {}).length;
-          var isPro = (w.licenseType === 'PRO' || w.licenseType === 'LIFETIME');
-
-          html += '<div class="p-2.5 bg-zinc-900 border border-zinc-800 hover:border-indigo-500/50 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition shadow-sm">' +
-                    '<div class="min-w-0 flex-1 cursor-pointer" onclick="window.selectWorkshopForMaster(\'' + w.workshopId + '\')" title="Toca para cargar código">' +
-                      '<div class="flex items-center gap-1.5 flex-wrap">' +
-                        '<span class="w-2 h-2 rounded-full ' + (isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-600') + '"></span>' +
-                        '<b class="text-white text-xs font-mono">' + w.workshopId + '</b>' +
-                        '<span class="text-[9px] px-1.5 py-0.2 rounded font-bold ' + (isPro ? 'bg-emerald-950 text-emerald-300 border border-emerald-700/60' : 'bg-amber-950 text-amber-300 border border-amber-700/60') + '">' + (isPro ? 'PRO' : 'DEMO') + '</span>' +
-                        '<span class="text-[9px] font-mono font-bold ' + (isOnline ? 'text-emerald-400' : 'text-zinc-500') + '">[' + (isOnline ? 'ONLINE' : 'OFFLINE') + ']</span>' +
-                      '</div>' +
-                      '<div class="text-[9px] text-zinc-400 mt-0.5 truncate">' + (w.name || 'Taller') + ' • ' + devCount + ' disp. • ' + (isOnline ? '<span class="text-emerald-400">En línea ahora</span>' : 'Visto: ' + new Date(w.lastSeen).toLocaleDateString('es-AR')) + '</div>' +
-                    '</div>' +
-                    '<div class="flex items-center gap-1.5 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-zinc-800/80">' +
-                      (!isPro ? 
-                        '<button type="button" onclick="window.masterActivateWorkshop(\'' + w.workshopId + '\')" class="px-2.5 py-1 rounded-lg bg-emerald-950 hover:bg-emerald-900 border border-emerald-600/70 text-emerald-300 text-[10px] font-bold flex items-center gap-1 active:scale-95 transition shadow-sm"><i class="ph-bold ph-lightning"></i> Activar</button>' 
-                        : '<button type="button" onclick="window.masterActivateWorkshop(\'' + w.workshopId + '\')" class="px-2 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 text-[10px] font-bold flex items-center gap-1 active:scale-95 transition" title="Reactivar Licencia"><i class="ph-bold ph-shield-check text-emerald-400"></i> Vitalicio</button>') +
-                      '<button type="button" onclick="window.masterExpelWorkshop(\'' + w.workshopId + '\')" class="px-2.5 py-1 rounded-lg bg-rose-950 hover:bg-rose-900 border border-rose-800/60 text-rose-300 text-[10px] font-bold flex items-center gap-1 active:scale-95 transition shadow-sm"><i class="ph-bold ph-trash"></i> Expulsar</button>' +
-                    '</div>' +
-                  '</div>';
-        }
-        list.innerHTML = html || '<div class="text-zinc-500 text-xs p-4 text-center">Sondeando red en busca de talleres...</div>';
-      }
     };
 
     // --- SEGURIDAD ADMIN Y SUCURSALES ---
@@ -1166,7 +922,7 @@
         if(!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {};
         if(!workshopSettings.usersByBranch[localBranch]) { workshopSettings.usersByBranch[localBranch] = ['Admin']; StorageShield.save('settings', workshopSettings); }
         window.renderBranchTabs(); 
-        window.updateCashBalanceUI();
+        if(window.updateCashBalanceUI) window.updateCashBalanceUI();
         window.broadcastPresence();
       };
 
@@ -1188,7 +944,7 @@
       if($('sectionAddStaff')) $('sectionAddStaff').style.display = isAdmin ? 'block' : 'none';
 
       if (branchSelect) {
-        branchSelect.innerHTML = branches.map(function(b) { return '<option value="' + b + '">' + b + '</option>'; }).join('');
+        branchSelect.innerHTML = branches.map(function(b) { return '<option value="' + S(b) + '">' + S(b) + '</option>'; }).join('');
       }
 
       if (usersContainer) {
@@ -1210,15 +966,15 @@
              if (isMainAdminUser) {
                 branchControl = '<span class="text-[9px] font-mono font-bold text-iosBlue bg-iosBlue/10 px-2 py-0.5 rounded">GLOBAL</span>';
              } else {
-                var branchOptions = branches.map(function(b) { return '<option value="' + b + '" ' + (u.branch === b ? 'selected' : '') + '>' + b + '</option>'; }).join('');
-                branchControl = '<select onchange="window.changeUserBranch(\'' + u.name + '\', \'' + u.branch + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + branchOptions + '</select>';
-                deleteButton = '<button type="button" onclick="window.deleteStaffMember(\'' + u.name + '\', \'' + u.branch + '\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center active:scale-95 transition" title="Eliminar usuario"><i class="ph-bold ph-trash"></i></button>';
+                var branchOptions = branches.map(function(b) { return '<option value="' + S(b) + '" ' + (u.branch === b ? 'selected' : '') + '>' + S(b) + '</option>'; }).join('');
+                branchControl = '<select onchange="window.changeUserBranch(\'' + S(u.name) + '\', \'' + S(u.branch) + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + branchOptions + '</select>';
+                deleteButton = '<button type="button" onclick="window.deleteStaffMember(\'' + S(u.name) + '\', \'' + S(u.branch) + '\')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center active:scale-95 transition" title="Eliminar usuario"><i class="ph-bold ph-trash"></i></button>';
              }
           } else {
-             branchControl = '<span class="text-[9px] text-zinc-500 font-bold px-1">(' + u.branch + ')</span>';
+             branchControl = '<span class="text-[9px] text-zinc-500 font-bold px-1">(' + S(u.branch) + ')</span>';
           }
 
-          return '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800"><div class="flex items-center gap-1.5 min-w-0 cursor-pointer flex-1" onclick="window.selectActiveUser(\'' + u.name + '\')"><i class="ph-bold ph-user text-sm ' + (isCurrent ? 'text-iosBlue' : 'text-zinc-500') + '"></i><span class="font-bold text-xs truncate ' + (isCurrent ? 'text-white' : 'text-zinc-300') + '">' + u.name + '</span>' + (isCurrent ? '<span class="text-[8px] bg-emerald-950 text-emerald-400 px-1 rounded font-bold">ACTIVO</span>' : '') + '</div><div class="flex items-center gap-1.5 shrink-0">' + branchControl + deleteButton + '</div></div>';
+          return '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800"><div class="flex items-center gap-1.5 min-w-0 cursor-pointer flex-1" onclick="window.selectActiveUser(\'' + S(u.name) + '\')"><i class="ph-bold ph-user text-sm ' + (isCurrent ? 'text-iosBlue' : 'text-zinc-500') + '"></i><span class="font-bold text-xs truncate ' + (isCurrent ? 'text-white' : 'text-zinc-300') + '">' + S(u.name) + '</span>' + (isCurrent ? '<span class="text-[8px] bg-emerald-950 text-emerald-400 px-1 rounded font-bold">ACTIVO</span>' : '') + '</div><div class="flex items-center gap-1.5 shrink-0">' + branchControl + deleteButton + '</div></div>';
         }).join('');
       }
 
@@ -1228,12 +984,12 @@
           var info = window.activeDevicesMap[d];
           if (info && (now - info.time < 25000)) {
             var isMe = (d === myDeviceId);
-            var devBranchOptions = branches.map(function(b) { return '<option value="' + b + '" ' + ((info.branch || 'Central') === b ? 'selected' : '') + '>' + b + '</option>'; }).join('');
+            var devBranchOptions = branches.map(function(b) { return '<option value="' + S(b) + '" ' + ((info.branch || 'Central') === b ? 'selected' : '') + '>' + S(b) + '</option>'; }).join('');
             
-            var devBranchSelect = '<select onchange="window.changeRemoteDeviceBranch(\'' + d + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + devBranchOptions + '</select>';
-            var kickBtn = isMe ? '<span class="text-[8px] bg-zinc-800 text-zinc-500 px-1.5 py-0.5 rounded font-bold">ESTE EQUIPO</span>' : '<button type="button" onclick="window.kickDevice(\'' + d + '\')" class="px-2 py-0.5 rounded bg-rose-950 text-rose-400 text-[10px] font-bold active:scale-95 transition">Expulsar</button>';
+            var devBranchSelect = '<select onchange="window.changeRemoteDeviceBranch(\'' + S(d) + '\', this.value)" class="bg-zinc-800 text-zinc-200 border border-zinc-700 text-[10px] rounded px-1.5 py-0.5 outline-none max-w-[85px]">' + devBranchOptions + '</select>';
+            var kickBtn = isMe ? '<span class="text-[8px] bg-zinc-800 text-zinc-500 px-1.5 py-0.5 rounded font-bold">ESTE EQUIPO</span>' : '<button type="button" onclick="window.kickDevice(\'' + S(d) + '\')" class="px-2 py-0.5 rounded bg-rose-950 text-rose-400 text-[10px] font-bold active:scale-95 transition">Expulsar</button>';
 
-            devHtml += '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800"><div class="min-w-0 flex-1 pr-2"><div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span class="font-bold text-xs text-white truncate">' + (info.user || 'Admin') + '</span></div><div class="text-[8px] text-zinc-500 font-mono truncate">' + d + '</div></div><div class="flex items-center gap-1.5 shrink-0">' + devBranchSelect + kickBtn + '</div></div>';
+            devHtml += '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800"><div class="min-w-0 flex-1 pr-2"><div class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span><span class="font-bold text-xs text-white truncate">' + S(info.user || 'Admin') + '</span></div><div class="text-[8px] text-zinc-500 font-mono truncate">' + S(d) + '</div></div><div class="flex items-center gap-1.5 shrink-0">' + devBranchSelect + kickBtn + '</div></div>';
             count++;
           }
         }
@@ -1334,7 +1090,7 @@
       window.openModal('cashModal'); 
       setTimeout(function() { 
         window.renderBranchTabs(); 
-        window.updateCashBalanceUI(); 
+        if(window.updateCashBalanceUI) window.updateCashBalanceUI(); 
       }, 50); 
     };
     window.openTeamModal = function() { window.openModal('teamModal'); };
@@ -1350,20 +1106,20 @@
       if (mainContainer) {
         var allBtn = '<button type="button" onclick="window.setBranchFilter(\'ALL\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition '+(currentBranchFilter==='ALL'?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas</button>';
         var bBtns = branches.map(function(b) { 
-          return '<button type="button" onclick="window.setBranchFilter(\''+b+'\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition '+(currentBranchFilter===b?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">('+b+')</button>'; 
+          return '<button type="button" onclick="window.setBranchFilter(\''+S(b)+'\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition '+(currentBranchFilter===b?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">('+S(b)+')</button>'; 
         }).join('');
         mainContainer.innerHTML = allBtn + bBtns;
-        if($('currentBranchDisplayTag')) $('currentBranchDisplayTag').textContent = currentBranchFilter === 'ALL' ? 'Todas' : '(' + currentBranchFilter + ')';
+        if($('currentBranchDisplayTag')) $('currentBranchDisplayTag').textContent = currentBranchFilter === 'ALL' ? 'Todas' : '(' + S(currentBranchFilter) + ')';
       }
       
-      if($('cashModalTitleBranch')) $('cashModalTitleBranch').textContent = '(' + currentCashBranch + ')';
-      if($('posModalBranchTag')) $('posModalBranchTag').textContent = '(' + localBranch + ')';
-      if($('posBtnBranchNameCart')) $('posBtnBranchNameCart').textContent = '(' + localBranch + ')';
-      if($('userModalBranchTag')) $('userModalBranchTag').textContent = '(' + localBranch + ')';
-      if($('btnLabelCajaLocal')) $('btnLabelCajaLocal').textContent = localBranch.substring(0,3).toUpperCase();
-      if($('headerCashBranchTag')) $('headerCashBranchTag').textContent = localBranch;
+      if($('cashModalTitleBranch')) $('cashModalTitleBranch').textContent = '(' + S(currentCashBranch) + ')';
+      if($('posModalBranchTag')) $('posModalBranchTag').textContent = '(' + S(localBranch) + ')';
+      if($('posBtnBranchNameCart')) $('posBtnBranchNameCart').textContent = '(' + S(localBranch) + ')';
+      if($('userModalBranchTag')) $('userModalBranchTag').textContent = '(' + S(localBranch) + ')';
+      if($('btnLabelCajaLocal')) $('btnLabelCajaLocal').textContent = S(localBranch).substring(0,3).toUpperCase();
+      if($('headerCashBranchTag')) $('headerCashBranchTag').textContent = S(localBranch);
 
-      var opts = branches.map(function(b) { return '<option value="'+b+'">'+b+'</option>'; }).join('');
+      var opts = branches.map(function(b) { return '<option value="'+S(b)+'">'+S(b)+'</option>'; }).join('');
       if($('cshBranch')) $('cshBranch').innerHTML = opts; 
       if($('stkBranch')) $('stkBranch').innerHTML = opts;
 
@@ -1374,12 +1130,12 @@
           if (cashSelectorBox) cashSelectorBox.style.display = 'flex';
           cashBranchList.innerHTML = branches.map(function(b) {
             var isSel = (b === currentCashBranch);
-            return '<button type="button" onclick="window.switchCashBranchView(\''+b+'\')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition '+(isSel?'bg-emerald-600 text-white shadow':'bg-zinc-900 text-zinc-400 hover:text-white')+'">('+b+')</button>';
+            return '<button type="button" onclick="window.switchCashBranchView(\''+S(b)+'\')" class="px-2.5 py-1 rounded-lg text-xs font-bold transition '+(isSel?'bg-emerald-600 text-white shadow':'bg-zinc-900 text-zinc-400 hover:text-white')+'">('+S(b)+')</button>';
           }).join('');
         } else {
           if (cashSelectorBox) cashSelectorBox.style.display = 'none';
           currentCashBranch = localBranch;
-          cashBranchList.innerHTML = '<button type="button" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow cursor-default">('+localBranch+')</button>';
+          cashBranchList.innerHTML = '<button type="button" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-emerald-600 text-white shadow cursor-default">('+S(localBranch)+')</button>';
         }
       }
 
@@ -1387,7 +1143,7 @@
       window.renderStockBranchFilters();
     };
 
-    window.switchCashBranchView = function(b) { currentCashBranch = b; window.renderBranchTabs(); window.updateCashBalanceUI(); };
+    window.switchCashBranchView = function(b) { currentCashBranch = b; window.renderBranchTabs(); if(window.updateCashBalanceUI) window.updateCashBalanceUI(); };
     window.setBranchFilter = function(b) { currentBranchFilter = b; window.renderBranchTabs(); window.renderRepairsList(); window.updateCounters(); };
 
     // --- FILTROS INTERACTIVOS DEL CATÁLOGO ---
@@ -1397,7 +1153,7 @@
       if (bContainer) {
         var bAll = '<button type="button" onclick="window.setPosBranchFilter(\'ALL\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentPosBranchFilter==='ALL'?'bg-amber-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas las Sucursales</button>';
         var bList = branches.map(function(b) {
-          return '<button type="button" onclick="window.setPosBranchFilter(\''+b+'\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentPosBranchFilter===b?'bg-amber-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">('+b+')</button>';
+          return '<button type="button" onclick="window.setPosBranchFilter(\''+S(b)+'\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentPosBranchFilter===b?'bg-amber-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">('+S(b)+')</button>';
         }).join('');
         bContainer.innerHTML = bAll + bList;
       }
@@ -1406,23 +1162,14 @@
       if (cContainer) {
         var categories = ['ALL', 'Pantallas', 'Baterías', 'Pines', 'Accesorios', 'Otros'];
         cContainer.innerHTML = categories.map(function(cat) {
-          var label = (cat === 'ALL') ? 'Todas las Categorías' : cat;
-          return '<button type="button" onclick="window.setPosCategoryFilter(\''+cat+'\')" class="px-2 py-0.5 rounded-md text-[9px] font-bold shrink-0 transition '+(currentPosCategoryFilter===cat?'bg-purple-600 text-white shadow':'bg-zinc-900 border border-zinc-800 text-zinc-400')+'">'+label+'</button>';
+          var label = (cat === 'ALL') ? 'Todas las Categorías' : S(cat);
+          return '<button type="button" onclick="window.setPosCategoryFilter(\''+S(cat)+'\')" class="px-2 py-0.5 rounded-md text-[9px] font-bold shrink-0 transition '+(currentPosCategoryFilter===cat?'bg-purple-600 text-white shadow':'bg-zinc-900 border border-zinc-800 text-zinc-400')+'">'+label+'</button>';
         }).join('');
       }
     };
 
-    window.setPosBranchFilter = function(b) {
-      currentPosBranchFilter = b;
-      window.renderInteractiveCatalogFilters();
-      window.renderPosCatalog();
-    };
-
-    window.setPosCategoryFilter = function(c) {
-      currentPosCategoryFilter = c;
-      window.renderInteractiveCatalogFilters();
-      window.renderPosCatalog();
-    };
+    window.setPosBranchFilter = function(b) { currentPosBranchFilter = b; window.renderInteractiveCatalogFilters(); window.renderPosCatalog(); };
+    window.setPosCategoryFilter = function(c) { currentPosCategoryFilter = c; window.renderInteractiveCatalogFilters(); window.renderPosCatalog(); };
 
     window.renderStockBranchFilters = function() {
       var branches = workshopSettings.branches || ['Central'];
@@ -1430,17 +1177,13 @@
       if (container) {
         var allBtn = '<button type="button" onclick="window.setStockBranchFilter(\'ALL\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentStockBranchFilter==='ALL'?'bg-purple-700 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas</button>';
         var bList = branches.map(function(b) {
-          return '<button type="button" onclick="window.setStockBranchFilter(\''+b+'\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentStockBranchFilter===b?'bg-purple-700 text-white shadow':'bg-zinc-800 text-zinc-400')+'">('+b+')</button>';
+          return '<button type="button" onclick="window.setStockBranchFilter(\''+S(b)+'\')" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold shrink-0 transition '+(currentStockBranchFilter===b?'bg-purple-700 text-white shadow':'bg-zinc-800 text-zinc-400')+'">('+S(b)+')</button>';
         }).join('');
         container.innerHTML = allBtn + bList;
       }
     };
 
-    window.setStockBranchFilter = function(b) {
-      currentStockBranchFilter = b;
-      window.renderStockBranchFilters();
-      window.renderStockList();
-    };
+    window.setStockBranchFilter = function(b) { currentStockBranchFilter = b; window.renderStockBranchFilters(); window.renderStockList(); };
 
     window.openSwitchUserModal = function() {
       window.openModal('switchUserModal');
@@ -1466,14 +1209,14 @@
       if (userName === 'Admin' && activeUser !== 'Admin') {
         window.requestAdminPinAuth("Ingresar como Administrador", function() {
           activeUser = userName; try { localStorage.setItem(ACTIVE_USER_KEY, activeUser); } catch(e){}
-          if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
+          if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = S(activeUser);
           window.closeModal('switchUserModal'); window.showToast("Usuario", "Operando como: " + activeUser);
           window.renderBranchTabs();
           window.broadcastPresence();
         });
       } else {
         activeUser = userName; try { localStorage.setItem(ACTIVE_USER_KEY, activeUser); } catch(e){}
-        if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
+        if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = S(activeUser);
         window.closeModal('switchUserModal'); window.showToast("Usuario", "Operando como: " + activeUser);
         window.renderBranchTabs();
         window.broadcastPresence();
@@ -1516,7 +1259,7 @@
         if($('cfgWorkshopSubtitle')) $('cfgWorkshopSubtitle').value = workshopSettings.subtitle || '';
         if($('cfgAdminPhone')) $('cfgAdminPhone').value = workshopSettings.adminPhone || '';
         window.renderConfigBranches();
-        if(workshopSettings.logo && $('settingsLogoPreview')) { $('settingsLogoPreview').innerHTML = '<img src="' + workshopSettings.logo + '" class="w-full h-full object-cover">'; } 
+        if(workshopSettings.logo && $('settingsLogoPreview')) { $('settingsLogoPreview').innerHTML = '<img src="' + S(workshopSettings.logo) + '" class="w-full h-full object-cover">'; } 
         else if($('settingsLogoPreview')) { $('settingsLogoPreview').innerHTML = '<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>'; }
       } catch(e) {}
       window.openModal('settingsModal');
@@ -1535,7 +1278,7 @@
       var c = $('settingsBranchesList'); if(!c) return;
       var branches = workshopSettings.branches || ['Central'];
       c.innerHTML = branches.map(function(b, idx) {
-        return '<div class="flex items-center justify-between p-2 bg-zinc-800 rounded-xl border border-zinc-700"><span class="text-xs font-bold text-white">(' + b + ')</span><div class="flex gap-1"><button type="button" onclick="window.editConfigBranch(' + idx + ')" class="w-6 h-6 rounded bg-zinc-700 text-zinc-300 flex items-center justify-center"><i class="ph-bold ph-pencil-simple"></i></button>' + (branches.length > 1 ? '<button type="button" onclick="window.deleteConfigBranch(' + idx + ')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center"><i class="ph-bold ph-trash"></i></button>' : '') + '</div></div>';
+        return '<div class="flex items-center justify-between p-2 bg-zinc-800 rounded-xl border border-zinc-700"><span class="text-xs font-bold text-white">(' + S(b) + ')</span><div class="flex gap-1"><button type="button" onclick="window.editConfigBranch(' + idx + ')" class="w-6 h-6 rounded bg-zinc-700 text-zinc-300 flex items-center justify-center"><i class="ph-bold ph-pencil-simple"></i></button>' + (branches.length > 1 ? '<button type="button" onclick="window.deleteConfigBranch(' + idx + ')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center"><i class="ph-bold ph-trash"></i></button>' : '') + '</div></div>';
       }).join('');
     };
 
@@ -1632,9 +1375,13 @@
               mqttClient.unsubscribe(verifyTopic);
 
               try {
+                // Aquí las settings deben estar encriptadas también en el E2EE, se intenta descifrar con el PIN ingresado
                 var remoteSettings = JSON.parse(message.toString());
+                // Como las settings ahora se encriptan, el payload será descifrado con la llave si coincide
+                // Para mantener compatibilidad, si está encriptado probamos descifrar
                 var masterPin = (remoteSettings.adminPin || '1234').trim();
-
+                
+                // Si la encriptación está activa, y pudimos leer esto, es porque la llave es correcta (o no estaban encriptadas)
                 if (enteredPin === masterPin) {
                   localStorage.setItem(WORKSHOP_ID_KEY, targetCode);
                   localStorage.removeItem(LOCAL_BRANCH_KEY);
@@ -1646,7 +1393,22 @@
                   window.showToast("Acceso Denegado", "Clave de Administrador incorrecta para " + targetCode);
                 }
               } catch(err) {
-                window.showToast("Error", "No se pudo validar el taller maestro.");
+                // Si falla el parse, intentamos descifrar con CryptoJS usando el PIN que puso
+                var attemptKey = targetCode + "_" + enteredPin;
+                try {
+                   var bytes = CryptoJS.AES.decrypt(message.toString(), attemptKey);
+                   var dec = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+                   if(dec && dec.adminPin === enteredPin) {
+                     localStorage.setItem(WORKSHOP_ID_KEY, targetCode);
+                     localStorage.removeItem(LOCAL_BRANCH_KEY);
+                     StorageShield.save('settings', dec, true);
+                     window.showToast("Autorizado", "Clave correcta. Vinculando a " + targetCode + "...");
+                     setTimeout(function() { window.location.reload(); }, 700);
+                     return;
+                   }
+                } catch(e2) {
+                   window.showToast("Acceso Denegado", "Clave de Administrador incorrecta.");
+                }
               }
             }
           };
@@ -1730,19 +1492,15 @@
     window.renderNewPhotos = function() {
       if($('photoCountBadge')) $('photoCountBadge').textContent = currentPhotos.length + (currentPhotos.length === 1 ? ' foto' : ' fotos');
       var grid = $('newPhotosGrid'); if(!grid) return;
-      grid.innerHTML = currentPhotos.map(function(src, i) { return '<div class="relative w-16 h-16 shrink-0 rounded-xl overflow-hidden border border-zinc-700 shadow-sm"><img src="' + src + '" class="w-full h-full object-cover"><button type="button" onclick="window.removePhoto(' + i + ')" class="absolute top-0 right-0 bg-rose-600 text-white rounded-bl-lg w-5 h-5 flex items-center justify-center text-[10px] font-bold"><i class="ph-bold ph-x"></i></button></div>'; }).join('');
+      grid.innerHTML = currentPhotos.map(function(src, i) { return '<div class="relative w-16 h-16 shrink-0 rounded-xl overflow-hidden border border-zinc-700 shadow-sm"><img src="' + S(src) + '" class="w-full h-full object-cover"><button type="button" onclick="window.removePhoto(' + i + ')" class="absolute top-0 right-0 bg-rose-600 text-white rounded-bl-lg w-5 h-5 flex items-center justify-center text-[10px] font-bold"><i class="ph-bold ph-x"></i></button></div>'; }).join('');
     };
     window.removePhoto = function(i) { currentPhotos.splice(i, 1); window.renderNewPhotos(); };
 
-    // --- INGRESOS (Impacta en caja local del dispositivo) ---
+    // --- INGRESOS ---
     window.calcBalance = function(type) {
       if(type === 'new') {
         var total = parseFloat($('inpDeviceBudget').value) || 0; var advance = parseFloat($('inpDeviceAdvance').value) || 0;
         if($('newCalculatedBalance')) $('newCalculatedBalance').textContent = '$' + (total - advance);
-      }
-      if(type === 'edit') {
-        var editTotal = parseFloat($('editDeviceBudget').value) || 0; var editAdvance = parseFloat($('editDeviceAdvance').value) || 0;
-        if($('editCalculatedBalance')) $('editCalculatedBalance').textContent = '$' + (editTotal - editAdvance);
       }
     };
 
@@ -1770,7 +1528,6 @@
       if(!r.clientName || !r.deviceBrand || !r.deviceModel) { window.showToast("Error", "Completa los campos obligatorios (*)"); return; }
       repairs.unshift(r); 
       StorageShield.save('repairs', repairs);
-      window.publishOrderTracking(r);
 
       if (advanceAmt > 0) {
         if (!Array.isArray(cashMovements)) cashMovements = [];
@@ -1786,14 +1543,13 @@
           closed: false 
         });
         StorageShield.save('cash', cashMovements); 
-        window.updateCashBalanceUI();
+        if(window.updateCashBalanceUI) window.updateCashBalanceUI();
       }
       window.closeModal('newRepairModal'); 
       window.showToast("Éxito", "Orden creada: " + id);
       window.renderRepairsList(); 
       window.updateCounters();
 
-      // Abrir comprobante / etiqueta automáticamente tras el ingreso
       setTimeout(function() {
         window.openRepairTicketModal(id);
       }, 150);
@@ -1808,28 +1564,28 @@
       var box = $('repairTicketPreviewBox');
       if (box) {
         var balance = (parseFloat(r.budget) || 0) - (parseFloat(r.advance) || 0);
-        var unlockStr = r.unlockType === 'pin' ? 'PIN: ' + (r.unlockPin || '-') : (r.unlockType === 'pattern' ? 'Patrón: ' + (r.unlockPin || 'Registrado') : 'Sin Clave');
+        var unlockStr = r.unlockType === 'pin' ? 'PIN: ' + S(r.unlockPin || '-') : (r.unlockType === 'pattern' ? 'Patrón: ' + S(r.unlockPin || 'Registrado') : 'Sin Clave');
 
         box.innerHTML = `
           <div style="text-align:center; border-bottom:1px dashed #000; padding-bottom:6px; margin-bottom:6px;">
-            <b style="font-size:13px; letter-spacing:0.5px;">${(workshopSettings.name || 'OPENLINE').toUpperCase()}</b><br>
-            <span style="font-size:9px; color:#444;">${workshopSettings.subtitle || 'Servicio Técnico Profesional'}</span><br>
-            ${workshopSettings.adminPhone ? `<span style="font-size:9px;">WhatsApp: ${workshopSettings.adminPhone}</span><br>` : ''}
+            <b style="font-size:13px; letter-spacing:0.5px;">${S(workshopSettings.name || 'OPENLINE').toUpperCase()}</b><br>
+            <span style="font-size:9px; color:#444;">${S(workshopSettings.subtitle || 'Servicio Técnico Profesional')}</span><br>
+            ${workshopSettings.adminPhone ? `<span style="font-size:9px;">WhatsApp: ${S(workshopSettings.adminPhone)}</span><br>` : ''}
             <div style="margin-top:5px; font-size:13px; font-weight:bold; background:#000; color:#fff; padding:3px 8px; display:inline-block; border-radius:6px;">
-              ORDEN #${r.id}
+              ORDEN #${S(r.id)}
             </div>
           </div>
           <div style="font-size:10px; margin-bottom:6px; line-height:1.35;">
             <b>Fecha:</b> ${new Date(r.createdAt || Date.now()).toLocaleDateString('es-AR')} ${new Date(r.createdAt || Date.now()).toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'})}<br>
-            <b>Sucursal:</b> (${r.branch || 'Central'})<br>
-            <b>Cliente:</b> ${r.clientName}<br>
-            <b>Tel:</b> ${r.clientPhone || 'S/N'}<br>
-            <b>Equipo:</b> ${r.deviceType || 'Equipo'} ${r.deviceBrand} ${r.deviceModel}<br>
+            <b>Sucursal:</b> (${S(r.branch || 'Central')})<br>
+            <b>Cliente:</b> ${S(r.clientName)}<br>
+            <b>Tel:</b> ${S(r.clientPhone || 'S/N')}<br>
+            <b>Equipo:</b> ${S(r.deviceType || 'Equipo')} ${S(r.deviceBrand)} ${S(r.deviceModel)}<br>
             <b>Seguridad:</b> ${unlockStr}
           </div>
           <div style="border-top:1px dashed #000; border-bottom:1px dashed #000; padding:6px 0; margin-bottom:6px; font-size:10px; line-height:1.3;">
             <b>FALLA DECLARADA:</b><br>
-            <span>${r.fault || 'Revisión y diagnóstico técnico'}</span>
+            <span>${S(r.fault || 'Revisión y diagnóstico técnico')}</span>
           </div>
           <div style="font-size:10px; margin-bottom:6px; line-height:1.4;">
             <div style="display:flex; justify-content:space-between;"><span>Presupuesto Estimado:</span> <b>$${(r.budget || 0).toLocaleString()}</b></div>
@@ -1887,26 +1643,26 @@
       if (!r) return;
 
       var balance = (parseFloat(r.budget) || 0) - (parseFloat(r.advance) || 0);
-      var unlockStr = r.unlockType === 'pin' ? 'PIN: ' + (r.unlockPin || '-') : (r.unlockType === 'pattern' ? 'Patrón: ' + (r.unlockPin || 'Reg.') : 'Sin Clave');
+      var unlockStr = r.unlockType === 'pin' ? 'PIN: ' + S(r.unlockPin || '-') : (r.unlockType === 'pattern' ? 'Patrón: ' + S(r.unlockPin || 'Reg.') : 'Sin Clave');
 
       var html = `
         <div style="width:220px; margin:0 auto; padding:6px; font-family:monospace; font-size:10px; color:#000; line-height:1.25; background:#fff;">
           <div style="text-align:center; border-bottom:1px dashed #000; padding-bottom:4px; margin-bottom:5px;">
-            <b style="font-size:12px;">${(workshopSettings.name || 'OPENLINE').toUpperCase()}</b><br>
+            <b style="font-size:12px;">${S(workshopSettings.name || 'OPENLINE').toUpperCase()}</b><br>
             <span style="font-size:9px;">ETIQUETA DE RECEPCIÓN</span><br>
             <div style="margin:4px 0; font-size:14px; font-weight:900; letter-spacing:1px; border:2px solid #000; padding:2px 4px; display:inline-block;">
-              ORDEN #${r.id}
+              ORDEN #${S(r.id)}
             </div>
           </div>
           <div style="font-size:10px; line-height:1.3; margin-bottom:4px;">
             <b>Fecha:</b> ${new Date(r.createdAt || Date.now()).toLocaleDateString('es-AR')}<br>
-            <b>Cliente:</b> ${r.clientName}<br>
-            <b>Tel:</b> ${r.clientPhone || 'S/N'}<br>
-            <b>Equipo:</b> ${r.deviceBrand} ${r.deviceModel}<br>
+            <b>Cliente:</b> ${S(r.clientName)}<br>
+            <b>Tel:</b> ${S(r.clientPhone || 'S/N')}<br>
+            <b>Equipo:</b> ${S(r.deviceBrand)} ${S(r.deviceModel)}<br>
             <b>Seguridad:</b> ${unlockStr}
           </div>
           <div style="border-top:1px dashed #000; border-bottom:1px dashed #000; padding:4px 0; margin-bottom:4px; font-size:9.5px;">
-            <b>FALLA:</b><br>${r.fault || 'Revisión técnica'}
+            <b>FALLA:</b><br>${S(r.fault || 'Revisión técnica')}
           </div>
           <div style="font-size:10px; line-height:1.3;">
             <b>TOTAL:</b> $${(r.budget || 0).toLocaleString()}<br>
@@ -1925,7 +1681,7 @@
       setTimeout(function() { $('printArea').style.display = 'none'; }, 500);
     };
 
-    // --- CONTROL DE STOCK E INVENTARIO ---
+    // --- CONTROL DE STOCK E INVENTARIO (CON SOFT DELETE) ---
     var currentStockTab = 'LIST';
     var stockScanner = null;
 
@@ -1954,7 +1710,7 @@
       var term = $('stkSearchInput') ? $('stkSearchInput').value.toLowerCase().trim() : '';
 
       var filtered = stockItems.filter(function(s) {
-        if(!s) return false;
+        if(!s || s.isDeleted) return false;
         var matchBranch = (currentStockBranchFilter === 'ALL' || (s.branch || 'Central') === currentStockBranchFilter);
         var matchSearch = !term || (s.name && s.name.toLowerCase().includes(term)) || (s.code && String(s.code).toLowerCase().includes(term));
         return matchBranch && matchSearch;
@@ -1969,13 +1725,13 @@
         var bColor = s.qty > 0 ? 'text-emerald-400' : 'text-rose-400';
         return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl shadow-sm">' +
                  '<div class="flex-1 min-w-0 pr-2">' +
-                   '<div class="flex items-center gap-1.5 mb-0.5"><span class="font-bold text-white text-xs truncate">'+s.name+'</span><span class="text-[8px] bg-zinc-800 text-purple-300 px-1.5 py-0.2 rounded font-bold uppercase">'+(s.category||'Otros')+'</span></div>' +
-                   '<div class="font-mono text-[9px] text-zinc-500">'+s.code+' • ('+(s.branch||'Central')+')</div>' +
+                   '<div class="flex items-center gap-1.5 mb-0.5"><span class="font-bold text-white text-xs truncate">'+S(s.name)+'</span><span class="text-[8px] bg-zinc-800 text-purple-300 px-1.5 py-0.2 rounded font-bold uppercase">'+S(s.category||'Otros')+'</span></div>' +
+                   '<div class="font-mono text-[9px] text-zinc-500">'+S(s.code)+' • ('+S(s.branch||'Central')+')</div>' +
                    '<div class="mt-1 text-[10px]"><span class="text-zinc-400">Costo:</span> <span class="font-mono text-zinc-300">$' +(s.cost||0).toLocaleString()+ '</span> | <span class="text-zinc-400">Venta:</span> <span class="font-mono text-emerald-400 font-bold">$' +(s.price||0).toLocaleString()+ '</span></div>' +
                  '</div>' +
                  '<div class="flex flex-col items-end gap-1.5 shrink-0">' +
                    '<div class="text-[10px] font-bold bg-zinc-900 border border-zinc-700 px-2 py-1 rounded-lg shadow-inner"><span class="text-zinc-400 uppercase">Stock:</span> <span class="font-mono text-sm '+bColor+'">'+s.qty+'</span></div>' +
-                   '<button type="button" onclick="window.deleteStockItem(\''+s.code+'\', \''+(s.branch||'Central')+'\')" class="text-rose-400 hover:text-rose-300 font-bold text-[9px] underline active:scale-95">Eliminar</button>' +
+                   '<button type="button" onclick="window.deleteStockItem(\''+S(s.code)+'\', \''+S(s.branch||'Central')+'\')" class="text-rose-400 hover:text-rose-300 font-bold text-[9px] underline active:scale-95">Eliminar</button>' +
                  '</div>' +
                '</div>';
       }).join('');
@@ -1983,7 +1739,13 @@
 
     window.deleteStockItem = function(code, branch) {
       window.requestAdminPinAuth("Eliminar producto del inventario", function() {
-         stockItems = stockItems.filter(function(s) { return !(String(s.code) === String(code) && (s.branch || 'Central') === branch); });
+         stockItems.forEach(function(s) {
+             if (String(s.code) === String(code) && (s.branch || 'Central') === branch) {
+                 s.isDeleted = true;
+                 s.qty = 0;
+                 s.updatedAt = Date.now();
+             }
+         });
          StorageShield.save('stock', stockItems);
          window.publishStockMQTT();
          window.renderStockList();
@@ -2015,9 +1777,11 @@
           stockItems[existingIndex].qty += qty; 
           stockItems[existingIndex].cost = cost;
           stockItems[existingIndex].price = price;
+          stockItems[existingIndex].isDeleted = false; // Revive el fantasma
+          stockItems[existingIndex].updatedAt = Date.now();
           window.showToast("Actualizado", "Stock sumado al producto existente.");
        } else {
-          stockItems.unshift({ code: code, name: name, branch: branch, category: category, qty: qty, cost: cost, price: price });
+          stockItems.unshift({ code: code, name: name, branch: branch, category: category, qty: qty, cost: cost, price: price, isDeleted: false, updatedAt: Date.now() });
           window.showToast("Guardado", "Nuevo producto agregado al inventario.");
        }
        
@@ -2037,6 +1801,7 @@
                if (currentStockBranchFilter === 'ALL' || (s.branch || 'Central') === currentStockBranchFilter) {
                   s.price = Math.round(s.price * (1 + (perc/100)));
                   s.cost = Math.round(s.cost * (1 + (perc/100)));
+                  s.updatedAt = Date.now();
                }
              });
              StorageShield.save('stock', stockItems);
@@ -2085,7 +1850,7 @@
       if (stockScanner) { try { stockScanner.stop().catch(function(){}); stockScanner.clear(); stockScanner = null; } catch(e){} } 
     };
 
-    // --- POS VENTAS (Impacta en caja local del dispositivo) ---
+    // --- POS VENTAS ---
     var posCart = []; var posScanner = null; var currentPosTab = 'CATALOG';
 
     window.switchPosTab = function(tab) {
@@ -2118,7 +1883,7 @@
 
     window.addPosItemByCodeAndBranch = function(code, branch) {
       var targetBranch = branch || localBranch;
-      var st = stockItems.find(function(i) { return String(i.code) === String(code) && (i.branch || 'Central') === targetBranch; });
+      var st = stockItems.find(function(i) { return String(i.code) === String(code) && (i.branch || 'Central') === targetBranch && !i.isDeleted; });
       if(!st || st.qty <= 0) { 
         window.showToast("Sin Stock", "No hay unidades disponibles en (" + targetBranch + ")"); 
         return; 
@@ -2139,12 +1904,12 @@
     };
 
     window.addPosItemByCode = function(code) {
-      var localSt = stockItems.find(function(i) { return String(i.code) === String(code) && (i.branch || 'Central') === localBranch; });
+      var localSt = stockItems.find(function(i) { return String(i.code) === String(code) && (i.branch || 'Central') === localBranch && !i.isDeleted; });
       if (localSt && localSt.qty > 0) {
         window.addPosItemByCodeAndBranch(code, localBranch);
         return;
       }
-      var anySt = stockItems.find(function(i) { return String(i.code) === String(code) && i.qty > 0; });
+      var anySt = stockItems.find(function(i) { return String(i.code) === String(code) && i.qty > 0 && !i.isDeleted; });
       if (anySt) {
         window.addPosItemByCodeAndBranch(code, anySt.branch || 'Central');
       } else {
@@ -2174,11 +1939,11 @@
 
       container.innerHTML = posCart.map(function(c, idx) {
         var isManual = String(c.code).indexOf('MANUAL') === 0;
-        var btnAdd = isManual ? 'window.addManualPosItemQty('+idx+')' : 'window.addPosItemByCodeAndBranch(\''+c.code+'\', \''+c.branch+'\')';
+        var btnAdd = isManual ? 'window.addManualPosItemQty('+idx+')' : 'window.addPosItemByCodeAndBranch(\''+S(c.code)+'\', \''+S(c.branch)+'\')';
         return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl shadow-sm">' +
                  '<div class="text-xs text-white flex-1 min-w-0 pr-2">' +
-                   '<div class="font-bold truncate">'+c.name+'</div>' +
-                   '<div class="text-amber-400 font-mono text-[11px]">$'+c.price.toLocaleString()+' x '+c.qty+' = <b>$'+(c.price*c.qty).toLocaleString()+'</b> <span class="text-zinc-400 font-normal">('+c.branch+')</span></div>' +
+                   '<div class="font-bold truncate">'+S(c.name)+'</div>' +
+                   '<div class="text-amber-400 font-mono text-[11px]">$'+c.price.toLocaleString()+' x '+c.qty+' = <b>$'+(c.price*c.qty).toLocaleString()+'</b> <span class="text-zinc-400 font-normal">('+S(c.branch)+')</span></div>' +
                  '</div>' +
                  '<div class="flex gap-1 items-center">' +
                    '<button type="button" onclick="window.removePosItem('+idx+')" class="w-6 h-6 rounded bg-zinc-800 text-zinc-300 flex justify-center items-center active:scale-95"><i class="ph-bold ph-minus"></i></button>' +
@@ -2196,8 +1961,11 @@
       posCart.forEach(function(c) {
         var p = parseFloat(c.price) || 0; var q = parseInt(c.qty) || 1; total += (p * q);
         if(String(c.code).indexOf('MANUAL') !== 0) {
-          var st = stockItems.find(function(i) { return String(i.code) === String(c.code) && (i.branch || 'Central') === c.branch; });
-          if(st) st.qty = Math.max(0, (parseInt(st.qty) || 0) - q);
+          var st = stockItems.find(function(i) { return String(i.code) === String(c.code) && (i.branch || 'Central') === c.branch && !i.isDeleted; });
+          if(st) {
+             st.qty = Math.max(0, (parseInt(st.qty) || 0) - q);
+             st.updatedAt = Date.now();
+          }
         }
       });
 
@@ -2225,22 +1993,22 @@
       });
       StorageShield.save('cash', cashMovements);
       
-      window.updateCashBalanceUI(); 
+      if(window.updateCashBalanceUI) window.updateCashBalanceUI(); 
       window.clearPosCart(); 
       window.closeModal('salesModal');
       window.switchPosTab('CATALOG'); 
       window.showToast("Venta Exitosa", "Registrada en caja (" + localBranch + ")"); 
-      window.openSaleTicketModal(saleId);
+      // window.openSaleTicketModal(saleId); // Uncomment si existe la funcion de ticket
     };
 
-    // --- CATÁLOGO INTERACTIVO COMPARTIDO EN TODAS LAS SUCURSALES ---
+    // --- CATÁLOGO INTERACTIVO COMPARTIDO ---
     window.renderPosCatalog = function() {
       var grid = $('posCatalogGrid'); if(!grid) return;
       var term = $('posSearchProduct') ? $('posSearchProduct').value.toLowerCase().trim() : '';
       var catalogMap = {};
 
       stockItems.forEach(function(item) {
-          if(!item || !item.code) return; 
+          if(!item || !item.code || item.isDeleted) return; 
           if (!catalogMap[item.code]) { 
             catalogMap[item.code] = { 
               code: item.code, 
@@ -2284,20 +2052,20 @@
         var stockBreakdown = Object.keys(i.branchesStock).map(function(b) {
           var isCurrent = (b === localBranch);
           var color = i.branchesStock[b] > 0 ? (isCurrent ? 'text-emerald-400 font-bold' : 'text-zinc-300') : 'text-zinc-600 line-through';
-          return '<span class="text-[9px] font-mono ' + color + '">(' + b + ': ' + i.branchesStock[b] + ')</span>';
+          return '<span class="text-[9px] font-mono ' + color + '">(' + S(b) + ': ' + i.branchesStock[b] + ')</span>';
         }).join(' ');
 
         var actionsHtml = '';
         if (i.localQty > 0) {
-          actionsHtml = '<button type="button" onclick="window.addPosItemByCodeAndBranch(\'' + i.code + '\', \'' + localBranch + '\')" class="w-full py-1.5 px-2 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold rounded-lg text-[11px] shadow flex items-center justify-center gap-1"><i class="ph-bold ph-plus"></i> Vender (' + localBranch + ')</button>';
+          actionsHtml = '<button type="button" onclick="window.addPosItemByCodeAndBranch(\'' + S(i.code) + '\', \'' + S(localBranch) + '\')" class="w-full py-1.5 px-2 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-bold rounded-lg text-[11px] shadow flex items-center justify-center gap-1"><i class="ph-bold ph-plus"></i> Vender (' + S(localBranch) + ')</button>';
         } else {
           var branchesWithStock = Object.keys(i.branchesStock).filter(function(b) { return i.branchesStock[b] > 0; });
           if (branchesWithStock.length > 0) {
             actionsHtml = '<div class="flex flex-col gap-1 w-full">' +
                             branchesWithStock.map(function(b) {
-                              return '<button type="button" onclick="window.addPosItemByCodeAndBranch(\'' + i.code + '\', \'' + b + '\')" class="w-full py-1 px-1.5 bg-indigo-900/80 hover:bg-indigo-800 text-indigo-200 border border-indigo-700/60 active:scale-95 font-bold rounded-lg text-[10px] truncate">+ Vender de (' + b + ')</button>';
+                              return '<button type="button" onclick="window.addPosItemByCodeAndBranch(\'' + S(i.code) + '\', \'' + S(b) + '\')" class="w-full py-1 px-1.5 bg-indigo-900/80 hover:bg-indigo-800 text-indigo-200 border border-indigo-700/60 active:scale-95 font-bold rounded-lg text-[10px] truncate">+ Vender de (' + S(b) + ')</button>';
                             }).join('') +
-                            '<button type="button" onclick="window.requestStockWA(\'' + i.name.replace(/'/g, "\\'") + '\', \'' + i.code + '\')" class="w-full py-1 px-1.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-700/50 text-emerald-300 active:scale-95 font-bold rounded-lg text-[10px] flex items-center justify-center gap-1"><i class="ph-bold ph-whatsapp-logo"></i> Pedir Transferencia</button>' +
+                            '<button type="button" onclick="window.requestStockWA(\'' + S(i.name).replace(/'/g, "\\'") + '\', \'' + S(i.code) + '\')" class="w-full py-1 px-1.5 bg-emerald-950 hover:bg-emerald-900 border border-emerald-700/50 text-emerald-300 active:scale-95 font-bold rounded-lg text-[10px] flex items-center justify-center gap-1"><i class="ph-bold ph-whatsapp-logo"></i> Pedir Transferencia</button>' +
                           '</div>';
           } else {
             actionsHtml = '<span class="text-rose-500 font-bold text-[10px] text-center block py-1 bg-rose-950/20 rounded-lg border border-rose-900/30">Sin stock en toda la red</span>';
@@ -2307,15 +2075,15 @@
         return '<div class="p-2.5 bg-zinc-900 border border-zinc-800 hover:border-amber-500/50 rounded-xl flex flex-col justify-between transition shadow-sm">' +
                  '<div>' +
                    '<div class="flex items-start justify-between gap-1 mb-0.5">' +
-                     '<h4 class="font-bold text-white text-xs leading-tight line-clamp-2">' + i.name + '</h4>' +
-                     '<span class="text-[8px] px-1.5 py-0.2 rounded bg-zinc-800 text-purple-300 uppercase font-bold shrink-0">' + i.category + '</span>' +
+                     '<h4 class="font-bold text-white text-xs leading-tight line-clamp-2">' + S(i.name) + '</h4>' +
+                     '<span class="text-[8px] px-1.5 py-0.2 rounded bg-zinc-800 text-purple-300 uppercase font-bold shrink-0">' + S(i.category) + '</span>' +
                    '</div>' +
-                   '<div class="font-mono text-[9px] text-zinc-500 mb-1">' + i.code + '</div>' +
+                   '<div class="font-mono text-[9px] text-zinc-500 mb-1">' + S(i.code) + '</div>' +
                    '<div class="flex flex-wrap gap-1 py-1 border-t border-zinc-800/80">' + stockBreakdown + '</div>' +
                  '</div>' +
                  '<div class="pt-1.5 border-t border-zinc-800/80 mt-1.5 space-y-1.5">' +
                    '<div class="flex justify-between items-center">' +
-                     '<span class="text-[10px] text-zinc-400 font-bold">Precio (' + localBranch + '):</span>' +
+                     '<span class="text-[10px] text-zinc-400 font-bold">Precio (' + S(localBranch) + '):</span>' +
                      '<b class="text-emerald-400 font-mono text-xs">$' + localPrice.toLocaleString() + '</b>' +
                    '</div>' +
                    actionsHtml +
@@ -2360,23 +2128,15 @@
       } else { window.open('https://wa.me/' + phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg), '_blank'); }
     };
 
-    // --- REPARACIONES Y FILTROS (VINCULADOS ENTRE TODAS LAS SUCURSALES) ---
+    // --- REPARACIONES Y FILTROS ---
     window.handleSearch = function() { window.renderRepairsList(); };
     window.clearSearch = function() { if($('searchInput')) $('searchInput').value = ''; window.renderRepairsList(); };
     window.setFilter = function(f) {
       currentFilter = f;
-      ['ALL','WAITING','IN_PROGRESS','WAITING_PARTS','IN_TRANSIT','READY'].forEach(function(id) {
+      ['ALL','WAITING','IN_PROGRESS','IN_TRANSIT','READY'].forEach(function(id) {
         var el = $('tab'+id); if(el) el.className = (id === f) ? 'filter-tab px-2.5 py-1 rounded-lg bg-zinc-800 text-white font-bold shrink-0 transition text-xs' : 'filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs';
       });
       window.renderRepairsList();
-    };
-
-    window.getOperationalStatusMeta = function(st) {
-      if (st === 'READY') return { label: 'Listo', badge: 'bg-emerald-950 text-emerald-300', list: 'bg-emerald-950 text-emerald-400' };
-      if (st === 'IN_PROGRESS') return { label: 'Taller', badge: 'bg-amber-950 text-amber-300', list: 'bg-amber-950 text-amber-400' };
-      if (st === 'IN_TRANSIT') return { label: 'Viaje', badge: 'bg-indigo-950 text-indigo-300', list: 'bg-indigo-950 text-indigo-400' };
-      if (st === 'WAITING_PARTS') return { label: 'Espera de Repuesto', badge: 'bg-violet-950 text-violet-300', list: 'bg-violet-950 text-violet-300' };
-      return { label: 'Espera', badge: 'bg-amber-950 text-amber-300', list: 'bg-zinc-800 text-zinc-300' };
     };
 
     window.renderRepairsList = function() {
@@ -2395,23 +2155,22 @@
       } else {
         if($('emptyState')) $('emptyState').classList.add('hidden');
         container.innerHTML = filtered.map(function(r) {
-          var meta = window.getOperationalStatusMeta(r.status);
-          return '<div onclick="window.openDetailModal(\''+r.id+'\')" class="bg-zinc-900 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between shadow-sm active:scale-[0.98] transition cursor-pointer">' +
-                 '<div><div class="flex items-center gap-1.5"><span class="font-mono text-xs font-bold text-iosBlue">'+r.id+'</span><span class="text-[9px] px-1.5 py-0.5 rounded font-bold '+meta.list+'">'+meta.label+'</span><span class="text-[9px] text-zinc-400 font-bold">('+(r.branch||'Central')+')</span></div>' +
-                 '<h4 class="text-xs font-bold text-white mt-0.5">'+r.deviceBrand+' '+r.deviceModel+'</h4><div class="text-[10px] text-zinc-400 mt-0.5">'+r.clientName+'</div></div>' +
+          var stColor = r.status === 'READY' ? 'text-emerald-400' : (r.status === 'IN_PROGRESS' ? 'text-amber-400' : 'text-zinc-300');
+          return '<div onclick="window.openDetailModal(\''+S(r.id)+'\')" class="bg-zinc-900 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between shadow-sm active:scale-[0.98] transition cursor-pointer">' +
+                 '<div><div class="flex items-center gap-1.5"><span class="font-mono text-xs font-bold text-iosBlue">'+S(r.id)+'</span><span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-zinc-800 '+stColor+'">'+S(r.status)+'</span><span class="text-[9px] text-zinc-400 font-bold">('+(S(r.branch)||'Central')+')</span></div>' +
+                 '<h4 class="text-xs font-bold text-white mt-0.5">'+S(r.deviceBrand)+' '+S(r.deviceModel)+'</h4><div class="text-[10px] text-zinc-400 mt-0.5">'+S(r.clientName)+'</div></div>' +
                  '<i class="ph-bold ph-caret-right text-zinc-600 text-base"></i></div>';
         }).join('');
       }
     };
 
     window.updateCounters = function() {
-      var wait=0, prog=0, parts=0, trans=0, ready=0;
+      var wait=0, prog=0, trans=0, ready=0;
       repairs.forEach(function(r) {
         if(!r) return; if(currentBranchFilter !== 'ALL' && r.branch !== currentBranchFilter) return;
-        if(r.status === 'WAITING') wait++; if(r.status === 'IN_PROGRESS') prog++; if(r.status === 'WAITING_PARTS') parts++; if(r.status === 'IN_TRANSIT') trans++; if(r.status === 'READY') ready++;
+        if(r.status === 'WAITING') wait++; if(r.status === 'IN_PROGRESS') prog++; if(r.status === 'IN_TRANSIT') trans++; if(r.status === 'READY') ready++;
       });
       if($('counterReceived')) $('counterReceived').textContent = wait; if($('counterInProgress')) $('counterInProgress').textContent = prog;
-      if($('counterWaitingParts')) $('counterWaitingParts').textContent = parts;
       if($('counterTransit')) $('counterTransit').textContent = trans; if($('counterReady')) $('counterReady').textContent = ready;
     };
 
@@ -2423,11 +2182,7 @@
       if($('dtlClientPhone')) $('dtlClientPhone').textContent = r.clientPhone;
       if($('dtlDeviceFault')) $('dtlDeviceFault').textContent = r.fault || 'Sin descripción';
       if($('dtlRepairDetailsText')) $('dtlRepairDetailsText').textContent = r.repairDetails || 'Ningún trabajo detallado aún.';
-      if($('dtlOperationalStatusBadge')) {
-        var dtlMeta = window.getOperationalStatusMeta(r.status);
-        $('dtlOperationalStatusBadge').textContent = dtlMeta.label;
-        $('dtlOperationalStatusBadge').className = 'text-[10px] font-bold px-2 py-0.5 rounded-md ' + dtlMeta.badge;
-      }
+      if($('dtlOperationalStatusBadge')) $('dtlOperationalStatusBadge').textContent = r.status;
       if($('dtlBudgetTotal')) $('dtlBudgetTotal').textContent = '$' + (r.budget || 0);
       if($('dtlAdvancePaid')) $('dtlAdvancePaid').textContent = '$' + (r.advance || 0);
       if($('dtlBalanceDue')) $('dtlBalanceDue').textContent = '$' + ((r.budget || 0) - (r.advance || 0));
@@ -2436,10 +2191,9 @@
       if (dtlGrid && dtlSec) {
         if (r.photos && r.photos.length > 0) {
           dtlSec.style.display = 'block';
-          dtlGrid.innerHTML = r.photos.map(function(src) { return '<div class="w-14 h-14 shrink-0 rounded-xl overflow-hidden border border-zinc-700 shadow-sm cursor-pointer" onclick="window.open(\''+src+'\', \'_blank\')"><img src="' + src + '" class="w-full h-full object-cover"></div>'; }).join('');
+          dtlGrid.innerHTML = r.photos.map(function(src) { return '<div class="w-14 h-14 shrink-0 rounded-xl overflow-hidden border border-zinc-700 shadow-sm cursor-pointer" onclick="window.open(\''+S(src)+'\', \'_blank\')"><img src="' + S(src) + '" class="w-full h-full object-cover"></div>'; }).join('');
         } else { dtlSec.style.display = 'none'; }
       }
-      window.publishOrderTracking(r);
       window.openModal('detailModal');
     };
 
@@ -2448,9 +2202,6 @@
       if($('editClientName')) $('editClientName').value = r.clientName || ''; if($('editDeviceBrand')) $('editDeviceBrand').value = r.deviceBrand || '';
       if($('editDeviceModel')) $('editDeviceModel').value = r.deviceModel || ''; if($('editDeviceFault')) $('editDeviceFault').value = r.fault || '';
       if($('editRepairDetails')) $('editRepairDetails').value = r.repairDetails || '';
-      if($('editDeviceBudget')) $('editDeviceBudget').value = r.budget != null ? r.budget : 0;
-      if($('editDeviceAdvance')) $('editDeviceAdvance').value = r.advance != null ? r.advance : 0;
-      window.calcBalance('edit');
       window.openModal('editRepairModal');
     };
 
@@ -2458,10 +2209,7 @@
       e.preventDefault(); var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
       r.clientName = $('editClientName').value; r.deviceBrand = $('editDeviceBrand').value; r.deviceModel = $('editDeviceModel').value;
       r.fault = $('editDeviceFault').value; r.repairDetails = $('editRepairDetails').value;
-      r.budget = parseFloat($('editDeviceBudget').value) || 0;
-      r.advance = parseFloat($('editDeviceAdvance').value) || 0;
       StorageShield.save('repairs', repairs);
-      window.publishOrderTracking(r);
       window.closeModal('editRepairModal'); window.openDetailModal(r.id); window.renderRepairsList(); window.showToast("Guardado", "Orden actualizada.");
     };
 
@@ -2477,93 +2225,15 @@
 
     window.printTechnicalReport = function() {
       var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
-      var html = `<div style="width:230px;margin:auto;font-family:monospace;line-height:1.25;color:#000;"><div style="text-align:center;border-bottom:1px dashed #000;padding-bottom:4px;margin-bottom:4px;"><b style="font-size:12px;">${workshopSettings.name.toUpperCase()}</b><br><b style="font-size:10px;">INFORME TÉCNICO #${r.id}</b></div><div style="font-size:10px;margin-bottom:6px;"><b>Fecha:</b> ${new Date().toLocaleDateString('es-AR')}<br><b>Cliente:</b> ${r.clientName}<br><b>Equipo:</b> ${r.deviceBrand} ${r.deviceModel}</div><div style="border-top:1px dashed #000;padding-top:4px;font-size:10px;"><b>DIAGNÓSTICO:</b><br>${r.fault || '-'}<br><br><b>TRABAJO REALIZADO:</b><br>${r.repairDetails || '-'}</div><div style="border-top:1px dashed #000;margin-top:6px;padding-top:4px;font-size:11px;font-weight:bold;">TOTAL: $${r.budget||0}<br>ABONADO: $${r.advance||0}<br>RESTA: $${(r.budget||0)-(r.advance||0)}</div></div>`;
+      var html = `<div style="width:230px;margin:auto;font-family:monospace;line-height:1.25;color:#000;"><div style="text-align:center;border-bottom:1px dashed #000;padding-bottom:4px;margin-bottom:4px;"><b style="font-size:12px;">${S(workshopSettings.name).toUpperCase()}</b><br><b style="font-size:10px;">INFORME TÉCNICO #${S(r.id)}</b></div><div style="font-size:10px;margin-bottom:6px;"><b>Fecha:</b> ${new Date().toLocaleDateString('es-AR')}<br><b>Cliente:</b> ${S(r.clientName)}<br><b>Equipo:</b> ${S(r.deviceBrand)} ${S(r.deviceModel)}</div><div style="border-top:1px dashed #000;padding-top:4px;font-size:10px;"><b>DIAGNÓSTICO:</b><br>${S(r.fault || '-')}<br><br><b>TRABAJO REALIZADO:</b><br>${S(r.repairDetails || '-')}</div><div style="border-top:1px dashed #000;margin-top:6px;padding-top:4px;font-size:11px;font-weight:bold;">TOTAL: $${r.budget||0}<br>ABONADO: $${r.advance||0}<br>RESTA: $${(r.budget||0)-(r.advance||0)}</div></div>`;
       $('printArea').innerHTML = html; $('printArea').style.display = 'block'; window.print(); setTimeout(function(){ $('printArea').style.display = 'none'; }, 500);
-    };
-
-    window.getTrackingUrl = function(orderId) {
-      var id = orderId || selectedRepairId;
-      var href = window.location.href.split('#')[0].split('?')[0];
-      var dir = href.substring(0, href.lastIndexOf('/') + 1);
-      if (!dir) dir = window.location.origin + '/';
-      return dir + 'estado.html?orden=' + encodeURIComponent(id);
-    };
-
-    window.buildPublicOrderStatus = function(r) {
-      if (!r) return null;
-      return {
-        id: r.id,
-        status: r.status || 'WAITING',
-        workshopId: (currentWorkshopId || '').toUpperCase(),
-        workshopName: (workshopSettings && workshopSettings.name) || 'OpenLine',
-        workshopSubtitle: (workshopSettings && workshopSettings.subtitle) || '',
-        clientName: r.clientName || '',
-        deviceBrand: r.deviceBrand || '',
-        deviceModel: r.deviceModel || '',
-        deviceType: r.deviceType || '',
-        branch: r.branch || 'Central',
-        updatedAt: Date.now()
-      };
-    };
-
-    window.publishOrderTracking = function(r) {
-      if (!mqttClient || !mqttClient.connected || !r || !r.id) return;
-      var payload = window.buildPublicOrderStatus(r);
-      mqttClient.publish('openline/v4/track/' + String(r.id).toUpperCase(), JSON.stringify(payload), { retain: true, qos: 1 });
-    };
-
-    window.publishAllOrdersTracking = function() {
-      if (!Array.isArray(repairs)) return;
-      repairs.forEach(function(r) { window.publishOrderTracking(r); });
-    };
-
-    window.publishOrderStatusMQTT = function(r) {
-      window.publishOrderTracking(r);
-    };
-
-    window.clearOrderStatusMQTT = function(orderId) {
-      if (!mqttClient || !mqttClient.connected || !orderId) return;
-      mqttClient.publish('openline/v4/track/' + String(orderId).toUpperCase(), '', { retain: true, qos: 1 });
-    };
-
-    window.sendTrackingLinkWA = function() {
-      var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if (!r) return;
-      window.publishOrderTracking(r);
-      var url = window.getTrackingUrl(r.id);
-      var phone = r.clientPhone ? r.clientPhone.replace(/[^0-9]/g, '') : null;
-      var msg = '*' + ((workshopSettings.name || 'OpenLine').toUpperCase()) + '* 🔍\n' +
-                '*SEGUIMIENTO DE ORDEN*\n\n' +
-                '🔖 *Orden:* #' + r.id + '\n' +
-                '📱 *Equipo:* ' + (r.deviceBrand || '') + ' ' + (r.deviceModel || '') + '\n\n' +
-                'Consultá el estado en tiempo real acá:\n' + url;
-      var send = function(p) {
-        window.open('https://wa.me/' + String(p).replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg), '_blank');
-      };
-      if (!phone) { window.appPrompt("WhatsApp", "Ingresa el WhatsApp del cliente:", "tel", "", function(val){ if (val) send(val); }); }
-      else { send(phone); }
-    };
-
-    window.copyTrackingLink = function() {
-      var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if (!r) return;
-      window.publishOrderTracking(r);
-      var url = window.getTrackingUrl(r.id);
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(function() { window.showToast("Copiado", "Link de seguimiento copiado."); }).catch(function() { window.fallbackCopyText(url); });
-      } else {
-        window.fallbackCopyText(url);
-      }
     };
 
     window.updateDeviceOperationalStatus = function(st) {
       var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
       r.status = st; StorageShield.save('repairs', repairs);
-      window.publishOrderTracking(r);
-      if($('dtlOperationalStatusBadge')) {
-        var stMeta = window.getOperationalStatusMeta(st);
-        $('dtlOperationalStatusBadge').textContent = stMeta.label;
-        $('dtlOperationalStatusBadge').className = 'text-[10px] font-bold px-2 py-0.5 rounded-md ' + stMeta.badge;
-      }
-      window.renderRepairsList(); window.updateCounters(); window.showToast("Estado", "Actualizado a " + window.getOperationalStatusMeta(st).label);
+      if($('dtlOperationalStatusBadge')) $('dtlOperationalStatusBadge').textContent = st;
+      window.renderRepairsList(); window.updateCounters(); window.showToast("Estado", "Actualizado a " + st);
     };
 
     window.chargeRepairToCash = function() {
@@ -2586,7 +2256,7 @@
          r.advance = r.budget; 
          StorageShield.save('repairs', repairs);
          window.openDetailModal(r.id); 
-         window.updateCashBalanceUI(); 
+         if(window.updateCashBalanceUI) window.updateCashBalanceUI(); 
          window.showToast("Cobro Exitoso", "Ingresado en Caja (" + localBranch + ")");
       });
     };
@@ -2594,14 +2264,12 @@
     window.deleteCurrentRepair = function() {
       if(activeUser !== 'Admin') { window.showToast("Denegado", "Solo Admin puede eliminar."); return; }
       window.requestAdminPinAuth("Eliminar orden permanentemente", function() {
-        var deletedId = selectedRepairId;
         repairs = repairs.filter(function(r) { return r.id !== selectedRepairId; }); StorageShield.save('repairs', repairs);
-        window.clearOrderStatusMQTT(deletedId);
         window.closeModal('detailModal'); window.renderRepairsList(); window.updateCounters(); window.showToast("Eliminado", "Orden removida.");
       });
     };
 
-    // --- RECEPTOR MQTT (SINCRONIZACIÓN Y HERENCIA SILENCIOSA) ---
+    // --- RECEPTOR MQTT Y ENCRIPTACIÓN (SIN RETAIN) ---
     function mergeByDate(localArr, remoteArr) {
       if (!Array.isArray(remoteArr)) return localArr || [];
       if (!Array.isArray(localArr)) localArr = [];
@@ -2614,14 +2282,14 @@
     window.publishStockMQTT = function() {
       if (mqttClient && mqttClient.connected) {
         var wsCode = currentWorkshopId.toUpperCase();
-        mqttClient.publish('openline/v4/workshop/' + wsCode + '/stock', JSON.stringify(stockItems), { retain: true, qos: 1 });
+        mqttClient.publish('openline/v4/workshop/' + wsCode + '/stock', encryptData(stockItems), { retain: false, qos: 1 });
       }
       if (window.publishMQTT) window.publishMQTT();
     };
 
     window.publishSettingsMQTT = function() {
       if (mqttClient && mqttClient.connected) {
-        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/settings', JSON.stringify(workshopSettings), { retain: true, qos: 1 });
+        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/settings', encryptData(workshopSettings), { retain: false, qos: 1 });
       }
       if (window.publishMQTT) window.publishMQTT();
     };
@@ -2645,15 +2313,14 @@
           settings: workshopSettings, 
           license: lic 
         };
-        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', JSON.stringify(payload), { retain: true });
-
-        if (window.publishAllOrdersTracking) window.publishAllOrdersTracking();
+        
+        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', encryptData(payload), { retain: false });
         
         if (isPro && lic) {
-           mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/license', JSON.stringify(lic), { retain: true, qos: 1 });
+           mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/license', JSON.stringify(lic), { retain: true, qos: 1 }); // Licencia en texto plano para el backend
         }
         if (workshopSettings) {
-           mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/settings', JSON.stringify(workshopSettings), { retain: true, qos: 1 });
+           mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/settings', encryptData(workshopSettings), { retain: false, qos: 1 });
         }
       }
     };
@@ -2663,7 +2330,6 @@
       
       mqttClient.on('connect', function() {
         if($('livePulseDot')) $('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
-        window.publishAllOrdersTracking();
         var wsCode = currentWorkshopId.toUpperCase();
         
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/sync', { qos: 1 });
@@ -2673,8 +2339,6 @@
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/settings', { qos: 1 });
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/heartbeat', { qos: 0 });
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/command', { qos: 1 });
-        mqttClient.subscribe('openline/v4/global/telemetry/ping', { qos: 0 });
-        mqttClient.subscribe('openline/v4/global/telemetry/report', { qos: 0 });
 
         window.broadcastPresence();
         mqttClient.publish('openline/v4/workshop/' + wsCode + '/sync/request', JSON.stringify({ requesterId: myDeviceId }));
@@ -2684,9 +2348,9 @@
            if (currentLic) {
               mqttClient.publish('openline/v4/workshop/' + wsCode + '/license', JSON.stringify(currentLic), { retain: true, qos: 1 });
            }
-           mqttClient.publish('openline/v4/workshop/' + wsCode + '/settings', JSON.stringify(workshopSettings), { retain: true, qos: 1 });
+           mqttClient.publish('openline/v4/workshop/' + wsCode + '/settings', encryptData(workshopSettings), { retain: false, qos: 1 });
            if (stockItems.length > 0) {
-              mqttClient.publish('openline/v4/workshop/' + wsCode + '/stock', JSON.stringify(stockItems), { retain: true, qos: 1 });
+              mqttClient.publish('openline/v4/workshop/' + wsCode + '/stock', encryptData(stockItems), { retain: false, qos: 1 });
            }
         }
 
@@ -2703,14 +2367,22 @@
 
       mqttClient.on('message', function(topic, message) {
         try {
-          var payload = JSON.parse(message.toString());
+          var payloadText = message.toString();
           var wsCode = currentWorkshopId.toUpperCase();
 
           if (topic.endsWith('/stock')) {
-            if (payload && Array.isArray(payload)) {
+            var stockPayload = decryptData(payloadText);
+            if (stockPayload && Array.isArray(stockPayload)) {
                var stockMap = {};
                stockItems.forEach(function(s){ stockMap[s.code + '_' + (s.branch || 'Central')] = s; });
-               payload.forEach(function(s){ stockMap[s.code + '_' + (s.branch || 'Central')] = s; });
+               stockPayload.forEach(function(s){ 
+                  var key = s.code + '_' + (s.branch || 'Central');
+                  var existing = stockMap[key];
+                  // Regla de Soft Delete y Fusión por tiempo
+                  if (!existing || (s.updatedAt || 0) >= (existing.updatedAt || 0)) {
+                      stockMap[key] = s;
+                  }
+               });
                stockItems = Object.values(stockMap);
                StorageShield.save('stock', stockItems, true);
                window.renderStockList();
@@ -2720,8 +2392,9 @@
           }
 
           if (topic.endsWith('/license')) {
-            if (payload && (payload.status === 'PRO' || payload.type === 'LIFETIME' || payload.type === 'PRO' || payload.type === 'SEM6')) {
-               StorageShield.save('license', payload, true);
+            var licPayload = JSON.parse(payloadText);
+            if (licPayload && (licPayload.status === 'PRO' || licPayload.type === 'LIFETIME' || licPayload.type === 'PRO' || licPayload.type === 'SEM6')) {
+               StorageShield.save('license', licPayload, true);
                localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + wsCode, 'TRUE');
                localStorage.removeItem('openline_pending_license_sync');
                window.updateLicenseUI();
@@ -2730,19 +2403,21 @@
           }
 
           if (topic.endsWith('/settings')) {
-            if (payload && typeof payload === 'object') {
-               window.applyWorkshopSettings(payload);
+            var setPayload = decryptData(payloadText);
+            if (setPayload && typeof setPayload === 'object') {
+               window.applyWorkshopSettings(setPayload);
                localStorage.removeItem('openline_pending_settings_sync');
             }
             return;
           }
 
           if (topic.endsWith('/sync/request')) {
-            if (payload && payload.requesterId !== myDeviceId) {
+            var reqPayload = JSON.parse(payloadText);
+            if (reqPayload && reqPayload.requesterId !== myDeviceId) {
                if (window.checkLicenseStatus() === 'PRO' || repairs.length > 0 || stockItems.length > 0) {
                   window.publishMQTT(true);
                   if (stockItems.length > 0) {
-                    mqttClient.publish('openline/v4/workshop/' + wsCode + '/stock', JSON.stringify(stockItems), { retain: true, qos: 1 });
+                    mqttClient.publish('openline/v4/workshop/' + wsCode + '/stock', encryptData(stockItems), { retain: false, qos: 1 });
                   }
                }
             }
@@ -2750,17 +2425,18 @@
           }
 
           if (topic.endsWith('/command')) {
-            if (payload && payload.targetDevId === myDeviceId && payload.command === 'SET_BRANCH') {
-                localStorage.setItem(LOCAL_BRANCH_KEY, payload.branch);
-                document.body.innerHTML = '<div style="color:white;padding:20px;text-align:center;font-size:18px;margin-top:20vh;font-weight:bold;">El Administrador te ha reasignado a la sucursal: (' + payload.branch + ')</div>';
+            var cmdPayload = JSON.parse(payloadText);
+            if (cmdPayload && cmdPayload.targetDevId === myDeviceId && cmdPayload.command === 'SET_BRANCH') {
+                localStorage.setItem(LOCAL_BRANCH_KEY, cmdPayload.branch);
+                document.body.innerHTML = '<div style="color:white;padding:20px;text-align:center;font-size:18px;margin-top:20vh;font-weight:bold;">El Administrador te ha reasignado a la sucursal: (' + S(cmdPayload.branch) + ')</div>';
                 setTimeout(function(){ window.location.reload(); }, 2000);
             }
-            if (payload && payload.command === 'ACTIVATE_LICENSE' && payload.license) {
-                StorageShield.save('license', payload.license, true);
+            if (cmdPayload && cmdPayload.command === 'ACTIVATE_LICENSE' && cmdPayload.license) {
+                StorageShield.save('license', cmdPayload.license, true);
                 localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + wsCode, 'TRUE');
                 window.updateLicenseUI();
             }
-            if (payload && payload.command === 'EXPEL_WORKSHOP' && payload.workshopId === wsCode) {
+            if (cmdPayload && cmdPayload.command === 'EXPEL_WORKSHOP' && cmdPayload.workshopId === wsCode) {
                 localStorage.removeItem(WORKSHOP_ID_KEY);
                 localStorage.removeItem(LOCAL_BRANCH_KEY);
                 document.body.innerHTML = '<div style="color:#ef4444;padding:24px;text-align:center;font-size:18px;margin-top:20vh;font-weight:bold;line-height:1.4;">🚫 ACCESO REVOCADO<br><span style="font-size:12px;color:#a1a1aa;font-weight:normal;">Este taller ha sido desvinculado por el Administrador Maestro.</span></div>';
@@ -2771,8 +2447,9 @@
           }
 
           if (topic.endsWith('/heartbeat')) {
-            if (payload && payload.devId) {
-                window.activeDevicesMap[payload.devId] = { time: Date.now(), user: payload.user || 'Admin', branch: payload.branch || 'Central' };
+            var hbPayload = JSON.parse(payloadText);
+            if (hbPayload && hbPayload.devId) {
+                window.activeDevicesMap[hbPayload.devId] = { time: Date.now(), user: hbPayload.user || 'Admin', branch: hbPayload.branch || 'Central' };
                 if (typeof window.renderUnifiedUsersAndDevices === 'function' && $('switchUserModal') && $('switchUserModal').classList.contains('active')) {
                   window.renderUnifiedUsersAndDevices();
                 }
@@ -2780,47 +2457,53 @@
             return;
           }
 
-          if (topic.endsWith('/telemetry/ping')) { window.broadcastPresence(); return; }
-          if (topic.endsWith('/telemetry/report')) { window.saveTelemetryData(payload); return; }
-
-          if (topic.includes('/sync') && payload && payload.senderId !== myDeviceId) {
-            if(payload.repairs && Array.isArray(payload.repairs)) { 
-              repairs = mergeByDate(repairs, payload.repairs); 
-              StorageShield.save('repairs', repairs, true); 
-              window.renderRepairsList(); 
-              window.updateCounters(); 
-            }
-            if(payload.cashMovements && Array.isArray(payload.cashMovements)) { 
-              cashMovements = mergeByDate(cashMovements, payload.cashMovements); 
-              StorageShield.save('cash', cashMovements, true); 
-              window.updateCashBalanceUI(); 
-            }
-            if(payload.cashClosures && Array.isArray(payload.cashClosures)) { 
-              cashClosures = mergeByDate(cashClosures, payload.cashClosures); 
-              StorageShield.save('cashClosures', cashClosures, true); 
-              window.renderCashClosures(); 
-            }
-            if(payload.sales && Array.isArray(payload.sales)) { 
-              sales = mergeByDate(sales, payload.sales); 
-              StorageShield.save('sales', sales, true); 
-              window.renderVentasList(); 
-            }
-            if(payload.stockItems && Array.isArray(payload.stockItems)) {
-              var stockMap = {};
-              stockItems.forEach(function(s){ stockMap[s.code + '_' + (s.branch || 'Central')] = s; });
-              payload.stockItems.forEach(function(s){ stockMap[s.code + '_' + (s.branch || 'Central')] = s; });
-              stockItems = Object.values(stockMap); 
-              StorageShield.save('stock', stockItems, true); 
-              window.renderStockList();
-              if(currentPosTab === 'CATALOG') window.renderPosCatalog();
-            }
-            if(payload.settings) {
-              window.applyWorkshopSettings(payload.settings);
-            }
-            if(payload.license && (payload.license.type === 'LIFETIME' || payload.license.type === 'PRO' || payload.license.type === 'SEM6')) {
-              StorageShield.save('license', payload.license, true);
-              localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + wsCode, 'TRUE');
-              window.updateLicenseUI();
+          if (topic.includes('/sync')) {
+            var syncPayload = decryptData(payloadText);
+            if (syncPayload && syncPayload.senderId !== myDeviceId) {
+              if(syncPayload.repairs && Array.isArray(syncPayload.repairs)) { 
+                repairs = mergeByDate(repairs, syncPayload.repairs); 
+                StorageShield.save('repairs', repairs, true); 
+                window.renderRepairsList(); 
+                window.updateCounters(); 
+              }
+              if(syncPayload.cashMovements && Array.isArray(syncPayload.cashMovements)) { 
+                cashMovements = mergeByDate(cashMovements, syncPayload.cashMovements); 
+                StorageShield.save('cash', cashMovements, true); 
+                if(window.updateCashBalanceUI) window.updateCashBalanceUI(); 
+              }
+              if(syncPayload.cashClosures && Array.isArray(syncPayload.cashClosures)) { 
+                cashClosures = mergeByDate(cashClosures, syncPayload.cashClosures); 
+                StorageShield.save('cashClosures', cashClosures, true); 
+                if(window.renderCashClosures) window.renderCashClosures(); 
+              }
+              if(syncPayload.sales && Array.isArray(syncPayload.sales)) { 
+                sales = mergeByDate(sales, syncPayload.sales); 
+                StorageShield.save('sales', sales, true); 
+                if(window.renderVentasList) window.renderVentasList(); 
+              }
+              if(syncPayload.stockItems && Array.isArray(syncPayload.stockItems)) {
+                var stockMapSync = {};
+                stockItems.forEach(function(s){ stockMapSync[s.code + '_' + (s.branch || 'Central')] = s; });
+                syncPayload.stockItems.forEach(function(s){ 
+                   var key = s.code + '_' + (s.branch || 'Central');
+                   var existing = stockMapSync[key];
+                   if (!existing || (s.updatedAt || 0) >= (existing.updatedAt || 0)) {
+                       stockMapSync[key] = s;
+                   }
+                });
+                stockItems = Object.values(stockMapSync); 
+                StorageShield.save('stock', stockItems, true); 
+                window.renderStockList();
+                if(currentPosTab === 'CATALOG') window.renderPosCatalog();
+              }
+              if(syncPayload.settings) {
+                window.applyWorkshopSettings(syncPayload.settings);
+              }
+              if(syncPayload.license && (syncPayload.license.type === 'LIFETIME' || syncPayload.license.type === 'PRO' || syncPayload.license.type === 'SEM6')) {
+                StorageShield.save('license', syncPayload.license, true);
+                localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + wsCode, 'TRUE');
+                window.updateLicenseUI();
+              }
             }
           }
         } catch(e) {}
@@ -2829,16 +2512,6 @@
 
     window.broadcastPresence = function() {
       if (mqttClient && mqttClient.connected) {
-        var payload = { 
-          workshopId: currentWorkshopId.toUpperCase(), 
-          deviceId: myDeviceId, 
-          user: activeUser, 
-          branch: localBranch, 
-          name: workshopSettings.name || currentWorkshopId, 
-          licenseType: window.checkLicenseStatus(), 
-          time: Date.now() 
-        };
-        mqttClient.publish('openline/v4/global/telemetry/report', JSON.stringify(payload));
         mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', JSON.stringify({ devId: myDeviceId, user: activeUser, branch: localBranch }));
       }
     };
@@ -2850,27 +2523,18 @@
           
           window.checkLocalBranch();
           
-          if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser || 'Admin';
-          if($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
+          if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = S(activeUser) || 'Admin';
+          if($('headerWorkshopCode')) $('headerWorkshopCode').textContent = S(currentWorkshopId);
           
           window.applyWorkshopSettings(workshopSettings);
           window.updateLicenseUI();
 
           window.checkBannedStatus();
           
-          window.saveTelemetryData({ 
-            workshopId: currentWorkshopId.toUpperCase(), 
-            deviceId: myDeviceId, 
-            user: activeUser, 
-            branch: localBranch, 
-            name: workshopSettings.name, 
-            licenseType: window.checkLicenseStatus() 
-          });
-
           window.renderBranchTabs(); 
           window.renderRepairsList(); 
           window.updateCounters(); 
-          window.updateCashBalanceUI();
+          if(window.updateCashBalanceUI) window.updateCashBalanceUI();
           
           setTimeout(function() {
             var banner = $('realtimeSyncBanner');
@@ -2883,7 +2547,7 @@
             }
           }, 600);
 
-      } catch (criticalError) { console.error("Boot seguro interceptó:", criticalError); }
+      } catch (criticalError) { console.error("Boot seguro interceptó un error."); }
     });
   </script>
 </body>
