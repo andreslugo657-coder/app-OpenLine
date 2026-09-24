@@ -493,7 +493,7 @@
     </div>
   </div>
 
-  <!-- MODAL EDITAR ORDEN (ACTUALIZADO) -->
+  <!-- MODAL EDITAR ORDEN -->
   <div id="editRepairModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0"><h3 class="text-sm font-bold text-white">Editar Orden</h3><button type="button" onclick="window.closeModal('editRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -628,7 +628,6 @@
           <div class="space-y-2"><input type="text" id="cfgWorkshopName" placeholder="Nombre Comercial" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"><input type="text" id="cfgWorkshopSubtitle" placeholder="Subtítulo" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white"><input type="tel" id="cfgAdminPhone" placeholder="WhatsApp Admin (Para recibir cierres y clave)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono"></div>
           <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2"><span class="text-[10px] font-bold text-zinc-300 uppercase block">📍 Sucursales (Ubicaciones):</span><div id="settingsBranchesList" class="space-y-1.5 max-h-32 overflow-y-auto no-scrollbar"></div><div class="flex gap-1.5 pt-1 border-t border-zinc-800/80"><input type="text" id="inpNewConfigBranch" placeholder="Nueva Sucursal..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"><button type="button" onclick="window.addConfigBranch()" class="px-3 py-2 bg-iosBlue text-white font-bold rounded-xl text-xs">+ Añadir</button></div></div>
           
-          <!-- BOTONES DE VINCULACIÓN Y LICENCIA -->
           <div class="pt-4 border-t border-zinc-800/80 space-y-2">
             <button type="button" onclick="window.closeModal('settingsModal'); window.openTeamModal();" class="w-full py-2.5 bg-indigo-900/40 hover:bg-indigo-800 border border-indigo-700 text-indigo-300 font-bold rounded-xl shadow flex items-center justify-center gap-1.5 transition active:scale-95">
               <i class="ph-bold ph-plugs-connected text-base"></i> Vincular a otro Taller (Sincronizar)
@@ -666,7 +665,7 @@
   <!-- SISTEMA JAVASCRIPT GLOBAL BLINDADO (E2EE + XSS + SOFT DELETE + TRACKING + EDIT)     -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v28.3.0-SECURE-EDIT'; 
+    var APP_CODE_VERSION = 'v28.4.0-SECURE-FULL'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var ACTIVE_USER_KEY = 'openline_current_active_user';
@@ -1107,6 +1106,89 @@
       });
     };
 
+    // --- VINCULACIÓN CON CLAVE DE ADMINISTRADOR DEL TALLER MAESTRO ---
+    window.joinWorkshop = function() { 
+      window.appPrompt("Vincular a Taller Maestro", "Paso 1 de 2:\nIngresa el Código del Taller Maestro (ej: TALLER-9572):", "text", "", function(code) {
+        if (!code) return;
+        var targetCode = code.trim().toUpperCase();
+        if (!targetCode.startsWith("TALLER-")) {
+          window.showToast("Error", "El código debe tener formato TALLER-XXXX");
+          return;
+        }
+
+        window.appPrompt("Clave de Administrador", "Paso 2 de 2:\nIngresa la Clave de Administrador de " + targetCode + ":", "password", "", function(pin) {
+          if (!pin) return;
+          var enteredPin = pin.trim();
+
+          if (!mqttClient || !mqttClient.connected) {
+            window.showToast("Error", "Sin conexión con el servidor. Verifica tu conexión a internet.");
+            return;
+          }
+
+          window.showToast("Verificando", "Validando credenciales con " + targetCode + "...");
+
+          var verifyTopic = 'openline/v4/workshop/' + targetCode + '/settings';
+          var resolved = false;
+
+          var onVerifyMessage = function(topic, message) {
+            if (topic === verifyTopic) {
+              resolved = true;
+              clearTimeout(timer);
+              mqttClient.removeListener('message', onVerifyMessage);
+              mqttClient.unsubscribe(verifyTopic);
+
+              // Función centralizada para guardar correctamente antes de reiniciar
+              var successLogic = function(settingsObj) {
+                  currentWorkshopId = targetCode; // Actualiza el ID en vivo
+                  workshopSettings = settingsObj; 
+                  localStorage.setItem(WORKSHOP_ID_KEY, targetCode);
+                  localStorage.removeItem(LOCAL_BRANCH_KEY);
+                  StorageShield.save('settings', settingsObj, true); 
+                  
+                  window.showToast("Autorizado", "Clave correcta. Vinculando a " + targetCode + "...");
+                  setTimeout(function() { window.location.reload(); }, 800);
+              };
+
+              try {
+                var attemptKey = targetCode + "_" + enteredPin;
+                var bytes = CryptoJS.AES.decrypt(message.toString(), attemptKey);
+                var dec = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+                
+                if(dec && dec.adminPin === enteredPin) {
+                   successLogic(dec);
+                } else {
+                   window.showToast("Acceso Denegado", "Clave de Administrador incorrecta.");
+                }
+              } catch(e) {
+                try {
+                  var unencryptedSettings = JSON.parse(message.toString());
+                  if (unencryptedSettings.adminPin === enteredPin) {
+                     successLogic(unencryptedSettings);
+                  } else {
+                     window.showToast("Acceso Denegado", "Clave de Administrador incorrecta.");
+                  }
+                } catch(e2) {
+                  window.showToast("Error", "No se pudo validar con la red maestra.");
+                }
+              }
+            }
+          };
+
+          mqttClient.on('message', onVerifyMessage);
+          mqttClient.subscribe(verifyTopic, { qos: 1 });
+          mqttClient.publish('openline/v4/workshop/' + targetCode + '/sync/request', JSON.stringify({ requesterId: myDeviceId }));
+
+          var timer = setTimeout(function() {
+            if (!resolved) {
+              mqttClient.removeListener('message', onVerifyMessage);
+              mqttClient.unsubscribe(verifyTopic);
+              window.showToast("No Encontrado", "No se encontró el taller " + targetCode + " o está fuera de línea.");
+            }
+          }, 5000);
+        });
+      });
+    };
+
     // --- APERTURAS DE MODALES ---
     window.openNewRepairModal = function() { 
       window.openModal('newRepairModal'); 
@@ -1217,244 +1299,6 @@
     };
 
     window.setStockBranchFilter = function(b) { currentStockBranchFilter = b; window.renderStockBranchFilters(); window.renderStockList(); };
-
-    window.openSwitchUserModal = function() {
-      window.openModal('switchUserModal');
-      setTimeout(function() {
-        try {
-          window.renderUnifiedUsersAndDevices();
-          var adminSect = $('adminPinConfigSection');
-          if(adminSect) {
-            if(activeUser === 'Admin') { 
-              adminSect.classList.remove('hidden'); adminSect.style.display = 'block';
-              var setupBox = $('setupPinBox');
-              if (setupBox) {
-                  if (workshopSettings.isCreatorPinSet || (workshopSettings.adminPin && workshopSettings.adminPin !== '1234')) { setupBox.style.display = 'none'; } 
-                  else { setupBox.style.display = 'block'; }
-              }
-            } else { adminSect.classList.add('hidden'); adminSect.style.display = 'none'; }
-          }
-        } catch(e) {}
-      }, 50);
-    };
-
-    window.selectActiveUser = function(userName) {
-      if (userName === 'Admin' && activeUser !== 'Admin') {
-        window.requestAdminPinAuth("Ingresar como Administrador", function() {
-          activeUser = userName; try { localStorage.setItem(ACTIVE_USER_KEY, activeUser); } catch(e){}
-          if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = S(activeUser);
-          window.closeModal('switchUserModal'); window.showToast("Usuario", "Operando como: " + activeUser);
-          window.renderBranchTabs();
-          window.broadcastPresence();
-        });
-      } else {
-        activeUser = userName; try { localStorage.setItem(ACTIVE_USER_KEY, activeUser); } catch(e){}
-        if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = S(activeUser);
-        window.closeModal('switchUserModal'); window.showToast("Usuario", "Operando como: " + activeUser);
-        window.renderBranchTabs();
-        window.broadcastPresence();
-      }
-    };
-
-    window.addNewStaffMember = function() {
-      var name = $('inpNewStaffName').value.trim(); 
-      var branch = $('inpNewStaffBranch') ? $('inpNewStaffBranch').value : localBranch;
-      if (!name || !branch) { window.showToast("Error", "Completa nombre y sucursal."); return; }
-      
-      if(!workshopSettings.usersByBranch) workshopSettings.usersByBranch = {};
-      if(!workshopSettings.usersByBranch[branch]) workshopSettings.usersByBranch[branch] = [];
-      
-      if (!workshopSettings.usersByBranch[branch].includes(name)) {
-        workshopSettings.usersByBranch[branch].push(name);
-        window.applyWorkshopSettings(workshopSettings);
-        window.publishSettingsMQTT();
-        $('inpNewStaffName').value = ''; 
-        window.showToast("Personal", name + " agregado a (" + branch + ")");
-      } else { window.showToast("Aviso", "El usuario ya existe en esa sucursal."); }
-    };
-
-    window.saveNewAdminPin = function() {
-      var newPin = $('inpNewAdminPin').value.trim(); if(!newPin) return;
-      window.appConfirm("Configurar Clave", "¿Confirmas que usarás [ " + newPin + " ] como Clave Maestra?\n\nAsegúrate de no olvidarla.", function() {
-        workshopSettings.adminPin = newPin; workshopSettings.isCreatorPinSet = true;
-        window.applyWorkshopSettings(workshopSettings);
-        window.publishSettingsMQTT();
-        $('inpNewAdminPin').value = ''; 
-        var setupBox = $('setupPinBox'); if(setupBox) setupBox.style.display = 'none';
-        window.showToast("Seguridad", "Clave Maestra protegida de por vida."); 
-      });
-    };
-
-    // --- AJUSTES Y CONFIGURACIÓN ---
-    window.openSettingsModal = function() {
-      try {
-        if($('cfgWorkshopName')) $('cfgWorkshopName').value = workshopSettings.name || '';
-        if($('cfgWorkshopSubtitle')) $('cfgWorkshopSubtitle').value = workshopSettings.subtitle || '';
-        if($('cfgAdminPhone')) $('cfgAdminPhone').value = workshopSettings.adminPhone || '';
-        window.renderConfigBranches();
-        if(workshopSettings.logo && $('settingsLogoPreview')) { $('settingsLogoPreview').innerHTML = '<img src="' + S(workshopSettings.logo) + '" class="w-full h-full object-cover">'; } 
-        else if($('settingsLogoPreview')) { $('settingsLogoPreview').innerHTML = '<i class="ph-bold ph-storefront text-zinc-500 text-2xl"></i>'; }
-      } catch(e) {}
-      window.openModal('settingsModal');
-    };
-
-    window.saveSettings = function() {
-      workshopSettings.name = $('cfgWorkshopName').value; workshopSettings.subtitle = $('cfgWorkshopSubtitle').value;
-      if($('cfgAdminPhone')) workshopSettings.adminPhone = $('cfgAdminPhone').value.replace(/[^0-9]/g, '');
-      window.applyWorkshopSettings(workshopSettings);
-      window.publishSettingsMQTT();
-      window.showToast("Guardado", "Ajustes actualizados en toda la red."); 
-      window.closeModal('settingsModal');
-    };
-
-    window.renderConfigBranches = function() {
-      var c = $('settingsBranchesList'); if(!c) return;
-      var branches = workshopSettings.branches || ['Central'];
-      c.innerHTML = branches.map(function(b, idx) {
-        return '<div class="flex items-center justify-between p-2 bg-zinc-800 rounded-xl border border-zinc-700"><span class="text-xs font-bold text-white">(' + S(b) + ')</span><div class="flex gap-1"><button type="button" onclick="window.editConfigBranch(' + idx + ')" class="w-6 h-6 rounded bg-zinc-700 text-zinc-300 flex items-center justify-center"><i class="ph-bold ph-pencil-simple"></i></button>' + (branches.length > 1 ? '<button type="button" onclick="window.deleteConfigBranch(' + idx + ')" class="w-6 h-6 rounded bg-rose-950 text-rose-400 flex items-center justify-center"><i class="ph-bold ph-trash"></i></button>' : '') + '</div></div>';
-      }).join('');
-    };
-
-    window.addConfigBranch = function() {
-      var val = $('inpNewConfigBranch').value.trim(); if(!val) return;
-      if(!workshopSettings.branches) workshopSettings.branches = ['Central'];
-      if(workshopSettings.branches.includes(val)) { window.showToast('Aviso', 'Ya existe esa sucursal'); return; }
-      workshopSettings.branches.push(val); 
-      window.applyWorkshopSettings(workshopSettings);
-      window.publishSettingsMQTT();
-      $('inpNewConfigBranch').value = '';
-    };
-
-    window.editConfigBranch = function(idx) {
-      var oldVal = workshopSettings.branches[idx]; 
-      window.appPrompt("Editar Sucursal", "Nuevo nombre para " + oldVal + ":", "text", oldVal, function(newVal) {
-        if(newVal && newVal.trim() !== '') {
-          newVal = newVal.trim(); workshopSettings.branches[idx] = newVal;
-          repairs.forEach(function(r) { if(r.branch === oldVal) r.branch = newVal; }); 
-          stockItems.forEach(function(s) { if(s.branch === oldVal) s.branch = newVal; }); 
-          sales.forEach(function(s) { if(s.branch === oldVal) s.branch = newVal; }); 
-          cashMovements.forEach(function(c) { if(c.branch === oldVal) c.branch = newVal; }); 
-          cashClosures.forEach(function(c) { if(c.branch === oldVal) c.branch = newVal; });
-          if(localBranch === oldVal) window.setLocalBranch(newVal, true);
-          StorageShield.save('repairs', repairs); StorageShield.save('stock', stockItems); StorageShield.save('sales', sales); StorageShield.save('cash', cashMovements); StorageShield.save('cashClosures', cashClosures);
-          window.applyWorkshopSettings(workshopSettings);
-          window.publishSettingsMQTT();
-          window.publishStockMQTT();
-          window.showToast('Actualizado', 'Sucursal editada.');
-        }
-      });
-    };
-
-    window.deleteConfigBranch = function(idx) {
-      if(workshopSettings.branches.length <= 1) return;
-      window.appConfirm("Eliminar Sucursal", "¿Estás seguro de eliminar esta sucursal?", function() { 
-        workshopSettings.branches.splice(idx, 1); 
-        window.applyWorkshopSettings(workshopSettings);
-        window.publishSettingsMQTT();
-      });
-    };
-
-    window.handleLogoUpload = function(input) {
-      if(input.files && input.files[0]) {
-        var r = new FileReader();
-        r.onload = function(e) {
-          workshopSettings.logo = e.target.result;
-          window.applyWorkshopSettings(workshopSettings);
-          window.publishSettingsMQTT();
-          window.showToast("Logo Actualizado", "Logo adoptado en toda la red.");
-        };
-        r.readAsDataURL(input.files[0]);
-      }
-    };
-    window.removeLogo = function() {
-      workshopSettings.logo = ''; 
-      window.applyWorkshopSettings(workshopSettings);
-      window.publishSettingsMQTT();
-    };
-
-    window.shareAppWA = function() { var url = window.location.origin + window.location.pathname; var msg = "🚀 *OpenLine - Gestión de Taller Profesional*\n\nAccede a la plataforma aquí:\n\n" + url; window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank'); };
-    window.copyAppUrl = function() { var url = window.location.origin + window.location.pathname; if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(function() { window.showToast("Copiado", "Enlace copiado al portapapeles."); }).catch(function() { window.fallbackCopyText(url); }); } else { window.fallbackCopyText(url); } };
-    window.fallbackCopyText = function(text) { var textArea = document.createElement("textarea"); textArea.value = text; document.body.appendChild(textArea); textArea.select(); try { document.execCommand('copy'); window.showToast("Copiado", "Enlace copiado al portapapeles."); } catch (err) { window.showToast("Error", "No se pudo copiar."); } document.body.removeChild(textArea); };
-    
-    // --- VINCULACIÓN CON CLAVE DE ADMINISTRADOR DEL TALLER MAESTRO ---
-    window.joinWorkshop = function() { 
-      window.appPrompt("Vincular a Taller Maestro", "Paso 1 de 2:\nIngresa el Código del Taller Maestro (ej: TALLER-9572):", "text", "", function(code) {
-        if (!code) return;
-        var targetCode = code.trim().toUpperCase();
-        if (!targetCode.startsWith("TALLER-")) {
-          window.showToast("Error", "El código debe tener formato TALLER-XXXX");
-          return;
-        }
-
-        window.appPrompt("Clave de Administrador", "Paso 2 de 2:\nIngresa la Clave de Administrador de " + targetCode + ":", "password", "", function(pin) {
-          if (!pin) return;
-          var enteredPin = pin.trim();
-
-          if (!mqttClient || !mqttClient.connected) {
-            window.showToast("Error", "Sin conexión con el servidor. Verifica tu conexión a internet.");
-            return;
-          }
-
-          window.showToast("Verificando", "Validando credenciales con " + targetCode + "...");
-
-          var verifyTopic = 'openline/v4/workshop/' + targetCode + '/settings';
-          var resolved = false;
-
-          var onVerifyMessage = function(topic, message) {
-            if (topic === verifyTopic) {
-              resolved = true;
-              clearTimeout(timer);
-              mqttClient.removeListener('message', onVerifyMessage);
-              mqttClient.unsubscribe(verifyTopic);
-
-              try {
-                var remoteSettings = JSON.parse(message.toString());
-                var masterPin = (remoteSettings.adminPin || '1234').trim();
-                
-                if (enteredPin === masterPin) {
-                  localStorage.setItem(WORKSHOP_ID_KEY, targetCode);
-                  localStorage.removeItem(LOCAL_BRANCH_KEY);
-                  localStorage.setItem('openline_pending_license_sync', 'TRUE');
-                  StorageShield.save('settings', remoteSettings, true);
-                  window.showToast("Autorizado", "Clave correcta. Vinculando a " + targetCode + "...");
-                  setTimeout(function() { window.location.reload(); }, 700);
-                } else {
-                  window.showToast("Acceso Denegado", "Clave de Administrador incorrecta para " + targetCode);
-                }
-              } catch(err) {
-                var attemptKey = targetCode + "_" + enteredPin;
-                try {
-                   var bytes = CryptoJS.AES.decrypt(message.toString(), attemptKey);
-                   var dec = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-                   if(dec && dec.adminPin === enteredPin) {
-                     localStorage.setItem(WORKSHOP_ID_KEY, targetCode);
-                     localStorage.removeItem(LOCAL_BRANCH_KEY);
-                     StorageShield.save('settings', dec, true);
-                     window.showToast("Autorizado", "Clave correcta. Vinculando a " + targetCode + "...");
-                     setTimeout(function() { window.location.reload(); }, 700);
-                     return;
-                   }
-                } catch(e2) {
-                   window.showToast("Acceso Denegado", "Clave de Administrador incorrecta.");
-                }
-              }
-            }
-          };
-
-          mqttClient.on('message', onVerifyMessage);
-          mqttClient.subscribe(verifyTopic, { qos: 1 });
-          mqttClient.publish('openline/v4/workshop/' + targetCode + '/sync/request', JSON.stringify({ requesterId: myDeviceId }));
-
-          var timer = setTimeout(function() {
-            if (!resolved) {
-              mqttClient.removeListener('message', onVerifyMessage);
-              mqttClient.unsubscribe(verifyTopic);
-              window.showToast("No Encontrado", "No se encontró el taller " + targetCode + " o está fuera de línea.");
-            }
-          }, 5000);
-        });
-      });
-    };
 
     // --- PATRÓN TÁCTIL ---
     var currentPhotos = []; var activeUnlockType = 'pin'; var patternCtx = null; var isDrawingPattern = false; var selectedPatternSequence = []; var patternNodes = [];
@@ -1817,7 +1661,7 @@
           stockItems[existingIndex].qty += qty; 
           stockItems[existingIndex].cost = cost;
           stockItems[existingIndex].price = price;
-          stockItems[existingIndex].isDeleted = false; // Revive el fantasma
+          stockItems[existingIndex].isDeleted = false;
           stockItems[existingIndex].updatedAt = Date.now();
           window.showToast("Actualizado", "Stock sumado al producto existente.");
        } else {
@@ -2038,7 +1882,6 @@
       window.closeModal('salesModal');
       window.switchPosTab('CATALOG'); 
       window.showToast("Venta Exitosa", "Registrada en caja (" + localBranch + ")"); 
-      // window.openSaleTicketModal(saleId);
     };
 
     // --- CATÁLOGO INTERACTIVO COMPARTIDO ---
@@ -2263,7 +2106,7 @@
       r.advance = parseFloat($('editDeviceAdvance').value) || 0;
       
       StorageShield.save('repairs', repairs);
-      window.publishTrackingMQTT(r); // Actualizamos el E2EE del seguimiento
+      window.publishTrackingMQTT(r); 
       
       window.closeModal('editRepairModal'); 
       window.openDetailModal(r.id); 
