@@ -919,6 +919,61 @@
     window.removePhoto = function(i) { currentPhotos.splice(i, 1); window.renderNewPhotos(); };
 
     // --- INGRESOS ---
+    // --- GENERADOR DE LINK Y ENVÍO DE SEGUIMIENTO ---
+    window.getTrackingUrl = function(orderId) {
+      var base = window.location.href.split('?')[0].replace('index.html', '');
+      if (!base.endsWith('/')) base += '/';
+      return base + 'estado.html?orden=' + encodeURIComponent(orderId);
+    };
+
+    window.publishOrderTracking = function(r) {
+      if (!r || !r.id || !mqttClient || !mqttClient.connected) return;
+      var payload = {
+        id: r.id,
+        brand: r.deviceBrand || '',
+        model: r.deviceModel || '',
+        status: r.status || 'WAITING',
+        budget: parseFloat(r.budget) || 0,
+        advance: parseFloat(r.advance) || 0,
+        fault: r.fault || '',
+        repairDetails: r.repairDetails || '',
+        updatedAt: Date.now(),
+        workshopName: workshopSettings.name || 'Servicio Técnico',
+        workshopSubtitle: workshopSettings.subtitle || 'Servicio Técnico Profesional',
+        workshopPhone: workshopSettings.adminPhone || '',
+        workshopLogo: workshopSettings.logo || ''
+      };
+      mqttClient.publish('openline/v4/track/' + r.id.toUpperCase(), JSON.stringify(payload), { retain: true, qos: 1 });
+    };
+
+    window.sendRepairTicketWA = function(orderId) {
+      var id = orderId || selectedRepairId;
+      var r = repairs.find(function(x) { return x.id === id; });
+      if (!r) return;
+
+      var phone = (r.clientPhone || '').replace(/[^0-9]/g, '');
+      var balance = (parseFloat(r.budget) || 0) - (parseFloat(r.advance) || 0);
+      var trackLink = window.getTrackingUrl(r.id);
+
+      var msg = `*${(workshopSettings.name || 'OPENLINE').toUpperCase()}* 🛠️\n` +
+                `*COMPROBANTE DE INGRESO AL TALLER*\n\n` +
+                `🔖 *Orden:* #${r.id}\n` +
+                `📱 *Equipo:* ${r.deviceBrand} ${r.deviceModel}\n` +
+                `📋 *Falla:* ${r.fault || 'Revisión y diagnóstico'}\n` +
+                `💰 *Ppto Estimado:* $${(r.budget || 0).toLocaleString()}\n` +
+                `💵 *Seña Abonada:* $${(r.advance || 0).toLocaleString()}\n` +
+                `❗️ *Resta Abonar:* $${balance.toLocaleString()}\n\n` +
+                `🌐 *SIGUE EL ESTADO EN VIVO AQUÍ:* \n${trackLink}\n\n` +
+                `¡Muchas gracias por confiar en nuestro servicio técnico!`;
+
+      if (!phone) {
+        window.appPrompt("WhatsApp", "Ingresa el WhatsApp del cliente:", "tel", "", function(val) {
+          if (val) window.open('https://wa.me/' + val.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg), '_blank');
+        });
+      } else {
+        window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(msg), '_blank');
+      }
+    };
     window.calcBalance = function(type) {
       if(type === 'new') {
         var total = parseFloat($('inpDeviceBudget').value) || 0; var advance = parseFloat($('inpDeviceAdvance').value) || 0;
@@ -953,7 +1008,17 @@
 
       if (advanceAmt > 0) {
         if (!Array.isArray(cashMovements)) cashMovements = [];
-        cashMovements.unshift({ id: 'CSH-ADV-' + Date.now(), branch: localBranch, type: 'INCOME', amount: advanceAmt, concept: 'Seña Orden #' + id + ' (' + r.deviceBrand + ')', method: 'Efectivo', date: Date.now(), user: activeUser, closed: false });
+        cashMovements.unshift({ 
+          id: 'CSH-ADV-' + Date.now(), 
+          branch: localBranch, 
+          type: 'INCOME', 
+          amount: advanceAmt, 
+          concept: 'Seña Orden #' + id + ' (' + r.deviceBrand + ' ' + r.deviceModel + ')', 
+          method: 'Efectivo', 
+          date: Date.now(), 
+          user: activeUser, 
+          closed: false 
+        });
         StorageShield.save('cash', cashMovements); 
         window.updateCashBalanceUI();
       }
@@ -964,8 +1029,14 @@
       window.renderRepairsList(); 
       window.updateCounters();
 
-      setTimeout(function() { window.openRepairTicketModal(id); }, 150);
+      // Alerta automática para enviar el comprobante con seguimiento en vivo
+      setTimeout(function() {
+        window.appConfirm("Comprobante con Seguimiento", "¿Deseas enviar el comprobante y link de seguimiento en vivo por WhatsApp al cliente?", function() {
+          window.sendRepairTicketWA(r.id);
+        });
+      }, 250);
     };
+      
 
     // --- CAJA LOCAL ---
     window.showCashIncome = function() { if($('cashMovementForm')) { $('cashMovementForm').classList.remove('hidden'); $('cshType').value = 'INCOME'; $('cashFormTitle').textContent = '+ Ingreso Manual a Caja'; } };
@@ -4322,6 +4393,7 @@
       var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
       r.status = st; StorageShield.save('repairs', repairs);
       if($('dtlOperationalStatusBadge')) $('dtlOperationalStatusBadge').textContent = st;
+      window.publishOrderTracking(r);
       window.renderRepairsList(); window.updateCounters(); window.showToast("Estado", "Actualizado a " + st);
     };
 
