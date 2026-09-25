@@ -337,7 +337,7 @@
 
   <!-- SCRIPT GLOBAL BLINDADO -->
   <script>
-    var APP_CODE_VERSION = 'v31.1.0-RECOVERY'; 
+    var APP_CODE_VERSION = 'v31.2.0-RECOVERY-FIX'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var ACTIVE_USER_KEY = 'openline_current_active_user';
@@ -889,10 +889,13 @@
         mqttClient.subscribe('openline/v5/workshop/' + wsCode + '/heartbeat', { qos: 0 }); 
         mqttClient.subscribe('openline/v5/workshop/' + wsCode + '/command', { qos: 1 });
 
-        // SUSCRIPCIÓN TEMPORAL DE RESCATE (Para recuperar el historial perdido de v4)
+        // SUSCRIPCIÓN TEMPORAL DE RESCATE (Escucha en v4)
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/sync', { qos: 1 });
 
         window.broadcastPresence();
+
+        // AQUÍ ESTÁ EL TRUCO PARA DESPERTAR DISPOSITIVOS VIEJOS
+        mqttClient.publish('openline/v4/workshop/' + wsCode + '/sync/request', JSON.stringify({ requesterId: myDeviceId }));
         mqttClient.publish('openline/v5/workshop/' + wsCode + '/sync/request', JSON.stringify({ requesterId: myDeviceId }));
 
         if (window.checkLicenseStatus() === 'PRO') {
@@ -915,21 +918,21 @@
           // LÓGICA DE RESCATE (RECOVERY DE DATOS ANTIGUOS v4)
           if (topic.includes('/v4/workshop/') && topic.endsWith('/sync')) {
              var oldPayload = decryptData(payloadText);
-             if (oldPayload) {
+             if (oldPayload && oldPayload.senderId !== myDeviceId) {
                 var recovered = false;
-                if(oldPayload.repairs && Array.isArray(oldPayload.repairs) && oldPayload.repairs.length > repairs.length) {
+                if(oldPayload.repairs && Array.isArray(oldPayload.repairs)) {
                    repairs = mergeByDate(repairs, oldPayload.repairs); StorageShield.save('repairs', repairs, true); recovered = true;
                 }
-                if(oldPayload.cashMovements && Array.isArray(oldPayload.cashMovements) && oldPayload.cashMovements.length > cashMovements.length) {
+                if(oldPayload.cashMovements && Array.isArray(oldPayload.cashMovements)) {
                    cashMovements = mergeByDate(cashMovements, oldPayload.cashMovements); StorageShield.save('cash', cashMovements, true); recovered = true;
                 }
-                if(oldPayload.cashClosures && Array.isArray(oldPayload.cashClosures) && oldPayload.cashClosures.length > cashClosures.length) {
+                if(oldPayload.cashClosures && Array.isArray(oldPayload.cashClosures)) {
                    cashClosures = mergeByDate(cashClosures, oldPayload.cashClosures); StorageShield.save('cashClosures', cashClosures, true); recovered = true;
                 }
-                if(oldPayload.sales && Array.isArray(oldPayload.sales) && oldPayload.sales.length > sales.length) {
+                if(oldPayload.sales && Array.isArray(oldPayload.sales)) {
                    sales = mergeByDate(sales, oldPayload.sales); StorageShield.save('sales', sales, true); recovered = true;
                 }
-                if(oldPayload.stockItems && Array.isArray(oldPayload.stockItems) && oldPayload.stockItems.length > stockItems.length) {
+                if(oldPayload.stockItems && Array.isArray(oldPayload.stockItems)) {
                    var stockMapSync = {}; stockItems.forEach(function(s){ stockMapSync[s.code + '_' + (s.branch || 'Central')] = s; });
                    oldPayload.stockItems.forEach(function(s){ var key = s.code + '_' + (s.branch || 'Central'); var existing = stockMapSync[key]; if (!existing || (s.updatedAt || 0) >= (existing.updatedAt || 0)) { stockMapSync[key] = s; } });
                    stockItems = Object.values(stockMapSync); StorageShield.save('stock', stockItems, true); recovered = true;
