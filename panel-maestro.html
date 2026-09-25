@@ -135,12 +135,14 @@
       
       mqttClient.on('connect', function() {
         $('connDot').className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
-        $('connText').textContent = 'Conectado a Red v5';
+        $('connText').textContent = 'Conectado a Red (v4 / v5)';
         $('connText').className = 'text-[9px] font-mono text-emerald-400 uppercase';
         
+        // Escuchamos en las dos frecuencias para detectar a todos los dispositivos
+        mqttClient.subscribe('openline/v4/global/telemetry/report', { qos: 0 });
         mqttClient.subscribe('openline/v5/global/telemetry/report', { qos: 0 });
-        window.requestTelemetryBroadcast();
         
+        window.requestTelemetryBroadcast();
         setInterval(window.renderTelemetry, 5000);
       });
 
@@ -156,6 +158,8 @@
 
     window.requestTelemetryBroadcast = function() {
       if (mqttClient && mqttClient.connected) {
+        // Solicitamos reporte en las dos frecuencias
+        mqttClient.publish('openline/v4/global/telemetry/ping', JSON.stringify({ requesterId: masterDeviceId, timestamp: Date.now() }));
         mqttClient.publish('openline/v5/global/telemetry/ping', JSON.stringify({ requesterId: masterDeviceId, timestamp: Date.now() }));
         window.showToast("Sondeo", "Solicitando reporte a la red...");
       }
@@ -197,7 +201,11 @@
         if (isOnline) online++;
         if (isPro) pro++; else demo++;
 
-        var devCount = Object.keys(w.devices || {}).length;
+        // Calculamos solo los dispositivos que están encendidos en este preciso instante
+        var activeDevCount = 0;
+        for(var dId in (w.devices || {})) {
+           if(now - w.devices[dId].lastSeen < 30000) { activeDevCount++; }
+        }
 
         // Opciones de licencia
         var selectHtml = '<select id="selLic_' + w.workshopId + '" class="bg-zinc-900 border border-zinc-700 text-[10px] rounded-lg px-2 py-1.5 text-white outline-none font-bold">' +
@@ -210,14 +218,14 @@
 
         var badgeText = w.licenseType === 'LIFETIME' ? 'VITALICIA' : (w.licenseType === 'SEM6' ? '6 MESES' : 'DEMO');
 
-        html += '<div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">' +
+        html += '<div class="p-3 bg-zinc-950 border border-zinc-800 hover:border-indigo-500/50 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">' +
                   '<div class="flex-1">' +
                     '<div class="flex items-center gap-2 mb-1">' +
                       '<span class="w-2 h-2 rounded-full ' + (isOnline ? 'bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-zinc-600') + '"></span>' +
                       '<b class="font-mono text-sm text-white">' + w.workshopId + '</b>' +
                       '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ' + (isPro ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800') + '">' + badgeText + '</span>' +
                     '</div>' +
-                    '<div class="text-[10px] text-zinc-400">' + w.name + ' • ' + devCount + ' equipos conectados • ' + (isOnline ? '<span class="text-emerald-400">Activo ahora</span>' : 'Visto: ' + new Date(w.lastSeen).toLocaleString('es-AR')) + '</div>' +
+                    '<div class="text-[10px] text-zinc-400">' + w.name + ' • ' + activeDevCount + ' equipo(s) activo(s) • ' + (isOnline ? '<span class="text-emerald-400">En línea ahora</span>' : 'Visto: ' + new Date(w.lastSeen).toLocaleString('es-AR')) + '</div>' +
                   '</div>' +
                   '<div class="flex items-center gap-1.5 bg-zinc-900 p-1.5 rounded-xl border border-zinc-800">' +
                     selectHtml + 
@@ -236,6 +244,10 @@
       if (listEl) listEl.innerHTML = html || '<div class="text-center text-zinc-500 text-xs py-8">No hay talleres registrados aún en la base local. Haz clic en "Sondear Talleres".</div>';
     };
 
+    window.generateKeyString = function(code) {
+      return 'OL-LIFETIME-' + Math.abs((code + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
+    };
+
     window.sendLicense = function(code, type) {
       if (!mqttClient || !mqttClient.connected) { window.showToast("Error", "No hay conexión al servidor MQTT"); return; }
       
@@ -243,14 +255,13 @@
 
       if (confirm("¿Confirmas aplicar la licencia " + typeLabels[type] + " al taller " + code + "?")) {
         
-        // Llave matemática
         var key = 'OL-' + type + '-' + Math.abs((code + '_' + type + '_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
 
         var expires = 9999999999999;
         var status = 'PRO';
 
         if (type === 'SEM6') {
-          expires = Date.now() + (183 * 24 * 60 * 60 * 1000); // + 6 meses
+          expires = Date.now() + (183 * 24 * 60 * 60 * 1000); 
         } else if (type === 'DEMO') {
           expires = 0;
           status = 'DEMO';
@@ -258,13 +269,12 @@
 
         var licData = { type: type, key: key, workshopId: code, status: status, expiresAt: expires };
 
-        // 1. Envío al canal persistente para los que están apagados
         mqttClient.publish('openline/v5/workshop/' + code + '/license', JSON.stringify(licData), { retain: true, qos: 1 });
-        
-        // 2. Envío de comando directo para obligar a los que están online a recargarla instantáneamente
         mqttClient.publish('openline/v5/workshop/' + code + '/command', JSON.stringify({ command: 'ACTIVATE_LICENSE', license: licData }));
 
-        // 3. Actualizamos la memoria del panel
+        // Publicamos en v4 también para atrapar a los que aún no actualizaron el código.
+        mqttClient.publish('openline/v4/workshop/' + code + '/license', JSON.stringify(licData), { retain: true, qos: 1 });
+
         var reg = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '{}');
         if(reg[code]) { 
           reg[code].licenseType = type; 
@@ -288,6 +298,7 @@
       if (confirm("⚠️ ¿Expulsar definitivamente la red " + code + " y desconectar todos sus dispositivos?")) {
         if (mqttClient && mqttClient.connected) {
           mqttClient.publish('openline/v5/workshop/' + code + '/command', JSON.stringify({ command: 'EXPEL_WORKSHOP', workshopId: code }));
+          mqttClient.publish('openline/v4/workshop/' + code + '/command', JSON.stringify({ command: 'EXPEL_WORKSHOP', workshopId: code }));
         }
         var reg = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '{}');
         if(reg[code]) { delete reg[code]; localStorage.setItem(TELEMETRY_KEY, JSON.stringify(reg)); window.renderTelemetry(); }
