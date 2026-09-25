@@ -44,7 +44,7 @@
 
   <div id="realtimeSyncBanner" style="display: none;" class="fixed top-4 left-1/2 -translate-x-1/2 z-[100000] bg-emerald-950/95 border border-emerald-500/60 text-white px-4 py-3 rounded-2xl shadow-[0_10px_35px_rgba(16,185,129,0.25)] flex items-start gap-3 w-[92%] max-w-md transition-all duration-700 ease-out transform -translate-y-[150%] opacity-0 pointer-events-auto backdrop-blur-xl">
     <div class="mt-0.5 w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center shrink-0"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span></div>
-    <div class="flex-1"><div class="flex items-center gap-1.5 mb-0.5"><h4 class="font-bold text-emerald-300 text-xs uppercase tracking-wider">Red Sincronizada</h4><span class="text-[9px] font-mono bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded-full font-bold">1s LIVE</span></div><p class="text-[10px] text-zinc-200 leading-relaxed">Catálogo compartido, stock y órdenes vinculadas en vivo. Cajas locales operando de forma independiente.</p></div>
+    <div class="flex-1"><div class="flex items-center gap-1.5 mb-0.5"><h4 class="font-bold text-emerald-300 text-xs uppercase tracking-wider">Red Protegida E2EE</h4><span class="text-[9px] font-mono bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded-full font-bold">AES-256</span></div><p class="text-[10px] text-zinc-200 leading-relaxed">Catálogo compartido, stock y órdenes vinculadas en vivo mediante encriptación militar fragmentada.</p></div>
     <button type="button" onclick="window.dismissRealtimeBanner()" class="bg-emerald-900/60 p-1.5 rounded-lg text-emerald-300 hover:text-white transition active:scale-95"><i class="ph-bold ph-x text-sm"></i></button>
   </div>
 
@@ -146,6 +146,7 @@
     </div>
   </div>
 
+  <!-- MODAL COMPROBANTE -->
   <div id="repairTicketModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-iosBlue/70 rounded-t-3xl sm:rounded-3xl w-full max-w-sm p-4 pb-safe space-y-3 text-xs text-zinc-300 modal-card flex flex-col shadow-2xl">
       <div class="flex items-center justify-between pb-1 shrink-0"><div class="flex items-center gap-1.5"><i class="ph-bold ph-tag text-iosBlue text-base"></i><h3 class="font-bold text-white text-sm">Comprobante de Ingreso</h3></div><button type="button" onclick="window.closeModal('repairTicketModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -180,6 +181,7 @@
     </div>
   </div>
 
+  <!-- MODAL VENTAS HISTORIAL -->
   <div id="ventasModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-indigo-700/80 rounded-t-3xl sm:rounded-3xl w-full max-w-3xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-indigo-950 border border-indigo-700 flex items-center justify-center text-indigo-400"><i class="ph-bold ph-receipt text-base"></i></div><div><h3 class="font-bold text-white text-sm">Historial de Ventas</h3><span class="text-[10px] text-zinc-400" id="ventasBranchIndicatorTag">Global</span></div></div><button type="button" onclick="window.closeModal('ventasModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -255,6 +257,7 @@
     </div>
   </div>
 
+  <!-- MODAL EDITAR ORDEN -->
   <div id="editRepairModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0"><h3 class="text-sm font-bold text-white">Editar Orden</h3><button type="button" onclick="window.closeModal('editRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -269,6 +272,7 @@
     </div>
   </div>
 
+  <!-- MODAL INSTALAR / COMPARTIR -->
   <div id="installModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Compartir Web App</h3><button type="button" onclick="window.closeModal('installModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -278,6 +282,7 @@
     </div>
   </div>
 
+  <!-- PANEL PERSONAL Y DISPOSITIVOS -->
   <div id="switchUserModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3.5 text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Personal & Dispositivos</h3><button type="button" onclick="window.closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -290,6 +295,7 @@
     </div>
   </div>
 
+  <!-- MODAL VINCULAR A OTRA RED -->
   <div id="teamModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Equipo & Sincronización</h3><button type="button" onclick="window.closeModal('teamModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -300,6 +306,7 @@
     </div>
   </div>
 
+  <!-- MODAL AJUSTES -->
   <div id="settingsModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3 shadow-2xl text-xs text-zinc-300 pb-safe modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><div class="flex items-center gap-1.5"><i class="ph-bold ph-gear text-lg text-zinc-300"></i><h3 class="font-bold text-white text-sm">Ajustes Taller</h3></div><button type="button" onclick="window.closeModal('settingsModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -313,6 +320,7 @@
     </div>
   </div>
 
+  <!-- LICENCIA -->
   <div id="licenseModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg p-4 space-y-3.5 pb-safe shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -327,8 +335,9 @@
   <div id="toastContainer" class="fixed top-safe left-0 right-0 z-[100000] flex flex-col items-center gap-2 pointer-events-none mt-2 px-4"></div>
   <div id="printArea" class="hidden"></div>
 
+  <!-- SCRIPT GLOBAL BLINDADO -->
   <script>
-    var APP_CODE_VERSION = 'v31.0.0-FIX-CASH-BOOT'; 
+    var APP_CODE_VERSION = 'v31.1.0-RECOVERY'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var ACTIVE_USER_KEY = 'openline_current_active_user';
@@ -805,7 +814,7 @@
       }).join('');
     };
 
-    // --- RECEPTOR MQTT (SINCRONIZACIÓN FRAGMENTADA POR CANALES) ---
+    // --- RECEPTOR MQTT (SINC. FRAGMENTADA + AUTO-RECUPERACIÓN) ---
     function mergeByDate(localArr, remoteArr) {
       if (!Array.isArray(remoteArr)) return localArr || []; if (!Array.isArray(localArr)) localArr = [];
       var map = {}; 
@@ -869,16 +878,19 @@
         if($('livePulseDot')) $('livePulseDot').className = 'w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse';
         var wsCode = currentWorkshopId.toUpperCase();
         
+        // Suscripción v5 (Canales actuales)
         mqttClient.subscribe('openline/v5/workshop/' + wsCode + '/repairs', { qos: 1 }); 
         mqttClient.subscribe('openline/v5/workshop/' + wsCode + '/stock', { qos: 1 }); 
         mqttClient.subscribe('openline/v5/workshop/' + wsCode + '/sales', { qos: 1 }); 
         mqttClient.subscribe('openline/v5/workshop/' + wsCode + '/cash', { qos: 1 }); 
         mqttClient.subscribe('openline/v5/workshop/' + wsCode + '/license', { qos: 1 }); 
         mqttClient.subscribe('openline/v5/workshop/' + wsCode + '/settings', { qos: 1 }); 
-        
         mqttClient.subscribe('openline/v5/workshop/' + wsCode + '/sync/request', { qos: 1 }); 
         mqttClient.subscribe('openline/v5/workshop/' + wsCode + '/heartbeat', { qos: 0 }); 
         mqttClient.subscribe('openline/v5/workshop/' + wsCode + '/command', { qos: 1 });
+
+        // SUSCRIPCIÓN TEMPORAL DE RESCATE (Para recuperar el historial perdido de v4)
+        mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/sync', { qos: 1 });
 
         window.broadcastPresence();
         mqttClient.publish('openline/v5/workshop/' + wsCode + '/sync/request', JSON.stringify({ requesterId: myDeviceId }));
@@ -899,6 +911,37 @@
       mqttClient.on('message', function(topic, message) {
         try {
           var payloadText = message.toString(); var wsCode = currentWorkshopId.toUpperCase();
+
+          // LÓGICA DE RESCATE (RECOVERY DE DATOS ANTIGUOS v4)
+          if (topic.includes('/v4/workshop/') && topic.endsWith('/sync')) {
+             var oldPayload = decryptData(payloadText);
+             if (oldPayload) {
+                var recovered = false;
+                if(oldPayload.repairs && Array.isArray(oldPayload.repairs) && oldPayload.repairs.length > repairs.length) {
+                   repairs = mergeByDate(repairs, oldPayload.repairs); StorageShield.save('repairs', repairs, true); recovered = true;
+                }
+                if(oldPayload.cashMovements && Array.isArray(oldPayload.cashMovements) && oldPayload.cashMovements.length > cashMovements.length) {
+                   cashMovements = mergeByDate(cashMovements, oldPayload.cashMovements); StorageShield.save('cash', cashMovements, true); recovered = true;
+                }
+                if(oldPayload.cashClosures && Array.isArray(oldPayload.cashClosures) && oldPayload.cashClosures.length > cashClosures.length) {
+                   cashClosures = mergeByDate(cashClosures, oldPayload.cashClosures); StorageShield.save('cashClosures', cashClosures, true); recovered = true;
+                }
+                if(oldPayload.sales && Array.isArray(oldPayload.sales) && oldPayload.sales.length > sales.length) {
+                   sales = mergeByDate(sales, oldPayload.sales); StorageShield.save('sales', sales, true); recovered = true;
+                }
+                if(oldPayload.stockItems && Array.isArray(oldPayload.stockItems) && oldPayload.stockItems.length > stockItems.length) {
+                   var stockMapSync = {}; stockItems.forEach(function(s){ stockMapSync[s.code + '_' + (s.branch || 'Central')] = s; });
+                   oldPayload.stockItems.forEach(function(s){ var key = s.code + '_' + (s.branch || 'Central'); var existing = stockMapSync[key]; if (!existing || (s.updatedAt || 0) >= (existing.updatedAt || 0)) { stockMapSync[key] = s; } });
+                   stockItems = Object.values(stockMapSync); StorageShield.save('stock', stockItems, true); recovered = true;
+                }
+                if(recovered) {
+                   window.renderRepairsList(); window.updateCounters(); window.updateCashBalanceUI(); window.renderStockList(); window.renderVentasList();
+                   window.showToast("Datos Recuperados", "Historial sincronizado y rescatado.");
+                   setTimeout(function(){ window.publishMQTT(true); }, 2500); // Retransmite lo recuperado a v5
+                }
+             }
+             return;
+          }
 
           if (topic.endsWith('/repairs')) {
             var repPayload = decryptData(payloadText);
