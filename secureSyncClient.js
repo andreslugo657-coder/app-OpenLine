@@ -1,28 +1,66 @@
-/* Browser client for the secure gateway. Set window.OPENLINE_API_URL before loading this file. */
+/* Authenticated client for the OpenLine server. Never uses public MQTT. */
 (function () {
   'use strict';
-  const base = String(window.OPENLINE_API_URL || '').replace(/\/$/, '');
-  let session = null;
-  function headers() { return { 'Content-Type': 'application/json', 'X-Device-ID': session.deviceId, Authorization: 'Bearer ' + session.sessionToken }; }
+  var base = String(window.OPENLINE_API_URL || '').replace(/\/$/, '');
+  var sessionKey = 'openline_secure_session_v1';
+  var session = null;
+  try { session = JSON.parse(sessionStorage.getItem(sessionKey) || 'null'); } catch (_) {}
+
+  function headers() {
+    if (!session) throw new Error('Sesión no iniciada');
+    return {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + session.sessionToken
+    };
+  }
+  async function request(path, options) {
+    var response = await fetch(base + path, options);
+    var body = {};
+    try { body = await response.json(); } catch (_) {}
+    if (!response.ok) {
+      var error = new Error(body.error || 'request_failed');
+      error.status = response.status;
+      error.body = body;
+      throw error;
+    }
+    return body;
+  }
+  function setSession(value) {
+    session = value;
+    try { sessionStorage.setItem(sessionKey, JSON.stringify(value)); } catch (_) {}
+  }
+  function clearSession() {
+    session = null;
+    try { sessionStorage.removeItem(sessionKey); } catch (_) {}
+  }
+
   window.openLineSecureSync = {
-    authorize: async function (workshopId, deviceId, user, branch, adminPin) {
-      if (!base) throw new Error('OPENLINE_API_URL is not configured');
-      const response = await fetch(base + '/api/authorize', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ workshopId, deviceId, user, branch, adminPin }) });
-      if (!response.ok) throw new Error('Authorization failed');
-      session = await response.json();
-      return session;
+    getSession: function () { return session; },
+    clearSession: clearSession,
+    join: async function (workshopId, password, deviceId, user, branch) {
+      var result = await request('/api/auth/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ workshopId: workshopId, password: password, deviceId: deviceId, user: user || 'Admin', branch: branch || 'Central' })
+      });
+      setSession(result);
+      return result;
     },
-    publish: async function (channel, data) {
-      if (!session) throw new Error('Device is not authorized');
-      const response = await fetch(base + '/api/sync/' + encodeURIComponent(channel), { method: 'POST', headers: headers(), body: JSON.stringify(data) });
-      if (!response.ok) throw new Error('Sync failed');
-      return response.json();
+    confirmAction: async function (password) {
+      return request('/api/auth/confirm', { method: 'POST', headers: headers(), body: JSON.stringify({ password: password }) });
     },
-    pull: async function (channel) {
-      if (!session) throw new Error('Device is not authorized');
-      const response = await fetch(base + '/api/sync/' + encodeURIComponent(channel), { headers: headers() });
-      if (!response.ok) throw new Error('Pull failed');
-      return response.json();
+    getState: async function () {
+      return request('/api/workshops/' + encodeURIComponent(session.workshopId) + '/state', { headers: headers() });
+    },
+    replaceState: async function (state, baseRevision) {
+      return request('/api/workshops/' + encodeURIComponent(session.workshopId) + '/state', {
+        method: 'PUT', headers: headers(), body: JSON.stringify({ state: state, baseRevision: baseRevision })
+      });
+    },
+    transaction: async function (kind, payload) {
+      return request('/api/workshops/' + encodeURIComponent(session.workshopId) + '/transactions/' + kind, {
+        method: 'POST', headers: headers(), body: JSON.stringify(payload)
+      });
     }
   };
 }());
