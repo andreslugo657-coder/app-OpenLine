@@ -12,15 +12,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
 
   <style>
-    .step-active { @apply text-iosBlue border-iosBlue; }
-    .step-done { @apply text-emerald-400 border-emerald-400; }
-    .step-wait { @apply text-zinc-600 border-zinc-800; }
+    .step-good { border-color: rgba(16, 185, 129, 0.45); background: rgba(6, 78, 59, 0.2); color: #a7f3d0; }
+    .step-current { border-color: rgba(59, 130, 246, 0.6); background: rgba(15, 23, 42, 0.9); color: white; }
+    .step-idle { border-color: rgba(39, 39, 42, 0.9); background: rgba(9, 9, 11, 0.9); color: white; }
   </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased min-h-screen flex flex-col items-center justify-center p-4">
 
   <div class="max-w-sm w-full bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
-    <!-- Header -->
     <div class="text-center border-b border-zinc-800 pb-4 mb-5">
       <div class="w-12 h-12 mx-auto bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mb-3 shadow-lg">
         <i class="ph-bold ph-wrench text-2xl text-white"></i>
@@ -29,113 +28,133 @@
       <p class="text-xs text-zinc-400 font-mono mt-1" id="uiOrderId">Cargando orden...</p>
     </div>
 
-    <!-- Info del Equipo -->
     <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-4 text-center mb-6">
       <span class="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Dispositivo:</span>
       <h2 class="text-sm font-bold text-white" id="uiDeviceName">Buscando información segura...</h2>
     </div>
 
-    <!-- Timeline de Estados -->
-    <div class="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-zinc-800 before:to-transparent">
-      
-      <!-- Paso 1 -->
-      <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active" id="step-WAITING">
-        <div class="flex items-center justify-center w-10 h-10 rounded-full border-2 bg-zinc-950 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow step-wait" id="icon-WAITING">
-          <i class="ph-bold ph-clock"></i>
-        </div>
-        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-zinc-800 bg-zinc-950 shadow-sm">
-          <h3 class="font-bold text-white text-xs uppercase">Recibido</h3>
-          <p class="text-[10px] text-zinc-400 mt-1">En lista de espera</p>
-        </div>
+    <div class="space-y-4">
+      <div id="step-WAITING" class="p-4 rounded-xl border step-idle">
+        <h3 class="font-bold text-xs uppercase">Recibido</h3>
+        <p class="text-[10px] text-zinc-400 mt-1">En lista de espera</p>
       </div>
 
-      <!-- Paso 2 -->
-      <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active" id="step-IN_PROGRESS">
-        <div class="flex items-center justify-center w-10 h-10 rounded-full border-2 bg-zinc-950 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow step-wait" id="icon-IN_PROGRESS">
-          <i class="ph-bold ph-wrench"></i>
-        </div>
-        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-zinc-800 bg-zinc-950 shadow-sm">
-          <h3 class="font-bold text-white text-xs uppercase">En Taller</h3>
-          <p class="text-[10px] text-zinc-400 mt-1">Siendo revisado/reparado</p>
-        </div>
+      <div id="step-IN_PROGRESS" class="p-4 rounded-xl border step-idle">
+        <h3 class="font-bold text-xs uppercase">En Taller</h3>
+        <p class="text-[10px] text-zinc-400 mt-1">Siendo revisado/reparado</p>
       </div>
 
-      <!-- Paso 3 -->
-      <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active" id="step-READY">
-        <div class="flex items-center justify-center w-10 h-10 rounded-full border-2 bg-zinc-950 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow step-wait" id="icon-READY">
-          <i class="ph-bold ph-check-circle"></i>
-        </div>
-        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-emerald-900/30 bg-emerald-950/10 shadow-sm">
-          <h3 class="font-bold text-emerald-400 text-xs uppercase">¡Listo para retirar!</h3>
-          <p class="text-[10px] text-zinc-400 mt-1">Trabajo finalizado</p>
-        </div>
+      <div id="step-READY" class="p-4 rounded-xl border step-idle">
+        <h3 class="font-bold text-xs uppercase">¡Listo para retirar!</h3>
+        <p class="text-[10px] text-zinc-400 mt-1">Trabajo finalizado</p>
       </div>
     </div>
-    
+
     <div class="mt-8 text-center border-t border-zinc-800 pt-4 flex items-center justify-center gap-2 text-[10px] font-mono text-zinc-500">
       <i class="ph-bold ph-lock-key text-emerald-500"></i> Conexión E2EE Segura
     </div>
   </div>
 
   <script>
-    // 1. Obtener datos de la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const workshop = urlParams.get('w');
-    const orderId = urlParams.get('id');
-    const token = urlParams.get('tk');
+    (function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const workshop = (urlParams.get('w') || '').trim();
+      const orderId = (urlParams.get('id') || '').trim();
+      const token = (urlParams.get('tk') || '').trim();
 
-    if (!workshop || !orderId || !token) {
-      document.getElementById('uiDeviceName').innerHTML = '<span class="text-rose-400">Enlace inválido o incompleto</span>';
-    } else {
-      document.getElementById('uiOrderId').textContent = "ORDEN #" + DOMPurify.sanitize(orderId);
-      conectarYBuscar();
-    }
+      const orderLabel = document.getElementById('uiOrderId');
+      const deviceNameEl = document.getElementById('uiDeviceName');
+      const stateOrder = ['WAITING', 'IN_PROGRESS', 'READY'];
 
-    function actualizarInterfaz(status) {
-      // Reiniciar clases
-      ['WAITING', 'IN_PROGRESS', 'READY'].forEach(id => {
-        document.getElementById('icon-' + id).className = 'flex items-center justify-center w-10 h-10 rounded-full border-2 bg-zinc-950 shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow step-wait';
-      });
-
-      // Lógica de avance
-      if (status === 'WAITING') {
-        document.getElementById('icon-WAITING').classList.replace('step-wait', 'step-active');
-      } else if (status === 'IN_PROGRESS' || status === 'IN_TRANSIT') {
-        document.getElementById('icon-WAITING').classList.replace('step-wait', 'step-done');
-        document.getElementById('icon-IN_PROGRESS').classList.replace('step-wait', 'step-active');
-      } else if (status === 'READY') {
-        document.getElementById('icon-WAITING').classList.replace('step-wait', 'step-done');
-        document.getElementById('icon-IN_PROGRESS').classList.replace('step-wait', 'step-done');
-        document.getElementById('icon-READY').classList.replace('step-wait', 'step-done');
+      function safeText(value) {
+        return DOMPurify.sanitize(String(value == null ? '' : value));
       }
-    }
 
-    function conectarYBuscar() {
-      // Conexión anónima (Solo lectura para este topic específico)
-      const mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'cli_' + Math.random().toString(16).slice(2) });
-      const topic = `openline/v4/track/${workshop.toUpperCase()}/${orderId}`;
+      function updateStatusUI(status, brand, model) {
+        const normalized = String(status || 'WAITING').toUpperCase();
+        const mapped = normalized === 'IN_TRANSIT' ? 'IN_PROGRESS' : normalized;
+        let index = stateOrder.indexOf(mapped);
+        if (index === -1) index = 0;
 
-      mqttClient.on('connect', () => {
-        mqttClient.subscribe(topic, { qos: 0 });
+        stateOrder.forEach(function (id, idx) {
+          const el = document.getElementById('step-' + id);
+          if (!el) return;
+          el.className = 'p-4 rounded-xl border step-idle';
+
+          if (idx < index) el.className = 'p-4 rounded-xl border step-good';
+          if (idx === index) el.className = 'p-4 rounded-xl border step-current';
+        });
+
+        const deviceLabel = [brand, model].filter(Boolean).join(' ').trim();
+        deviceNameEl.textContent = safeText(deviceLabel || 'Equipo');
+      }
+
+      function parseMessagePayload(messageText) {
+        try {
+          const parsed = JSON.parse(messageText);
+          if (parsed && typeof parsed === 'object') return parsed;
+        } catch (error) {}
+
+        try {
+          const bytes = CryptoJS.AES.decrypt(messageText, token);
+          const plain = bytes.toString(CryptoJS.enc.Utf8);
+          if (!plain) return null;
+          return JSON.parse(plain);
+        } catch (error) {
+          return null;
+        }
+      }
+
+      function applyIncomingData(data) {
+        if (!data) return;
+
+        const status = data.st || data.status || 'WAITING';
+        const brand = data.br || data.brand || '';
+        const model = data.mo || data.model || '';
+        updateStatusUI(status, brand, model);
+      }
+
+      if (!workshop || !orderId || !token) {
+        deviceNameEl.innerHTML = '<span class="text-rose-400">Enlace inválido o incompleto</span>';
+        if (orderLabel) orderLabel.textContent = 'ORDEN no disponible';
+        return;
+      }
+
+      orderLabel.textContent = 'ORDEN #' + safeText(orderId);
+
+      const mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', {
+        clientId: 'track_' + Math.random().toString(16).slice(2),
+        clean: true,
+        reconnectPeriod: 3000
       });
 
-      mqttClient.on('message', (topicReceived, message) => {
-        if (topicReceived === topic) {
-          try {
-            // Desencriptar usando el Token Mágico de la URL
-            const bytes = CryptoJS.AES.decrypt(message.toString(), token);
-            const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      const topics = [
+        'openline/v5/track/' + workshop.toUpperCase() + '/' + orderId,
+        'openline/v4/track/' + workshop.toUpperCase() + '/' + orderId
+      ];
 
-            if (decryptedData && decryptedData.st) {
-              document.getElementById('uiDeviceName').textContent = DOMPurify.sanitize(decryptedData.br + ' ' + decryptedData.mo);
-              actualizarInterfaz(decryptedData.st);
-            }
-          } catch (e) {
-            console.error("No se pudo desencriptar. Token inválido.");
+      mqttClient.on('connect', function () {
+        topics.forEach(function (topic) {
+          mqttClient.subscribe(topic, { qos: 1 });
+        });
+      });
+
+      mqttClient.on('message', function (topic, message) {
+        if (topics.indexOf(topic) === -1) return;
+
+        try {
+          let payloadText = message.toString();
+          const parsed = parseMessagePayload(payloadText);
+          if (!parsed) {
+            throw new Error('payload inválido');
           }
+
+          applyIncomingData(parsed);
+        } catch (error) {
+          console.warn('Seguimiento: payload no válido', error);
         }
       });
-    }
+    }());
   </script>
 </body>
 </html>
