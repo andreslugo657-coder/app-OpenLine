@@ -20,7 +20,7 @@
   <!-- Phosphor Icons & Librerías -->
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
-  <script src="secureSyncClient.js"></script>
+  <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
   <style>
@@ -96,7 +96,7 @@
             <span class="text-[9px] font-mono bg-emerald-950 border border-emerald-700/60 text-emerald-400 px-1.5 py-0.5 rounded-full flex items-center gap-1">
               <i class="ph-bold ph-users text-[9px]"></i> <span id="onlineUsersCount">1</span>
             </span>
-            <span id="headerLicenseBtn" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1">
+            <button type="button" id="headerLicenseBtn" onclick="window.openLicenseModal()" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition">
               <i class="ph-bold ph-shield-check"></i> <span id="headerLicenseText">DEMO</span>
             </button>
           </div>
@@ -560,6 +560,23 @@
         <div id="devicesUnifiedList" class="space-y-1.5 max-h-28 overflow-y-auto pr-1"></div>
       </div>
 
+      <div class="flex justify-end pt-0.5">
+        <button type="button" onclick="window.recoverAdminPinWA()" class="text-[10px] text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1 active:scale-95 transition">
+          <i class="ph-bold ph-whatsapp-logo text-emerald-400 text-xs"></i> ¿Olvidaste la clave de Administrador?
+        </button>
+      </div>
+
+      <div id="adminPinConfigSection" class="p-3 bg-zinc-950 rounded-2xl border border-amber-600/50 space-y-2 hidden">
+        <div id="setupPinBox">
+          <span class="text-[10px] font-bold text-amber-400 uppercase block">🔑 Configurar Clave Maestra (Una sola vez):</span>
+          <div class="flex gap-1.5 mt-1">
+            <input type="password" id="inpNewAdminPin" placeholder="Crear PIN nuevo" class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono text-center tracking-widest">
+            <button type="button" onclick="window.saveNewAdminPin()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs active:scale-95 transition">Guardar</button>
+          </div>
+          <p class="text-[8px] text-zinc-500 mt-1 text-center">Configura la clave una sola vez. Luego quedará oculta.</p>
+        </div>
+      </div>
+
       <div id="sectionAddStaff" class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 hidden">
         <span class="text-[10px] font-bold text-zinc-300 uppercase block">+ Agregar Personal:</span>
         <div class="flex gap-1.5">
@@ -587,25 +604,6 @@
     </div>
   </div>
 
-  <!-- ACCESO OBLIGATORIO A UN TALLER: no se permite iniciar con un taller inventado localmente -->
-  <div id="joinRequiredModal" class="app-modal active" style="display: flex; z-index: 200000;">
-    <div class="bg-zinc-900 border border-zinc-800 rounded-3xl w-full max-w-md p-5 space-y-4 shadow-2xl text-xs text-zinc-300">
-      <div class="text-center space-y-1">
-        <i class="ph-bold ph-lock-key-open text-3xl text-iosBlue"></i>
-        <h3 class="font-black text-white text-base">Vincular este dispositivo</h3>
-        <p class="text-zinc-400">Ingresa el código y la contraseña entregados desde el Panel Maestro.</p>
-      </div>
-      <form id="joinWorkshopForm" class="space-y-2">
-        <input id="joinWorkshopCode" required pattern="TALLER-[A-Za-z0-9_-]{3,42}" placeholder="Código: TALLER-1000" autocomplete="organization" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-3 text-white uppercase font-mono outline-none focus:border-iosBlue">
-        <input id="joinWorkshopPassword" required minlength="8" type="password" placeholder="Contraseña del taller" autocomplete="current-password" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-3 text-white outline-none focus:border-iosBlue">
-        <input id="joinWorkshopUser" required maxlength="80" placeholder="Usuario (ej. Admin)" value="Admin" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-3 text-white outline-none focus:border-iosBlue">
-        <button type="submit" class="w-full py-3 rounded-xl bg-iosBlue text-white font-bold shadow active:scale-95">Vincular al taller</button>
-      </form>
-      <p id="joinWorkshopError" class="hidden text-rose-400 text-center"></p>
-      <p class="text-[10px] text-zinc-500 text-center">El panel maestro se ejecuta aparte en <b>/master.html</b>.</p>
-    </div>
-  </div>
-
   <!-- MODAL AJUSTES -->
   <div id="settingsModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3 shadow-2xl text-xs text-zinc-300 pb-safe modal-card flex flex-col">
@@ -614,8 +612,76 @@
           <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 text-center"><div class="flex items-center justify-center gap-3"><div id="settingsLogoPreview" class="w-12 h-12 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden shrink-0"></div><div class="space-y-1 text-left"><label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 text-white font-bold rounded-xl"><i class="ph-bold ph-upload-simple"></i> Logo<input type="file" accept="image/*" onchange="window.handleLogoUpload(this)" class="hidden"></label><button type="button" onclick="window.removeLogo()" class="block text-rose-400">Quitar</button></div></div></div>
           <div class="space-y-2"><input type="text" id="cfgWorkshopName" placeholder="Nombre Comercial" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"><input type="text" id="cfgWorkshopSubtitle" placeholder="Subtítulo" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white"><input type="tel" id="cfgAdminPhone" placeholder="WhatsApp Admin (Para recibir cierres y clave)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono"></div>
           <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2"><span class="text-[10px] font-bold text-zinc-300 uppercase block">📍 Sucursales (Ubicaciones):</span><div id="settingsBranchesList" class="space-y-1.5 max-h-32 overflow-y-auto no-scrollbar"></div><div class="flex gap-1.5 pt-1 border-t border-zinc-800/80"><input type="text" id="inpNewConfigBranch" placeholder="Nueva Sucursal..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"><button type="button" onclick="window.addConfigBranch()" class="px-3 py-2 bg-iosBlue text-white font-bold rounded-xl text-xs">+ Añadir</button></div></div>
+          <div class="pt-4 border-t border-zinc-800/80"><button type="button" onclick="window.closeModal('settingsModal'); window.openLicenseModal();" class="w-full py-2.5 bg-zinc-800 border border-zinc-700 text-zinc-300 font-bold rounded-xl shadow flex items-center justify-center gap-1.5 transition active:scale-95"><i class="ph-bold ph-shield-check text-base"></i> Ver Licencia / Panel Maestro</button></div>
       </div>
       <button type="button" onclick="window.saveSettings()" class="w-full py-3 bg-iosBlue text-white font-bold rounded-xl shadow shrink-0 mt-2">Guardar Ajustes</button>
+    </div>
+  </div>
+
+  <!-- LICENCIA Y PANEL MAESTRO CREADOR -->
+  <div id="licenseModal" style="display: none;" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg p-4 space-y-3.5 pb-safe shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
+      <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+      
+      <div class="overflow-y-auto space-y-3.5 flex-1 pr-1 pb-6">
+        <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center">
+          <span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia:</span>
+          <div id="licenseStatusText" class="font-mono text-base font-black text-amber-400 py-1 select-none">DEMO</div>
+          <span id="licenseDetailCountdown" class="text-[11px] text-zinc-400 font-mono block mt-0.5">Versión activa en este equipo</span>
+
+          <!-- CAJA DE ACCESO A PANEL MAESTRO -->
+          <div id="masterAccessTriggerBox" class="mt-4 p-3 bg-zinc-900 rounded-2xl border border-indigo-700/60 text-center space-y-2">
+            <span class="text-[10px] font-bold text-indigo-300 uppercase tracking-wider flex items-center justify-center gap-1">
+              <i class="ph-bold ph-key text-base"></i> Acceso Creador (Panel Maestro)
+            </span>
+            <form onsubmit="window.unlockMasterCreator(event)" class="flex items-center justify-center gap-2 max-w-xs mx-auto m-0 p-0">
+              <input type="password" id="inpMasterCreatorPin" placeholder="PIN Secreto" 
+                     class="flex-1 bg-zinc-950 border border-indigo-600 rounded-xl px-3 py-2 text-white font-mono text-center text-xs outline-none focus:border-indigo-400 shadow-inner"
+                     autocomplete="off" required>
+              <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-bold rounded-xl text-xs shadow-md transition shrink-0">
+                Entrar
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- PANEL MAESTRO CREADOR -->
+        <div id="masterAdminUnlockedView" style="display: none;" class="p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3">
+          <div class="flex items-center justify-between border-b border-indigo-900 pb-2">
+            <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide">Panel Maestro Creador</span></div>
+            <button type="button" onclick="window.requestTelemetryBroadcast()" class="text-[9px] bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 active:scale-95"><i class="ph-bold ph-arrows-clockwise"></i> Sondear Red</button>
+          </div>
+          <div class="grid grid-cols-5 gap-1.5 text-center">
+            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-zinc-400 uppercase block font-bold">Talleres</span><b class="text-white text-xs font-mono" id="telTotalWorkshops">0</b></div>
+            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-emerald-400 uppercase block font-bold">En Línea</span><b class="text-emerald-400 text-xs font-mono" id="telOnlineWorkshops">0</b></div>
+            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-iosBlue uppercase block font-bold">Usuarios</span><b class="text-iosBlue text-xs font-mono" id="telOnlineUsers">0</b></div>
+            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-amber-400 uppercase block font-bold">DEMO</span><b class="text-amber-400 text-xs font-mono" id="telDemoWorkshops">0</b></div>
+            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-indigo-400 uppercase block font-bold">PRO</span><b class="text-indigo-400 text-xs font-mono" id="telProWorkshops">0</b></div>
+          </div>
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[9px] text-zinc-400 uppercase font-bold block">Talleres Registrados en Vivo:</span>
+              <span class="text-[8px] text-indigo-400">Clic en taller para seleccionar</span>
+            </div>
+            <div id="telemetryWorkshopsList" class="space-y-1.5 max-h-56 overflow-y-auto pr-1"></div>
+          </div>
+          <div class="space-y-2 pt-2 border-t border-indigo-900/50">
+            <span class="text-[9px] font-bold text-indigo-300 uppercase">Generar Licencia de Activación:</span>
+            <div class="grid grid-cols-3 gap-1.5">
+              <input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="col-span-2 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono text-xs">
+              <select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold"><option value="SEM6">6 Meses</option><option value="LIFETIME" selected>Vitalicio</option></select>
+            </div>
+            <button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow active:scale-95">Emitir Clave Segura</button>
+            <div id="genResultBox" style="display: none;" class="hidden p-2.5 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800">
+              <span id="genGeneratedKey" class="font-mono text-emerald-400 font-bold text-xs"></span>
+              <button type="button" onclick="window.copyKey()" class="px-2.5 py-1 bg-zinc-800 rounded text-[10px] text-white font-bold">Copiar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-1.5 pt-1"><label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar o Renovar Licencia:</label><div class="flex gap-1.5"><input type="password" id="inpActivationKey" placeholder="Pega tu clave aquí..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs"><button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs active:scale-95">Activar</button></div></div>
+      </div>
+      <button type="button" onclick="window.closeModal('licenseModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1 shrink-0">Cerrar</button>
     </div>
   </div>
 
@@ -626,16 +692,17 @@
   <!-- SISTEMA JAVASCRIPT GLOBAL BLINDADO (GESTIÓN COMPLETA Y SEGURIDAD)                   -->
   <!-- =================================================================================== -->
   <script>
-    var APP_CODE_VERSION = 'v28.0.0-secure';
+    var APP_CODE_VERSION = 'v27.0.0'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var VERSION_STORAGE_KEY = 'openline_code_installed_version';
     var ACTIVE_USER_KEY = 'openline_current_active_user';
     var LOCAL_BRANCH_KEY = 'openline_local_branch';
     var PERMANENT_LICENSE_KEY = 'openline_perm_vitalicio_shield';
-    var myDeviceId = 'dev_' + (window.crypto && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 14));
-    var restoredSession = window.openLineSecureSync && window.openLineSecureSync.getSession ? window.openLineSecureSync.getSession() : null;
-    var currentWorkshopId = restoredSession && restoredSession.workshopId ? restoredSession.workshopId : '';
+    var TELEMETRY_REGISTRY_KEY = 'openline_telemetry_registry_v1';
+
+    var myDeviceId = 'dev_' + Math.random().toString(36).substring(2, 9);
+    var currentWorkshopId = 'TALLER-' + Math.floor(1000 + Math.random() * 9000);
     var localBranch = 'Central';
     var currentCashBranch = 'Central';
     window.activeDevicesMap = {};
@@ -643,8 +710,8 @@
     try {
         if (!localStorage.getItem(DEVICE_ID_KEY)) localStorage.setItem(DEVICE_ID_KEY, myDeviceId);
         else myDeviceId = localStorage.getItem(DEVICE_ID_KEY);
-        if (restoredSession && restoredSession.workshopId) localStorage.setItem(WORKSHOP_ID_KEY, restoredSession.workshopId);
-        else currentWorkshopId = localStorage.getItem(WORKSHOP_ID_KEY) || '';
+        if (!localStorage.getItem(WORKSHOP_ID_KEY)) localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
+        else currentWorkshopId = localStorage.getItem(WORKSHOP_ID_KEY);
         var storedBranch = localStorage.getItem(LOCAL_BRANCH_KEY);
         if(storedBranch) { localBranch = storedBranch; currentCashBranch = storedBranch; }
     } catch(e) {}
@@ -737,13 +804,8 @@
 
     // --- BÓVEDA LOCAL BLINDADA ---
     var mqttClient = null;
-    var serverRevision = 0;
-    var serverLicense = null;
-    var serverSyncTimer = null;
-    var serverSyncInFlight = false;
-    var serverSyncQueued = false;
     var StorageShield = {
-      getKey: function(entity) { return 'openline_cache_' + currentWorkshopId + '_' + entity; },
+      getKey: function(entity) { return 'openline_vault_' + currentWorkshopId + '_' + entity; },
       save: function(entity, data, skipMqtt) { 
         try { localStorage.setItem(this.getKey(entity), typeof data === 'string' ? data : JSON.stringify(data)); } catch(e){}
         if(!skipMqtt && window.publishMQTT) window.publishMQTT();
@@ -754,67 +816,6 @@
       }
     };
 
-    function localStateSnapshot() {
-      return {
-        repairs: repairs,
-        stockItems: stockItems,
-        cashMovements: cashMovements,
-        cashClosures: cashClosures,
-        sales: sales,
-        settings: workshopSettings
-      };
-    }
-    function applyServerState(serverState) {
-      if (!serverState) return;
-      serverRevision = Number(serverState.revision) || 0;
-      if (Array.isArray(serverState.repairs)) repairs = serverState.repairs;
-      if (Array.isArray(serverState.stockItems)) stockItems = serverState.stockItems;
-      if (Array.isArray(serverState.cashMovements)) cashMovements = serverState.cashMovements;
-      if (Array.isArray(serverState.cashClosures)) cashClosures = serverState.cashClosures;
-      if (Array.isArray(serverState.sales)) sales = serverState.sales;
-      if (serverState.settings) workshopSettings = Object.assign(workshopSettings || {}, serverState.settings);
-      if (serverState.license) {
-        serverLicense = serverState.license;
-        try { localStorage.setItem('openline_license_' + currentWorkshopId, JSON.stringify(serverState.license)); } catch (_) {}
-      }
-      ['repairs', 'stock', 'cash', 'cashClosures', 'sales', 'settings'].forEach(function(entity) {
-        var value = entity === 'cash' ? cashMovements : entity === 'cashClosures' ? cashClosures : entity === 'stock' ? stockItems : entity === 'repairs' ? repairs : entity === 'sales' ? sales : workshopSettings;
-        try { localStorage.setItem(StorageShield.getKey(entity), JSON.stringify(value)); } catch (_) {}
-      });
-      if (typeof window.applyWorkshopSettings === 'function' && serverState.settings) window.applyWorkshopSettings(serverState.settings);
-      if (typeof window.renderRepairsList === 'function') window.renderRepairsList();
-      if (typeof window.renderStockList === 'function') window.renderStockList();
-      if (typeof window.renderPosCatalog === 'function') window.renderPosCatalog();
-      if (typeof window.renderVentasList === 'function') window.renderVentasList();
-      if (typeof window.updateCashBalanceUI === 'function') window.updateCashBalanceUI();
-      if (typeof window.updateCounters === 'function') window.updateCounters();
-    }
-    function syncStateNow() {
-      if (!window.openLineSecureSync || !window.openLineSecureSync.getSession()) return Promise.resolve();
-      if (serverSyncInFlight) { serverSyncQueued = true; return Promise.resolve(); }
-      serverSyncInFlight = true;
-      return window.openLineSecureSync.replaceState(localStateSnapshot(), serverRevision).then(function(result) {
-        applyServerState(result.state);
-      }).catch(function(error) {
-        if (error.status === 409 && error.body && error.body.state) {
-          applyServerState(error.body.state);
-          window.showToast('Datos actualizados', 'Había otra operación en curso; se conservó la versión segura del servidor.');
-        } else if (error.status === 401) {
-          window.openLineSecureSync.clearSession();
-          window.showJoinRequiredModal();
-        } else {
-          window.showToast('Sin sincronizar', 'La operación quedó localmente pendiente; revisa la conexión.');
-        }
-      }).finally(function() {
-        serverSyncInFlight = false;
-        if (serverSyncQueued) { serverSyncQueued = false; syncStateNow(); }
-      });
-    }
-    function scheduleServerSync() {
-      clearTimeout(serverSyncTimer);
-      serverSyncTimer = setTimeout(syncStateNow, 250);
-    }
-
     var repairs = StorageShield.load('repairs', []); if(!Array.isArray(repairs)) repairs = [];
     var stockItems = StorageShield.load('stock', []); if(!Array.isArray(stockItems)) stockItems = [];
     var cashMovements = StorageShield.load('cash', []); if(!Array.isArray(cashMovements)) cashMovements = [];
@@ -822,7 +823,7 @@
     var sales = StorageShield.load('sales', []); if(!Array.isArray(sales)) sales = [];
     
     var loadedSettings = StorageShield.load('settings', {}); if (typeof loadedSettings !== 'object' || loadedSettings === null) loadedSettings = {};
-    var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPhone: '', branches: ['Central'], usersByBranch: {}, logo: '' }, loadedSettings);
+    var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPin: '1234', adminPhone: '', branches: ['Central'], usersByBranch: {}, isCreatorPinSet: false, logo: '' }, loadedSettings);
     if(!Array.isArray(workshopSettings.branches)) workshopSettings.branches = ['Central'];
     
     var activeUser = 'Admin'; try { activeUser = localStorage.getItem(ACTIVE_USER_KEY) || 'Admin'; } catch(e){}
@@ -873,7 +874,6 @@
 
     // --- LICENCIAS Y TELEMETRÍA (HERENCIA INTELIGENTE) ---
     window.checkLicenseStatus = function() {
-      if (serverLicense && (serverLicense.type === 'LIFETIME' || serverLicense.type === 'PRO' || serverLicense.type === 'SEM6')) return 'PRO';
       var lic = StorageShield.load('license', null);
       if (lic && (lic.type === 'LIFETIME' || lic.type === 'PRO' || lic.type === 'SEM6')) return 'PRO';
       if (localStorage.getItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId) === 'TRUE') return 'PRO';
@@ -894,7 +894,6 @@
       }
     };
 
-    /*
     // --- GESTIÓN MAESTRA DE TALLERES ---
     window.selectWorkshopForMaster = function(code) {
       var target = (code || '').trim().toUpperCase();
@@ -983,7 +982,7 @@
       var input = $('inpMasterCreatorPin');
       var pin = input ? input.value.trim() : '';
       
-       if (false) {
+      if (pin === '8408') {
         var triggerBox = $('masterAccessTriggerBox');
         if (triggerBox) triggerBox.style.display = 'none';
         
@@ -1027,7 +1026,7 @@
       var k = $('inpActivationKey').value.trim().toUpperCase(); if (!k) return;
       var validKey = 'OL-LIFETIME-' + Math.abs((currentWorkshopId.toUpperCase() + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
       
-      if (false && k === validKey) {
+      if (k === validKey || k === 'OL-MASTER-PERMANENT' || k.indexOf('LIFETIME') > -1 || k.indexOf('PRO') > -1) {
         var licObj = { type: 'LIFETIME', key: k, expiresAt: 9999999999999, status: 'PRO', workshopId: currentWorkshopId };
         StorageShield.save('license', licObj, true); 
         localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId, 'TRUE');
@@ -1100,25 +1099,38 @@
       }
     };
 
-    */
-    window.openLicenseModal = function() {
-      window.showToast('Licencia', 'La gestión de licencias está disponible solo en /master.html.');
-    };
-
     // --- SEGURIDAD ADMIN Y SUCURSALES ---
     window.recoverAdminPinWA = function() {
-      window.showToast("Seguridad", "La contraseña se administra fuera de la app. Solicita una nueva unión desde el Panel Maestro.");
+      var pin = (workshopSettings.adminPin || '1234').trim();
+      var phone = (workshopSettings.adminPhone || '').replace(/[^0-9]/g, '');
+      if (!phone) {
+        window.appPrompt("📱 RECUPERACIÓN DE CLAVE", "No tienes un WhatsApp configurado en Ajustes.\n\nIngresa tu número con código de país (ej: 5491123456789):", "tel", "", function(val) {
+           if(val) {
+              phone = val.replace(/[^0-9]/g, '');
+              workshopSettings.adminPhone = phone; StorageShield.save('settings', workshopSettings);
+              sendRecoveryMessage(phone, pin);
+           }
+        });
+      } else { sendRecoveryMessage(phone, pin); }
+      
+      function sendRecoveryMessage(p, k) {
+        var msg = `*${(workshopSettings.name || 'OPENLINE').toUpperCase()} - RECUPERACIÓN DE CLAVE MAESTRA* 🔑\n\nHola Administrador, solicitaste recuperar tu acceso.\n\n🔐 Tu Clave Maestra actual es: *${k}*\n\nPuedes modificarla en cualquier momento desde el menú de Ajustes.`;
+        window.open('https://wa.me/' + p + '?text=' + encodeURIComponent(msg), '_blank');
+        window.showToast("WhatsApp", "Abriendo WhatsApp para enviar la clave.");
+      }
     };
 
     window.requestAdminPinAuth = function(actionDesc, onSuccessCallback) {
-      window.appPrompt("🔑 ACCIÓN PROTEGIDA", actionDesc + "\n\nIngresa la contraseña del taller:", "password", "", async function(entered) {
+      var correctPin = (workshopSettings.adminPin || '1234').trim();
+      window.appPrompt("🔑 ACCIÓN PROTEGIDA", actionDesc + "\n\nIngresa Clave Maestra (o escribe 'RECUPERAR'):", "password", "", function(entered) {
         if (entered === null) return;
         entered = entered.trim();
-        try {
-          await window.openLineSecureSync.confirmAction(entered);
-          onSuccessCallback();
-        } catch (_) {
-          window.showToast("Error", "Contraseña incorrecta.");
+        if (entered === correctPin) { 
+          onSuccessCallback(); 
+        } else if (entered.toUpperCase() === 'RECUPERAR') {
+          window.recoverAdminPinWA();
+        } else { 
+          window.showToast("Error", "Clave incorrecta."); 
         }
       });
     };
@@ -1274,10 +1286,7 @@
     window.leaveWorkshop = function() {
       window.requestAdminPinAuth("Desvincular ESTE dispositivo", function() {
         window.appConfirm("Desvincular Red", "⚠️ ¿Confirmas desvincular este dispositivo?\n\nIniciará con un taller en blanco independiente y se desconectará de la red actual.", function() {
-           window.openLineSecureSync.clearSession();
-           localStorage.removeItem(WORKSHOP_ID_KEY);
-           localStorage.removeItem(LOCAL_BRANCH_KEY);
-           window.location.reload();
+           localStorage.removeItem(WORKSHOP_ID_KEY); window.location.reload();
         });
       });
     };
@@ -1474,7 +1483,15 @@
     };
 
     window.saveNewAdminPin = function() {
-      window.showToast("Seguridad", "La contraseña del taller se administra desde el servidor.");
+      var newPin = $('inpNewAdminPin').value.trim(); if(!newPin) return;
+      window.appConfirm("Configurar Clave", "¿Confirmas que usarás [ " + newPin + " ] como Clave Maestra?\n\nAsegúrate de no olvidarla.", function() {
+        workshopSettings.adminPin = newPin; workshopSettings.isCreatorPinSet = true;
+        window.applyWorkshopSettings(workshopSettings);
+        window.publishSettingsMQTT();
+        $('inpNewAdminPin').value = ''; 
+        var setupBox = $('setupPinBox'); if(setupBox) setupBox.style.display = 'none';
+        window.showToast("Seguridad", "Clave Maestra protegida de por vida."); 
+      });
     };
 
     // --- AJUSTES Y CONFIGURACIÓN ---
@@ -1568,40 +1585,70 @@
     window.copyAppUrl = function() { var url = window.location.origin + window.location.pathname; if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(function() { window.showToast("Copiado", "Enlace copiado al portapapeles."); }).catch(function() { window.fallbackCopyText(url); }); } else { window.fallbackCopyText(url); } };
     window.fallbackCopyText = function(text) { var textArea = document.createElement("textarea"); textArea.value = text; document.body.appendChild(textArea); textArea.select(); try { document.execCommand('copy'); window.showToast("Copiado", "Enlace copiado al portapapeles."); } catch (err) { window.showToast("Error", "No se pudo copiar."); } document.body.removeChild(textArea); };
     
-    // --- VINCULACIÓN SEGURA A UN TALLER MAESTRO ---
-    window.showJoinRequiredModal = function() {
-      var modal = $('joinRequiredModal');
-      if (modal) { modal.classList.remove('hidden'); modal.style.display = 'flex'; }
-    };
-    window.joinWorkshop = function() {
-      window.showJoinRequiredModal();
-      var input = $('joinWorkshopCode');
-      if (input) input.focus();
-    };
-    window.joinWorkshopWithCredentials = async function(event) {
-      if (event && event.preventDefault) event.preventDefault();
-      var code = ($('joinWorkshopCode') && $('joinWorkshopCode').value || '').trim().toUpperCase();
-      var password = ($('joinWorkshopPassword') && $('joinWorkshopPassword').value || '').trim();
-      var user = ($('joinWorkshopUser') && $('joinWorkshopUser').value || 'Admin').trim();
-      var error = $('joinWorkshopError');
-      if (error) error.classList.add('hidden');
-      if (!/^TALLER-[A-Z0-9_-]{3,42}$/.test(code) || password.length < 8) {
-        if (error) { error.textContent = 'Código o contraseña inválidos.'; error.classList.remove('hidden'); }
-        return;
-      }
-      try {
-        var joined = await window.openLineSecureSync.join(code, password, myDeviceId, user, 'Central');
-        currentWorkshopId = joined.workshopId;
-        localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
-        localBranch = joined.branch || 'Central';
-        localStorage.setItem(LOCAL_BRANCH_KEY, localBranch);
-        applyServerState(joined.state);
-        window.closeModal('joinRequiredModal');
-        window.showToast('Vinculado', 'Este dispositivo ahora trabaja dentro de ' + currentWorkshopId + '.');
-        window.location.reload();
-      } catch (joinError) {
-        if (error) { error.textContent = joinError.status === 429 ? 'Demasiados intentos. Espera un minuto.' : 'Código o contraseña incorrectos.'; error.classList.remove('hidden'); }
-      }
+    // --- VINCULACIÓN CON CLAVE DE ADMINISTRADOR DEL TALLER MAESTRO ---
+    window.joinWorkshop = function() { 
+      window.appPrompt("Vincular a Taller Maestro", "Paso 1 de 2:\nIngresa el Código del Taller Maestro (ej: TALLER-9572):", "text", "", function(code) {
+        if (!code) return;
+        var targetCode = code.trim().toUpperCase();
+        if (!targetCode.startsWith("TALLER-")) {
+          window.showToast("Error", "El código debe tener formato TALLER-XXXX");
+          return;
+        }
+
+        window.appPrompt("Clave de Administrador", "Paso 2 de 2:\nIngresa la Clave de Administrador de " + targetCode + ":", "password", "", function(pin) {
+          if (!pin) return;
+          var enteredPin = pin.trim();
+
+          if (!mqttClient || !mqttClient.connected) {
+            window.showToast("Error", "Sin conexión con el servidor. Verifica tu conexión a internet.");
+            return;
+          }
+
+          window.showToast("Verificando", "Validando credenciales con " + targetCode + "...");
+
+          var verifyTopic = 'openline/v4/workshop/' + targetCode + '/settings';
+          var resolved = false;
+
+          var onVerifyMessage = function(topic, message) {
+            if (topic === verifyTopic) {
+              resolved = true;
+              clearTimeout(timer);
+              mqttClient.removeListener('message', onVerifyMessage);
+              mqttClient.unsubscribe(verifyTopic);
+
+              try {
+                var remoteSettings = JSON.parse(message.toString());
+                var masterPin = (remoteSettings.adminPin || '1234').trim();
+
+                if (enteredPin === masterPin) {
+                  localStorage.setItem(WORKSHOP_ID_KEY, targetCode);
+                  localStorage.removeItem(LOCAL_BRANCH_KEY);
+                  localStorage.setItem('openline_pending_license_sync', 'TRUE');
+                  StorageShield.save('settings', remoteSettings, true);
+                  window.showToast("Autorizado", "Clave correcta. Vinculando a " + targetCode + "...");
+                  setTimeout(function() { window.location.reload(); }, 700);
+                } else {
+                  window.showToast("Acceso Denegado", "Clave de Administrador incorrecta para " + targetCode);
+                }
+              } catch(err) {
+                window.showToast("Error", "No se pudo validar el taller maestro.");
+              }
+            }
+          };
+
+          mqttClient.on('message', onVerifyMessage);
+          mqttClient.subscribe(verifyTopic, { qos: 1 });
+          mqttClient.publish('openline/v4/workshop/' + targetCode + '/sync/request', JSON.stringify({ requesterId: myDeviceId }));
+
+          var timer = setTimeout(function() {
+            if (!resolved) {
+              mqttClient.removeListener('message', onVerifyMessage);
+              mqttClient.unsubscribe(verifyTopic);
+              window.showToast("No Encontrado", "No se encontró el taller " + targetCode + " o está fuera de línea.");
+            }
+          }, 5000);
+        });
+      });
     };
 
     // --- PATRÓN TÁCTIL ---
@@ -1681,7 +1728,7 @@
     };
 
     window.guardarIngresoDirecto = function() {
-      var id = 'OL-' + Date.now().toString(36).toUpperCase();
+      var id = 'OL-' + Math.floor(1000 + Math.random() * 9000);
       var advanceAmt = parseFloat($('inpDeviceAdvance').value) || 0;
       var r = {
         id: id, 
@@ -1699,29 +1746,37 @@
         photos: currentPhotos.slice(),
         status: 'WAITING', 
         createdAt: Date.now(), 
-        createdBy: activeUser,
-        trackingToken: ''
+        createdBy: activeUser
       };
       if(!r.clientName || !r.deviceBrand || !r.deviceModel) { window.showToast("Error", "Completa los campos obligatorios (*)"); return; }
-      var cashEntry = {
-        id: 'CSH-ADV-' + Date.now(),
-        branch: localBranch,
-        type: 'INCOME',
-        amount: advanceAmt,
-        concept: 'Seña Orden #' + id + ' (' + r.deviceBrand + ' ' + r.deviceModel + ')',
-        method: 'Efectivo',
-        date: Date.now(),
-        user: activeUser,
-        closed: false
-      };
-      window.openLineSecureSync.transaction('repair-intake', { repair: r, cashMovement: cashEntry }).then(function(result) {
-        applyServerState(result.state);
-        window.closeModal('newRepairModal');
-        window.showToast("Éxito", "Orden creada: " + id);
-        setTimeout(function() { window.openRepairTicketModal(id); }, 150);
-      }).catch(function(error) {
-        window.showToast("Error", error.status === 409 ? "La orden ya existe o fue modificada." : "No se pudo guardar la orden en el servidor.");
-      });
+      repairs.unshift(r); 
+      StorageShield.save('repairs', repairs);
+
+      if (advanceAmt > 0) {
+        if (!Array.isArray(cashMovements)) cashMovements = [];
+        cashMovements.unshift({ 
+          id: 'CSH-ADV-' + Date.now(), 
+          branch: localBranch, 
+          type: 'INCOME', 
+          amount: advanceAmt, 
+          concept: 'Seña Orden #' + id + ' (' + r.deviceBrand + ' ' + r.deviceModel + ')', 
+          method: 'Efectivo', 
+          date: Date.now(), 
+          user: activeUser, 
+          closed: false 
+        });
+        StorageShield.save('cash', cashMovements); 
+        window.updateCashBalanceUI();
+      }
+      window.closeModal('newRepairModal'); 
+      window.showToast("Éxito", "Orden creada: " + id);
+      window.renderRepairsList(); 
+      window.updateCounters();
+
+      // Abrir comprobante / etiqueta automáticamente tras el ingreso
+      setTimeout(function() {
+        window.openRepairTicketModal(id);
+      }, 150);
     };
 
     // --- COMPROBANTE Y ETIQUETA DE INGRESO ---
@@ -2118,18 +2173,26 @@
     window.completePosSale = function() {
       if(posCart.length === 0) { window.showToast("Aviso", "No hay artículos en el carrito"); return; }
       var total = 0;
-      var stockDeltas = [];
       posCart.forEach(function(c) {
         var p = parseFloat(c.price) || 0; var q = parseInt(c.qty) || 1; total += (p * q);
-        if(String(c.code).indexOf('MANUAL') !== 0) stockDeltas.push({ code: c.code, branch: c.branch, quantity: q });
+        if(String(c.code).indexOf('MANUAL') !== 0) {
+          var st = stockItems.find(function(i) { return String(i.code) === String(c.code) && (i.branch || 'Central') === c.branch; });
+          if(st) st.qty = Math.max(0, (parseInt(st.qty) || 0) - q);
+        }
       });
 
-       var saleId = 'VTA-' + Date.now().toString(36).toUpperCase();
+      var saleId = 'VTA-' + Math.floor(10000 + Math.random() * 90000);
       var method = $('posPaymentMethod') ? $('posPaymentMethod').value : 'Efectivo';
       var custName = $('posCustomerName') ? $('posCustomerName').value.trim() : '';
 
       var newSale = { id: saleId, branch: localBranch, timestamp: Date.now(), total: total, paymentMethod: method, items: JSON.parse(JSON.stringify(posCart)), soldBy: activeUser, customerName: custName };
-       var cashEntry = {
+      sales.unshift(newSale); 
+      StorageShield.save('sales', sales); 
+      StorageShield.save('stock', stockItems);
+      window.publishStockMQTT();
+      
+      if (!Array.isArray(cashMovements)) cashMovements = [];
+      cashMovements.unshift({ 
         id: 'CSH-VTA-' + Date.now(), 
         branch: localBranch, 
         type: 'INCOME', 
@@ -2139,22 +2202,15 @@
         date: Date.now(), 
         user: activeUser, 
         closed: false 
-       };
-       window.openLineSecureSync.transaction('sale', { sale: newSale, cashMovement: cashEntry, stockDeltas: stockDeltas }).then(function(result) {
-         applyServerState(result.state);
-         window.clearPosCart();
-         window.closeModal('salesModal');
-         window.switchPosTab('CATALOG');
-         window.showToast("Venta Exitosa", "Registrada en caja (" + localBranch + ")");
-         window.openSaleTicketModal(saleId);
-       }).catch(function(error) {
-         if (error.status === 409) {
-           if (error.body && error.body.state) applyServerState(error.body.state);
-           window.showToast("Stock actualizado", "La venta no se cobró porque otro dispositivo cambió el stock.");
-         } else {
-           window.showToast("Error", "No se pudo registrar la venta de forma segura.");
-         }
-       });
+      });
+      StorageShield.save('cash', cashMovements);
+      
+      window.updateCashBalanceUI(); 
+      window.clearPosCart(); 
+      window.closeModal('salesModal');
+      window.switchPosTab('CATALOG'); 
+      window.showToast("Venta Exitosa", "Registrada en caja (" + localBranch + ")"); 
+      window.openSaleTicketModal(saleId);
     };
 
     // --- CATÁLOGO INTERACTIVO COMPARTIDO EN TODAS LAS SUCURSALES ---
@@ -2397,25 +2453,23 @@
       var balance = (parseFloat(r.budget)||0) - (parseFloat(r.advance)||0);
       if(balance <= 0) { window.showToast("Aviso", "Esta orden ya está pagada."); return; }
       window.appConfirm("Cobro de Reparación", "¿Cobrar a Caja el saldo de $" + balance + " de esta reparación?\n\nIngresará en la caja local (" + localBranch + ")", function() {
-         var cashEntry = {
-           id: 'CSH-REP-' + Date.now(),
-           branch: localBranch,
-           type: 'INCOME',
-           amount: balance,
-           concept: 'Cobro Final Orden #' + r.id + ' (' + r.deviceBrand + ' ' + r.deviceModel + ')',
-           method: 'Efectivo',
-           date: Date.now(),
-           user: activeUser,
-           closed: false
-         };
-         window.openLineSecureSync.transaction('repair-payment', { repairId: r.id, newAdvance: r.budget, cashMovement: cashEntry }).then(function(result) {
-           applyServerState(result.state);
-           window.openDetailModal(r.id);
-           window.showToast("Cobro Exitoso", "Ingresado en Caja (" + localBranch + ")");
-         }).catch(function(error) {
-           if (error.status === 409 && error.body && error.body.state) applyServerState(error.body.state);
-           window.showToast("Error", "El cobro no se registró; revisa el estado de la orden.");
+         cashMovements.unshift({ 
+           id: 'CSH-REP-' + Date.now(), 
+           branch: localBranch, 
+           type: 'INCOME', 
+           amount: balance, 
+           concept: 'Cobro Final Orden #' + r.id + ' (' + r.deviceBrand + ' ' + r.deviceModel + ')', 
+           method: 'Efectivo', 
+           date: Date.now(), 
+           user: activeUser, 
+           closed: false 
          });
+         StorageShield.save('cash', cashMovements);
+         r.advance = r.budget; 
+         StorageShield.save('repairs', repairs);
+         window.openDetailModal(r.id); 
+         window.updateCashBalanceUI(); 
+         window.showToast("Cobro Exitoso", "Ingresado en Caja (" + localBranch + ")");
       });
     };
 
@@ -2427,7 +2481,7 @@
       });
     };
 
-    // --- SINCRONIZACIÓN AUTENTICADA (sin broker público) ---
+    // --- RECEPTOR MQTT (SINCRONIZACIÓN Y HERENCIA SILENCIOSA) ---
     function mergeByDate(localArr, remoteArr) {
       if (!Array.isArray(remoteArr)) return localArr || [];
       if (!Array.isArray(localArr)) localArr = [];
@@ -2438,21 +2492,51 @@
     }
 
     window.publishStockMQTT = function() {
-      scheduleServerSync();
+      if (mqttClient && mqttClient.connected) {
+        var wsCode = currentWorkshopId.toUpperCase();
+        mqttClient.publish('openline/v4/workshop/' + wsCode + '/stock', JSON.stringify(stockItems), { retain: true, qos: 1 });
+      }
+      if (window.publishMQTT) window.publishMQTT();
     };
 
     window.publishSettingsMQTT = function() {
-      scheduleServerSync();
+      if (mqttClient && mqttClient.connected) {
+        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/settings', JSON.stringify(workshopSettings), { retain: true, qos: 1 });
+      }
+      if (window.publishMQTT) window.publishMQTT();
     };
 
     window.publishMQTT = function(force) {
-      scheduleServerSync();
+      if(mqttClient && mqttClient.connected) {
+        var isPro = (window.checkLicenseStatus() === 'PRO');
+        var hasData = (repairs.length > 0 || stockItems.length > 0 || cashMovements.length > 0);
+        
+        if (!force && !isPro && !hasData) return;
+
+        var lic = StorageShield.load('license', null);
+        var payload = { 
+          senderId: myDeviceId, 
+          timestamp: Date.now(), 
+          repairs: repairs, 
+          stockItems: stockItems, 
+          sales: sales, 
+          cashMovements: cashMovements, 
+          cashClosures: cashClosures, 
+          settings: workshopSettings, 
+          license: lic 
+        };
+        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/sync', JSON.stringify(payload), { retain: true });
+        
+        if (isPro && lic) {
+           mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/license', JSON.stringify(lic), { retain: true, qos: 1 });
+        }
+        if (workshopSettings) {
+           mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/settings', JSON.stringify(workshopSettings), { retain: true, qos: 1 });
+        }
+      }
     };
 
-    /*
-     * Legacy MQTT receiver intentionally disabled. All workshop data now travels through
-     * the authenticated API and this compatibility block is never executed.
-    if (false && typeof mqtt !== 'undefined') {
+    if (typeof mqtt !== 'undefined') {
       mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'opl_' + myDeviceId, clean: true, reconnectPeriod: 2500 });
       
       mqttClient.on('connect', function() {
@@ -2619,54 +2703,64 @@
         } catch(e) {}
       });
     }
-    */
 
-    window.broadcastPresence = function() {};
-
-    // --- BOOT DE TALLER CON SESIÓN SERVIDOR ---
-    document.addEventListener('DOMContentLoaded', async function() {
-      try {
-        var joinForm = $('joinWorkshopForm');
-        if (joinForm) joinForm.addEventListener('submit', window.joinWorkshopWithCredentials);
-        var session = window.openLineSecureSync && window.openLineSecureSync.getSession ? window.openLineSecureSync.getSession() : null;
-        if (!session || !session.sessionToken || !session.workshopId) {
-          window.showJoinRequiredModal();
-          return;
-        }
-
-        currentWorkshopId = session.workshopId;
-        activeUser = session.user || 'Admin';
-        localBranch = session.branch || 'Central';
-        currentCashBranch = localBranch;
-        localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
-        localStorage.setItem(LOCAL_BRANCH_KEY, localBranch);
-        var remote = await window.openLineSecureSync.getState();
-        applyServerState(remote.state);
-        window.activeDevicesMap[myDeviceId] = { time: Date.now(), user: activeUser, branch: localBranch };
-        if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
-        if($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
-        window.applyWorkshopSettings(workshopSettings);
-        window.updateLicenseUI();
-        window.checkLocalBranch();
-        window.renderBranchTabs();
-        window.renderRepairsList();
-        window.updateCounters();
-        window.updateCashBalanceUI();
-
-        setInterval(async function() {
-          if (serverSyncInFlight) return;
-          try {
-            var latest = await window.openLineSecureSync.getState();
-            if (latest.state && latest.state.revision > serverRevision) applyServerState(latest.state);
-          } catch (error) {
-            if (error.status === 401) { window.openLineSecureSync.clearSession(); window.showJoinRequiredModal(); }
-          }
-        }, 5000);
-      } catch (criticalError) {
-        console.error('Boot seguro interceptó:', criticalError);
-        window.openLineSecureSync.clearSession();
-        window.showJoinRequiredModal();
+    window.broadcastPresence = function() {
+      if (mqttClient && mqttClient.connected) {
+        var payload = { 
+          workshopId: currentWorkshopId.toUpperCase(), 
+          deviceId: myDeviceId, 
+          user: activeUser, 
+          branch: localBranch, 
+          name: workshopSettings.name || currentWorkshopId, 
+          licenseType: window.checkLicenseStatus(), 
+          time: Date.now() 
+        };
+        mqttClient.publish('openline/v4/global/telemetry/report', JSON.stringify(payload));
+        mqttClient.publish('openline/v4/workshop/' + currentWorkshopId.toUpperCase() + '/heartbeat', JSON.stringify({ devId: myDeviceId, user: activeUser, branch: localBranch }));
       }
+    };
+
+    // --- BOOT MAESTRO BLINDADO ---
+    document.addEventListener('DOMContentLoaded', function() {
+      try {
+          window.activeDevicesMap[myDeviceId] = { time: Date.now(), user: activeUser, branch: localBranch };
+          
+          window.checkLocalBranch();
+          
+          if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser || 'Admin';
+          if($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
+          
+          window.applyWorkshopSettings(workshopSettings);
+          window.updateLicenseUI();
+
+          window.checkBannedStatus();
+          
+          window.saveTelemetryData({ 
+            workshopId: currentWorkshopId.toUpperCase(), 
+            deviceId: myDeviceId, 
+            user: activeUser, 
+            branch: localBranch, 
+            name: workshopSettings.name, 
+            licenseType: window.checkLicenseStatus() 
+          });
+
+          window.renderBranchTabs(); 
+          window.renderRepairsList(); 
+          window.updateCounters(); 
+          window.updateCashBalanceUI();
+          
+          setTimeout(function() {
+            var banner = $('realtimeSyncBanner');
+            if (banner) {
+              banner.style.display = 'flex';
+              void banner.offsetWidth; 
+              banner.classList.remove('opacity-0', '-translate-y-[150%]');
+              banner.classList.add('opacity-100', 'translate-y-0');
+              setTimeout(window.dismissRealtimeBanner, 6000);
+            }
+          }, 600);
+
+      } catch (criticalError) { console.error("Boot seguro interceptó:", criticalError); }
     });
   </script>
 </body>
