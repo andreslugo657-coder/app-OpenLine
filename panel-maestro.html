@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es" class="bg-zinc-950">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenLine - Creador / Panel Maestro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+  <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; color: #f4f4f5; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+  <!-- PANTALLA DE LOGIN -->
+  <div id="loginView" class="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-2xl text-center">
+    <div class="w-12 h-12 bg-indigo-900/50 text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-indigo-700/50">
+      <i class="ph-bold ph-key text-2xl"></i>
+    </div>
+    <h1 class="text-lg font-bold text-white mb-1">Acceso Creador</h1>
+    <p class="text-xs text-zinc-400 mb-6">Panel de Telemetría y Licencias</p>
+    
+    <form onsubmit="unlockPanel(event)" class="space-y-3">
+      <input type="password" id="masterPin" placeholder="PIN Secreto" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 text-white font-mono text-center tracking-widest outline-none focus:border-indigo-500" required>
+      <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg active:scale-95 transition">Ingresar</button>
+    </form>
+    <div id="loginError" class="hidden text-rose-400 text-xs mt-3 font-bold">PIN incorrecto</div>
+  </div>
+
+  <!-- PANEL DE ADMINISTRACIÓN -->
+  <div id="adminView" style="display: none;" class="w-full max-w-4xl bg-zinc-900 border border-indigo-900/50 rounded-3xl p-4 sm:p-6 shadow-2xl flex-col h-[90vh]">
+    <div class="flex items-center justify-between border-b border-zinc-800 pb-4 mb-4 shrink-0">
+      <div class="flex items-center gap-2">
+        <i class="ph-bold ph-globe text-indigo-400 text-2xl"></i>
+        <div>
+          <h2 class="font-bold text-white text-sm sm:text-base">Telemetría Global OpenLine</h2>
+          <span class="text-[10px] text-emerald-400 font-mono flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Conectado al Broker</span>
+        </div>
+      </div>
+      <button onclick="pingNetwork()" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-800/60 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 active:scale-95 transition">
+        <i class="ph-bold ph-radar"></i> Sondear Red
+      </button>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4 shrink-0">
+      <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl text-center"><span class="text-[9px] text-zinc-400 uppercase font-bold block">Talleres Totales</span><b class="text-white text-lg font-mono" id="statTotal">0</b></div>
+      <div class="p-3 bg-zinc-950 border border-emerald-900/30 rounded-2xl text-center"><span class="text-[9px] text-emerald-400 uppercase font-bold block">En Línea</span><b class="text-emerald-400 text-lg font-mono" id="statOnline">0</b></div>
+      <div class="p-3 bg-zinc-950 border border-amber-900/30 rounded-2xl text-center"><span class="text-[9px] text-amber-400 uppercase font-bold block">Licencias DEMO</span><b class="text-amber-400 text-lg font-mono" id="statDemo">0</b></div>
+      <div class="p-3 bg-zinc-950 border border-indigo-900/30 rounded-2xl text-center"><span class="text-[9px] text-indigo-400 uppercase font-bold block">Licencias PRO</span><b class="text-indigo-400 text-lg font-mono" id="statPro">0</b></div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto pr-2 space-y-2 min-h-[200px]" id="workshopsList">
+      <div class="text-center text-zinc-500 text-xs py-10">Esperando reportes de telemetría...</div>
+    </div>
+
+    <div class="pt-4 border-t border-zinc-800 mt-4 shrink-0">
+      <h3 class="text-[11px] font-bold text-indigo-300 uppercase mb-2">Comandos de Red (Ejecución Remota)</h3>
+      <div class="flex flex-col sm:flex-row gap-2">
+        <input type="text" id="targetWorkshop" placeholder="ID del Taller (Ej: TALLER-1234)" class="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs outline-none focus:border-indigo-500">
+        <button onclick="activatePro()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1 shadow active:scale-95 transition"><i class="ph-bold ph-shield-check"></i> Hacer PRO</button>
+        <button onclick="expelWorkshop()" class="px-4 py-2 bg-rose-950 hover:bg-rose-900 border border-rose-800/60 text-rose-300 font-bold rounded-xl text-xs flex items-center justify-center gap-1 shadow active:scale-95 transition"><i class="ph-bold ph-trash"></i> Eliminar Taller</button>
+      </div>
+      <div id="cmdResult" class="text-[10px] text-emerald-400 font-mono mt-2 hidden"></div>
+    </div>
+  </div>
+
+  <script>
+    let mqttClient = null;
+    const workshops = {};
+
+    function $(id) { return document.getElementById(id); }
+
+    function unlockPanel(e) {
+      e.preventDefault();
+      if ($('masterPin').value === '8408') {
+        $('loginView').style.display = 'none';$('adminView').style.display = 'flex';
+        initMQTT();
+      } else {
+        $('loginError').classList.remove('hidden');$('masterPin').value = '';
+      }
+    }
+
+    function initMQTT() {
+      const clientId = 'master_' + Math.random().toString(36).substring(2, 9);
+      mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: clientId, clean: true });
+      
+      mqttClient.on('connect', () => {
+        mqttClient.subscribe('openline/v5/global/telemetry/report');
+        pingNetwork();
+      });
+
+      mqttClient.on('message', (topic, message) => {
+        if (topic.endsWith('/telemetry/report')) {
+          try {
+            const data = JSON.parse(message.toString());
+            if (data && data.workshopId) {
+              if (!workshops[data.workshopId]) {
+                workshops[data.workshopId] = { id: data.workshopId, name: data.name, devices: 0, type: data.licenseType || 'DEMO', lastSeen: Date.now() };
+              }
+              workshops[data.workshopId].lastSeen = Date.now();
+              workshops[data.workshopId].type = data.licenseType;
+              workshops[data.workshopId].name = data.name || data.workshopId;
+              renderList();
+            }
+          } catch(e) {}
+        }
+      });
+
+      setInterval(renderList, 3000);
+    }
+
+    function pingNetwork() {
+      if (mqttClient && mqttClient.connected) {
+        mqttClient.publish('openline/v5/global/telemetry/ping', JSON.stringify({ requester: 'MASTER', time: Date.now() }));
+      }
+    }
+
+    function renderList() {
+      const now = Date.now();
+      let total = 0, online = 0, demo = 0, pro = 0;
+      let html = '';
+
+      const sortedWorkshops = Object.values(workshops).sort((a, b) => b.lastSeen - a.lastSeen);
+
+      sortedWorkshops.forEach(w => {
+        total++;
+        const isOnline = (now - w.lastSeen) < 25000;
+        if (isOnline) online++;
+        if (w.type === 'DEMO') demo++; else pro++;
+
+        const statusDot = isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-600';
+        const typeBadge = w.type === 'PRO' || w.type === 'LIFETIME' ? 'bg-emerald-950 text-emerald-300 border-emerald-700/60' : 'bg-amber-950 text-amber-300 border-amber-700/60';
+
+        html += `
+          <div class="p-3 bg-zinc-950 border border-zinc-800 hover:border-indigo-500/50 rounded-xl flex justify-between items-center cursor-pointer transition shadow-sm" onclick="document.getElementById('targetWorkshop').value='${w.id}'">
+            <div>
+              <div class="flex items-center gap-1.5 mb-1">
+                <span class="w-2 h-2 rounded-full ${statusDot}"></span>
+                <b class="text-white text-xs font-mono">${w.id}</b>
+                <span class="text-[9px] px-1.5 py-0.2 rounded font-bold border ${typeBadge}">${w.type}</span>
+              </div>
+              <div class="text-[10px] text-zinc-400">${w.name} • ${isOnline ? '<span class="text-emerald-400">En línea</span>' : 'Desconectado'}</div>
+            </div>
+            <i class="ph-bold ph-caret-down text-zinc-600"></i>
+          </div>
+        `;
+      });
+
+      $('statTotal').textContent = total; $('statOnline').textContent = online;
+      $('statDemo').textContent = demo; $('statPro').textContent = pro;
+      $('workshopsList').innerHTML = html || '<div class="text-center text-zinc-500 text-xs py-10">Esperando reportes...</div>';
+    }
+
+    function activatePro() {
+      const id = $('targetWorkshop').value.trim().toUpperCase();
+      if (!id || !id.startsWith('TALLER-')) return alert('Ingresa un ID válido.');
+      
+      const key = 'OL-LIFETIME-' + Math.abs((id + '_LIFETIME_OPENLINE_2026').split('').reduce((a,b)=>((a<<5)-a)+b.charCodeAt(0),0)).toString(16).toUpperCase().substring(0,6);
+      const licData = { type: 'LIFETIME', key: key, workshopId: id, status: 'PRO', expiresAt: 9999999999999 };
+      
+      if (mqttClient && mqttClient.connected) {
+        mqttClient.publish('openline/v5/workshop/' + id + '/license', JSON.stringify(licData), { retain: true, qos: 1 });
+        mqttClient.publish('openline/v5/workshop/' + id + '/command', JSON.stringify({ command: 'ACTIVATE_LICENSE', license: licData }));
+        
+        const res = $('cmdResult');
+        res.innerHTML = `✅ Licencia PRO emitida y guardada en la red para <b>${id}</b>. Clave: ${key}`;
+        res.classList.remove('hidden');
+        setTimeout(() => { res.classList.add('hidden'); }, 6000);
+      }
+    }
+
+    function expelWorkshop() {
+      const id = $('targetWorkshop').value.trim().toUpperCase();
+      if (!id || !id.startsWith('TALLER-')) return alert('Ingresa un ID válido.');
+      
+      if (confirm('¿ESTÁS SEGURO? Esto destruirá el acceso de todos los dispositivos conectados a ' + id)) {
+        if (mqttClient && mqttClient.connected) {
+          mqttClient.publish('openline/v5/workshop/' + id + '/command', JSON.stringify({ command: 'EXPEL_WORKSHOP', workshopId: id }));
+          delete workshops[id];
+          renderList();
+          $('targetWorkshop').value = '';
+        }
+      }
+    }
+  </script>
+</body>
+</html>
