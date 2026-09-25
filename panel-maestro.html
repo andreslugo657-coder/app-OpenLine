@@ -47,7 +47,7 @@
         </div>
       </div>
       <div class="flex gap-2">
-        <button type="button" onclick="window.requestTelemetryBroadcast()" class="px-3 py-1.5 rounded-lg bg-indigo-950 text-indigo-300 font-bold text-xs flex items-center gap-1.5 hover:bg-indigo-900 border border-indigo-800 transition">
+        <button type="button" onclick="window.requestTelemetryBroadcast()" class="px-3 py-1.5 rounded-lg bg-indigo-950 text-indigo-300 font-bold text-xs flex items-center gap-1.5 hover:bg-indigo-900 border border-indigo-800 transition shadow">
           <i class="ph-bold ph-arrows-clockwise"></i> Sondear Talleres
         </button>
         <button type="button" onclick="location.reload()" class="px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-300 font-bold text-xs hover:bg-zinc-700 transition">Salir</button>
@@ -79,13 +79,18 @@
       <div class="text-center text-zinc-500 text-xs py-8">Esperando conexión MQTT...</div>
     </div>
 
-    <!-- GENERADOR MANUAL -->
+    <!-- ASIGNACIÓN MANUAL -->
     <div class="p-4 border-t border-zinc-800 bg-zinc-950 rounded-b-2xl shrink-0">
-      <span class="text-[10px] font-bold text-zinc-400 uppercase block mb-2">Activación Manual Inmediata:</span>
+      <span class="text-[10px] font-bold text-zinc-400 uppercase block mb-2">Asignación Manual (Talleres fuera de línea):</span>
       <div class="flex gap-2">
         <input type="text" id="manualCode" placeholder="TALLER-XXXX" class="w-1/3 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs outline-none focus:border-indigo-500">
-        <button type="button" onclick="window.activateManual()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition active:scale-95">
-          <i class="ph-bold ph-lightning"></i> Activar y Enviar Vitalicio
+        <select id="manualType" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs outline-none font-bold">
+          <option value="LIFETIME">Vitalicia</option>
+          <option value="SEM6">6 Meses</option>
+          <option value="DEMO">Demo</option>
+        </select>
+        <button type="button" onclick="window.activateManual()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition active:scale-95 shadow">
+          <i class="ph-bold ph-paper-plane-tilt"></i> Enviar Licencia
         </button>
       </div>
     </div>
@@ -187,27 +192,37 @@
       sortedWorkshops.forEach(function(w) {
         total++;
         var isOnline = (now - w.lastSeen < 25000);
-        var isPro = (w.licenseType === 'PRO' || w.licenseType === 'LIFETIME');
+        var isPro = (w.licenseType === 'PRO' || w.licenseType === 'LIFETIME' || w.licenseType === 'SEM6');
         
         if (isOnline) online++;
         if (isPro) pro++; else demo++;
 
         var devCount = Object.keys(w.devices || {}).length;
 
+        // Opciones de licencia
+        var selectHtml = '<select id="selLic_' + w.workshopId + '" class="bg-zinc-900 border border-zinc-700 text-[10px] rounded-lg px-2 py-1.5 text-white outline-none font-bold">' +
+                         '<option value="LIFETIME"' + (w.licenseType==='LIFETIME'?' selected':'') + '>Vitalicia</option>' +
+                         '<option value="SEM6"' + (w.licenseType==='SEM6'?' selected':'') + '>6 Meses</option>' +
+                         '<option value="DEMO"' + (w.licenseType==='DEMO'?' selected':'') + '>Demo</option>' +
+                         '</select>';
+
+        var sendBtn = '<button onclick="window.sendLicense(\'' + w.workshopId + '\', document.getElementById(\'selLic_' + w.workshopId + '\').value)" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[10px] transition shadow">Aplicar</button>';
+
+        var badgeText = w.licenseType === 'LIFETIME' ? 'VITALICIA' : (w.licenseType === 'SEM6' ? '6 MESES' : 'DEMO');
+
         html += '<div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">' +
                   '<div class="flex-1">' +
                     '<div class="flex items-center gap-2 mb-1">' +
                       '<span class="w-2 h-2 rounded-full ' + (isOnline ? 'bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-zinc-600') + '"></span>' +
                       '<b class="font-mono text-sm text-white">' + w.workshopId + '</b>' +
-                      '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ' + (isPro ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800') + '">' + (isPro ? 'VITALICIO' : 'DEMO') + '</span>' +
+                      '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ' + (isPro ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800') + '">' + badgeText + '</span>' +
                     '</div>' +
                     '<div class="text-[10px] text-zinc-400">' + w.name + ' • ' + devCount + ' equipos conectados • ' + (isOnline ? '<span class="text-emerald-400">Activo ahora</span>' : 'Visto: ' + new Date(w.lastSeen).toLocaleString('es-AR')) + '</div>' +
                   '</div>' +
-                  '<div class="flex items-center gap-2">' +
-                    (!isPro ? 
-                      '<button onclick="window.sendLicense(\'' + w.workshopId + '\')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] transition shadow"><i class="ph-bold ph-lightning"></i> Activar PRO</button>' 
-                      : '<button disabled class="px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-500 font-bold text-[10px] cursor-not-allowed border border-zinc-700">Ya es PRO</button>') +
-                    '<button onclick="window.expelWorkshop(\'' + w.workshopId + '\')" class="w-8 h-8 rounded-lg bg-rose-950 hover:bg-rose-900 border border-rose-800 text-rose-400 flex items-center justify-center transition" title="Expulsar"><i class="ph-bold ph-trash"></i></button>' +
+                  '<div class="flex items-center gap-1.5 bg-zinc-900 p-1.5 rounded-xl border border-zinc-800">' +
+                    selectHtml + 
+                    sendBtn +
+                    '<button onclick="window.expelWorkshop(\'' + w.workshopId + '\')" class="ml-1 w-7 h-7 rounded-lg bg-rose-950 hover:bg-rose-900 border border-rose-800 text-rose-400 flex items-center justify-center transition" title="Expulsar de la red"><i class="ph-bold ph-trash"></i></button>' +
                   '</div>' +
                 '</div>';
       });
@@ -221,32 +236,51 @@
       if (listEl) listEl.innerHTML = html || '<div class="text-center text-zinc-500 text-xs py-8">No hay talleres registrados aún en la base local. Haz clic en "Sondear Talleres".</div>';
     };
 
-    window.generateKeyString = function(code) {
-      // Misma lógica matemática del index.html para generar la llave válida
-      return 'OL-LIFETIME-' + Math.abs((code + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
-    };
+    window.sendLicense = function(code, type) {
+      if (!mqttClient || !mqttClient.connected) { window.showToast("Error", "No hay conexión al servidor MQTT"); return; }
+      
+      var typeLabels = { 'LIFETIME': 'VITALICIA', 'SEM6': '6 MESES', 'DEMO': 'DEMO' };
 
-    window.sendLicense = function(code) {
-      if (!mqttClient || !mqttClient.connected) { window.showToast("Error", "No hay conexión al servidor"); return; }
-      if (confirm("¿Activar licencia VITALICIA de forma remota para " + code + "?")) {
-        var key = window.generateKeyString(code);
-        var licData = { type: 'LIFETIME', key: key, workshopId: code, status: 'PRO', expiresAt: 9999999999999 };
+      if (confirm("¿Confirmas aplicar la licencia " + typeLabels[type] + " al taller " + code + "?")) {
         
+        // Llave matemática
+        var key = 'OL-' + type + '-' + Math.abs((code + '_' + type + '_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
+
+        var expires = 9999999999999;
+        var status = 'PRO';
+
+        if (type === 'SEM6') {
+          expires = Date.now() + (183 * 24 * 60 * 60 * 1000); // + 6 meses
+        } else if (type === 'DEMO') {
+          expires = 0;
+          status = 'DEMO';
+        }
+
+        var licData = { type: type, key: key, workshopId: code, status: status, expiresAt: expires };
+
+        // 1. Envío al canal persistente para los que están apagados
         mqttClient.publish('openline/v5/workshop/' + code + '/license', JSON.stringify(licData), { retain: true, qos: 1 });
+        
+        // 2. Envío de comando directo para obligar a los que están online a recargarla instantáneamente
         mqttClient.publish('openline/v5/workshop/' + code + '/command', JSON.stringify({ command: 'ACTIVATE_LICENSE', license: licData }));
-        
-        // Actualizar UI local rápido
+
+        // 3. Actualizamos la memoria del panel
         var reg = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '{}');
-        if(reg[code]) { reg[code].licenseType = 'PRO'; localStorage.setItem(TELEMETRY_KEY, JSON.stringify(reg)); window.renderTelemetry(); }
-        
-        window.showToast("Activado", "Licencia enviada exitosamente al taller.");
+        if(reg[code]) { 
+          reg[code].licenseType = type; 
+          localStorage.setItem(TELEMETRY_KEY, JSON.stringify(reg)); 
+          window.renderTelemetry(); 
+        }
+
+        window.showToast("Licencia Emitida", "El taller " + code + " ahora está en " + typeLabels[type]);
       }
     };
 
     window.activateManual = function() {
       var code = $('manualCode').value.trim().toUpperCase();
-      if(!code.startsWith('TALLER-')) { window.showToast("Aviso", "El código debe empezar con TALLER-"); return; }
-      window.sendLicense(code);
+      var type = $('manualType').value;
+      if(!code.startsWith('TALLER-')) { window.showToast("Aviso", "El código debe tener el formato TALLER-XXXX"); return; }
+      window.sendLicense(code, type);
       $('manualCode').value = '';
     };
 
