@@ -2,8 +2,8 @@
   "name": "openline-secure-sync",
   "version": "1.0.0",
   "private": true,
-  "description": "Secure REST/MQTT synchronization gateway for OpenLine",
+  "description": "Secure multi-workshop management system for OpenLine",
   "main": "server.js",
   "scripts": {"start": "node server.js"},
-  "dependencies": {"cors": "^2.8.5", "express": "^4.19.2", "mqtt": "^5.10.4"}
+  "dependencies": {"cors": "^2.8.5", "express": "^4.19.2"}
 }
