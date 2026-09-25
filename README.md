@@ -1,143 +1,59 @@
-# OpenLine Secure Sync
+# OpenLine Secure
 
-Este repositorio originalmente era una app SPA de una sola página con sincronización por MQTT público. Eso no es seguro para un taller profesional con datos de clientes, finanzas, stock y permisos administrativos.
+OpenLine es una app web multi-taller. El servidor es la autoridad de los datos: cada sesión queda limitada a un taller, las escrituras usan revisión optimista y las operaciones de venta/caja se aplican en una sola transacción.
 
-Se agregó un backend mínimo y seguro que permite:
+## Rutas
 
-- autorizar dispositivos por taller
-- revocar dispositivos no autorizados
-- validar sesiones por token por dispositivo
-- firmar mensajes con HMAC para evitar spoofing
-- usar WebSockets autenticados en vez de publicar sobre un broker público anónimo
-- centralizar comandos y estado
+- `/` — interfaz operativa de un taller.
+- `/master.html` — panel maestro separado. No se enlaza desde la interfaz de talleres y exige la contraseña maestra del servidor.
+- `/seguimiento.html?w=TALLER-1000&id=OL-...&tk=...` — seguimiento público con token firmado por orden.
+- `/health` — estado básico del servidor.
 
-## Requisitos
+## Configuración
 
-- Node.js 18+
-- npm
-
-## Instalar
+Node.js 18 o superior:
 
 ```bash
 npm install
-```
-
-## Ejecutar
-
-```bash
 npm start
 ```
 
-La API queda disponible en:
-
-- http://localhost:3000/health
-- ws://localhost:3000/ws
-
-## Endpoints principales
-
-### 1) Autorizar un dispositivo a un taller
+Variables obligatorias:
 
 ```bash
-curl -X POST http://localhost:3000/api/workshops/TALLER-1000/authorize \
-  -H "Content-Type: application/json" \
-  -d '{
-    "deviceId": "dev_phone_01",
-    "user": "Admin",
-    "branch": "Central",
-    "role": "admin",
-    "adminPin": "1234"
-  }'
+OPENLINE_SERVER_SECRET=un-secreto-aleatorio-de-32-caracteres-o-mas
+OPENLINE_MASTER_PASSWORD=una-clave-maestra-larga
 ```
 
-Respuesta:
-
-```json
-{
-  "workshopId": "TALLER-1000",
-  "deviceId": "dev_phone_01",
-  "sessionToken": "...",
-  "deviceSecret": "...",
-  "expiresAt": 1720000000000,
-  "status": "authorized"
-}
-```
-
-### 2) Enviar sincronización segura
-
-```bash
-curl -X POST http://localhost:3000/api/workshops/TALLER-1000/sync \
-  -H "Content-Type: application/json" \
-  -d '{
-    "deviceId": "dev_phone_01",
-    "sessionToken": "...",
-    "action": "repairs",
-    "payload": [{ "id": "1001", "status": "WAITING" }],
-    "sig": "..."
-  }'
-```
-
-La firma `sig` debe calcularse con el `deviceSecret` recibido en la autorización.
-
-### 3) Enviar comando administrativo
-
-```bash
-curl -X POST http://localhost:3000/api/workshops/TALLER-1000/command \
-  -H "Content-Type: application/json" \
-  -d '{
-    "deviceId": "dev_phone_01",
-    "sessionToken": "...",
-    "command": "ACTIVATE_LICENSE",
-    "payload": { "license": { "type": "PRO" } },
-    "sig": "..."
-  }'
-```
-
-### 4) Ver estado del taller
-
-```bash
-curl http://localhost:3000/api/workshops/TALLER-1000/status
-```
-
-## Seguridad aplicada
-
-- El broker público ya no se usa.
-- Los dispositivos deben autenticarse con PIN maestro del taller.
-- Toda sesión usa `sessionToken` temporal.
-- Cada mensaje tiene firma HMAC con secreto por dispositivo.
-- Los WebSockets exigen sesión válida antes de recibir broadcast.
-- Los dispositivos pueden ser revocados por el administrador del taller.
-- La clave del backend no vive en el navegador.
-
-## Cómo integrar esto a la app principal
-
-1. En `index.html` reemplazar la conexión MQTT pública por una llamada de registro al backend.
-2. Guardar `sessionToken` + `deviceSecret` en `localStorage` del dispositivo.
-3. En cada sincronización publicar por `POST /api/workshops/:id/sync` con firma HMAC.
-4. Los eventos del taller se reciben por WebSocket autenticado en `/ws`.
-5. Sustituir los topics de MQTT por eventos del taller en JSON serializados.
-
-## Limitación del prototipo
-
-Este es un modelo seguro funcional para entorno local o hosting privado, pero aún no está integrado al HTML principal de la app del usuario. El siguiente paso recomendado es:
-
-- crear un archivo `secureSyncClient.js`
-- reemplazar la conexión MQTT pública en `index.html`
-- migrar las llamadas actuales `publishRepairsMQTT`, `publishStockMQTT`, etc. a la API del backend
-
-## Variables de entorno
+Opcionales:
 
 ```bash
 PORT=3000
-OPENLINE_ADMIN_PIN=1234
-OPENLINE_SERVER_SECRET=tu_secret_super_secreto
+OPENLINE_DATA_FILE=./data/openline.json
+CORS_ORIGIN=https://tu-dominio.example
 ```
 
-## Recomiendo para producción
+`OPENLINE_MASTER_PASSWORD` puede reemplazarse por `OPENLINE_MASTER_PASSWORD_HASH`, generado con el formato `salt:hash` de `crypto.scrypt`. Nunca guardes contraseñas dentro de HTML, JavaScript o `localStorage`.
 
-- mover la base de datos a PostgreSQL/Mongo
-- usar JWT con expiración
-- usar HTTPS con TLS 1.2+
-- bloquear acceso por IP o whitelist
-- cifrar también en la base de datos
-- mantener una lista de dispositivos permitidos
-- no usar `localStorage` para secretos críticos si se puede evitar (usar cookies HttpOnly o almacenamiento seguro del navegador)
+## Flujo seguro
+
+1. El administrador abre `/master.html`, inicia sesión y crea un taller con su código y contraseña de unión.
+2. Cada dispositivo secundario abre `/`, introduce el código y la contraseña y recibe una sesión temporal.
+3. El servidor devuelve únicamente el estado del taller autenticado. No existen topics públicos ni sincronización MQTT.
+4. Caja, ventas y stock se guardan juntas en una transacción. Si otro dispositivo modificó el stock, la venta se rechaza y la app refresca el estado.
+5. Los demás cambios se guardan con `baseRevision`; un conflicto no sobrescribe silenciosamente el trabajo de otro dispositivo.
+
+## Seguridad incorporada
+
+- Contraseñas con `crypto.scrypt` y comparación constante.
+- Sesiones temporales en memoria del servidor; el navegador solo conserva el token en `sessionStorage`.
+- Rate limit para login maestro y unión de talleres.
+- Validación de alcance: una sesión no puede leer ni escribir otro `workshopId`.
+- Cabeceras de seguridad, límite de payload y CORS explícito.
+- Persistencia JSON con escritura temporal y rename atómico.
+- El seguimiento público requiere un token HMAC por orden y solo expone datos reducidos.
+- El panel maestro no forma parte de `index.html` y sus endpoints exigen una sesión de rol maestro.
+
+## Nota de producción
+
+La persistencia JSON es adecuada para una instalación pequeña o una primera versión. Para varios servidores o alta concurrencia, cambia `OPENLINE_DATA_FILE` por PostgreSQL/SQLite administrado y conserva las mismas reglas de aislamiento y transacciones. Publica siempre detrás de HTTPS y configura un `CORS_ORIGIN` explícito.
