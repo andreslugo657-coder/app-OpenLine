@@ -1,190 +1,265 @@
 <!DOCTYPE html>
-<html lang="es" class="bg-zinc-950">
+<html lang="es" class="bg-black">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OpenLine - Creador / Panel Maestro</title>
+  <title>OpenLine - Panel Maestro Independiente</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
   <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
   <style>
-    body { font-family: system-ui, -apple-system, sans-serif; color: #f4f4f5; }
+    body { font-family: system-ui, -apple-system, sans-serif; }
+    .hidden { display: none !important; }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="bg-zinc-950 text-zinc-200 min-h-screen flex items-center justify-center p-4">
 
   <!-- PANTALLA DE LOGIN -->
-  <div id="loginView" class="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-2xl text-center">
-    <div class="w-12 h-12 bg-indigo-900/50 text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-indigo-700/50">
-      <i class="ph-bold ph-key text-2xl"></i>
+  <div id="loginView" class="w-full max-w-sm bg-zinc-900 border border-indigo-900/50 rounded-2xl p-6 shadow-2xl">
+    <div class="w-12 h-12 rounded-xl bg-indigo-950 flex items-center justify-center text-indigo-400 mx-auto mb-4 border border-indigo-800">
+      <i class="ph-bold ph-lock-key text-2xl"></i>
     </div>
-    <h1 class="text-lg font-bold text-white mb-1">Acceso Creador</h1>
-    <p class="text-xs text-zinc-400 mb-6">Panel de Telemetría y Licencias</p>
+    <h1 class="text-center text-lg font-bold text-white mb-2">Panel Maestro Central</h1>
+    <p class="text-center text-xs text-zinc-400 mb-6">Administración de Red OpenLine</p>
     
-    <form onsubmit="unlockPanel(event)" class="space-y-3">
-      <input type="password" id="masterPin" placeholder="PIN Secreto" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 text-white font-mono text-center tracking-widest outline-none focus:border-indigo-500" required>
-      <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg active:scale-95 transition">Ingresar</button>
+    <form onsubmit="window.unlockPanel(event)" class="space-y-4">
+      <div>
+        <label class="text-[10px] font-bold text-zinc-400 uppercase block mb-1">PIN Creador</label>
+        <input type="password" id="inpPin" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 text-white text-center font-mono tracking-[0.3em] outline-none focus:border-indigo-500 transition" required placeholder="••••">
+      </div>
+      <button type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-lg transition active:scale-95">Desbloquear Panel</button>
     </form>
-    <div id="loginError" class="hidden text-rose-400 text-xs mt-3 font-bold">PIN incorrecto</div>
   </div>
 
-  <!-- PANEL DE ADMINISTRACIÓN -->
-  <div id="adminView" style="display: none;" class="w-full max-w-4xl bg-zinc-900 border border-indigo-900/50 rounded-3xl p-4 sm:p-6 shadow-2xl flex-col h-[90vh]">
-    <div class="flex items-center justify-between border-b border-zinc-800 pb-4 mb-4 shrink-0">
+  <!-- PANEL DE CONTROL -->
+  <div id="dashboardView" class="hidden w-full max-w-3xl bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl flex-col max-h-[90vh]">
+    <div class="p-4 border-b border-zinc-800 flex items-center justify-between shrink-0">
       <div class="flex items-center gap-2">
-        <i class="ph-bold ph-globe text-indigo-400 text-2xl"></i>
+        <i class="ph-bold ph-globe-hemisphere-west text-indigo-400 text-xl"></i>
         <div>
-          <h2 class="font-bold text-white text-sm sm:text-base">Telemetría Global OpenLine</h2>
-          <span class="text-[10px] text-emerald-400 font-mono flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Conectado al Broker</span>
+          <h2 class="text-white font-bold text-sm">Control de Red Global</h2>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span id="connDot" class="w-2 h-2 rounded-full bg-rose-500"></span>
+            <span id="connText" class="text-[9px] font-mono text-zinc-400 uppercase">Desconectado</span>
+          </div>
         </div>
       </div>
-      <button onclick="pingNetwork()" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-800/60 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 active:scale-95 transition">
-        <i class="ph-bold ph-radar"></i> Sondear Red
-      </button>
-    </div>
-
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4 shrink-0">
-      <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl text-center"><span class="text-[9px] text-zinc-400 uppercase font-bold block">Talleres Totales</span><b class="text-white text-lg font-mono" id="statTotal">0</b></div>
-      <div class="p-3 bg-zinc-950 border border-emerald-900/30 rounded-2xl text-center"><span class="text-[9px] text-emerald-400 uppercase font-bold block">En Línea</span><b class="text-emerald-400 text-lg font-mono" id="statOnline">0</b></div>
-      <div class="p-3 bg-zinc-950 border border-amber-900/30 rounded-2xl text-center"><span class="text-[9px] text-amber-400 uppercase font-bold block">Licencias DEMO</span><b class="text-amber-400 text-lg font-mono" id="statDemo">0</b></div>
-      <div class="p-3 bg-zinc-950 border border-indigo-900/30 rounded-2xl text-center"><span class="text-[9px] text-indigo-400 uppercase font-bold block">Licencias PRO</span><b class="text-indigo-400 text-lg font-mono" id="statPro">0</b></div>
-    </div>
-
-    <div class="flex-1 overflow-y-auto pr-2 space-y-2 min-h-[200px]" id="workshopsList">
-      <div class="text-center text-zinc-500 text-xs py-10">Esperando reportes de telemetría...</div>
-    </div>
-
-    <div class="pt-4 border-t border-zinc-800 mt-4 shrink-0">
-      <h3 class="text-[11px] font-bold text-indigo-300 uppercase mb-2">Comandos de Red (Ejecución Remota)</h3>
-      <div class="flex flex-col sm:flex-row gap-2">
-        <input type="text" id="targetWorkshop" placeholder="ID del Taller (Ej: TALLER-1234)" class="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs outline-none focus:border-indigo-500">
-        <button onclick="activatePro()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1 shadow active:scale-95 transition"><i class="ph-bold ph-shield-check"></i> Hacer PRO</button>
-        <button onclick="expelWorkshop()" class="px-4 py-2 bg-rose-950 hover:bg-rose-900 border border-rose-800/60 text-rose-300 font-bold rounded-xl text-xs flex items-center justify-center gap-1 shadow active:scale-95 transition"><i class="ph-bold ph-trash"></i> Eliminar Taller</button>
+      <div class="flex gap-2">
+        <button type="button" onclick="window.requestTelemetryBroadcast()" class="px-3 py-1.5 rounded-lg bg-indigo-950 text-indigo-300 font-bold text-xs flex items-center gap-1.5 hover:bg-indigo-900 border border-indigo-800 transition">
+          <i class="ph-bold ph-arrows-clockwise"></i> Sondear Talleres
+        </button>
+        <button type="button" onclick="location.reload()" class="px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-300 font-bold text-xs hover:bg-zinc-700 transition">Salir</button>
       </div>
-      <div id="cmdResult" class="text-[10px] text-emerald-400 font-mono mt-2 hidden"></div>
+    </div>
+
+    <!-- ESTADÍSTICAS -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 p-4 shrink-0">
+      <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-center">
+        <span class="text-[9px] text-zinc-500 uppercase font-bold block mb-1">Total Registrados</span>
+        <b id="statTotal" class="text-xl font-mono text-white">0</b>
+      </div>
+      <div class="bg-zinc-950 border border-emerald-900/30 rounded-xl p-3 text-center">
+        <span class="text-[9px] text-emerald-500 uppercase font-bold block mb-1">En Línea Ahora</span>
+        <b id="statOnline" class="text-xl font-mono text-emerald-400">0</b>
+      </div>
+      <div class="bg-zinc-950 border border-amber-900/30 rounded-xl p-3 text-center">
+        <span class="text-[9px] text-amber-500 uppercase font-bold block mb-1">Licencias DEMO</span>
+        <b id="statDemo" class="text-xl font-mono text-amber-400">0</b>
+      </div>
+      <div class="bg-zinc-950 border border-indigo-900/30 rounded-xl p-3 text-center">
+        <span class="text-[9px] text-indigo-400 uppercase font-bold block mb-1">Licencias PRO</span>
+        <b id="statPro" class="text-xl font-mono text-indigo-400">0</b>
+      </div>
+    </div>
+
+    <!-- LISTA DE TALLERES -->
+    <div class="flex-1 overflow-y-auto px-4 pb-4 space-y-2" id="workshopsList">
+      <div class="text-center text-zinc-500 text-xs py-8">Esperando conexión MQTT...</div>
+    </div>
+
+    <!-- GENERADOR MANUAL -->
+    <div class="p-4 border-t border-zinc-800 bg-zinc-950 rounded-b-2xl shrink-0">
+      <span class="text-[10px] font-bold text-zinc-400 uppercase block mb-2">Activación Manual Inmediata:</span>
+      <div class="flex gap-2">
+        <input type="text" id="manualCode" placeholder="TALLER-XXXX" class="w-1/3 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs outline-none focus:border-indigo-500">
+        <button type="button" onclick="window.activateManual()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition active:scale-95">
+          <i class="ph-bold ph-lightning"></i> Activar y Enviar Vitalicio
+        </button>
+      </div>
     </div>
   </div>
 
+  <div id="toastContainer" class="fixed top-4 right-4 z-[100000] flex flex-col items-end gap-2 pointer-events-none"></div>
+
   <script>
-    let mqttClient = null;
-    const workshops = {};
+    var TELEMETRY_KEY = 'openline_master_telemetry_registry';
+    var mqttClient = null;
+    var masterDeviceId = 'master_' + Math.random().toString(36).substring(2, 9);
+    var targetPin = '8408'; 
 
     function $(id) { return document.getElementById(id); }
 
-    function unlockPanel(e) {
+    window.showToast = function(title, msg) {
+      var tc = $('toastContainer');
+      var t = document.createElement('div');
+      t.className = 'bg-zinc-800 border border-zinc-700 text-white px-4 py-3 rounded-xl shadow-2xl text-xs w-64 transform transition-all duration-300 pointer-events-auto';
+      t.innerHTML = '<b class="text-indigo-400 block mb-0.5">' + title + '</b>' + msg;
+      tc.appendChild(t);
+      setTimeout(function() { t.style.opacity = '0'; setTimeout(function(){ t.remove(); }, 300); }, 3500);
+    };
+
+    window.unlockPanel = function(e) {
       e.preventDefault();
-      if ($('masterPin').value === '8408') {
-        $('loginView').style.display = 'none';$('adminView').style.display = 'flex';
-        initMQTT();
+      var pin = $('inpPin').value.trim();
+      if (pin === targetPin) {
+        $('loginView').classList.add('hidden');
+        $('dashboardView').classList.remove('hidden');
+        $('dashboardView').classList.add('flex');
+        window.initMQTT();
+        window.renderTelemetry();
       } else {
-        $('loginError').classList.remove('hidden');$('masterPin').value = '';
+        window.showToast("Error", "PIN incorrecto");
+        $('inpPin').value = '';
       }
-    }
+    };
 
     function initMQTT() {
-      const clientId = 'master_' + Math.random().toString(36).substring(2, 9);
-      mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: clientId, clean: true });
+      mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'ol_mst_' + masterDeviceId, clean: true, reconnectPeriod: 2500 });
       
-      mqttClient.on('connect', () => {
-        mqttClient.subscribe('openline/v5/global/telemetry/report');
-        pingNetwork();
+      mqttClient.on('connect', function() {
+        $('connDot').className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+        $('connText').textContent = 'Conectado a Red v5';
+        $('connText').className = 'text-[9px] font-mono text-emerald-400 uppercase';
+        
+        mqttClient.subscribe('openline/v5/global/telemetry/report', { qos: 0 });
+        window.requestTelemetryBroadcast();
+        
+        setInterval(window.renderTelemetry, 5000);
       });
 
-      mqttClient.on('message', (topic, message) => {
+      mqttClient.on('message', function(topic, message) {
         if (topic.endsWith('/telemetry/report')) {
           try {
-            const data = JSON.parse(message.toString());
-            if (data && data.workshopId) {
-              if (!workshops[data.workshopId]) {
-                workshops[data.workshopId] = { id: data.workshopId, name: data.name, devices: 0, type: data.licenseType || 'DEMO', lastSeen: Date.now() };
-              }
-              workshops[data.workshopId].lastSeen = Date.now();
-              workshops[data.workshopId].type = data.licenseType;
-              workshops[data.workshopId].name = data.name || data.workshopId;
-              renderList();
-            }
-          } catch(e) {}
+            var data = JSON.parse(message.toString());
+            window.saveTelemetryData(data);
+          } catch(err) {}
         }
       });
-
-      setInterval(renderList, 3000);
     }
 
-    function pingNetwork() {
+    window.requestTelemetryBroadcast = function() {
       if (mqttClient && mqttClient.connected) {
-        mqttClient.publish('openline/v5/global/telemetry/ping', JSON.stringify({ requester: 'MASTER', time: Date.now() }));
+        mqttClient.publish('openline/v5/global/telemetry/ping', JSON.stringify({ requesterId: masterDeviceId, timestamp: Date.now() }));
+        window.showToast("Sondeo", "Solicitando reporte a la red...");
       }
-    }
+    };
 
-    function renderList() {
-      const now = Date.now();
-      let total = 0, online = 0, demo = 0, pro = 0;
-      let html = '';
+    window.saveTelemetryData = function(data) {
+      if(!data || !data.workshopId) return;
+      var reg = {}; try { reg = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '{}'); } catch(e){}
+      
+      if(!reg[data.workshopId]) { 
+        reg[data.workshopId] = { workshopId: data.workshopId, name: data.name || data.workshopId, devices: {}, licenseType: data.licenseType || 'DEMO', firstSeen: Date.now(), lastSeen: Date.now() }; 
+      }
+      
+      reg[data.workshopId].lastSeen = Date.now();
+      reg[data.workshopId].name = data.name || reg[data.workshopId].name;
+      reg[data.workshopId].licenseType = data.licenseType || reg[data.workshopId].licenseType;
+      
+      if(data.deviceId) { 
+        reg[data.workshopId].devices[data.deviceId] = { user: data.user || 'Admin', branch: data.branch || 'Central', lastSeen: Date.now() }; 
+      }
+      
+      localStorage.setItem(TELEMETRY_KEY, JSON.stringify(reg));
+      window.renderTelemetry();
+    };
 
-      const sortedWorkshops = Object.values(workshops).sort((a, b) => b.lastSeen - a.lastSeen);
+    window.renderTelemetry = function() {
+      var reg = {}; try { reg = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '{}'); } catch(e){}
+      var now = Date.now(); 
+      var total = 0, online = 0, demo = 0, pro = 0;
+      var html = '';
 
-      sortedWorkshops.forEach(w => {
+      var sortedWorkshops = Object.values(reg).sort(function(a, b) { return b.lastSeen - a.lastSeen; });
+
+      sortedWorkshops.forEach(function(w) {
         total++;
-        const isOnline = (now - w.lastSeen) < 25000;
+        var isOnline = (now - w.lastSeen < 25000);
+        var isPro = (w.licenseType === 'PRO' || w.licenseType === 'LIFETIME');
+        
         if (isOnline) online++;
-        if (w.type === 'DEMO') demo++; else pro++;
+        if (isPro) pro++; else demo++;
 
-        const statusDot = isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-600';
-        const typeBadge = w.type === 'PRO' || w.type === 'LIFETIME' ? 'bg-emerald-950 text-emerald-300 border-emerald-700/60' : 'bg-amber-950 text-amber-300 border-amber-700/60';
+        var devCount = Object.keys(w.devices || {}).length;
 
-        html += `
-          <div class="p-3 bg-zinc-950 border border-zinc-800 hover:border-indigo-500/50 rounded-xl flex justify-between items-center cursor-pointer transition shadow-sm" onclick="document.getElementById('targetWorkshop').value='${w.id}'">
-            <div>
-              <div class="flex items-center gap-1.5 mb-1">
-                <span class="w-2 h-2 rounded-full ${statusDot}"></span>
-                <b class="text-white text-xs font-mono">${w.id}</b>
-                <span class="text-[9px] px-1.5 py-0.2 rounded font-bold border ${typeBadge}">${w.type}</span>
-              </div>
-              <div class="text-[10px] text-zinc-400">${w.name} • ${isOnline ? '<span class="text-emerald-400">En línea</span>' : 'Desconectado'}</div>
-            </div>
-            <i class="ph-bold ph-caret-down text-zinc-600"></i>
-          </div>
-        `;
+        html += '<div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">' +
+                  '<div class="flex-1">' +
+                    '<div class="flex items-center gap-2 mb-1">' +
+                      '<span class="w-2 h-2 rounded-full ' + (isOnline ? 'bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-zinc-600') + '"></span>' +
+                      '<b class="font-mono text-sm text-white">' + w.workshopId + '</b>' +
+                      '<span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ' + (isPro ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800') + '">' + (isPro ? 'VITALICIO' : 'DEMO') + '</span>' +
+                    '</div>' +
+                    '<div class="text-[10px] text-zinc-400">' + w.name + ' • ' + devCount + ' equipos conectados • ' + (isOnline ? '<span class="text-emerald-400">Activo ahora</span>' : 'Visto: ' + new Date(w.lastSeen).toLocaleString('es-AR')) + '</div>' +
+                  '</div>' +
+                  '<div class="flex items-center gap-2">' +
+                    (!isPro ? 
+                      '<button onclick="window.sendLicense(\'' + w.workshopId + '\')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] transition shadow"><i class="ph-bold ph-lightning"></i> Activar PRO</button>' 
+                      : '<button disabled class="px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-500 font-bold text-[10px] cursor-not-allowed border border-zinc-700">Ya es PRO</button>') +
+                    '<button onclick="window.expelWorkshop(\'' + w.workshopId + '\')" class="w-8 h-8 rounded-lg bg-rose-950 hover:bg-rose-900 border border-rose-800 text-rose-400 flex items-center justify-center transition" title="Expulsar"><i class="ph-bold ph-trash"></i></button>' +
+                  '</div>' +
+                '</div>';
       });
 
-      $('statTotal').textContent = total; $('statOnline').textContent = online;
-      $('statDemo').textContent = demo; $('statPro').textContent = pro;
-      $('workshopsList').innerHTML = html || '<div class="text-center text-zinc-500 text-xs py-10">Esperando reportes...</div>';
-    }
+      $('statTotal').textContent = total;
+      $('statOnline').textContent = online;
+      $('statDemo').textContent = demo;
+      $('statPro').textContent = pro;
+      
+      var listEl = $('workshopsList');
+      if (listEl) listEl.innerHTML = html || '<div class="text-center text-zinc-500 text-xs py-8">No hay talleres registrados aún en la base local. Haz clic en "Sondear Talleres".</div>';
+    };
 
-    function activatePro() {
-      const id = $('targetWorkshop').value.trim().toUpperCase();
-      if (!id || !id.startsWith('TALLER-')) return alert('Ingresa un ID válido.');
-      
-      const key = 'OL-LIFETIME-' + Math.abs((id + '_LIFETIME_OPENLINE_2026').split('').reduce((a,b)=>((a<<5)-a)+b.charCodeAt(0),0)).toString(16).toUpperCase().substring(0,6);
-      const licData = { type: 'LIFETIME', key: key, workshopId: id, status: 'PRO', expiresAt: 9999999999999 };
-      
-      if (mqttClient && mqttClient.connected) {
-        mqttClient.publish('openline/v5/workshop/' + id + '/license', JSON.stringify(licData), { retain: true, qos: 1 });
-        mqttClient.publish('openline/v5/workshop/' + id + '/command', JSON.stringify({ command: 'ACTIVATE_LICENSE', license: licData }));
+    window.generateKeyString = function(code) {
+      // Misma lógica matemática del index.html para generar la llave válida
+      return 'OL-LIFETIME-' + Math.abs((code + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
+    };
+
+    window.sendLicense = function(code) {
+      if (!mqttClient || !mqttClient.connected) { window.showToast("Error", "No hay conexión al servidor"); return; }
+      if (confirm("¿Activar licencia VITALICIA de forma remota para " + code + "?")) {
+        var key = window.generateKeyString(code);
+        var licData = { type: 'LIFETIME', key: key, workshopId: code, status: 'PRO', expiresAt: 9999999999999 };
         
-        const res = $('cmdResult');
-        res.innerHTML = `✅ Licencia PRO emitida y guardada en la red para <b>${id}</b>. Clave: ${key}`;
-        res.classList.remove('hidden');
-        setTimeout(() => { res.classList.add('hidden'); }, 6000);
+        mqttClient.publish('openline/v5/workshop/' + code + '/license', JSON.stringify(licData), { retain: true, qos: 1 });
+        mqttClient.publish('openline/v5/workshop/' + code + '/command', JSON.stringify({ command: 'ACTIVATE_LICENSE', license: licData }));
+        
+        // Actualizar UI local rápido
+        var reg = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '{}');
+        if(reg[code]) { reg[code].licenseType = 'PRO'; localStorage.setItem(TELEMETRY_KEY, JSON.stringify(reg)); window.renderTelemetry(); }
+        
+        window.showToast("Activado", "Licencia enviada exitosamente al taller.");
       }
-    }
+    };
 
-    function expelWorkshop() {
-      const id = $('targetWorkshop').value.trim().toUpperCase();
-      if (!id || !id.startsWith('TALLER-')) return alert('Ingresa un ID válido.');
-      
-      if (confirm('¿ESTÁS SEGURO? Esto destruirá el acceso de todos los dispositivos conectados a ' + id)) {
+    window.activateManual = function() {
+      var code = $('manualCode').value.trim().toUpperCase();
+      if(!code.startsWith('TALLER-')) { window.showToast("Aviso", "El código debe empezar con TALLER-"); return; }
+      window.sendLicense(code);
+      $('manualCode').value = '';
+    };
+
+    window.expelWorkshop = function(code) {
+      if (confirm("⚠️ ¿Expulsar definitivamente la red " + code + " y desconectar todos sus dispositivos?")) {
         if (mqttClient && mqttClient.connected) {
-          mqttClient.publish('openline/v5/workshop/' + id + '/command', JSON.stringify({ command: 'EXPEL_WORKSHOP', workshopId: id }));
-          delete workshops[id];
-          renderList();
-          $('targetWorkshop').value = '';
+          mqttClient.publish('openline/v5/workshop/' + code + '/command', JSON.stringify({ command: 'EXPEL_WORKSHOP', workshopId: code }));
         }
+        var reg = JSON.parse(localStorage.getItem(TELEMETRY_KEY) || '{}');
+        if(reg[code]) { delete reg[code]; localStorage.setItem(TELEMETRY_KEY, JSON.stringify(reg)); window.renderTelemetry(); }
+        window.showToast("Eliminado", "Taller expulsado de la red.");
       }
-    }
+    };
   </script>
 </body>
 </html>
