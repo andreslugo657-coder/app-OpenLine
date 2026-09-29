@@ -468,7 +468,7 @@
     </div>
   </div>
 
-  <!-- MODAL EDITAR ORDEN (CON SELECTOR DE SUCURSAL PARA ADMIN) -->
+  <!-- MODAL EDITAR ORDEN -->
   <div id="editRepairModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0">
@@ -492,6 +492,12 @@
 
         <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Diagnóstico / Falla</label><textarea id="editDeviceFault" rows="2" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"></textarea></div>
         <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Reparación / Trabajo Realizado</label><textarea id="editRepairDetails" rows="3" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"></textarea></div>
+        
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Ppto Total ($)</label><input type="number" id="editDeviceBudget" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></div>
+          <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Seña / Adelanto ($)</label><input type="number" id="editDeviceAdvance" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold"></div>
+        </div>
+
         <div class="grid grid-cols-2 gap-2 pt-2">
           <button type="button" onclick="window.closeModal('editRepairModal')" class="py-2.5 bg-zinc-800 text-white font-bold rounded-xl active:scale-95 transition">Cancelar</button>
           <button type="submit" class="py-2.5 bg-iosBlue text-white font-bold rounded-xl active:scale-95 transition">Guardar</button>
@@ -675,6 +681,7 @@
     var ACTIVE_USER_KEY = 'openline_current_active_user';
     var LOCAL_BRANCH_KEY = 'openline_local_branch';
     var PERMANENT_LICENSE_KEY = 'openline_perm_vitalicio_shield';
+    var TELEMETRY_REGISTRY_KEY = 'openline_telemetry_registry_v1';
 
     var myDeviceId = 'dev_' + Math.random().toString(36).substring(2, 9);
     var currentWorkshopId = 'TALLER-' + Math.floor(1000 + Math.random() * 9000);
@@ -2067,6 +2074,8 @@
       if($('editDeviceModel')) $('editDeviceModel').value = r.deviceModel || ''; 
       if($('editDeviceFault')) $('editDeviceFault').value = r.fault || '';
       if($('editRepairDetails')) $('editRepairDetails').value = r.repairDetails || '';
+      if($('editDeviceBudget')) $('editDeviceBudget').value = r.budget || 0;
+      if($('editDeviceAdvance')) $('editDeviceAdvance').value = r.advance || 0;
 
       var branchSelect = $('editRepairBranch');
       if (branchSelect) {
@@ -2093,15 +2102,42 @@
       
       var oldBranch = r.branch || 'Central';
       var newBranch = $('editRepairBranch') ? $('editRepairBranch').value : oldBranch;
+      
+      var oldAdvance = parseFloat(r.advance) || 0;
+      var newBudget = parseFloat($('editDeviceBudget').value) || 0;
+      var newAdvance = parseFloat($('editDeviceAdvance').value) || 0;
 
       r.clientName = $('editClientName').value; 
       r.deviceBrand = $('editDeviceBrand').value; 
       r.deviceModel = $('editDeviceModel').value;
       r.fault = $('editDeviceFault').value; 
       r.repairDetails = $('editRepairDetails').value;
+      r.budget = newBudget;
+      r.advance = newAdvance;
       
       if (activeUser === 'Admin' && newBranch) {
          r.branch = newBranch;
+      }
+      
+      var advanceDiff = newAdvance - oldAdvance;
+      if (advanceDiff !== 0) {
+          var mType = advanceDiff > 0 ? 'INCOME' : 'EXPENSE';
+          var mConcept = (advanceDiff > 0 ? 'Agregado de Seña' : 'Devolución de Seña') + ' Orden #' + r.id;
+          
+          if (!Array.isArray(cashMovements)) cashMovements = [];
+          cashMovements.unshift({ 
+              id: 'CSH-EDIT-' + Date.now(), 
+              branch: localBranch, 
+              type: mType, 
+              amount: Math.abs(advanceDiff), 
+              concept: mConcept, 
+              method: 'Efectivo', 
+              date: Date.now(), 
+              user: activeUser, 
+              closed: false 
+          });
+          StorageShield.save('cash', cashMovements);
+          window.updateCashBalanceUI();
       }
 
       StorageShield.save('repairs', repairs);
