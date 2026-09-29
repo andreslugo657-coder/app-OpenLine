@@ -198,12 +198,6 @@
     </div>
   </div>
 
-  <div class="ticker-wrap pb-safe border-t border-zinc-800">
-    <div class="ticker text-[10px] font-bold text-zinc-500 tracking-widest uppercase flex items-center gap-3">
-      <span>🚀 DESARROLLADO POR OPENLINE • INDUSTRIA ARGENTINA 🇦🇷 • SOFTWARE PARA TALLERES PROFESIONALES 🚀</span>
-    </div>
-  </div>
-
   <!-- MODALES DE ALERTA INTERNOS -->
   <div id="appPromptModal" style="display: none; z-index: 100005;" class="fixed inset-0 bg-black/95 backdrop-blur-md items-center justify-center p-4">
     <div class="bg-zinc-900 border border-zinc-700 rounded-3xl w-full max-w-xs p-5 space-y-4 shadow-[0_0_50px_rgba(0,0,0,0.8)] text-center relative">
@@ -474,16 +468,34 @@
     </div>
   </div>
 
-  <!-- MODAL EDITAR ORDEN -->
+  <!-- MODAL EDITAR ORDEN (CON SELECTOR DE SUCURSAL PARA ADMIN) -->
   <div id="editRepairModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0"><h3 class="text-sm font-bold text-white">Editar Orden</h3><button type="button" onclick="window.closeModal('editRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0">
+        <h3 class="text-sm font-bold text-white">Editar Orden</h3>
+        <button type="button" onclick="window.closeModal('editRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button>
+      </div>
       <form onsubmit="window.saveEditedRepair(event)" class="overflow-y-auto p-4 space-y-3 flex-1 pb-8">
         <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Cliente</label><input type="text" id="editClientName" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white"></div>
-        <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Equipo</label><div class="grid grid-cols-2 gap-2"><input type="text" id="editDeviceBrand" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white"><input type="text" id="editDeviceModel" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white"></div></div>
+        <div class="space-y-1">
+          <label class="font-bold text-zinc-400 text-[10px]">Equipo</label>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" id="editDeviceBrand" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white">
+            <input type="text" id="editDeviceModel" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white">
+          </div>
+        </div>
+        
+        <div class="space-y-1">
+          <label class="font-bold text-indigo-400 text-[10px] flex items-center gap-1"><i class="ph-bold ph-storefront"></i> Reubicar Sucursal (Solo Admin)</label>
+          <select id="editRepairBranch" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-500 transition"></select>
+        </div>
+
         <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Diagnóstico / Falla</label><textarea id="editDeviceFault" rows="2" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"></textarea></div>
         <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Reparación / Trabajo Realizado</label><textarea id="editRepairDetails" rows="3" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"></textarea></div>
-        <div class="grid grid-cols-2 gap-2 pt-2"><button type="button" onclick="window.closeModal('editRepairModal')" class="py-2.5 bg-zinc-800 text-white font-bold rounded-xl">Cancelar</button><button type="submit" class="py-2.5 bg-iosBlue text-white font-bold rounded-xl">Guardar</button></div>
+        <div class="grid grid-cols-2 gap-2 pt-2">
+          <button type="button" onclick="window.closeModal('editRepairModal')" class="py-2.5 bg-zinc-800 text-white font-bold rounded-xl active:scale-95 transition">Cancelar</button>
+          <button type="submit" class="py-2.5 bg-iosBlue text-white font-bold rounded-xl active:scale-95 transition">Guardar</button>
+        </div>
       </form>
     </div>
   </div>
@@ -507,7 +519,7 @@
     </div>
   </div>
 
-  <!-- PANEL PERSONAL Y DISPOSITIVOS (CON RESTRICCIONES) -->
+  <!-- PANEL PERSONAL Y DISPOSITIVOS -->
   <div id="switchUserModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3.5 text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Personal & Dispositivos</h3><button type="button" onclick="window.closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -558,7 +570,7 @@
     </div>
   </div>
 
-  <!-- MODAL VINCULAR A OTRA RED CON CLAVE DE ADMIN OBLIGATORIA -->
+  <!-- MODAL VINCULAR A OTRA RED -->
   <div id="teamModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Equipo & Sincronización</h3><button type="button" onclick="window.closeModal('teamModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
@@ -580,70 +592,22 @@
           <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 text-center"><div class="flex items-center justify-center gap-3"><div id="settingsLogoPreview" class="w-12 h-12 rounded-2xl bg-zinc-800 border border-zinc-700 flex items-center justify-center overflow-hidden shrink-0"></div><div class="space-y-1 text-left"><label class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 text-white font-bold rounded-xl"><i class="ph-bold ph-upload-simple"></i> Logo<input type="file" accept="image/*" onchange="window.handleLogoUpload(this)" class="hidden"></label><button type="button" onclick="window.removeLogo()" class="block text-rose-400">Quitar</button></div></div></div>
           <div class="space-y-2"><input type="text" id="cfgWorkshopName" placeholder="Nombre Comercial" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"><input type="text" id="cfgWorkshopSubtitle" placeholder="Subtítulo" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white"><input type="tel" id="cfgAdminPhone" placeholder="WhatsApp Admin (Para recibir cierres y clave)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono"></div>
           <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2"><span class="text-[10px] font-bold text-zinc-300 uppercase block">📍 Sucursales (Ubicaciones):</span><div id="settingsBranchesList" class="space-y-1.5 max-h-32 overflow-y-auto no-scrollbar"></div><div class="flex gap-1.5 pt-1 border-t border-zinc-800/80"><input type="text" id="inpNewConfigBranch" placeholder="Nueva Sucursal..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"><button type="button" onclick="window.addConfigBranch()" class="px-3 py-2 bg-iosBlue text-white font-bold rounded-xl text-xs">+ Añadir</button></div></div>
-          <div class="pt-4 border-t border-zinc-800/80"><button type="button" onclick="window.closeModal('settingsModal'); window.openLicenseModal();" class="w-full py-2.5 bg-zinc-800 border border-zinc-700 text-zinc-300 font-bold rounded-xl shadow flex items-center justify-center gap-1.5 transition active:scale-95"><i class="ph-bold ph-shield-check text-base"></i> Ver Licencia / Panel Maestro</button></div>
+          <div class="pt-4 border-t border-zinc-800/80"><button type="button" onclick="window.closeModal('settingsModal'); window.openLicenseModal();" class="w-full py-2.5 bg-zinc-800 border border-zinc-700 text-zinc-300 font-bold rounded-xl shadow flex items-center justify-center gap-1.5 transition active:scale-95"><i class="ph-bold ph-shield-check text-base"></i> Ver Licencia</button></div>
       </div>
       <button type="button" onclick="window.saveSettings()" class="w-full py-3 bg-iosBlue text-white font-bold rounded-xl shadow shrink-0 mt-2">Guardar Ajustes</button>
     </div>
   </div>
 
-  <!-- LICENCIA Y PANEL MAESTRO CREADOR -->
+  <!-- LICENCIA (SIN PANEL MAESTRO) -->
   <div id="licenseModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg p-4 space-y-3.5 pb-safe shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
-      
       <div class="overflow-y-auto space-y-3.5 flex-1 pr-1 pb-6">
         <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center">
           <span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia:</span>
           <div id="licenseStatusText" class="font-mono text-base font-black text-amber-400 py-1 select-none">DEMO</div>
           <span id="licenseDetailCountdown" class="text-[11px] text-zinc-400 font-mono block mt-0.5">Versión activa en este equipo</span>
-
-          <!-- CAJA DE ACCESO A PANEL MAESTRO -->
-          <div id="masterAccessTriggerBox" class="mt-4 p-3 bg-zinc-900 rounded-2xl border border-indigo-700/60 text-center space-y-2">
-            <span class="text-[10px] font-bold text-indigo-300 uppercase tracking-wider flex items-center justify-center gap-1">
-              <i class="ph-bold ph-key text-base"></i> Acceso Creador (Panel Maestro)
-            </span>
-            <form onsubmit="window.unlockMasterCreator(event)" class="flex items-center justify-center gap-2 max-w-xs mx-auto m-0 p-0">
-              <input type="password" id="inpMasterCreatorPin" placeholder="PIN Secreto" 
-                     class="flex-1 bg-zinc-950 border border-indigo-600 rounded-xl px-3 py-2 text-white font-mono text-center text-xs outline-none focus:border-indigo-400 shadow-inner"
-                     autocomplete="off" required>
-              <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-bold rounded-xl text-xs shadow-md transition shrink-0">
-                Entrar
-              </button>
-            </form>
-          </div>
         </div>
-
-        <!-- PANEL MAESTRO CREADOR -->
-        <div id="masterAdminUnlockedView" style="display: none;" class="p-3.5 bg-zinc-950 rounded-2xl border-2 border-indigo-600 space-y-3">
-          <div class="flex items-center justify-between border-b border-indigo-900 pb-2">
-            <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span class="text-[11px] font-bold text-indigo-300 uppercase tracking-wide">Panel Maestro Creador</span></div>
-            <button type="button" onclick="window.requestTelemetryBroadcast()" class="text-[9px] bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 active:scale-95"><i class="ph-bold ph-arrows-clockwise"></i> Sondear Red</button>
-          </div>
-          <div class="grid grid-cols-5 gap-1.5 text-center">
-            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-zinc-400 uppercase block font-bold">Talleres</span><b class="text-white text-xs font-mono" id="telTotalWorkshops">0</b></div>
-            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-emerald-400 uppercase block font-bold">En Línea</span><b class="text-emerald-400 text-xs font-mono" id="telOnlineWorkshops">0</b></div>
-            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-iosBlue uppercase block font-bold">Usuarios</span><b class="text-iosBlue text-xs font-mono" id="telOnlineUsers">0</b></div>
-            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-amber-400 uppercase block font-bold">DEMO</span><b class="text-amber-400 text-xs font-mono" id="telDemoWorkshops">0</b></div>
-            <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[8px] text-indigo-400 uppercase block font-bold">PRO</span><b class="text-indigo-400 text-xs font-mono" id="telProWorkshops">0</b></div>
-          </div>
-          <div class="space-y-1.5">
-            <span class="text-[9px] text-zinc-400 uppercase font-bold block">Talleres y Dispositivos Registrados:</span>
-            <div id="telemetryWorkshopsList" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
-          </div>
-          <div class="space-y-2 pt-2 border-t border-indigo-900/50">
-            <span class="text-[9px] font-bold text-indigo-300 uppercase">Generar Licencia de Activación:</span>
-            <div class="grid grid-cols-3 gap-1.5">
-              <input type="text" id="genTargetWorkshopCode" placeholder="Código Taller" class="col-span-2 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white uppercase font-mono text-xs">
-              <select id="genLicTypeSelect" class="bg-zinc-900 border border-zinc-700 rounded-xl px-2 py-2 text-white text-xs font-bold"><option value="SEM6">6 Meses</option><option value="LIFETIME" selected>Vitalicio</option></select>
-            </div>
-            <button type="button" onclick="window.emitKey()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow active:scale-95">Emitir Clave Segura</button>
-            <div id="genResultBox" style="display: none;" class="hidden p-2.5 bg-zinc-900 rounded-xl flex justify-between items-center border border-zinc-800">
-              <span id="genGeneratedKey" class="font-mono text-emerald-400 font-bold text-xs"></span>
-              <button type="button" onclick="window.copyKey()" class="px-2.5 py-1 bg-zinc-800 rounded text-[10px] text-white font-bold">Copiar</button>
-            </div>
-          </div>
-        </div>
-
         <div class="space-y-1.5 pt-1"><label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar o Renovar Licencia:</label><div class="flex gap-1.5"><input type="password" id="inpActivationKey" placeholder="Pega tu clave aquí..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs"><button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs active:scale-95">Activar</button></div></div>
       </div>
       <button type="button" onclick="window.closeModal('licenseModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1 shrink-0">Cerrar</button>
@@ -711,7 +675,6 @@
     var ACTIVE_USER_KEY = 'openline_current_active_user';
     var LOCAL_BRANCH_KEY = 'openline_local_branch';
     var PERMANENT_LICENSE_KEY = 'openline_perm_vitalicio_shield';
-    var TELEMETRY_REGISTRY_KEY = 'openline_telemetry_registry_v1';
 
     var myDeviceId = 'dev_' + Math.random().toString(36).substring(2, 9);
     var currentWorkshopId = 'TALLER-' + Math.floor(1000 + Math.random() * 9000);
@@ -774,7 +737,6 @@
       } catch(e) { alert(title + "\n" + msg); }
     };
 
-    // --- ALERTAS INTERNAS SIN BLOQUEO DEL NAVEGADOR ---
     var activePromptCallback = null;
     window.appPrompt = function(title, desc, inputType, defaultVal, callback) {
       var m = $('appPromptModal');
@@ -814,7 +776,6 @@
       if (activeConfirmCallback) { var cb = activeConfirmCallback; activeConfirmCallback = null; if(res) cb(); }
     };
 
-    // --- BÓVEDA LOCAL BLINDADA ---
     var mqttClient = null;
     var StorageShield = {
       getKey: function(entity) { return 'openline_vault_' + currentWorkshopId + '_' + entity; },
@@ -840,14 +801,13 @@
     
     var activeUser = 'Admin'; try { activeUser = localStorage.getItem(ACTIVE_USER_KEY) || 'Admin'; } catch(e){}
     var currentFilter = 'ALL'; 
-    var currentBranchFilter = 'ALL'; // Vista de órdenes compartida entre todas las sucursales
-    var currentStockBranchFilter = 'ALL'; // Filtro interactivo de inventario
-    var currentPosBranchFilter = 'ALL'; // Filtro interactivo de catálogo
-    var currentPosCategoryFilter = 'ALL'; // Filtro interactivo de categorías
+    var currentBranchFilter = 'ALL'; 
+    var currentStockBranchFilter = 'ALL'; 
+    var currentPosBranchFilter = 'ALL'; 
+    var currentPosCategoryFilter = 'ALL'; 
     var currentVentasPeriod = 'HOY'; 
     var selectedRepairId = null;
 
-    // --- APLICACIÓN DE AJUSTES EN VIVO (LOGO, SUCURSALES, DATOS) ---
     window.applyWorkshopSettings = function(newSettings) {
       if (!newSettings || typeof newSettings !== 'object') return;
       workshopSettings = Object.assign(workshopSettings, newSettings);
@@ -883,7 +843,6 @@
       window.checkBannedStatus();
     };
 
-    // --- LICENCIAS Y TELEMETRÍA (HERENCIA INTELIGENTE) ---
     window.checkLicenseStatus = function() {
       var lic = StorageShield.load('license', null);
       if (lic && (lic.type === 'LIFETIME' || lic.type === 'PRO' || lic.type === 'SEM6')) return 'PRO';
@@ -905,52 +864,6 @@
       }
     };
 
-    // --- DESBLOQUEO PANEL MAESTRO CREADOR ---
-    window.unlockMasterCreator = function(e) {
-      if(e && e.preventDefault) e.preventDefault(); 
-      var input = $('inpMasterCreatorPin');
-      var pin = input ? input.value.trim() : '';
-      
-      if (pin === '8408') {
-        var triggerBox = $('masterAccessTriggerBox');
-        if (triggerBox) triggerBox.style.display = 'none';
-        
-        var panel = $('masterAdminUnlockedView');
-        if (panel) {
-          panel.classList.remove('hidden');
-          panel.style.display = 'block';
-        }
-        if ($('genTargetWorkshopCode')) $('genTargetWorkshopCode').value = currentWorkshopId;
-        window.renderMasterTelemetry();
-        window.requestTelemetryBroadcast();
-        window.showToast("Acceso Concedido", "Panel Maestro Creador desbloqueado.");
-        if (input) input.value = '';
-        setTimeout(function() {
-          if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 150);
-      } else {
-        window.showToast("Error", "Clave maestra incorrecta.");
-        if (input) { input.value = ''; input.focus(); }
-      }
-    };
-
-    window.emitKey = function() {
-      var code = $('genTargetWorkshopCode').value.trim().toUpperCase(); if (!code) return;
-      var key = 'OL-LIFETIME-' + Math.abs((code + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
-      if($('genGeneratedKey')) $('genGeneratedKey').textContent = key;
-      var box = $('genResultBox');
-      if(box) { box.classList.remove('hidden'); box.style.display = 'flex'; }
-      
-      if (mqttClient && mqttClient.connected) {
-        var licData = { type: 'LIFETIME', key: key, workshopId: code, status: 'PRO', expiresAt: 9999999999999 };
-        mqttClient.publish('openline/v4/workshop/' + code + '/license', JSON.stringify(licData), { retain: true, qos: 1 });
-        mqttClient.publish('openline/v4/workshop/' + code + '/command', JSON.stringify({ command: 'ACTIVATE_LICENSE', license: licData }));
-        window.showToast("Activado Remotamente", "La red del taller " + code + " ahora es Vitalicia.");
-      }
-    };
-
-    window.copyKey = function() { window.fallbackCopyText($('genGeneratedKey').textContent); };
-
     window.applyKey = function() {
       var k = $('inpActivationKey').value.trim().toUpperCase(); if (!k) return;
       var validKey = 'OL-LIFETIME-' + Math.abs((currentWorkshopId.toUpperCase() + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
@@ -970,47 +883,6 @@
       } else { window.showToast('Error', 'Clave no válida.'); }
     };
 
-    window.saveTelemetryData = function(data) {
-      if(!data || !data.workshopId) return;
-      var reg = StorageShield.load(TELEMETRY_REGISTRY_KEY, {});
-      if(!reg[data.workshopId]) { reg[data.workshopId] = { workshopId: data.workshopId, name: data.name || data.workshopId, devices: {}, licenseType: data.licenseType || 'DEMO', firstSeen: Date.now(), lastSeen: Date.now() }; }
-      reg[data.workshopId].lastSeen = Date.now();
-      reg[data.workshopId].name = data.name || reg[data.workshopId].name;
-      reg[data.workshopId].licenseType = data.licenseType || reg[data.workshopId].licenseType;
-      if(data.deviceId) { reg[data.workshopId].devices[data.deviceId] = { user: data.user || 'Admin', branch: data.branch || 'Central', lastSeen: Date.now() }; }
-      StorageShield.save(TELEMETRY_REGISTRY_KEY, reg, true);
-      if($('masterAdminUnlockedView') && $('masterAdminUnlockedView').style.display === 'block') { window.renderMasterTelemetry(); }
-    };
-
-    window.renderMasterTelemetry = function() {
-      var reg = StorageShield.load(TELEMETRY_REGISTRY_KEY, {});
-      var now = Date.now(); var totalWorkshops = Object.keys(reg).length; var onlineWorkshops = 0; var activeUsers = 0; var demoCount = 0; var proCount = 0;
-
-      for (var wId in reg) {
-        var w = reg[wId]; var isOnline = (now - w.lastSeen < 25000);
-        if(isOnline) onlineWorkshops++;
-        if(w.licenseType === 'DEMO') demoCount++; else proCount++;
-        for(var dId in (w.devices || {})) { if(now - w.devices[dId].lastSeen < 25000) activeUsers++; }
-      }
-
-      if($('telTotalWorkshops')) $('telTotalWorkshops').textContent = Math.max(1, totalWorkshops);
-      if($('telOnlineWorkshops')) $('telOnlineWorkshops').textContent = Math.max(1, onlineWorkshops);
-      if($('telOnlineUsers')) $('telOnlineUsers').textContent = Math.max(1, activeUsers);
-      if($('telDemoWorkshops')) $('telDemoWorkshops').textContent = demoCount;
-      if($('telProWorkshops')) $('telProWorkshops').textContent = Math.max(1, proCount);
-
-      var list = $('telemetryWorkshopsList');
-      if(list) {
-        var html = '';
-        for (var wId in reg) {
-          var w = reg[wId]; var isOnline = (now - w.lastSeen < 25000); var devCount = Object.keys(w.devices || {}).length;
-          html += '<div class="p-2 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-between"><div><div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full ' + (isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-600') + '"></span><b class="text-white text-xs font-mono">' + w.workshopId + '</b><span class="text-[9px] px-1.5 py-0.2 rounded font-bold ' + (w.licenseType==='DEMO'?'bg-amber-950 text-amber-300':'bg-emerald-950 text-emerald-300') + '">' + (w.licenseType||'PRO') + '</span></div><div class="text-[9px] text-zinc-400 mt-0.5">' + (w.name || 'Taller') + ' • ' + devCount + ' dispositivo(s) • ' + (isOnline ? '<span class="text-emerald-400">En línea ahora</span>' : 'Visto: ' + new Date(w.lastSeen).toLocaleDateString('es-AR')) + '</div></div><span class="text-[9px] font-mono font-bold text-indigo-300">' + (isOnline ? 'CONECTADO' : 'OFFLINE') + '</span></div>';
-        }
-        list.innerHTML = html || '<div class="text-zinc-500 text-xs p-4 text-center">Sondeando red...</div>';
-      }
-    };
-
-    // --- SEGURIDAD ADMIN Y SUCURSALES ---
     window.recoverAdminPinWA = function() {
       var pin = (workshopSettings.adminPin || '1234').trim();
       var phone = (workshopSettings.adminPhone || '').replace(/[^0-9]/g, '');
@@ -1202,7 +1074,6 @@
       });
     };
 
-    // --- APERTURAS DE MODALES ---
     window.openNewRepairModal = function() { 
       window.openModal('newRepairModal'); 
       setTimeout(function() {
@@ -1237,12 +1108,10 @@
     window.openLicenseModal = function() { window.openModal('licenseModal'); };
     window.openInstallModal = function() { window.openModal('installModal'); };
 
-    // --- PESTAÑAS Y VISTA DE ÓRDENES Y CAJAS ---
     window.renderBranchTabs = function() {
       var branches = workshopSettings.branches || ['Central'];
       var isAdmin = (activeUser === 'Admin');
 
-      // 1. Pestañas de Vista de Órdenes: Todos pueden navegar entre todas las sucursales
       var mainContainer = $('branchTabsButtonsList');
       if (mainContainer) {
         var allBtn = '<button type="button" onclick="window.setBranchFilter(\'ALL\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition '+(currentBranchFilter==='ALL'?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas</button>';
@@ -1253,7 +1122,6 @@
         if($('currentBranchDisplayTag')) $('currentBranchDisplayTag').textContent = currentBranchFilter === 'ALL' ? 'Todas' : '(' + currentBranchFilter + ')';
       }
       
-      // 2. Títulos y etiquetas de Caja Local del dispositivo
       if($('cashModalTitleBranch')) $('cashModalTitleBranch').textContent = '(' + currentCashBranch + ')';
       if($('posModalBranchTag')) $('posModalBranchTag').textContent = '(' + localBranch + ')';
       if($('posBtnBranchNameCart')) $('posBtnBranchNameCart').textContent = '(' + localBranch + ')';
@@ -1265,7 +1133,6 @@
       if($('cshBranch')) $('cshBranch').innerHTML = opts; 
       if($('stkBranch')) $('stkBranch').innerHTML = opts;
 
-      // 3. Selector de Caja: Si es Admin puede auditar cualquier caja; si no, queda fijo en su sucursal
       var cashBranchList = $('cashBranchSelectorList');
       var cashSelectorBox = $('cashBranchSelectorContainer');
       if(cashBranchList) {
@@ -1289,7 +1156,6 @@
     window.switchCashBranchView = function(b) { currentCashBranch = b; window.renderBranchTabs(); window.updateCashBalanceUI(); };
     window.setBranchFilter = function(b) { currentBranchFilter = b; window.renderBranchTabs(); window.renderRepairsList(); window.updateCounters(); };
 
-    // --- FILTROS INTERACTIVOS DEL CATÁLOGO ---
     window.renderInteractiveCatalogFilters = function() {
       var branches = workshopSettings.branches || ['Central'];
       var bContainer = $('posCatalogBranchPills');
@@ -1367,7 +1233,6 @@
         try { localStorage.setItem(ACTIVE_USER_KEY, activeUser); } catch(e){}
         if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
         
-        // VINCULACIÓN ESTRICTA: Si no es Admin, forzar la sucursal asignada
         if (userName !== 'Admin') {
            var assignedBranch = localBranch; 
            for (var b in workshopSettings.usersByBranch) {
@@ -1375,7 +1240,6 @@
                   assignedBranch = b; break;
               }
            }
-           // Esto fija la caja local a la sucursal del empleado
            window.setLocalBranch(assignedBranch, true);
         }
 
@@ -1421,7 +1285,6 @@
       });
     };
 
-    // --- AJUSTES Y CONFIGURACIÓN ---
     window.openSettingsModal = function() {
       try {
         if($('cfgWorkshopName')) $('cfgWorkshopName').value = workshopSettings.name || '';
@@ -1512,7 +1375,6 @@
     window.copyAppUrl = function() { var url = window.location.origin + window.location.pathname; if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(url).then(function() { window.showToast("Copiado", "Enlace copiado al portapapeles."); }).catch(function() { window.fallbackCopyText(url); }); } else { window.fallbackCopyText(url); } };
     window.fallbackCopyText = function(text) { var textArea = document.createElement("textarea"); textArea.value = text; document.body.appendChild(textArea); textArea.select(); try { document.execCommand('copy'); window.showToast("Copiado", "Enlace copiado al portapapeles."); } catch (err) { window.showToast("Error", "No se pudo copiar."); } document.body.removeChild(textArea); };
     
-    // --- VINCULACIÓN CON CLAVE DE ADMINISTRADOR DEL TALLER MAESTRO ---
     window.joinWorkshop = function() { 
       window.appPrompt("Vincular a Taller Maestro", "Paso 1 de 2:\nIngresa el Código del Taller Maestro (ej: TALLER-9572):", "text", "", function(code) {
         if (!code) return;
@@ -1578,7 +1440,6 @@
       });
     };
 
-    // --- PATRÓN TÁCTIL ---
     var currentPhotos = []; var activeUnlockType = 'pin'; var patternCtx = null; var isDrawingPattern = false; var selectedPatternSequence = []; var patternNodes = [];
     window.setUnlockType = function(type) {
       activeUnlockType = type;
@@ -1619,7 +1480,6 @@
     };
     window.resetPatternCanvas = function() { selectedPatternSequence = []; isDrawingPattern = false; if($('patternStatusLabel')) { $('patternStatusLabel').textContent = 'Dibuja el patrón en los puntos'; $('patternStatusLabel').className = 'text-zinc-400 mt-1'; } window.drawPatternGrid(); };
 
-    // --- FOTOS DE INGRESO ---
     window.handleNewPhotoUpload = function(input) {
       if (input.files && input.files[0]) {
         Array.from(input.files).forEach(function(file) {
@@ -1646,7 +1506,6 @@
     };
     window.removePhoto = function(i) { currentPhotos.splice(i, 1); window.renderNewPhotos(); };
 
-    // --- INGRESOS (Impacta en caja local del dispositivo) ---
     window.calcBalance = function(type) {
       if(type === 'new') {
         var total = parseFloat($('inpDeviceBudget').value) || 0; var advance = parseFloat($('inpDeviceAdvance').value) || 0;
@@ -1679,7 +1538,6 @@
       repairs.unshift(r); 
       StorageShield.save('repairs', repairs);
 
-      // La seña ingresa estrictamente a la caja de la sucursal que recibe el equipo
       if (advanceAmt > 0) {
         if (!Array.isArray(cashMovements)) cashMovements = [];
         cashMovements.unshift({ 
@@ -1702,7 +1560,6 @@
       window.updateCounters();
     };
 
-    // --- CONTROL DE STOCK E INVENTARIO ---
     var currentStockTab = 'LIST';
     var stockScanner = null;
 
@@ -1862,7 +1719,6 @@
       if (stockScanner) { try { stockScanner.stop().catch(function(){}); stockScanner.clear(); stockScanner = null; } catch(e){} } 
     };
 
-    // --- POS VENTAS (Impacta en caja local del dispositivo) ---
     var posCart = []; var posScanner = null; var currentPosTab = 'CATALOG';
 
     window.switchPosTab = function(tab) {
@@ -2010,7 +1866,6 @@
       window.openSaleTicketModal(saleId);
     };
 
-    // --- CATÁLOGO INTERACTIVO COMPARTIDO EN TODAS LAS SUCURSALES ---
     window.renderPosCatalog = function() {
       var grid = $('posCatalogGrid'); if(!grid) return;
       var term = $('posSearchProduct') ? $('posSearchProduct').value.toLowerCase().trim() : '';
@@ -2137,7 +1992,6 @@
       } else { window.open('https://wa.me/' + phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg), '_blank'); }
     };
 
-    // --- REPARACIONES Y FILTROS (VINCULADOS ENTRE TODAS LAS SUCURSALES) ---
     window.handleSearch = function() { window.renderRepairsList(); };
     window.clearSearch = function() { if($('searchInput')) $('searchInput').value = ''; window.renderRepairsList(); };
     window.setFilter = function(f) {
@@ -2208,18 +2062,59 @@
 
     window.openEditRepairModal = function() {
       var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
-      if($('editClientName')) $('editClientName').value = r.clientName || ''; if($('editDeviceBrand')) $('editDeviceBrand').value = r.deviceBrand || '';
-      if($('editDeviceModel')) $('editDeviceModel').value = r.deviceModel || ''; if($('editDeviceFault')) $('editDeviceFault').value = r.fault || '';
+      if($('editClientName')) $('editClientName').value = r.clientName || ''; 
+      if($('editDeviceBrand')) $('editDeviceBrand').value = r.deviceBrand || '';
+      if($('editDeviceModel')) $('editDeviceModel').value = r.deviceModel || ''; 
+      if($('editDeviceFault')) $('editDeviceFault').value = r.fault || '';
       if($('editRepairDetails')) $('editRepairDetails').value = r.repairDetails || '';
+
+      var branchSelect = $('editRepairBranch');
+      if (branchSelect) {
+         var branches = workshopSettings.branches || ['Central'];
+         branchSelect.innerHTML = branches.map(function(b) {
+            return '<option value="' + b + '" ' + ((r.branch || 'Central') === b ? 'selected' : '') + '>' + b + '</option>';
+         }).join('');
+         
+         if (activeUser !== 'Admin') {
+            branchSelect.disabled = true;
+            branchSelect.classList.add('opacity-50', 'cursor-not-allowed');
+         } else {
+            branchSelect.disabled = false;
+            branchSelect.classList.remove('opacity-50', 'cursor-not-allowed');
+         }
+      }
+
       window.openModal('editRepairModal');
     };
 
     window.saveEditedRepair = function(e) {
-      e.preventDefault(); var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
-      r.clientName = $('editClientName').value; r.deviceBrand = $('editDeviceBrand').value; r.deviceModel = $('editDeviceModel').value;
-      r.fault = $('editDeviceFault').value; r.repairDetails = $('editRepairDetails').value;
+      e.preventDefault(); 
+      var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
+      
+      var oldBranch = r.branch || 'Central';
+      var newBranch = $('editRepairBranch') ? $('editRepairBranch').value : oldBranch;
+
+      r.clientName = $('editClientName').value; 
+      r.deviceBrand = $('editDeviceBrand').value; 
+      r.deviceModel = $('editDeviceModel').value;
+      r.fault = $('editDeviceFault').value; 
+      r.repairDetails = $('editRepairDetails').value;
+      
+      if (activeUser === 'Admin' && newBranch) {
+         r.branch = newBranch;
+      }
+
       StorageShield.save('repairs', repairs);
-      window.closeModal('editRepairModal'); window.openDetailModal(r.id); window.renderRepairsList(); window.showToast("Guardado", "Orden actualizada.");
+      window.closeModal('editRepairModal'); 
+      window.openDetailModal(r.id); 
+      window.renderRepairsList(); 
+      window.updateCounters();
+
+      if (oldBranch !== newBranch && activeUser === 'Admin') {
+         window.showToast("Orden Reubicada", "El equipo fue trasladado a la sucursal: " + newBranch);
+      } else {
+         window.showToast("Guardado", "Orden actualizada.");
+      }
     };
 
     window.sendTechnicalReportWA = function() {
@@ -2278,7 +2173,6 @@
       });
     };
 
-    // --- MOVIMIENTOS DE CAJA MANUALES Y CIERRE ---
     window.showCashIncome = function() {
       var form = $('cashMovementForm');
       if (form) {
@@ -2446,7 +2340,6 @@
       $('printArea').innerHTML = html; $('printArea').style.display = 'block'; window.print(); setTimeout(function(){ $('printArea').style.display = 'none'; }, 500);
     };
 
-    // --- LÓGICA DE REPORTES Y BALANCE DE CAJA ---
     var currentBalanceBranch = 'Central';
 
     window.openBalanceModal = function() {
@@ -2517,7 +2410,6 @@
        if($('balMesNeto')) $('balMesNeto').textContent = '$' + (data.mes.i - data.mes.e).toLocaleString();
     };
 
-    // --- RECEPTOR MQTT (SINCRONIZACIÓN Y HERENCIA SILENCIOSA) ---
     function mergeByDate(localArr, remoteArr) {
       if (!Array.isArray(remoteArr)) return localArr || [];
       if (!Array.isArray(localArr)) localArr = [];
@@ -2587,8 +2479,7 @@
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/heartbeat', { qos: 0 });
         mqttClient.subscribe('openline/v4/workshop/' + wsCode + '/command', { qos: 1 });
         mqttClient.subscribe('openline/v4/global/telemetry/ping', { qos: 0 });
-        mqttClient.subscribe('openline/v4/global/telemetry/report', { qos: 0 });
-
+        
         window.broadcastPresence();
 
         mqttClient.publish('openline/v4/workshop/' + wsCode + '/sync/request', JSON.stringify({ requesterId: myDeviceId }));
@@ -2688,7 +2579,6 @@
           }
 
           if (topic.endsWith('/telemetry/ping')) { window.broadcastPresence(); return; }
-          if (topic.endsWith('/telemetry/report')) { window.saveTelemetryData(payload); return; }
 
           if (topic.includes('/sync') && payload && payload.senderId !== myDeviceId) {
             if(payload.repairs && Array.isArray(payload.repairs)) { 
@@ -2750,7 +2640,6 @@
       }
     };
 
-    // --- BOOT MAESTRO BLINDADO ---
     document.addEventListener('DOMContentLoaded', function() {
       try {
           window.activeDevicesMap[myDeviceId] = { time: Date.now(), user: activeUser, branch: localBranch };
@@ -2765,21 +2654,11 @@
 
           window.checkBannedStatus();
           
-          window.saveTelemetryData({ 
-            workshopId: currentWorkshopId.toUpperCase(), 
-            deviceId: myDeviceId, 
-            user: activeUser, 
-            branch: localBranch, 
-            name: workshopSettings.name, 
-            licenseType: window.checkLicenseStatus() 
-          });
-
           window.renderBranchTabs(); 
           window.renderRepairsList(); 
           window.updateCounters(); 
           window.updateCashBalanceUI();
           
-          // Mostrar banner animado de sincronización
           setTimeout(function() {
             var banner = $('realtimeSyncBanner');
             if (banner) {
