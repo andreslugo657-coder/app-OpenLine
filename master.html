@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es" class="bg-black">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>OpenLine - Panel Maestro Control</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+  <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
+  <style>
+    body { min-height: 100vh; background-color: #09090b; color: #f4f4f5; font-family: sans-serif; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #09090b; }
+    ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center p-4">
+
+  <!-- LOGIN -->
+  <div id="loginView" class="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-2xl mt-12 text-center">
+    <div class="w-16 h-16 mx-auto bg-indigo-900/50 rounded-2xl flex items-center justify-center border border-indigo-500 mb-4">
+      <i class="ph-bold ph-key text-3xl text-indigo-400"></i>
+    </div>
+    <h2 class="text-xl font-bold text-white mb-1">Panel Maestro</h2>
+    <p class="text-xs text-zinc-400 mb-6">Generador de Licencias OpenLine</p>
+    
+    <form onsubmit="window.unlockMasterPanel(event)">
+      <input type="password" id="inpMasterPin" placeholder="PIN de Seguridad" required class="w-full bg-zinc-950 border border-zinc-700 focus:border-indigo-500 outline-none rounded-xl px-4 py-3 text-center font-mono text-white tracking-widest mb-4">
+      <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white font-bold transition active:scale-95">Ingresar</button>
+    </form>
+  </div>
+
+  <!-- DASHBOARD MASTER -->
+  <div id="masterView" style="display: none;" class="w-full max-w-3xl space-y-4 pb-12 mt-4">
+    
+    <div class="flex items-center justify-between p-4 bg-zinc-900 border border-zinc-800 rounded-2xl">
+      <div class="flex items-center gap-3">
+        <i class="ph-bold ph-shield-check text-2xl text-indigo-400"></i>
+        <div>
+          <h1 class="font-bold text-white text-lg leading-tight">Control Maestro</h1>
+          <span class="text-[10px] text-zinc-400">Emisión de Licencias y Telemetría</span>
+        </div>
+      </div>
+      <button type="button" onclick="window.requestTelemetryBroadcast()" class="px-3 py-1.5 bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 border border-indigo-700/50 rounded-xl font-bold text-xs flex items-center gap-1.5 active:scale-95 transition">
+        <i class="ph-bold ph-arrows-clockwise"></i> Sondear Redes
+      </button>
+    </div>
+
+    <!-- STATS -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+      <div class="p-3 bg-zinc-900 border border-zinc-800 rounded-2xl">
+        <span class="text-[10px] text-zinc-400 font-bold uppercase block">Talleres Registrados</span>
+        <b class="text-white text-xl font-mono block mt-1" id="statTotal">0</b>
+      </div>
+      <div class="p-3 bg-zinc-900 border border-emerald-900/50 rounded-2xl">
+        <span class="text-[10px] text-emerald-400 font-bold uppercase block">En Línea Ahora</span>
+        <b class="text-emerald-400 text-xl font-mono block mt-1" id="statOnline">0</b>
+      </div>
+      <div class="p-3 bg-zinc-900 border border-amber-900/50 rounded-2xl">
+        <span class="text-[10px] text-amber-400 font-bold uppercase block">Licencias DEMO</span>
+        <b class="text-amber-400 text-xl font-mono block mt-1" id="statDemo">0</b>
+      </div>
+      <div class="p-3 bg-zinc-900 border border-indigo-900/50 rounded-2xl">
+        <span class="text-[10px] text-indigo-400 font-bold uppercase block">Licencias PRO</span>
+        <b class="text-indigo-400 text-xl font-mono block mt-1" id="statPro">0</b>
+      </div>
+    </div>
+
+    <!-- GENERADOR DE CLAVES -->
+    <div class="p-4 bg-zinc-900 border border-indigo-800 rounded-2xl space-y-3">
+      <span class="text-xs font-bold text-indigo-300 uppercase tracking-wide flex items-center gap-1.5 border-b border-indigo-900/50 pb-2">
+        <i class="ph-bold ph-key"></i> Generar Licencia Activa
+      </span>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <input type="text" id="genTargetCode" placeholder="Ej: TALLER-1234" class="sm:col-span-2 bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-2.5 text-white uppercase font-mono text-sm outline-none focus:border-indigo-500">
+        <select id="genLicType" class="bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2.5 text-white text-sm font-bold outline-none focus:border-indigo-500">
+          <option value="LIFETIME" selected>Vitalicia</option>
+        </select>
+      </div>
+      <button type="button" onclick="window.generateAndEmitKey()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg active:scale-95 transition">Generar y Enviar Comando Remoto</button>
+      
+      <div id="resultBox" style="display: none;" class="p-3 bg-black border border-emerald-800 rounded-xl flex justify-between items-center mt-2">
+        <div>
+          <span class="text-[10px] text-zinc-500 block uppercase font-bold">Clave Generada:</span>
+          <span id="txtGeneratedKey" class="font-mono text-emerald-400 font-bold text-sm"></span>
+        </div>
+        <button type="button" onclick="window.copyKey()" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-xs text-white font-bold">Copiar</button>
+      </div>
+    </div>
+
+    <!-- LISTA DE TALLERES EN TIEMPO REAL -->
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl flex flex-col max-h-[50vh]">
+      <div class="p-3 border-b border-zinc-800 shrink-0">
+        <h3 class="text-xs font-bold text-zinc-300 uppercase">Radar de Talleres en vivo</h3>
+      </div>
+      <div id="workshopsList" class="p-3 overflow-y-auto space-y-2 flex-1">
+        <div class="text-center text-zinc-500 text-xs py-8">Esperando conexión y sondeo...</div>
+      </div>
+    </div>
+    
+    <div class="text-center">
+      <button type="button" onclick="location.reload()" class="text-xs text-rose-500 font-bold underline">Cerrar Sesión Segura</button>
+    </div>
+
+  </div>
+
+  <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-[100000] flex flex-col items-center gap-2 pointer-events-none w-[90%] max-w-sm"></div>
+
+  <script>
+    function $(id) { return document.getElementById(id); }
+
+    window.showToast = function(title, msg) {
+      var tc = $('toastContainer');
+      if(tc) {
+         var t = document.createElement('div');
+         t.className = 'bg-zinc-800 border border-zinc-700 text-white px-4 py-3 rounded-2xl shadow-2xl text-xs mb-2 w-full text-center pointer-events-none transition-all z-[100000]';
+         t.innerHTML = '<b class="text-indigo-400 block mb-0.5">'+title+'</b>'+msg;
+         tc.appendChild(t); setTimeout(function(){ try { t.remove(); } catch(e){} }, 3500);
+      }
+    };
+
+    var mqttClient = null;
+    var TELEMETRY_KEY = 'openline_master_telemetry_registry_v1';
+    var telemetryData = {};
+
+    try { var saved = localStorage.getItem(TELEMETRY_KEY); if(saved) telemetryData = JSON.parse(saved); } catch(e){}
+
+    // Login Simple
+    window.unlockMasterPanel = function(e) {
+      e.preventDefault();
+      var pin = $('inpMasterPin').value.trim();
+      if(pin === '8408') {
+         $('loginView').style.display = 'none';
+         $('masterView').style.display = 'block';
+         window.initMasterMQTT();
+         window.renderTelemetry();
+         window.showToast("Acceso Concedido", "Panel Maestro inicializado.");
+      } else {
+         window.showToast("Error", "PIN incorrecto.");
+         $('inpMasterPin').value = '';
+      }
+    };
+
+    window.initMasterMQTT = function() {
+      mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'opl_master_' + Math.random().toString(16).substr(2,8), clean: true });
+      
+      mqttClient.on('connect', function() {
+        mqttClient.subscribe('openline/v4/global/telemetry/report', { qos: 0 });
+        window.requestTelemetryBroadcast();
+      });
+
+      mqttClient.on('message', function(topic, message) {
+        if(topic === 'openline/v4/global/telemetry/report') {
+          try {
+            var payload = JSON.parse(message.toString());
+            if(payload && payload.workshopId) {
+               if(!telemetryData[payload.workshopId]) {
+                  telemetryData[payload.workshopId] = { workshopId: payload.workshopId, devices: {}, firstSeen: Date.now() };
+               }
+               telemetryData[payload.workshopId].lastSeen = Date.now();
+               telemetryData[payload.workshopId].name = payload.name || telemetryData[payload.workshopId].name;
+               telemetryData[payload.workshopId].licenseType = payload.licenseType || 'DEMO';
+               
+               if(payload.deviceId) {
+                 telemetryData[payload.workshopId].devices[payload.deviceId] = {
+                   user: payload.user, branch: payload.branch, lastSeen: Date.now()
+                 };
+               }
+               
+               localStorage.setItem(TELEMETRY_KEY, JSON.stringify(telemetryData));
+               window.renderTelemetry();
+            }
+          } catch(e) {}
+        }
+      });
+    };
+
+    window.requestTelemetryBroadcast = function() {
+      if(mqttClient && mqttClient.connected) {
+         mqttClient.publish('openline/v4/global/telemetry/ping', JSON.stringify({ req: 'master' }));
+         window.showToast("Sondeo", "Petición de radar enviada a todos los talleres.");
+      }
+    };
+
+    window.renderTelemetry = function() {
+      var now = Date.now();
+      var total = 0, online = 0, demo = 0, pro = 0;
+      var html = '';
+
+      // Ordenar: Los online primero
+      var sortedWorkshops = Object.values(telemetryData).sort(function(a, b) {
+         var aOnline = (now - a.lastSeen < 30000) ? 1 : 0;
+         var bOnline = (now - b.lastSeen < 30000) ? 1 : 0;
+         if(bOnline !== aOnline) return bOnline - aOnline;
+         return b.lastSeen - a.lastSeen;
+      });
+
+      sortedWorkshops.forEach(function(w) {
+         total++;
+         var isOnline = (now - w.lastSeen < 30000);
+         if(isOnline) online++;
+         if(w.licenseType === 'DEMO') demo++; else pro++;
+         
+         var devCount = Object.keys(w.devices || {}).length;
+         var statusDot = isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-600';
+         var statusTxt = isOnline ? '<span class="text-emerald-400">En Línea</span>' : 'Visto: ' + new Date(w.lastSeen).toLocaleDateString();
+         var licBadge = w.licenseType === 'DEMO' ? 'bg-amber-950 text-amber-300' : 'bg-indigo-950 text-indigo-300';
+
+         html += '<div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl flex items-center justify-between">' +
+                   '<div>' +
+                     '<div class="flex items-center gap-2 mb-1">' +
+                       '<span class="w-2.5 h-2.5 rounded-full '+statusDot+'"></span>' +
+                       '<b class="text-white text-xs font-mono">'+w.workshopId+'</b>' +
+                       '<span class="text-[9px] px-1.5 py-0.2 rounded font-bold uppercase '+licBadge+'">'+(w.licenseType||'PRO')+'</span>' +
+                     '</div>' +
+                     '<div class="text-[10px] text-zinc-400">'+(w.name || 'Sin Nombre')+' • '+devCount+' equipos • '+statusTxt+'</div>' +
+                   '</div>' +
+                   '<button type="button" onclick="window.fillTarget(\''+w.workshopId+'\')" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg text-[10px] font-bold transition active:scale-95 border border-zinc-700">Emitir Clave</button>' +
+                 '</div>';
+      });
+
+      $('statTotal').textContent = total;
+      $('statOnline').textContent = online;
+      $('statDemo').textContent = demo;
+      $('statPro').textContent = pro;
+
+      var list = $('workshopsList');
+      if(list) list.innerHTML = html || '<div class="text-center text-zinc-500 text-xs py-8">No hay talleres registrados en la telemetría.</div>';
+    };
+
+    window.fillTarget = function(code) {
+      $('genTargetCode').value = code;
+      $('genTargetCode').focus();
+    };
+
+    window.generateAndEmitKey = function() {
+      var code = $('genTargetCode').value.trim().toUpperCase();
+      if (!code || !code.startsWith('TALLER-')) { window.showToast("Error", "Ingresa un ID válido (ej: TALLER-XXXX)"); return; }
+      
+      var key = 'OL-LIFETIME-' + Math.abs((code + '_LIFETIME_OPENLINE_2026').split('').reduce(function(a,b){a=((a<<5)-a)+b.charCodeAt(0);return a&a;},0)).toString(16).toUpperCase().substring(0,6);
+      
+      $('txtGeneratedKey').textContent = key;
+      $('resultBox').style.display = 'flex';
+      
+      if (mqttClient && mqttClient.connected) {
+        var licData = { type: 'LIFETIME', key: key, workshopId: code, status: 'PRO', expiresAt: 9999999999999 };
+        mqttClient.publish('openline/v4/workshop/' + code + '/license', JSON.stringify(licData), { retain: true, qos: 1 });
+        mqttClient.publish('openline/v4/workshop/' + code + '/command', JSON.stringify({ command: 'ACTIVATE_LICENSE', license: licData }));
+        window.showToast("Comando Enviado", "Si el taller " + code + " está online, se activará al instante.");
+      } else {
+        window.showToast("Sin Conexión", "La clave fue generada, pero no se pudo enviar automáticamente.");
+      }
+    };
+
+    window.copyKey = function() {
+      var k = $('txtGeneratedKey').textContent;
+      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(k); window.showToast("Copiado", "Clave copiada al portapapeles."); } 
+      else { window.showToast("Error", "Copia manual requerida."); }
+    };
+    
+    // Auto-actualizar lista cada 10 seg
+    setInterval(function(){ if($('masterView').style.display === 'block') window.renderTelemetry(); }, 10000);
+  </script>
+</body>
+</html>
