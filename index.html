@@ -2217,6 +2217,175 @@
       });
     };
 
+    // --- MOVIMIENTOS DE CAJA MANUALES Y CIERRE ---
+    
+    window.showCashIncome = function() {
+      var form = $('cashMovementForm');
+      if (form) {
+        form.classList.remove('hidden');
+        $('cashFormTitle').textContent = 'Registrar Ingreso';
+        $('cshType').value = 'INCOME';
+        $('cshAmount').value = '';
+        $('cshConcept').value = '';
+      }
+    };
+
+    window.showCashExpense = function() {
+      var form = $('cashMovementForm');
+      if (form) {
+        form.classList.remove('hidden');
+        $('cashFormTitle').textContent = 'Registrar Salida';
+        $('cshType').value = 'EXPENSE';
+        $('cshAmount').value = '';
+        $('cshConcept').value = '';
+      }
+    };
+
+    window.hideCashForm = function() {
+      var form = $('cashMovementForm');
+      if (form) form.classList.add('hidden');
+    };
+
+    window.saveCashMovement = function() {
+      var amount = parseFloat($('cshAmount').value);
+      var concept = $('cshConcept').value.trim();
+      var method = $('cshMethod').value;
+      var type = $('cshType').value;
+
+      if (!amount || amount <= 0 || !concept) {
+        window.showToast("Error", "Ingresa un monto válido y un concepto.");
+        return;
+      }
+
+      var id = 'CSH-MAN-' + Date.now();
+      
+      cashMovements.unshift({ 
+        id: id, 
+        branch: currentCashBranch, 
+        type: type, 
+        amount: amount, 
+        concept: concept, 
+        method: method, 
+        date: Date.now(), 
+        user: activeUser, 
+        closed: false 
+      });
+
+      StorageShield.save('cash', cashMovements);
+      window.updateCashBalanceUI();
+      window.hideCashForm();
+      window.showToast("Éxito", "Movimiento registrado en caja.");
+    };
+
+    window.updateCashBalanceUI = function() {
+      var income = 0;
+      var expense = 0;
+      var container = $('cashListContainer');
+
+      var branchMovements = cashMovements.filter(function(m) { 
+        return m.branch === currentCashBranch && !m.closed; 
+      });
+
+      branchMovements.forEach(function(m) {
+        if (m.type === 'INCOME') income += parseFloat(m.amount);
+        if (m.type === 'EXPENSE') expense += parseFloat(m.amount);
+      });
+
+      if ($('cashTotalIncome')) $('cashTotalIncome').textContent = '$' + income.toLocaleString();
+      if ($('cashTotalExpense')) $('cashTotalExpense').textContent = '$' + expense.toLocaleString();
+      if ($('cashNetBalance')) $('cashNetBalance').textContent = '$' + (income - expense).toLocaleString();
+
+      if ($('headerCashBalance') && currentCashBranch === localBranch) {
+        $('headerCashBalance').textContent = '$' + (income - expense).toLocaleString();
+      }
+
+      if (container) {
+        if (branchMovements.length === 0) {
+          container.innerHTML = '<div class="text-center text-zinc-600 text-xs py-4">No hay movimientos activos en esta caja.</div>';
+        } else {
+          container.innerHTML = branchMovements.map(function(m) {
+            var isInc = (m.type === 'INCOME');
+            var color = isInc ? 'text-emerald-400' : 'text-rose-400';
+            var sign = isInc ? '+' : '-';
+            return '<div class="flex items-center justify-between p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl mb-1">' +
+                     '<div class="flex-1 min-w-0 pr-2">' +
+                       '<div class="text-[11px] font-bold text-white truncate">' + m.concept + '</div>' +
+                       '<div class="text-[9px] text-zinc-500 mt-0.5">' + m.method + ' • ' + m.user + '</div>' +
+                     '</div>' +
+                     '<div class="text-right shrink-0">' +
+                       '<div class="text-xs font-mono font-bold ' + color + '">' + sign + '$' + parseFloat(m.amount).toLocaleString() + '</div>' +
+                     '</div>' +
+                   '</div>';
+          }).join('');
+        }
+      }
+      
+      if (typeof window.renderCashClosures === 'function') {
+        window.renderCashClosures();
+      }
+    };
+
+    window.cerrarCajaRestablecer = function() {
+      window.requestAdminPinAuth("Cerrar Caja Local", function() {
+        var branchMovements = cashMovements.filter(function(m) { return m.branch === currentCashBranch && !m.closed; });
+        if(branchMovements.length === 0) { window.showToast("Aviso", "No hay movimientos para cerrar."); return; }
+        
+        var inc = 0, exp = 0;
+        branchMovements.forEach(function(m) {
+          if(m.type === 'INCOME') inc += parseFloat(m.amount);
+          else exp += parseFloat(m.amount);
+          m.closed = true; 
+        });
+        
+        cashClosures.unshift({
+          id: 'CIERRE-' + Date.now(),
+          branch: currentCashBranch,
+          date: Date.now(),
+          income: inc,
+          expense: exp,
+          balance: inc - exp,
+          user: activeUser
+        });
+        
+        StorageShield.save('cash', cashMovements);
+        StorageShield.save('cashClosures', cashClosures);
+        window.updateCashBalanceUI();
+        window.showToast("Caja Cerrada", "Saldo restablecido a cero.");
+      });
+    };
+
+    window.renderCashClosures = function() {
+      var container = $('cashClosuresList'); if(!container) return;
+      var branchClosures = cashClosures.filter(function(c) { return c.branch === currentCashBranch; });
+      if(branchClosures.length === 0) {
+        container.innerHTML = '<div class="text-center text-zinc-600 text-xs py-4">No hay cierres previos.</div>';
+        return;
+      }
+      container.innerHTML = branchClosures.map(function(c) {
+        return '<div class="flex items-center justify-between p-2 bg-zinc-950 border border-zinc-800 rounded-xl mb-1">' +
+                 '<div class="text-[10px] text-zinc-400 font-mono">' + new Date(c.date).toLocaleString('es-AR') + '<br><span class="text-white font-sans">' + c.user + '</span></div>' +
+                 '<div class="text-right"><div class="text-xs font-mono font-bold text-white">$' + parseFloat(c.balance).toLocaleString() + '</div><div class="text-[8px] text-emerald-400">Ing: $' + c.income + ' | Egr: $' + c.expense + '</div></div>' +
+               '</div>';
+      }).join('');
+    };
+
+    window.sendCashCierreWA = function() {
+      var inc = 0, exp = 0;
+      var branchMovements = cashMovements.filter(function(m) { return m.branch === currentCashBranch && !m.closed; });
+      branchMovements.forEach(function(m) { if(m.type === 'INCOME') inc += parseFloat(m.amount); else exp += parseFloat(m.amount); });
+      var msg = `*${workshopSettings.name.toUpperCase()} - REPORTE DE CAJA* 💵\n\n🏢 *Sucursal:* ${currentCashBranch}\n👤 *Operador:* ${activeUser}\n📅 *Fecha:* ${new Date().toLocaleString('es-AR')}\n\n🟢 *Ingresos:* $${inc}\n🔴 *Egresos:* $${exp}\n\n💰 *SALDO FINAL:* $${inc - exp}`;
+      var phone = workshopSettings.adminPhone || '';
+      window.open('https://wa.me/' + phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent(msg), '_blank');
+    };
+
+    window.printCashCierre = function() {
+      var inc = 0, exp = 0;
+      var branchMovements = cashMovements.filter(function(m) { return m.branch === currentCashBranch && !m.closed; });
+      branchMovements.forEach(function(m) { if(m.type === 'INCOME') inc += parseFloat(m.amount); else exp += parseFloat(m.amount); });
+      var html = `<div style="width:230px;margin:auto;font-family:monospace;line-height:1.25;color:#000;"><div style="text-align:center;border-bottom:1px dashed #000;padding-bottom:4px;margin-bottom:4px;"><b style="font-size:12px;">${workshopSettings.name.toUpperCase()}</b><br><b style="font-size:10px;">REPORTE DE CAJA - ${currentCashBranch}</b></div><div style="font-size:10px;margin-bottom:6px;"><b>Fecha:</b> ${new Date().toLocaleString('es-AR')}<br><b>Operador:</b> ${activeUser}</div><div style="border-top:1px dashed #000;margin-top:6px;padding-top:4px;font-size:11px;">INGRESOS: $${inc}<br>EGRESOS: $${exp}<br><br><b style="font-size:13px;">SALDO FINAL: $${inc - exp}</b></div></div>`;
+      $('printArea').innerHTML = html; $('printArea').style.display = 'block'; window.print(); setTimeout(function(){ $('printArea').style.display = 'none'; }, 500);
+    };
+
     // --- RECEPTOR MQTT (SINCRONIZACIÓN Y HERENCIA SILENCIOSA) ---
     function mergeByDate(localArr, remoteArr) {
       if (!Array.isArray(remoteArr)) return localArr || [];
@@ -2506,3 +2675,4 @@
   </script>
 </body>
 </html>
+```eof
