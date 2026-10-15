@@ -17,16 +17,14 @@
     };
   </script>
 
-  <!-- Phosphor Icons & Librerías -->
+  <!-- Phosphor Icons -->
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
-  <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
 
   <style>
     body { min-height: 100vh; min-height: 100dvh; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
     .pt-safe { padding-top: max(env(safe-area-inset-top), 8px); }
     .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 20px); }
     ::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
     .app-modal {
       display: none; position: fixed; inset: 0; z-index: 9999;
@@ -42,7 +40,7 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen relative z-0">
 
-  <!-- CABECERA DE LA APLICACIÓN -->
+  <!-- CABECERA PRINCIPAL -->
   <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
     <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full">
       <div class="flex items-center gap-2 min-w-0">
@@ -72,7 +70,7 @@
       </div>
     </div>
 
-    <!-- BOTONERA DE MÓDULOS -->
+    <!-- BOTONERA Y NAVEGACIÓN -->
     <div class="px-2.5 pb-2 max-w-5xl mx-auto w-full space-y-2">
       <div class="grid grid-cols-5 gap-1.5 text-center">
         <button type="button" onclick="window.openNewRepairModal()" class="py-2 px-1 rounded-xl bg-iosBlue text-white text-[10px] font-bold shadow flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
@@ -92,7 +90,6 @@
         </button>
       </div>
 
-      <!-- SELECTOR DE MÓDULOS DEL SISTEMA -->
       <nav class="flex items-center gap-1 bg-zinc-950 p-1 rounded-xl border border-zinc-800 text-xs font-medium">
         <button type="button" onclick="window.switchView('taller')" id="navTaller" class="flex-1 py-1.5 px-2 rounded-lg bg-zinc-800 text-white font-bold flex items-center justify-center gap-1 transition">
           <i class="ph-bold ph-wrench text-iosBlue"></i><span>Taller</span>
@@ -107,10 +104,10 @@
     </div>
   </header>
 
-  <!-- VISTAS DE MÓDULOS -->
+  <!-- MÓDULOS Y VISTAS -->
   <main class="flex-1 w-full max-w-5xl mx-auto px-3 py-2 space-y-2 pb-safe overflow-y-auto">
 
-    <!-- VISTA 1: TALLER DE REPARACIONES -->
+    <!-- VISTA 1: LISTADO DE ÓRDENES -->
     <div id="viewModuleTaller" class="space-y-2">
       <div class="grid grid-cols-3 gap-1.5">
         <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center">
@@ -133,20 +130,16 @@
       </div>
     </div>
 
-    <!-- VISTA 2: CARTERA DE CLIENTES AUTO-CONSTRUIDA & CUENTA CORRIENTE -->
+    <!-- VISTA 2: CARTERA DE CLIENTES -->
     <div id="viewModuleClientes" class="hidden space-y-2.5">
-      <div class="flex items-center justify-between gap-2">
-        <input type="text" id="searchClientInput" oninput="window.renderClientsList()" placeholder="Buscar por cliente o teléfono..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500">
-        <button type="button" onclick="window.openNewClientModal()" class="px-3 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs shrink-0 active:scale-95 transition">+ Cliente</button>
-      </div>
-
+      <input type="text" id="searchClientInput" oninput="window.renderClientsList()" placeholder="Buscar por cliente o teléfono..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white">
       <div id="clientsListContainer" class="space-y-2 pb-6"></div>
     </div>
 
     <!-- VISTA 3: BALANCE DE CAJA -->
     <div id="viewModuleCaja" class="hidden space-y-2.5">
-      <div class="p-3 bg-zinc-900 border border-zinc-800 rounded-2xl text-center space-y-1">
-        <span class="text-[10px] text-emerald-400 font-bold uppercase block">Caja / Saldo Actual Neto</span>
+      <div class="p-3 bg-zinc-900 border border-zinc-800 rounded-2xl text-center">
+        <span class="text-[10px] text-emerald-400 font-bold uppercase block">Caja Net Balance</span>
         <span id="cashNetBalance" class="text-2xl font-bold text-white font-mono">$0</span>
       </div>
       <div id="cashMovementsList" class="space-y-1.5 pb-6"></div>
@@ -154,27 +147,64 @@
 
   </main>
 
-  <!-- MODAL CREAR CLIENTE -->
-  <div id="clientModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-4 space-y-3 modal-card flex flex-col text-xs">
-      <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
-        <h3 class="font-bold text-white">Nuevo Cliente Manual</h3>
-        <button type="button" onclick="window.closeModal('clientModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button>
+  <!-- MODAL DE DETALLE DE LA ÓRDEN (ABRE AL CLICKEAR) -->
+  <div id="repairDetailModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col text-xs text-zinc-300">
+      <div class="flex items-center justify-between p-4 border-b border-zinc-800 shrink-0">
+        <div>
+          <span id="detailOrderNumber" class="text-iosBlue font-mono font-bold text-sm">#OL-XXXX</span>
+          <h3 id="detailDeviceTitle" class="text-white font-bold text-xs mt-0.5">Dispositivo</h3>
+        </div>
+        <button type="button" onclick="window.closeModal('repairDetailModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
       </div>
-      <form onsubmit="window.saveManualClient(event)" class="space-y-3">
-        <input type="text" id="inpClientFormName" required placeholder="Nombre y Apellido *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-        <input type="tel" id="inpClientFormPhone" required placeholder="Teléfono / WhatsApp *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
-        <button type="submit" class="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl active:scale-95 transition">Guardar Cliente</button>
-      </form>
+
+      <div class="p-4 space-y-3.5 flex-1 overflow-y-auto">
+        <!-- CLIENTE Y WHATSAPP -->
+        <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-1">
+          <span class="text-[9px] font-bold text-zinc-500 uppercase block">Cliente</span>
+          <div id="detailClientName" class="text-white font-bold text-xs">Nombre Cliente</div>
+          <a id="detailClientPhoneLink" href="#" target="_blank" class="inline-flex items-center gap-1 font-mono text-emerald-400 text-xs mt-1 underline">
+            <i class="ph-bold ph-whatsapp-logo"></i> <span id="detailClientPhone">0000000000</span>
+          </a>
+        </div>
+
+        <!-- FALLA -->
+        <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-1">
+          <span class="text-[9px] font-bold text-zinc-500 uppercase block">Falla / Diagnóstico</span>
+          <p id="detailDeviceFault" class="text-zinc-300 leading-relaxed">Detalle de la falla...</p>
+        </div>
+
+        <!-- PRESUPUESTO Y SEÑA -->
+        <div class="grid grid-cols-2 gap-2">
+          <div class="bg-zinc-950 p-2.5 rounded-xl border border-zinc-800">
+            <span class="text-[9px] font-bold text-zinc-500 uppercase block">Presupuesto</span>
+            <span id="detailBudget" class="text-emerald-400 font-mono font-bold text-sm">$0</span>
+          </div>
+          <div class="bg-zinc-950 p-2.5 rounded-xl border border-zinc-800">
+            <span class="text-[9px] font-bold text-zinc-500 uppercase block">Seña Dejada</span>
+            <span id="detailAdvance" class="text-amber-400 font-mono font-bold text-sm">$0</span>
+          </div>
+        </div>
+
+        <!-- CAMBIO DE ESTADO -->
+        <div class="space-y-1">
+          <label class="text-[9px] font-bold text-zinc-400 uppercase block">Estado de la Orden</label>
+          <select id="detailStatusSelect" onchange="window.updateOrderStatusFromModal()" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
+            <option value="IN_PROGRESS">En Taller (IN_PROGRESS)</option>
+            <option value="READY">Listo para Entregar (READY)</option>
+            <option value="DELIVERED">Entregado (DELIVERED)</option>
+          </select>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- MODAL NUEVO INGRESO REPARACIÓN -->
+  <!-- MODAL NUEVO INGRESO -->
   <div id="newRepairModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0">
         <h2 class="text-sm font-bold text-white">Nuevo Ingreso de Equipo</h2>
-        <button type="button" onclick="window.closeModal('newRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
+        <button type="button" onclick="window.closeModal('newRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button>
       </div>
       <form onsubmit="window.guardarIngresoDirecto(event)" class="overflow-y-auto p-4 space-y-3 flex-1 pb-8">
         <input type="text" id="inpClientName" required placeholder="Nombre del Cliente *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
@@ -193,7 +223,7 @@
     </div>
   </div>
 
-  <!-- MODALES DE VENTA Y OTROS MÓDULOS -->
+  <!-- MODALES ADICIONALES -->
   <div id="salesModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-amber-600/70 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col text-xs text-zinc-300">
       <div class="p-3 border-b border-zinc-800 flex items-center justify-between shrink-0"><h3 class="font-bold text-white text-sm">Venta Mostrador</h3><button type="button" onclick="window.closeModal('salesModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button></div>
@@ -215,30 +245,25 @@
   <div id="stockModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-purple-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><h3 class="font-bold text-white text-sm">Stock</h3><button type="button" onclick="window.closeModal('stockModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button></div>
-      <div class="p-4 space-y-3 flex-1 overflow-y-auto" id="stockListContainer"><div class="text-center text-zinc-500 py-6">Inventario cargado.</div></div>
+      <div class="p-4 space-y-3 flex-1 overflow-y-auto"><div class="text-center text-zinc-500 py-6">Inventario sincronizado.</div></div>
     </div>
   </div>
 
   <div id="ventasModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-indigo-700/80 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><h3 class="font-bold text-white text-sm">Historial Ventas</h3><button type="button" onclick="window.closeModal('ventasModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button></div>
-      <div class="p-4 space-y-3 flex-1 overflow-y-auto" id="ventasListContainer"><div class="text-center text-zinc-500 py-6">Sin ventas registradas.</div></div>
+      <div class="p-4 space-y-3 flex-1 overflow-y-auto"><div class="text-center text-zinc-500 py-6">Sin ventas registradas.</div></div>
     </div>
   </div>
 
-  <div id="toastContainer" class="fixed top-4 right-4 z-[100000] flex flex-col items-center gap-2 pointer-events-none"></div>
-
-  <!-- CONTROLADOR PRINCIPAL Y DE NAVEGACIÓN -->
   <script>
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
-    var PERMANENT_LICENSE_KEY = 'openline_perm_vitalicio_shield';
-
     var currentWorkshopId = 'TALLER-9572';
     localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
 
     var repairs = [];
     var cashMovements = [];
-    var clients = [];
+    var activeOrderSelected = null;
 
     function $(id) { return document.getElementById(id); }
 
@@ -250,7 +275,6 @@
     window.openVentasHistoryModal = function() { window.openModal('ventasModal'); };
     window.openStockModal = function() { window.openModal('stockModal'); };
     window.openCashModal = function() { window.openModal('cashModal'); };
-    window.openNewClientModal = function() { window.openModal('clientModal'); };
 
     window.switchView = function(viewName) {
       ['taller', 'clientes', 'caja'].forEach(v => {
@@ -270,7 +294,6 @@
       if (viewName === 'caja') window.renderCashMovements();
     };
 
-    // DEEP SCAN HISTÓRICO Y SEPARACIÓN DE REPARACIONES / CAJA / CLIENTES
     function deepScanAllHistoricalData() {
       var allKeys = Object.keys(localStorage);
       var repairMap = {};
@@ -281,14 +304,8 @@
           var data = JSON.parse(localStorage.getItem(key));
           if (Array.isArray(data)) {
             data.forEach(function(item) {
-              // 1. Filtrar únicamente Órdenes de Reparación (evitando items CSH)
-              if (item && item.id && String(item.id).startsWith('OL-')) {
-                repairMap[item.id] = item;
-              }
-              // 2. Movimientos de Caja
-              if (item && item.id && (String(item.id).startsWith('CSH-') || String(item.id).startsWith('VTA-'))) {
-                cashMap[item.id] = item;
-              }
+              if (item && item.id && String(item.id).startsWith('OL-')) repairMap[item.id] = item;
+              if (item && item.id && (String(item.id).startsWith('CSH-') || String(item.id).startsWith('VTA-'))) cashMap[item.id] = item;
             });
           }
         } catch(e) {}
@@ -297,58 +314,39 @@
       repairs = Object.values(repairMap).sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
       cashMovements = Object.values(cashMap).sort((a,b) => (b.date || 0) - (a.date || 0));
 
-      window.syncClientsFromRepairs();
       window.renderRepairsList();
       window.updateCashBalanceUI();
     }
 
-    // CARTERA AUTO-CONSTRUIDA DE CLIENTES DESDE LAS ÓRDENES HISTÓRICAS
-    window.syncClientsFromRepairs = function() {
-      var clientMap = {};
-      
-      repairs.forEach(r => {
-        if (!r.clientPhone) return;
-        var cleanPhone = r.clientPhone.trim();
-        if (!clientMap[cleanPhone]) {
-          clientMap[cleanPhone] = {
-            name: r.clientName || 'Cliente',
-            phone: cleanPhone,
-            totalBilled: 0,
-            repairsCount: 0
-          };
-        }
-        clientMap[cleanPhone].totalBilled += (parseFloat(r.budget) || 0);
-        clientMap[cleanPhone].repairsCount += 1;
-      });
+    // ABRIR EL MODAL AL CLICKEAR EN UNA ÓRDEN
+    window.openRepairDetailModal = function(orderId) {
+      var order = repairs.find(r => r.id === orderId);
+      if (!order) return;
 
-      clients = Object.values(clientMap);
+      activeOrderSelected = order;
+      $('detailOrderNumber').textContent = '#' + order.id;
+      $('detailDeviceTitle').textContent = (order.deviceBrand || '') + ' ' + (order.deviceModel || '');
+      $('detailClientName').textContent = order.clientName || 'Cliente';
+      
+      var phone = order.clientPhone || 'Sin número';
+      $('detailClientPhone').textContent = phone;
+      $('detailClientPhoneLink').href = 'https://wa.me/' + phone.replace(/[^0-9]/g, '');
+
+      $('detailDeviceFault').textContent = order.fault || 'Sin observaciones cargadas.';
+      $('detailBudget').textContent = '$' + (parseFloat(order.budget) || 0).toLocaleString();
+      $('detailAdvance').textContent = '$' + (parseFloat(order.advance) || 0).toLocaleString();
+      $('detailStatusSelect').value = order.status || 'IN_PROGRESS';
+
+      window.openModal('repairDetailModal');
     };
 
-    window.renderClientsList = function() {
-      var container = $('clientsListContainer');
-      var query = $('searchClientInput')?.value.toLowerCase().trim() || '';
+    window.updateOrderStatusFromModal = function() {
+      if (!activeOrderSelected) return;
+      var newStatus = $('detailStatusSelect').value;
+      activeOrderSelected.status = newStatus;
 
-      if (!container) return;
-
-      var filtered = clients.filter(c => !query || c.name.toLowerCase().includes(query) || c.phone.toLowerCase().includes(query));
-
-      if (filtered.length === 0) {
-        container.innerHTML = `<div class="text-center py-10 text-zinc-500 text-xs">Sin clientes registrados.</div>`;
-        return;
-      }
-
-      container.innerHTML = filtered.map(c => `
-        <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex justify-between items-center">
-          <div>
-            <h4 class="text-xs font-bold text-white flex items-center gap-1"><i class="ph-bold ph-user text-indigo-400"></i> ${c.name}</h4>
-            <p class="text-[10px] font-mono text-zinc-400 mt-0.5"><i class="ph-bold ph-whatsapp-logo text-emerald-400"></i> ${c.phone}</p>
-          </div>
-          <div class="text-right">
-            <span class="text-[9px] text-zinc-500 uppercase font-bold block">${c.repairsCount} Trabajos</span>
-            <span class="text-xs font-mono font-bold text-emerald-400">$${c.totalBilled.toLocaleString()}</span>
-          </div>
-        </div>
-      `).join('');
+      localStorage.setItem('openline_vault_' + currentWorkshopId + '_repairs', JSON.stringify(repairs));
+      window.renderRepairsList();
     };
 
     window.renderRepairsList = function() {
@@ -356,9 +354,9 @@
       var empty = $('emptyState');
       if (!container) return;
 
-      if ($('counterTotal'))$('counterTotal').textContent = repairs.length;
-      if ($('counterInProgress'))$('counterInProgress').textContent = repairs.filter(r => r.status === 'IN_PROGRESS').length;
-      if ($('counterReady'))$('counterReady').textContent = repairs.filter(r => r.status === 'READY').length;
+      if ($('counterTotal')) $('counterTotal').textContent = repairs.length;
+      if ($('counterInProgress')) $('counterInProgress').textContent = repairs.filter(r => r.status === 'IN_PROGRESS').length;
+      if ($('counterReady')) $('counterReady').textContent = repairs.filter(r => r.status === 'READY').length;
 
       if (!repairs || repairs.length === 0) {
         container.innerHTML = '';
@@ -368,86 +366,44 @@
 
       empty?.classList.add('hidden');
       container.innerHTML = repairs.map(r => `
-        <div class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl flex justify-between items-center">
+        <div onclick="window.openRepairDetailModal('${r.id}')" class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl flex justify-between items-center cursor-pointer active:scale-98 transition hover:border-zinc-700">
           <div>
             <span class="font-mono text-xs font-bold text-iosBlue">#${r.id}</span>
-            <h4 class="text-xs font-bold text-white mt-0.5">${r.deviceBrand || ''} ${r.deviceModel || ''}</h4>
+            <h4 class="text-xs font-bold text-white mt-0.5">${r.deviceBrand \vert{}\vert{} ''}${r.deviceModel || ''}</h4>
             <div class="text-[10px] text-zinc-400">${r.clientName || 'Cliente'} <span class="font-mono text-zinc-500">(${r.clientPhone || 'S/T'})</span></div>
           </div>
           <div class="text-right">
-            <span class="text-[9px] px-2 py-0.5 rounded bg-zinc-800 text-amber-400 font-bold">${r.status || 'IN_PROGRESS'}</span>
-            <div class="font-mono text-xs font-bold text-emerald-400 mt-1">$${(r.budget || 0).toLocaleString()}</div>
+            <span class="text-[9px] px-2 py-0.5 rounded bg-zinc-800 text-amber-400 font-bold">${r.status \vert{}\vert{} 'IN_PROGRESS'}</span> <div class="font-mono text-xs font-bold text-emerald-400 mt-1">$${(r.budget || 0).toLocaleString()}</div>
           </div>
         </div>
       `).join('');
     };
 
-    window.updateCashBalanceUI = function() {
-      var total = 0;
-      cashMovements.forEach(c => { total += (c.amount || 0); });
-      if ($('cashNetBalance')) $('cashNetBalance').textContent = '$' + total.toLocaleString();
-    };
+    window.renderClientsList = function() {
+      var container = $('clientsListContainer');
+      var clientMap = {};
 
-    window.renderCashMovements = function() {
-      var container = $('cashMovementsList');
-      var modalContainer = $('cashModalList');
-      var html = cashMovements.length === 0 ? '<div class="text-center text-zinc-500 py-4">Sin movimientos.</div>' : cashMovements.map(c => `
-        <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-lg flex justify-between items-center">
-          <div>
-            <span class="text-white text-xs font-bold">${c.concept || 'Movimiento'}</span>
-            <div class="text-[9px] text-zinc-500">${new Date(c.date || Date.now()).toLocaleDateString('es-AR')}</div>
-          </div>
-          <span class="font-mono text-emerald-400 font-bold text-xs">+$${(c.amount || 0).toLocaleString()}</span>
-        </div>
-      `).join('');
+      repairs.forEach(r => {
+        if (!r.clientPhone) return;
+        var phone = r.clientPhone.trim();
+        if (!clientMap[phone]) clientMap[phone] = { name: r.clientName || 'Cliente', phone: phone, total: 0, count: 0 };
+        clientMap[phone].total += (parseFloat(r.budget) || 0);
+        clientMap[phone].count += 1;
+      });
 
-      if (container) container.innerHTML = html;
-      if (modalContainer) modalContainer.innerHTML = html;
-    };
+      var clients = Object.values(clientMap);
+      if (!container) return;
 
-    window.guardarIngresoDirecto = function(e) {
-      if (e && e.preventDefault) e.preventDefault();
-      var id = 'OL-' + Math.floor(1000 + Math.random() * 9000);
-      var budget = parseFloat($('inpDeviceBudget').value) || 0;
-      var advance = parseFloat($('inpDeviceAdvance').value) || 0;
-
-      var order = {
-        id: id,
-        clientName: $('inpClientName').value,
-        clientPhone: $('inpClientPhone').value,
-        deviceBrand: $('inpDeviceBrand').value,
-        deviceModel: $('inpDeviceModel').value,
-        fault: $('inpDeviceFault').value,
-        budget: budget,
-        advance: advance,
-        status: 'IN_PROGRESS',
-        createdAt: Date.now()
-      };
-
-      repairs.unshift(order);
-      localStorage.setItem('openline_vault_' + currentWorkshopId + '_repairs', JSON.stringify(repairs));
-
-      if (advance > 0) {
-        cashMovements.unshift({ id: 'CSH-' + Date.now(), amount: advance, concept: 'Seña Orden #' + id, date: Date.now() });
-        localStorage.setItem('openline_vault_' + currentWorkshopId + '_cash', JSON.stringify(cashMovements));
+      if (clients.length === 0) {
+        container.innerHTML = `<div class="text-center py-10 text-zinc-500 text-xs">Sin clientes registrados.</div>`;
+        return;
       }
 
-      window.closeModal('newRepairModal');
-      deepScanAllHistoricalData();
-    };
-
-    window.exportFullBackupJSON = function() {
-      var backup = { workshopId: currentWorkshopId, repairs, cashMovements, exportedAt: new Date().toISOString() };
-      var blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `backup_${currentWorkshopId}_${new Date().toISOString().slice(0,10)}.json`;
-      a.click();
-    };
-
-    window.addEventListener('DOMContentLoaded', function() {
-      deepScanAllHistoricalData();
-    });
-  </script>
-</body>
-</html>
+      container.innerHTML = clients.map(c => `
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex justify-between items-center">
+          <div>
+            <h4 class="text-xs font-bold text-white flex items-center gap-1"><i class="ph-bold ph-user text-indigo-400"></i> ${c.name}</h4>
+            <p class="text-[10px] font-mono text-zinc-400 mt-0.5"><i class="ph-bold ph-whatsapp-logo text-emerald-400"></i> ${c.phone}</p>
+          </div>
+          <div class="text-right">
+            <span class="text-[9px] text-zinc-500 uppercase font-bold block
