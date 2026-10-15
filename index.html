@@ -17,167 +17,220 @@
     };
   </script>
 
-  <!-- Phosphor Icons & MQTT -->
+  <!-- Phosphor Icons & Librerías -->
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
   <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
   <style>
     body { min-height: 100vh; min-height: 100dvh; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
     .pt-safe { padding-top: max(env(safe-area-inset-top), 8px); }
     .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 20px); }
-    ::-webkit-scrollbar { display: none; }
-    .app-modal { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.88); backdrop-filter: blur(8px); align-items: flex-end; justify-content: center; }
-    @media (min-width: 640px) { .app-modal { align-items: center; } }
+    
+    input, select, textarea { font-size: 16px !important; }
+    button, a, .cursor-pointer { touch-action: manipulation; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    
+    ::-webkit-scrollbar { display: none; width: 0; height: 0; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .app-modal {
+      display: none; position: fixed; inset: 0; z-index: 9999;
+      background-color: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      align-items: flex-end; justify-content: center;
+      padding-bottom: max(env(safe-area-inset-bottom), 12px); padding-top: max(env(safe-area-inset-top), 8px);
+    }
+    @media (min-width: 640px) { .app-modal { align-items: center; padding-bottom: 20px; } }
     .app-modal.active { display: flex !important; }
+    .modal-card { max-height: 86dvh; height: 86dvh; min-height: 0; }
+    @media (min-width: 640px) { .modal-card { max-height: 88dvh; height: auto; } }
+
+    #qr-reader, #pos-qr-reader, #stock-qr-reader { border: none !important; width: 100%; min-height: 240px; }
+    #qr-reader video, #pos-qr-reader video, #stock-qr-reader video { border-radius: 1rem; object-fit: cover; width: 100%; height: 240px; }
+
+    .ticker-wrap { width: 100%; overflow: hidden; background-color: #09090b; border-top: 1px solid #27272a; padding: 5px 0; flex-shrink: 0; }
+    .ticker { display: inline-block; white-space: nowrap; padding-right: 100%; box-sizing: content-box; animation: ticker 25s linear infinite; }
+    @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+
+    @media print {
+      body * { visibility: hidden !important; }
+      #printArea, #printArea * { visibility: visible !important; }
+      #printArea { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; display: block !important; background: white !important; color: black !important; }
+    }
   </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen">
+<body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen relative z-0">
 
-  <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md">
+  <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
     <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center font-bold text-white">
-          <i class="ph-bold ph-wrench"></i>
+      <div class="flex items-center gap-2 min-w-0">
+        <div id="headerLogoContainer" class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center overflow-hidden shadow shrink-0">
+          <i id="headerDefaultIcon" class="ph-bold ph-wrench text-white text-base"></i>
+          <img id="headerCustomLogo" src="" alt="Logo" class="w-full h-full object-cover hidden">
         </div>
-        <div>
-          <div class="flex items-center gap-1.5">
-            <h1 class="text-xs font-bold text-white">OpenLine</h1>
-            <span id="headerWorkshopCode" class="text-[9px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-1.5 py-0.5 rounded-full">TALLER-XXXX</span>
-            <span id="headerLicenseBadge" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-600/70">DEMO</span>
+        <div class="min-w-0 flex flex-col">
+          <div class="flex items-center gap-1 flex-wrap">
+            <h1 id="appHeaderTitle" class="text-xs font-bold text-white tracking-tight truncate">OpenLine</h1>
+            <button type="button" onclick="window.openTeamModal()" class="text-[9px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-1.5 py-0.5 rounded-full flex items-center gap-1 active:opacity-75 transition">
+              <span id="livePulseDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span id="headerWorkshopCode">TALLER-XXXX</span>
+            </button>
+            <span class="text-[9px] font-mono bg-emerald-950 border border-emerald-700/60 text-emerald-400 px-1.5 py-0.5 rounded-full flex items-center gap-1">
+              <i class="ph-bold ph-users text-[9px]"></i> <span id="onlineUsersCount">1</span>
+            </span>
+            <button type="button" id="headerLicenseBtn" onclick="window.openLicenseModal()" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition">
+              <i class="ph-bold ph-shield-check"></i> <span id="headerLicenseText">DEMO</span>
+            </button>
           </div>
-          <p class="text-[10px] text-zinc-400">Servicio Técnico Profesional</p>
+          <span id="appHeaderSubtitle" class="text-[10px] text-zinc-400 font-medium truncate">Servicio Técnico Profesional</span>
         </div>
       </div>
 
-      <div class="flex items-center gap-1">
-        <button onclick="window.exportFullBackupJSON()" class="h-8 px-2 rounded-lg bg-indigo-950 text-indigo-300 border border-indigo-700 text-xs font-bold flex items-center gap-1">
-          <i class="ph-bold ph-floppy-disk"></i> Backup
+      <div class="flex items-center gap-1 shrink-0">
+        <button type="button" onclick="window.exportFullBackupJSON()" class="h-8 px-2 rounded-lg bg-indigo-950 text-indigo-300 border border-indigo-700 flex items-center gap-1 active:scale-95 transition shadow-sm text-xs font-bold" title="Descargar Respaldo JSON">
+          <i class="ph-bold ph-floppy-disk text-sm"></i>
+          <span class="hidden sm:inline">Backup</span>
+        </button>
+        <button type="button" onclick="window.openSwitchUserModal()" class="h-8 px-2 rounded-lg bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center gap-1 active:scale-95 transition shadow-sm text-xs font-bold" title="Personal y Dispositivos">
+          <i class="ph-bold ph-user-circle text-sm text-iosBlue"></i>
+          <span id="headerActiveUserDisplay" class="max-w-[70px] truncate">Admin</span>
+        </button>
+        <button type="button" onclick="window.openSettingsModal()" class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm" title="Ajustes">
+          <i class="ph-bold ph-gear text-base"></i>
         </button>
       </div>
     </div>
 
-    <!-- BOTONERA CON FUNCIONALIDAD COMPLETA -->
+    <!-- BOTONERA PRINCIPAL -->
     <div class="px-2.5 pb-2 max-w-5xl mx-auto w-full">
       <div class="grid grid-cols-5 gap-1.5 text-center">
-        <button onclick="window.openNewRepairModal()" class="py-2 px-1 rounded-xl bg-iosBlue text-white text-[10px] font-bold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
+        <button type="button" onclick="window.openNewRepairModal()" class="py-2 px-1 rounded-xl bg-iosBlue text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform">
           <i class="ph-bold ph-plus text-base"></i><span>Ingreso</span>
         </button>
-        <button onclick="window.openSalesModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] font-bold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
+        <button type="button" onclick="window.openSalesModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform">
           <i class="ph-bold ph-shopping-cart-simple text-base"></i><span>Vender</span>
         </button>
-        <button onclick="window.openVentasHistoryModal()" class="py-2 px-1 rounded-xl bg-indigo-950 border border-indigo-700/60 text-indigo-200 text-[10px] font-bold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
+        <button type="button" onclick="window.openVentasHistoryModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-indigo-900 to-blue-900 border border-indigo-700/60 text-indigo-200 text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform">
           <i class="ph-bold ph-receipt text-base text-indigo-400"></i><span>Ventas</span>
         </button>
-        <button onclick="window.openStockModal()" class="py-2 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
+        <button type="button" onclick="window.openStockModal()" class="py-2 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform relative">
           <i class="ph-bold ph-barcode text-base text-purple-400"></i><span>Stock</span>
         </button>
-        <button onclick="window.openCashModal()" class="py-2 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
-          <i class="ph-bold ph-currency-dollar-simple text-base text-emerald-400"></i><span>Caja</span>
+        <button type="button" onclick="window.openCashModal()" class="py-2 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform">
+          <i class="ph-bold ph-currency-dollar-simple text-base text-emerald-400"></i><span>Caja (<span id="btnLabelCajaLocal">C</span>)</span>
         </button>
       </div>
     </div>
   </header>
 
-  <main class="flex-1 w-full max-w-5xl mx-auto px-3 py-3 space-y-3">
-    <div id="repairsList" class="space-y-2"></div>
-    <div id="emptyState" class="hidden text-center py-12 text-zinc-500 text-xs">
-      No hay datos en esta sección.
+  <!-- CUERPO PRINCIPAL -->
+  <main class="flex-1 w-full max-w-5xl mx-auto px-3 py-2 space-y-2 pb-safe overflow-y-auto z-10 relative">
+    <div id="branchFilterContainer" class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 shadow-sm space-y-1">
+      <div class="flex items-center justify-between px-1">
+        <span class="text-[9px] font-bold uppercase text-zinc-400 flex items-center gap-1"><i class="ph-bold ph-eye text-rose-400 text-xs"></i> Vista Global Órdenes:</span>
+        <span id="currentBranchDisplayTag" class="text-[10px] font-mono text-zinc-300">Todas</span>
+      </div>
+      <div id="branchTabsButtonsList" class="flex gap-1 overflow-x-auto no-scrollbar text-xs font-medium pb-0.5"></div>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
+      <button type="button" onclick="window.openCashModal()" class="w-full text-center bg-gradient-to-br from-zinc-900 to-emerald-950/40 border border-emerald-900/40 rounded-xl p-2 shadow-sm active:scale-95 transition">
+        <span class="text-[9px] text-emerald-400 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-wallet"></i> Saldo Caja (<span id="headerCashBranchTag">Central</span>)</span>
+        <span id="headerCashBalance" class="text-sm font-extrabold text-emerald-300 font-mono mt-0.5 block">$0</span>
+      </button>
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center shadow-sm">
+        <span class="text-[9px] text-zinc-400 block font-bold uppercase">Espera</span><span id="counterReceived" class="text-sm font-bold text-white mt-0.5 block">0</span>
+      </div>
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center shadow-sm">
+        <span class="text-[9px] text-amber-400 block font-bold uppercase">Taller</span><span id="counterInProgress" class="text-sm font-bold text-amber-400 mt-0.5 block">0</span>
+      </div>
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center shadow-sm">
+        <span class="text-[9px] text-indigo-400 block font-bold uppercase">En Viaje</span><span id="counterTransit" class="text-sm font-bold text-indigo-400 mt-0.5 block">0</span>
+      </div>
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center shadow-sm col-span-2 sm:col-span-1">
+        <span class="text-[9px] text-emerald-400 block font-bold uppercase">Listos</span><span id="counterReady" class="text-sm font-bold text-emerald-400 mt-0.5 block">0</span>
+      </div>
+    </div>
+
+    <div class="space-y-1.5">
+      <div class="relative">
+        <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm"></i>
+        <input id="searchInput" type="text" oninput="window.handleSearch()" placeholder="Buscar orden, cliente, modelo o sucursal..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-8 pr-8 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-iosBlue shadow-sm">
+        <button type="button" id="clearSearchBtn" onclick="window.clearSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 p-1"><i class="ph-bold ph-x-circle text-sm"></i></button>
+      </div>
+      <div class="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0.5">
+        <button type="button" onclick="window.setFilter('ALL')" id="tabALL" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-800 text-white font-bold shrink-0 transition text-xs">Todos</button>
+        <button type="button" onclick="window.setFilter('WAITING')" id="tabWAITING" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Espera</button>
+        <button type="button" onclick="window.setFilter('IN_PROGRESS')" id="tabIN_PROGRESS" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Taller</button>
+        <button type="button" onclick="window.setFilter('IN_TRANSIT')" id="tabIN_TRANSIT" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Viaje</button>
+        <button type="button" onclick="window.setFilter('READY')" id="tabREADY" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Listos</button>
+      </div>
+    </div>
+
+    <div id="repairsList" class="space-y-2 pb-6"></div>
+    <div id="emptyState" class="hidden text-center py-8 px-4">
+      <div class="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto mb-2 text-zinc-600"><i class="ph-bold ph-clipboard-text text-xl"></i></div>
+      <h3 class="text-xs font-semibold text-zinc-400">No hay órdenes registradas</h3>
     </div>
   </main>
 
-  <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
-
-  <!-- CONTROLADOR JAVASCRIPT EXPOSICIÓN GLOBAL -->
-  <script>
-    const WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
-    
-    // 1. Vincular e Identificar Taller
-    let currentWorkshopId = localStorage.getItem(WORKSHOP_ID_KEY) || localStorage.getItem('openline_current_workshop_id');
-    if (!currentWorkshopId) {
-      currentWorkshopId = 'TALLER-' + Math.floor(1000 + Math.random() * 9000);
-      localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
-    }
-
-    let repairs = [];
-    let stockItems = [];
-    let cashMovements = [];
-
-    // 2. Cargar Base de Datos de Formato Universal
-    function initDatabaseRecovery() {
-      const repairKeys = [
-        `openline_vault_${currentWorkshopId}_repairs`,
-        `openline_local_repairs_v8_${currentWorkshopId}`,
-        `openline_local_repairs_${currentWorkshopId}`,
-        'openline_local_repairs_v8',
-        'openline_local_repairs'
-      ];
-
-      for (let key of repairKeys) {
-        const raw = localStorage.getItem(key);
-        if (raw) {
-          try {
-            const data = JSON.parse(raw);
-            if (Array.isArray(data) && data.length > 0) {
-              repairs = data;
-              break;
-            }
-          } catch(e) {}
-        }
-      }
-      renderRepairsList();
-    }
-
-    // 3. Exponer Funciones de Pestañas a Ámbito Global
-    window.openNewRepairModal = function() { window.showToast('Modulo', 'Ingreso de equipos listo.'); };
-    window.openSalesModal = function() { window.showToast('Modulo', 'Mostrador POS listo.'); };
-    window.openVentasHistoryModal = function() { window.showToast('Modulo', 'Historial de ventas listo.'); };
-    window.openStockModal = function() { window.showToast('Modulo', 'Control de stock listo.'); };
-    window.openCashModal = function() { window.showToast('Modulo', 'Balance de caja listo.'); };
-
-    window.exportFullBackupJSON = function() {
-      const backup = { workshopId: currentWorkshopId, repairs, stockItems, cashMovements, exportedAt: new Date().toISOString() };
-      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `backup_${currentWorkshopId}.json`;
-      a.click();
-      window.showToast('Backup', 'Copia guardada con éxito.');
-    };
-
-    function renderRepairsList() {
-      const container = document.getElementById('repairsList');
-      const empty = document.getElementById('emptyState');
-      if (!repairs || repairs.length === 0) {
-        container.innerHTML = '';
-        empty.classList.remove('hidden');
-        return;
-      }
-      empty.classList.add('hidden');
-      container.innerHTML = repairs.map(item => `
-        <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex justify-between items-center">
-          <div>
-            <span class="text-xs font-mono font-bold text-blue-400">#${item.id}</span>
-            <h4 class="text-xs font-bold text-white">${item.deviceBrand || ''} ${item.deviceModel || ''}</h4>
-            <p class="text-[10px] text-zinc-400">${item.clientName || 'Cliente'}</p>
+  <!-- MODAL DE INGRESO -->
+  <div id="newRepairModal" class="app-modal">
+    <div class="bg-zinc-900 sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0">
+        <h2 class="text-sm font-bold text-white flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-iosBlue"></span>Nuevo Ingreso</h2>
+        <button type="button" onclick="window.closeModal('newRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button>
+      </div>
+      <div class="overflow-y-auto p-4 space-y-3.5 flex-1 pb-10">
+        <div class="space-y-1.5">
+          <label class="font-bold text-zinc-300 uppercase text-[9px]">1. Datos del Cliente</label>
+          <input type="text" id="inpClientName" placeholder="Nombre y Apellido *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+          <input type="tel" id="inpClientPhone" placeholder="Número celular *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+        </div>
+        <div class="space-y-1.5">
+          <label class="font-bold text-zinc-300 uppercase text-[9px]">2. Dispositivo</label>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" id="inpDeviceBrand" placeholder="Marca *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+            <input type="text" id="inpDeviceModel" placeholder="Modelo *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
           </div>
         </div>
-      `).join('');
-    }
+        <div class="space-y-2 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
+          <label class="font-bold text-zinc-300 uppercase text-[9px] block">3. Falla y Presupuesto</label>
+          <textarea id="inpDeviceFault" rows="2" placeholder="Falla informada por el cliente..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white"></textarea>
+          <div class="grid grid-cols-2 gap-2">
+            <div><label class="text-[9px] text-zinc-400 block mb-0.5">Total ($)</label><input type="number" id="inpDeviceBudget" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></div>
+            <div><label class="text-[9px] text-zinc-400 block mb-0.5">Seña ($)</label><input type="number" id="inpDeviceAdvance" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold"></div>
+          </div>
+        </div>
+        <button type="button" onclick="window.guardarIngresoDirecto()" class="w-full py-3.5 rounded-xl bg-iosBlue text-white font-bold text-sm shadow active:scale-95 transition mb-4">Guardar Ingreso de Equipo</button>
+      </div>
+    </div>
+  </div>
 
-    window.showToast = function(title, msg) {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      toast.className = 'bg-zinc-800 border border-zinc-700 text-white px-3 py-2 rounded-xl text-xs shadow-lg';
-      toast.innerHTML = `<b>${title}</b><br>${msg}`;
-      container.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    };
+  <!-- MODAL LICENCIA -->
+  <div id="licenseModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg p-4 space-y-3.5 pb-safe shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
+      <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center">
+        <span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia:</span>
+        <div id="licenseStatusText" class="font-mono text-base font-black text-amber-400 py-1 select-none">DEMO</div>
+      </div>
+      <div class="space-y-1.5 pt-1">
+        <label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar Licencia Vitalicia / PRO:</label>
+        <div class="flex gap-1.5">
+          <input type="password" id="inpActivationKey" placeholder="Pega tu clave aquí..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs">
+          <button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs active:scale-95">Activar</button>
+        </div>
+      </div>
+      <button type="button" onclick="window.closeModal('licenseModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1 shrink-0">Cerrar</button>
+    </div>
+  </div>
 
-    // 4. Iniciar Aplicación
-    window.addEventListener('load', () => {
-      document.getElementById('headerWorkshopCode').textContent = currentWorkshopId;
-      initDatabaseRecovery();
-    });
-  </script>
-</body>
-</html>
+  <!-- MODAL VENTAS POS -->
+  <div id="salesModal" class="app-modal">
+    <div class="bg-zinc-900 sm:border border-amber-600/70 rounded-t-3xl sm:rounded-3xl w-full max-w-xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
+      <div class="p-3 border-b border-zinc-800 flex items-center justify-between">
+        <h3 class="font-bold text-white text-sm">Venta Mostrador</h3>
+        <button type="button" onclick="window.closeModal('salesModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <div
