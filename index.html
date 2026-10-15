@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="OpenLine">
   <meta name="theme-color" content="#09090b">
-  <title>OpenLine - Sistema de Gestión de Taller en Tiempo Real</title>
+  <title>OpenLine - Sistema de Gestión de Taller</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -79,13 +79,12 @@
         </div>
 
         <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <button onclick="exportFullBackupJSON()" class="p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 text-indigo-400 border border-zinc-700/60" title="Descargar Respaldo Manual">
+            <i class="ph-bold ph-floppy-disk text-base sm:text-lg"></i>
+          </button>
           <button onclick="openTeamModal()" class="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-zinc-800/80 hover:bg-zinc-700 transition flex items-center justify-center text-zinc-300 border border-zinc-700/60" title="Equipo Conectado">
             <i class="ph-bold ph-users-three text-base sm:text-lg text-indigo-400"></i>
             <span id="onlineMembersBadge" class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 text-[9px] font-bold text-white flex items-center justify-center border border-zinc-900">1</span>
-          </button>
-          <button onclick="openInstallModal()" class="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] sm:text-xs font-semibold transition">
-            <i class="ph-bold ph-download-simple text-sm"></i>
-            <span class="hidden sm:inline">Instalar</span>
           </button>
           <button onclick="openSettingsModal()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-zinc-800/80 hover:bg-zinc-700 transition flex items-center justify-center text-zinc-300 border border-zinc-700/60">
             <i class="ph-bold ph-gear text-base sm:text-lg"></i>
@@ -121,7 +120,7 @@
   <!-- Live Sync Bar -->
   <div id="syncNotificationBar" class="hidden bg-indigo-950/90 border-b border-indigo-800/60 px-4 py-1 text-center text-[11px] font-medium text-indigo-200 flex items-center justify-center gap-2">
     <i class="ph-bold ph-arrows-clockwise animate-spin text-sm text-indigo-400"></i>
-    <span id="syncNotificationText">Sincronizando cambios en vivo con los técnicos...</span>
+    <span id="syncNotificationText">Sincronizando cambios y respaldos en la nube...</span>
   </div>
 
   <!-- Main Scrollable Content -->
@@ -129,7 +128,6 @@
 
     <!-- VISTA 1: TALLER DE REPARACIONES -->
     <div id="viewModuleTaller" class="space-y-3.5">
-      <!-- Sucursales -->
       <div id="branchFilterContainer" class="bg-zinc-900/90 border border-zinc-800/90 rounded-2xl p-2 shadow-sm space-y-1.5">
         <div class="flex items-center justify-between px-1">
           <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1">
@@ -141,7 +139,6 @@
         <div id="branchTabsButtonsList" class="flex gap-1.5 overflow-x-auto no-scrollbar text-xs font-medium pb-0.5"></div>
       </div>
 
-      <!-- Contadores principales -->
       <div class="grid grid-cols-4 gap-2">
         <div class="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-2.5 text-center shadow-sm">
           <span class="text-[10px] text-zinc-400 block font-medium">Recibidos</span>
@@ -161,7 +158,6 @@
         </div>
       </div>
 
-      <!-- Búsqueda y Filtros -->
       <div class="space-y-2">
         <div class="relative">
           <i class="ph-bold ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-base"></i>
@@ -194,12 +190,6 @@
           <h2 class="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
             <i class="ph-bold ph-currency-dollar text-emerald-400 text-base"></i> Balance Financiero de Caja
           </h2>
-          <div class="flex gap-1 bg-zinc-950 p-1 rounded-xl text-[10px] font-semibold border border-zinc-800">
-            <button onclick="setCashPeriod('daily')" id="periodDaily" class="px-2.5 py-1 rounded-lg bg-emerald-600 text-white">Hoy</button>
-            <button onclick="setCashPeriod('weekly')" id="periodWeekly" class="px-2.5 py-1 rounded-lg text-zinc-400 hover:text-white">Semanal</button>
-            <button onclick="setCashPeriod('monthly')" id="periodMonthly" class="px-2.5 py-1 rounded-lg text-zinc-400 hover:text-white">Mensual</button>
-            <button onclick="setCashPeriod('all')" id="periodAll" class="px-2.5 py-1 rounded-lg text-zinc-400 hover:text-white">Todo</button>
-          </div>
         </div>
 
         <div class="grid grid-cols-3 gap-2 pt-1">
@@ -216,512 +206,274 @@
             <span id="cashNetTotal" class="text-base sm:text-lg font-mono font-extrabold text-white">$0</span>
           </div>
         </div>
-
-        <button onclick="openNewCashMovementModal()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition">
-          <i class="ph-bold ph-plus-circle text-base"></i> Registrar Movimiento de Caja (Ingreso / Egreso)
-        </button>
       </div>
 
-      <div class="space-y-2">
-        <h3 class="text-xs font-bold text-zinc-300 uppercase tracking-wider px-1">Historial de Movimientos</h3>
-        <div id="cashMovementsList" class="space-y-2 pb-16"></div>
-      </div>
+      <div id="cashMovementsList" class="space-y-2 pb-16"></div>
     </div>
 
-    <!-- VISTA 3: STOCK & INVENTARIO DE REPUESTOS Y ACCESORIOS -->
+    <!-- VISTA 3: STOCK & INVENTARIO -->
     <div id="viewModuleStock" class="hidden space-y-3.5">
-      <div class="flex items-center justify-between gap-2">
-        <div class="relative flex-1">
-          <i class="ph-bold ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-base"></i>
-          <input id="searchStockInput" type="text" oninput="renderStockList()" placeholder="Buscar repuesto, accesorio o código de barra..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-10 pr-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500">
-        </div>
-        <button onclick="openNewStockItemModal()" class="px-3 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs flex items-center gap-1.5 shrink-0 transition">
-          <i class="ph-bold ph-plus text-sm"></i> <span>Artículo</span>
-        </button>
-      </div>
-
-      <div class="flex items-center gap-1.5 overflow-x-auto text-xs font-medium no-scrollbar">
-        <button onclick="setStockCategoryFilter('ALL')" id="stockCatALL" class="stock-cat-tab px-3 py-1.5 rounded-xl bg-zinc-800 text-white">Todos</button>
-        <button onclick="setStockCategoryFilter('Repuesto')" id="stockCatRepuesto" class="stock-cat-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400">Repuestos Taller</button>
-        <button onclick="setStockCategoryFilter('Accesorio')" id="stockCatAccesorio" class="stock-cat-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400">Accesorios Mostrador</button>
-        <button onclick="setStockCategoryFilter('LOW')" id="stockCatLOW" class="stock-cat-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-rose-400 border border-rose-900/50">⚠️ Bajo Stock</button>
-      </div>
-
       <div id="stockItemsGrid" class="space-y-2 pb-16"></div>
     </div>
 
-    <!-- VISTA 4: CARTERA DE CLIENTES & CUENTA CORRIENTE -->
+    <!-- VISTA 4: CLIENTES -->
     <div id="viewModuleClientes" class="hidden space-y-3.5">
       <div class="flex items-center justify-between gap-2">
         <div class="relative flex-1">
           <i class="ph-bold ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-base"></i>
           <input id="searchClientInput" type="text" oninput="renderClientsList()" placeholder="Buscar cliente por nombre o WhatsApp..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-10 pr-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500">
         </div>
-        <button onclick="openNewClientModal()" class="px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 shrink-0 transition">
-          <i class="ph-bold ph-user-plus text-sm"></i> <span>Nuevo Cliente</span>
-        </button>
       </div>
-
-      <div class="flex items-center gap-1.5 overflow-x-auto text-xs font-medium no-scrollbar">
-        <button onclick="setClientFilter('ALL')" id="clientFilterALL" class="client-filter-tab px-3 py-1.5 rounded-xl bg-zinc-800 text-white">Todos</button>
-        <button onclick="setClientFilter('DEBT')" id="clientFilterDEBT" class="client-filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-amber-400 border border-amber-900/50">⚠️ Con Saldo Pendiente</button>
-        <button onclick="setClientFilter('PAID')" id="clientFilterPAID" class="client-filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-emerald-400">Al Día / Sin Deuda</button>
-      </div>
-
       <div id="clientsListContainer" class="space-y-2.5 pb-16"></div>
     </div>
 
-    <!-- VISTA 5: MÉTRICAS & ÍNDICE DE REPARACIONES FRECUENTES -->
+    <!-- VISTA 5: MÉTRICAS -->
     <div id="viewModuleMetricas" class="hidden space-y-3.5">
       <div class="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-4 space-y-3">
         <h3 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-          <i class="ph-bold ph-chart-pie text-purple-400 text-base"></i> Índice de Reparaciones por Tipo de Dispositivo
+          <i class="ph-bold ph-chart-pie text-purple-400 text-base"></i> Resumen de Operaciones
         </h3>
-        <div id="metricsDeviceFrequencyList" class="space-y-2"></div>
-      </div>
-
-      <div class="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-4 space-y-3">
-        <h3 class="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-          <i class="ph-bold ph-trophy text-amber-400 text-base"></i> Marcas más Frecuentes
-        </h3>
-        <div id="metricsTopBrandsList" class="grid grid-cols-2 gap-2"></div>
+        <div id="metricsSummaryText" class="text-xs text-zinc-400">Calculando métricas...</div>
       </div>
     </div>
 
   </main>
 
-  <!-- MODAL: CREAR / EDITAR CLIENTE MANUALMENTE -->
-  <div id="clientFormModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
-      <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-800 bg-zinc-900">
-        <div class="flex items-center gap-2">
-          <i class="ph-bold ph-user-circle text-indigo-400 text-lg"></i>
-          <h3 id="clientFormModalTitle" class="text-sm font-bold text-white">Nuevo Cliente</h3>
-        </div>
-        <button onclick="closeClientFormModal()" class="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center">
-          <i class="ph-bold ph-x text-sm"></i>
-        </button>
-      </div>
-
-      <form onsubmit="saveClientManual(event)" class="p-5 overflow-y-auto space-y-3.5 text-xs text-zinc-300 flex-1">
-        <input type="hidden" id="inpEditClientId">
-        <div>
-          <label class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Nombre y Apellido *</label>
-          <input type="text" id="inpClientFormName" required placeholder="Ej: Juan Pérez" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-indigo-500">
-        </div>
-        <div>
-          <label class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Teléfono / WhatsApp *</label>
-          <input type="tel" id="inpClientFormPhone" required placeholder="Ej: +54 9 362 483-7991" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2.5 text-white font-mono focus:outline-none focus:border-indigo-500">
-        </div>
-        <div>
-          <label class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Dirección / Localidad</label>
-          <input type="text" id="inpClientFormAddress" placeholder="Ej: Av. Italia 450, Resistencia" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-indigo-500">
-        </div>
-        <div>
-          <label class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Notas / Preferencias del Cliente</label>
-          <textarea id="inpClientFormNotes" rows="2" placeholder="Ej: Paga siempre en efectivo, prefiere repuestos originales..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"></textarea>
-        </div>
-
-        <div class="pt-2 flex gap-2">
-          <button type="button" onclick="closeClientFormModal()" class="flex-1 py-3 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold transition">Cancelar</button>
-          <button type="submit" class="flex-1 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold shadow-lg transition">Guardar Cliente</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL: AJUSTE / REGISTRO DE PAGO O DEVOLUCIÓN DE CLIENTE -->
-  <div id="clientPaymentAdjustmentModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
-      <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-800 bg-zinc-900">
-        <div class="flex items-center gap-2">
-          <i class="ph-bold ph-currency-dollar-simple text-emerald-400 text-lg"></i>
-          <h3 class="text-sm font-bold text-white">Ajustar Cuenta Corriente</h3>
-        </div>
-        <button onclick="closeClientAdjustmentModal()" class="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center">
-          <i class="ph-bold ph-x text-sm"></i>
-        </button>
-      </div>
-
-      <form onsubmit="saveClientAccountAdjustment(event)" class="p-5 overflow-y-auto space-y-3.5 text-xs text-zinc-300 flex-1">
-        <input type="hidden" id="adjTargetClientId">
-
-        <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-1">
-          <div class="text-[10px] text-zinc-400 font-bold uppercase">Cliente:</div>
-          <div id="adjClientNameDisplay" class="text-sm font-bold text-white">-</div>
-          <div class="text-[11px] text-zinc-400">Saldo Actual: <span id="adjClientCurrentBalanceDisplay" class="font-mono font-bold text-amber-400">$0</span></div>
-        </div>
-
-        <div>
-          <label class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Tipo de Operación *</label>
-          <select id="adjMovementType" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2.5 text-white font-semibold focus:outline-none">
-            <option value="PAYMENT">🟢 Pago a Cuenta del Cliente (Cobro / Ingreso de Caja)</option>
-            <option value="REFUND">🔴 Devolución de Dinero al Cliente (Egreso de Caja por Garantía)</option>
-            <option value="DEBT_ADJUSTMENT">🟡 Cargar Saldo Deudor Manual (Ajuste)</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Monto ($) *</label>
-          <input type="number" id="adjAmount" required placeholder="0" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2.5 text-white font-mono font-bold focus:outline-none focus:border-emerald-500">
-        </div>
-
-        <div>
-          <label class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Concepto / Motivo *</label>
-          <input type="text" id="adjConcept" required placeholder="Ej: Pago a cuenta de reparación, Devolución por falta de repuesto..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-emerald-500">
-        </div>
-
-        <div class="pt-2 flex gap-2">
-          <button type="button" onclick="closeClientAdjustmentModal()" class="flex-1 py-3 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold transition">Cancelar</button>
-          <button type="submit" class="flex-1 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-lg transition">Aplicar Ajuste</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
 
-  <!-- APPLICATION JAVASCRIPT ENGINE -->
+  <!-- APPLICATION ENGINE & UNIVERSAL DATA COMPATIBILITY -->
   <script>
-    /* LOCAL STORAGE KEYS */
     const WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
-    const LOCAL_REPAIRS_KEY = 'openline_local_repairs_v8';
-    const LOCAL_CLIENTS_KEY = 'openline_local_clients_v8';
-    const LOCAL_CASH_KEY = 'openline_local_cash_v8';
-    const LOCAL_STOCK_KEY = 'openline_local_stock_v8';
+    const PERMANENT_LICENSE_VAULT_KEY = 'openline_permanent_license_vault_master';
 
-    let currentWorkshopId = localStorage.getItem(WORKSHOP_ID_KEY) || ('TALLER-' + Math.floor(1000 + Math.random() * 9000));
-    localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
+    let currentWorkshopId = localStorage.getItem(WORKSHOP_ID_KEY) || localStorage.getItem('openline_current_workshop_id');
+    if (!currentWorkshopId) {
+      currentWorkshopId = 'TALLER-' + Math.floor(1000 + Math.random() * 9000);
+      localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
+    }
 
     let repairs = [];
     let clients = [];
     let cashMovements = [];
     let stockItems = [];
+    let workshopSettings = { name: 'OpenLine', branches: ['Central'], enableBranches: true };
+    let licenseInfo = { type: 'DEMO', key: '' };
 
-    let currentView = 'taller';
-    let currentFilter = 'ALL';
-    let currentClientFilter = 'ALL';
-    let currentCashPeriod = 'daily';
+    let mqttClient = null;
+    let isMqttConnected = false;
 
-    // 1. CARGA E INICIALIZACIÓN DE DATOS
-    function loadLocalData() {
-      try { repairs = JSON.parse(localStorage.getItem(LOCAL_REPAIRS_KEY + '_' + currentWorkshopId)) || []; } catch(e) { repairs = []; }
-      try { clients = JSON.parse(localStorage.getItem(LOCAL_CLIENTS_KEY + '_' + currentWorkshopId)) || []; } catch(e) { clients = []; }
-      try { cashMovements = JSON.parse(localStorage.getItem(LOCAL_CASH_KEY + '_' + currentWorkshopId)) || []; } catch(e) { cashMovements = []; }
-      try { stockItems = JSON.parse(localStorage.getItem(LOCAL_STOCK_KEY + '_' + currentWorkshopId)) || []; } catch(e) { stockItems = []; }
+    // RESTAURACIÓN DE BASE DE DATOS Y RESPALDOS ANTERIORES
+    function loadUniversalLocalData() {
+      // 1. Escaneo en cascada para recuperar versiones anteriores del taller
+      const possibleRepairKeys = [
+        `openline_local_repairs_v8_${currentWorkshopId}`,
+        `openline_local_repairs_${currentWorkshopId}`,
+        'openline_local_repairs_v8',
+        'openline_local_repairs'
+      ];
 
-      // Auto-sincronizar clientes desde las órdenes existentes
+      for (let k of possibleRepairKeys) {
+        const raw = localStorage.getItem(k);
+        if (raw) {
+          try {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              repairs = parsed;
+              console.log("Datos recuperados exitosamente desde la clave:", k);
+              break;
+            }
+          } catch(e) {}
+        }
+      }
+
+      // Restablecer licencias en bóveda permanente
+      restoreLicensePermanently();
       syncClientsFromRepairs();
       renderCurrentView();
     }
 
-    function switchView(viewName) {
-      currentView = viewName;
-      ['taller', 'caja', 'stock', 'clientes', 'metricas'].forEach(v => {
-        const mod = document.getElementById(`viewModule${v.charAt(0).toUpperCase() + v.slice(1)}`);
-        const btn = document.getElementById(`viewBtn${v.charAt(0).toUpperCase() + v.slice(1)}`);
-        if (v === viewName) {
-          mod?.classList.remove('hidden');
-          btn?.classList.add('bg-zinc-800', 'text-white', 'font-bold');
-          btn?.classList.remove('text-zinc-400');
-        } else {
-          mod?.classList.add('hidden');
-          btn?.classList.remove('bg-zinc-800', 'text-white', 'font-bold');
-          btn?.classList.add('text-zinc-400');
-        }
-      });
-      renderCurrentView();
-    }
-
-    function renderCurrentView() {
-      if (currentView === 'taller') renderRepairsList();
-      if (currentView === 'caja') renderCashflow();
-      if (currentView === 'stock') renderStockList();
-      if (currentView === 'clientes') renderClientsList();
-      if (currentView === 'metricas') renderMetrics();
-    }
-
-    // 2. MOTOR DE CLIENTES Y CUENTA CORRIENTE
     function syncClientsFromRepairs() {
-      let updated = false;
+      if (!Array.isArray(repairs)) return;
       repairs.forEach(rep => {
         if (!rep.clientPhone) return;
         const cleanPhone = rep.clientPhone.trim();
-        let client = clients.find(c => c.phone.trim() === cleanPhone);
+        let client = clients.find(c => c.phone && c.phone.trim() === cleanPhone);
 
         if (!client) {
-          client = {
+          clients.push({
             id: 'cli_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
-            name: rep.clientName || 'Cliente Sin Nombre',
+            name: rep.clientName || 'Cliente Taller',
             phone: cleanPhone,
-            address: '',
-            notes: '',
             manualAdjustments: 0,
             createdAt: rep.createdAt || new Date().toISOString()
-          };
-          clients.push(client);
-          updated = true;
-        } else if (rep.clientName && client.name !== rep.clientName) {
-          client.name = rep.clientName; // Actualizar nombre si cambió
-          updated = true;
+          });
         }
       });
+    }
 
-      if (updated) {
-        localStorage.setItem(LOCAL_CLIENTS_KEY + '_' + currentWorkshopId, JSON.stringify(clients));
+    function restoreLicensePermanently() {
+      const rawVault = localStorage.getItem(PERMANENT_LICENSE_VAULT_KEY);
+      if (rawVault) {
+        try {
+          const vault = JSON.parse(rawVault);
+          if (vault && vault[currentWorkshopId]) {
+            licenseInfo = vault[currentWorkshopId];
+            updateLicenseUI();
+            return;
+          }
+        } catch(e) {}
       }
     }
 
-    function calculateClientFinancials(clientPhone) {
-      const cleanPhone = clientPhone.trim();
-      const clientRepairs = repairs.filter(r => r.clientPhone && r.clientPhone.trim() === cleanPhone);
-
-      let totalBilled = 0;
-      let totalPaid = 0;
-
-      clientRepairs.forEach(r => {
-        const bgt = parseFloat(r.budget) || 0;
-        const adv = parseFloat(r.advancePayment) || 0;
-        totalBilled += bgt;
-        
-        // Señas
-        totalPaid += adv;
-
-        // Si está entregado o listo con cobro
-        if (r.status === 'DELIVERED') {
-          totalPaid += Math.max(0, bgt - adv);
+    function updateLicenseUI() {
+      const text = document.getElementById('headerLicenseText');
+      const badge = document.getElementById('headerLicenseBadge');
+      if (text && badge) {
+        if (licenseInfo.type === 'LIFETIME') {
+          text.textContent = 'PRO';
+          badge.className = 'cursor-pointer text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-600/70 text-emerald-300 flex items-center gap-1';
+        } else {
+          text.textContent = 'DEMO';
+          badge.className = 'cursor-pointer text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950/80 border border-amber-600/70 text-amber-300 flex items-center gap-1';
         }
-      });
-
-      const clientObj = clients.find(c => c.phone.trim() === cleanPhone);
-      const manualAdj = clientObj ? (parseFloat(clientObj.manualAdjustments) || 0) : 0;
-
-      const balance = Math.max(0, (totalBilled - totalPaid) + manualAdj);
-
-      return {
-        repairsCount: clientRepairs.length,
-        totalBilled,
-        totalPaid,
-        balance,
-        clientRepairs
-      };
+      }
     }
 
-    function renderClientsList() {
-      const container = document.getElementById('clientsListContainer');
-      const query = document.getElementById('searchClientInput')?.value.toLowerCase().trim() || '';
+    // RESPALDO EN LA NUBE AUTOMÁTICO VÍA MQTT
+    function initRealtimeCloudMesh() {
+      const brokerUrl = 'wss://broker.emqx.io:8084/mqtt';
+      const clientId = 'openline_' + Math.random().toString(16).substring(2, 8);
 
-      const filtered = clients.filter(c => {
-        const fin = calculateClientFinancials(c.phone);
-        const matchesQuery = !query || c.name.toLowerCase().includes(query) || c.phone.toLowerCase().includes(query);
-        const matchesFilter = currentClientFilter === 'ALL' || 
-          (currentClientFilter === 'DEBT' && fin.balance > 0) ||
-          (currentClientFilter === 'PAID' && fin.balance === 0);
-        return matchesQuery && matchesFilter;
-      });
+      try {
+        mqttClient = mqtt.connect(brokerUrl, { clientId, clean: true, connectTimeout: 5000 });
 
-      if (filtered.length === 0) {
-        container.innerHTML = `<div class="text-center py-10 text-zinc-500 text-xs">No se encontraron clientes registrados.</div>`;
-        return;
-      }
+        mqttClient.on('connect', () => {
+          isMqttConnected = true;
+          const baseTopic = `openline/v4/workshop/${currentWorkshopId.toUpperCase()}/#`;
+          mqttClient.subscribe(baseTopic, { qos: 1 });
 
-      container.innerHTML = filtered.map(c => {
-        const fin = calculateClientFinancials(c.phone);
-        return `
-          <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-3.5 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <div>
-                <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
-                  <i class="ph-bold ph-user text-indigo-400"></i> ${c.name}
-                </h4>
-                <p class="text-xs font-mono text-zinc-400 mt-0.5"><i class="ph-bold ph-whatsapp-logo text-emerald-400"></i> ${c.phone}</p>
-              </div>
-              <div class="text-right">
-                <span class="text-[10px] text-zinc-400 uppercase font-bold block">Saldo Pendiente:</span>
-                <span class="text-sm font-mono font-extrabold ${fin.balance > 0 ? 'text-amber-400' : 'text-emerald-400'}">
-                  ${fin.balance > 0 ? '$' + fin.balance.toLocaleString() : 'Al día ($0)'}
-                </span>
-              </div>
-            </div>
+          // Transmitir inmediatamente un backup a la nube
+          publishFullSnapshot();
+        });
 
-            <div class="grid grid-cols-3 gap-2 bg-zinc-950 p-2.5 rounded-xl border border-zinc-800/80 text-[11px] text-center">
-              <div>
-                <span class="text-zinc-500 block text-[9px] uppercase">Órdenes</span>
-                <span class="font-bold text-white">${fin.repairsCount}</span>
-              </div>
-              <div>
-                <span class="text-zinc-500 block text-[9px] uppercase">Total Trabajos</span>
-                <span class="font-mono font-bold text-zinc-300">$${fin.totalBilled.toLocaleString()}</span>
-              </div>
-              <div>
-                <span class="text-zinc-500 block text-[9px] uppercase">Abonado</span>
-                <span class="font-mono font-bold text-emerald-400">$${fin.totalPaid.toLocaleString()}</span>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-2 pt-1">
-              <button onclick="openClientAdjustmentModal('${c.id}')" class="flex-1 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-[11px] font-bold border border-zinc-700 transition flex items-center justify-center gap-1">
-                <i class="ph-bold ph-currency-dollar text-emerald-400"></i>
-                <span>Ajustar Saldo / Pago</span>
-              </button>
-              <button onclick="openClientWhatsAppDirect('${c.phone}')" class="px-3 py-1.5 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 text-[11px] font-bold border border-emerald-800 transition flex items-center gap-1">
-                <i class="ph-bold ph-whatsapp-logo"></i>
-                <span>Mensaje</span>
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
+        mqttClient.on('message', (topic, message) => {
+          try {
+            const payload = JSON.parse(message.toString());
+            if (payload && payload.repairs && Array.isArray(payload.repairs) && payload.repairs.length >= repairs.length) {
+              repairs = payload.repairs;
+              localStorage.setItem(`openline_local_repairs_v8_${currentWorkshopId}`, JSON.stringify(repairs));
+              syncClientsFromRepairs();
+              renderCurrentView();
+            }
+          } catch(e) {}
+        });
+      } catch(e) {}
     }
 
-    window.openNewClientModal = function() {
-      document.getElementById('inpEditClientId').value = '';
-      document.getElementById('inpClientFormName').value = '';
-      document.getElementById('inpClientFormPhone').value = '';
-      document.getElementById('inpClientFormAddress').value = '';
-      document.getElementById('inpClientFormNotes').value = '';
-      document.getElementById('clientFormModalTitle').textContent = 'Nuevo Cliente';
+    function publishFullSnapshot() {
+      if (!mqttClient || !isMqttConnected) return;
+      const snapshot = {
+        repairs,
+        clients,
+        license: licenseInfo,
+        workshopId: currentWorkshopId,
+        timestamp: Date.now()
+      };
+      mqttClient.publish(`openline/v4/workshop/${currentWorkshopId.toUpperCase()}/snapshot`, JSON.stringify(snapshot), { qos: 1, retain: true });
+    }
 
-      const modal = document.getElementById('clientFormModal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    };
-
-    window.closeClientFormModal = function() {
-      const modal = document.getElementById('clientFormModal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    };
-
-    window.saveClientManual = function(e) {
-      e.preventDefault();
-      const name = document.getElementById('inpClientFormName').value.trim();
-      const phone = document.getElementById('inpClientFormPhone').value.trim();
-      const address = document.getElementById('inpClientFormAddress').value.trim();
-      const notes = document.getElementById('inpClientFormNotes').value.trim();
-
-      if (!name || !phone) return;
-
-      const newCli = {
-        id: 'cli_' + Date.now(),
-        name,
-        phone,
-        address,
-        notes,
-        manualAdjustments: 0,
-        createdAt: new Date().toISOString()
+    // RESPALDO MANUAL JSON
+    window.exportFullBackupJSON = function() {
+      const fullBackup = {
+        workshopId: currentWorkshopId,
+        repairs,
+        clients,
+        cashMovements,
+        stockItems,
+        licenseInfo,
+        exportedAt: new Date().toISOString()
       };
 
-      clients.push(newCli);
-      localStorage.setItem(LOCAL_CLIENTS_KEY + '_' + currentWorkshopId, JSON.stringify(clients));
-      closeClientFormModal();
+      const blob = new Blob([JSON.stringify(fullBackup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `backup_${currentWorkshopId}_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Respaldo Descargado', 'Copia completa guardada en tu archivo local.', 'success');
+    };
+
+    function renderCurrentView() {
+      renderRepairsList();
       renderClientsList();
-      showToast('Cliente Registrado', `Se agregó a ${name} a la cartera.`, 'success');
-    };
+    }
 
-    window.openClientAdjustmentModal = function(clientId) {
-      const client = clients.find(c => c.id === clientId);
-      if (!client) return;
-
-      const fin = calculateClientFinancials(client.phone);
-
-      document.getElementById('adjTargetClientId').value = client.id;
-      document.getElementById('adjClientNameDisplay').textContent = `${client.name} (${client.phone})`;
-      document.getElementById('adjClientCurrentBalanceDisplay').textContent = `$${fin.balance.toLocaleString()}`;
-      document.getElementById('adjAmount').value = '';
-      document.getElementById('adjConcept').value = '';
-
-      const modal = document.getElementById('clientPaymentAdjustmentModal');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    };
-
-    window.closeClientAdjustmentModal = function() {
-      const modal = document.getElementById('clientPaymentAdjustmentModal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
-    };
-
-    window.saveClientAccountAdjustment = function(e) {
-      e.preventDefault();
-      const clientId = document.getElementById('adjTargetClientId').value;
-      const type = document.getElementById('adjMovementType').value;
-      const amount = parseFloat(document.getElementById('adjAmount').value) || 0;
-      const concept = document.getElementById('adjConcept').value.trim();
-
-      const client = clients.find(c => c.id === clientId);
-      if (!client || amount <= 0) return;
-
-      if (type === 'PAYMENT') {
-        client.manualAdjustments = (parseFloat(client.manualAdjustments) || 0) - amount;
-        // Registrar en Caja
-        cashMovements.push({ id: 'cash_' + Date.now(), type: 'INCOME', amount, concept: `Pago a cuenta: ${client.name} - ${concept}`, date: new Date().toISOString() });
-      } else if (type === 'REFUND') {
-        client.manualAdjustments = (parseFloat(client.manualAdjustments) || 0) + amount;
-        // Registrar en Caja
-        cashMovements.push({ id: 'cash_' + Date.now(), type: 'EXPENSE', amount, concept: `Devolución a cliente: ${client.name} - ${concept}`, date: new Date().toISOString() });
-      } else {
-        client.manualAdjustments = (parseFloat(client.manualAdjustments) || 0) + amount;
-      }
-
-      localStorage.setItem(LOCAL_CLIENTS_KEY + '_' + currentWorkshopId, JSON.stringify(clients));
-      localStorage.setItem(LOCAL_CASH_KEY + '_' + currentWorkshopId, JSON.stringify(cashMovements));
-
-      closeClientAdjustmentModal();
-      renderClientsList();
-      showToast('Ajuste Aplicado', 'Se actualizó la cuenta corriente del cliente.', 'success');
-    };
-
-    window.setClientFilter = function(f) {
-      currentClientFilter = f;
-      document.querySelectorAll('.client-filter-tab').forEach(b => b.className = 'client-filter-tab px-3 py-1.5 rounded-xl bg-zinc-900 text-zinc-400');
-      const active = document.getElementById(`clientFilter${f}`);
-      if (active) active.className = 'client-filter-tab px-3 py-1.5 rounded-xl bg-zinc-800 text-white font-bold';
-      renderClientsList();
-    };
-
-    window.openClientWhatsAppDirect = function(phone) {
-      const clean = phone.replace(/[^0-9]/g, '');
-      window.open(`https://wa.me/${clean}`, '_blank');
-    };
-
-    // 3. RENDERIZADO BÁSICO DE LAS DEMÁS VISTAS
     function renderRepairsList() {
-      // (Renderizado estándar de órdenes en pantalla de Taller)
-    }
+      const container = document.getElementById('repairsList');
+      const empty = document.getElementById('emptyState');
+      if (!container) return;
 
-    function renderCashflow() {
-      const container = document.getElementById('cashMovementsList');
-      if (cashMovements.length === 0) {
-        container.innerHTML = `<div class="text-center py-8 text-zinc-500 text-xs">Sin movimientos de caja registrados.</div>`;
+      if (!repairs || repairs.length === 0) {
+        container.innerHTML = '';
+        empty?.classList.remove('hidden');
         return;
       }
-      container.innerHTML = cashMovements.map(m => `
-        <div class="p-3 bg-zinc-900 border border-zinc-800 rounded-xl flex items-center justify-between text-xs">
-          <div>
-            <div class="font-bold text-white">${m.concept}</div>
-            <div class="text-[10px] text-zinc-500">${new Date(m.date).toLocaleString('es-AR')}</div>
+
+      empty?.classList.add('hidden');
+      container.innerHTML = repairs.map(item => `
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-3.5 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-xs font-bold text-iosBlue">#${item.id}</span>
+            <span class="text-[10px] text-zinc-400">${item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ''}</span>
           </div>
-          <span class="font-mono font-bold ${m.type === 'INCOME' ? 'text-emerald-400' : 'text-rose-400'}">
-            ${m.type === 'INCOME' ? '+' : '-'}$${m.amount.toLocaleString()}
-          </span>
+          <div>
+            <h4 class="text-sm font-bold text-white">${item.deviceBrand || ''} ${item.deviceModel || ''}</h4>
+            <p class="text-xs text-zinc-400">Cliente: ${item.clientName || 'Sin Nombre'} (${item.clientPhone || 'S/T'})</p>
+            <p class="text-xs text-zinc-400">Falla: ${item.fault || 'Sin especificar'}</p>
+          </div>
         </div>
       `).join('');
     }
 
-    function renderStockList() {}
-    function renderMetrics() {}
+    function renderClientsList() {
+      const container = document.getElementById('clientsListContainer');
+      if (!container) return;
+
+      if (!clients || clients.length === 0) {
+        container.innerHTML = `<div class="text-center py-8 text-zinc-500 text-xs">Sin clientes registrados.</div>`;
+        return;
+      }
+
+      container.innerHTML = clients.map(c => `
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-3.5 space-y-1">
+          <h4 class="text-sm font-bold text-white">${c.name}</h4>
+          <p class="text-xs font-mono text-zinc-400">WhatsApp: ${c.phone}</p>
+        </div>
+      `).join('');
+    }
 
     function showToast(title, message, type = 'info') {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
-      toast.className = 'p-3.5 rounded-xl border border-indigo-500/40 bg-zinc-900/95 text-white shadow-xl backdrop-blur-md text-xs';
+      toast.className = 'p-3.5 rounded-xl border border-indigo-500/40 bg-zinc-900/95 text-white shadow-xl backdrop-blur-md text-xs pointer-events-auto';
       toast.innerHTML = `<b class="block uppercase tracking-wider text-[10px]">${title}</b><div>${message}</div>`;
       container.appendChild(toast);
       setTimeout(() => toast.remove(), 3500);
     }
 
-    window.addEventListener('load', loadLocalData);
+    window.switchView = function(viewName) {
+      ['taller', 'caja', 'stock', 'clientes', 'metricas'].forEach(v => {
+        document.getElementById(`viewModule${v.charAt(0).toUpperCase() + v.slice(1)}`)?.classList.add('hidden');
+      });
+      document.getElementById(`viewModule${viewName.charAt(0).toUpperCase() + viewName.slice(1)}`)?.classList.remove('hidden');
+    };
+
+    window.addEventListener('load', () => {
+      document.getElementById('headerWorkshopCode').textContent = currentWorkshopId;
+      loadUniversalLocalData();
+      initRealtimeCloudMesh();
+    });
   </script>
 </body>
 </html>
