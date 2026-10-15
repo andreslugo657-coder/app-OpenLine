@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="OpenLine">
   <meta name="theme-color" content="#09090b">
-  <title>OpenLine - Gestión de Taller Profesional</title>
+  <title>OpenLine - TALLER-9572</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -19,7 +19,6 @@
 
   <!-- Phosphor Icons & Librerías -->
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
-  <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
   <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
 
   <style>
@@ -43,7 +42,7 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen relative z-0">
 
-  <!-- CABECERA PRINCIPAL -->
+  <!-- CABECERA DE LA APLICACIÓN -->
   <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
     <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full">
       <div class="flex items-center gap-2 min-w-0">
@@ -51,30 +50,30 @@
           <i class="ph-bold ph-wrench text-white text-base"></i>
         </div>
         <div class="min-w-0 flex flex-col">
-          <div class="flex items-center gap-1 flex-wrap">
+          <div class="flex items-center gap-1.5 flex-wrap">
             <h1 class="text-xs font-bold text-white tracking-tight truncate">OpenLine</h1>
-            <button type="button" onclick="window.openTeamModal()" class="text-[9px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-1.5 py-0.5 rounded-full flex items-center gap-1">
+            <span class="text-[9px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-1.5 py-0.5 rounded-full flex items-center gap-1">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span id="headerWorkshopCode">TALLER-XXXX</span>
-            </button>
-            <button type="button" id="headerLicenseBtn" onclick="window.openLicenseModal()" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1">
-              <i class="ph-bold ph-shield-check"></i> <span id="headerLicenseText">DEMO</span>
-            </button>
+              <span id="headerWorkshopCode">TALLER-9572</span>
+            </span>
+            <span id="headerLicenseBadge" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1">
+              <i class="ph-bold ph-shield-check"></i> <span>PRO / VITALICIO</span>
+            </span>
           </div>
           <span class="text-[10px] text-zinc-400 font-medium truncate">Servicio Técnico Profesional</span>
         </div>
       </div>
 
       <div class="flex items-center gap-1 shrink-0">
-        <button type="button" onclick="window.exportFullBackupJSON()" class="h-8 px-2.5 rounded-lg bg-indigo-950 text-indigo-300 border border-indigo-700 flex items-center gap-1.5 text-xs font-bold active:scale-95 transition" title="Descargar Respaldo JSON">
+        <button type="button" onclick="window.exportFullBackupJSON()" class="h-8 px-2.5 rounded-lg bg-indigo-950 text-indigo-300 border border-indigo-700 flex items-center gap-1.5 text-xs font-bold active:scale-95 transition">
           <i class="ph-bold ph-floppy-disk text-sm"></i>
           <span>Backup JSON</span>
         </button>
       </div>
     </div>
 
-    <!-- BOTONERA DE MÓDULOS Y PESTAÑAS -->
-    <div class="px-2.5 pb-2 max-w-5xl mx-auto w-full">
+    <!-- BOTONERA DE MÓDULOS -->
+    <div class="px-2.5 pb-2 max-w-5xl mx-auto w-full space-y-2">
       <div class="grid grid-cols-5 gap-1.5 text-center">
         <button type="button" onclick="window.openNewRepairModal()" class="py-2 px-1 rounded-xl bg-iosBlue text-white text-[10px] font-bold shadow flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
           <i class="ph-bold ph-plus text-base"></i><span>Ingreso</span>
@@ -92,44 +91,90 @@
           <i class="ph-bold ph-currency-dollar-simple text-base text-emerald-400"></i><span>Caja</span>
         </button>
       </div>
+
+      <!-- SELECTOR DE MÓDULOS DEL SISTEMA -->
+      <nav class="flex items-center gap-1 bg-zinc-950 p-1 rounded-xl border border-zinc-800 text-xs font-medium">
+        <button type="button" onclick="window.switchView('taller')" id="navTaller" class="flex-1 py-1.5 px-2 rounded-lg bg-zinc-800 text-white font-bold flex items-center justify-center gap-1 transition">
+          <i class="ph-bold ph-wrench text-iosBlue"></i><span>Taller</span>
+        </button>
+        <button type="button" onclick="window.switchView('clientes')" id="navClientes" class="flex-1 py-1.5 px-2 rounded-lg text-zinc-400 hover:text-white flex items-center justify-center gap-1 transition">
+          <i class="ph-bold ph-users text-indigo-400"></i><span>Clientes</span>
+        </button>
+        <button type="button" onclick="window.switchView('caja')" id="navCaja" class="flex-1 py-1.5 px-2 rounded-lg text-zinc-400 hover:text-white flex items-center justify-center gap-1 transition">
+          <i class="ph-bold ph-wallet text-emerald-400"></i><span>Caja</span>
+        </button>
+      </nav>
     </div>
   </header>
 
-  <!-- CUERPO DE ÓRDENES Y HISTORIAL COMPLETO -->
+  <!-- VISTAS DE MÓDULOS -->
   <main class="flex-1 w-full max-w-5xl mx-auto px-3 py-2 space-y-2 pb-safe overflow-y-auto">
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center">
-        <span class="text-[9px] text-zinc-400 block font-bold uppercase">Total Órdenes</span>
-        <span id="counterTotal" class="text-sm font-bold text-white mt-0.5 block">0</span>
+
+    <!-- VISTA 1: TALLER DE REPARACIONES -->
+    <div id="viewModuleTaller" class="space-y-2">
+      <div class="grid grid-cols-3 gap-1.5">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center">
+          <span class="text-[9px] text-zinc-400 block font-bold uppercase">Órdenes Taller</span>
+          <span id="counterTotal" class="text-sm font-bold text-white mt-0.5 block">0</span>
+        </div>
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center">
+          <span class="text-[9px] text-amber-400 block font-bold uppercase">En Taller</span>
+          <span id="counterInProgress" class="text-sm font-bold text-amber-400 mt-0.5 block">0</span>
+        </div>
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center">
+          <span class="text-[9px] text-emerald-400 block font-bold uppercase">Listos</span>
+          <span id="counterReady" class="text-sm font-bold text-emerald-400 mt-0.5 block">0</span>
+        </div>
       </div>
-      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center">
-        <span class="text-[9px] text-amber-400 block font-bold uppercase">En Taller</span>
-        <span id="counterInProgress" class="text-sm font-bold text-amber-400 mt-0.5 block">0</span>
-      </div>
-      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center">
-        <span class="text-[9px] text-emerald-400 block font-bold uppercase">Listos</span>
-        <span id="counterReady" class="text-sm font-bold text-emerald-400 mt-0.5 block">0</span>
-      </div>
-      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center">
-        <span class="text-[9px] text-emerald-300 block font-bold uppercase">Caja Acumulada</span>
-        <span id="counterCashTotal" class="text-sm font-extrabold text-emerald-300 font-mono mt-0.5 block">$0</span>
+
+      <div id="repairsList" class="space-y-2 pb-6"></div>
+      <div id="emptyState" class="hidden text-center py-12 px-4">
+        <h3 class="text-xs font-semibold text-zinc-400">Sin órdenes registradas</h3>
       </div>
     </div>
 
-    <div id="repairsList" class="space-y-2 pb-6"></div>
-    <div id="emptyState" class="hidden text-center py-12 px-4">
-      <i class="ph-bold ph-clipboard-text text-3xl text-zinc-600 mb-1"></i>
-      <h3 class="text-xs font-semibold text-zinc-400">Sin órdenes registradas</h3>
+    <!-- VISTA 2: CARTERA DE CLIENTES AUTO-CONSTRUIDA & CUENTA CORRIENTE -->
+    <div id="viewModuleClientes" class="hidden space-y-2.5">
+      <div class="flex items-center justify-between gap-2">
+        <input type="text" id="searchClientInput" oninput="window.renderClientsList()" placeholder="Buscar por cliente o teléfono..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500">
+        <button type="button" onclick="window.openNewClientModal()" class="px-3 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs shrink-0 active:scale-95 transition">+ Cliente</button>
+      </div>
+
+      <div id="clientsListContainer" class="space-y-2 pb-6"></div>
     </div>
+
+    <!-- VISTA 3: BALANCE DE CAJA -->
+    <div id="viewModuleCaja" class="hidden space-y-2.5">
+      <div class="p-3 bg-zinc-900 border border-zinc-800 rounded-2xl text-center space-y-1">
+        <span class="text-[10px] text-emerald-400 font-bold uppercase block">Caja / Saldo Actual Neto</span>
+        <span id="cashNetBalance" class="text-2xl font-bold text-white font-mono">$0</span>
+      </div>
+      <div id="cashMovementsList" class="space-y-1.5 pb-6"></div>
+    </div>
+
   </main>
 
-  <!-- ESTRUCTURA DE MODALES DE LA APLICACIÓN -->
-  <!-- MODAL NUEVO INGRESO -->
+  <!-- MODAL CREAR CLIENTE -->
+  <div id="clientModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-4 space-y-3 modal-card flex flex-col text-xs">
+      <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
+        <h3 class="font-bold text-white">Nuevo Cliente Manual</h3>
+        <button type="button" onclick="window.closeModal('clientModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <form onsubmit="window.saveManualClient(event)" class="space-y-3">
+        <input type="text" id="inpClientFormName" required placeholder="Nombre y Apellido *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+        <input type="tel" id="inpClientFormPhone" required placeholder="Teléfono / WhatsApp *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+        <button type="submit" class="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl active:scale-95 transition">Guardar Cliente</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL NUEVO INGRESO REPARACIÓN -->
   <div id="newRepairModal" class="app-modal">
-    <div class="bg-zinc-900 sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0">
         <h2 class="text-sm font-bold text-white">Nuevo Ingreso de Equipo</h2>
-        <button type="button" onclick="window.closeModal('newRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
+        <button type="button" onclick="window.closeModal('newRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
       </div>
       <form onsubmit="window.guardarIngresoDirecto(event)" class="overflow-y-auto p-4 space-y-3 flex-1 pb-8">
         <input type="text" id="inpClientName" required placeholder="Nombre del Cliente *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
@@ -148,223 +193,220 @@
     </div>
   </div>
 
-  <!-- MODAL VENTA MOSTRADOR POS -->
+  <!-- MODALES DE VENTA Y OTROS MÓDULOS -->
   <div id="salesModal" class="app-modal">
-    <div class="bg-zinc-900 sm:border border-amber-600/70 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="p-3 border-b border-zinc-800 flex items-center justify-between shrink-0">
-        <h3 class="font-bold text-white text-sm">Venta Mostrador</h3>
-        <button type="button" onclick="window.closeModal('salesModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
-      </div>
+    <div class="bg-zinc-900 border-t sm:border border-amber-600/70 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col text-xs text-zinc-300">
+      <div class="p-3 border-b border-zinc-800 flex items-center justify-between shrink-0"><h3 class="font-bold text-white text-sm">Venta Mostrador</h3><button type="button" onclick="window.closeModal('salesModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button></div>
       <form onsubmit="window.completePosSale(event)" class="p-4 space-y-3 flex-1 overflow-y-auto">
         <input type="text" id="posManualName" required placeholder="Producto / Accesorio..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
         <input type="number" id="posManualPrice" required placeholder="Monto ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono font-bold">
-        <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-xs shadow active:scale-95 transition">Registrar Venta</button>
+        <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-xs shadow transition">Registrar Venta</button>
       </form>
     </div>
   </div>
 
-  <!-- MODAL CAJA LOCAL -->
   <div id="cashModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
-        <h3 class="font-bold text-white text-sm">Movimientos de Caja</h3>
-        <button type="button" onclick="window.closeModal('cashModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
-      </div>
-      <div class="p-4 space-y-3 flex-1 overflow-y-auto">
-        <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl text-center">
-          <span class="text-[10px] text-emerald-400 font-bold uppercase block">Saldo Total Neto</span>
-          <span id="cashNetBalance" class="text-xl font-bold text-white font-mono mt-0.5 block">$0</span>
-        </div>
-        <div id="cashMovementsList" class="space-y-1.5 max-h-60 overflow-y-auto"></div>
-      </div>
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs text-zinc-300">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><h3 class="font-bold text-white text-sm">Movimientos de Caja</h3><button type="button" onclick="window.closeModal('cashModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button></div>
+      <div class="p-4 space-y-3 flex-1 overflow-y-auto" id="cashModalList"></div>
     </div>
   </div>
 
-  <!-- MODAL CONTROL DE STOCK -->
   <div id="stockModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-purple-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
-        <h3 class="font-bold text-white text-sm">Inventario & Stock</h3>
-        <button type="button" onclick="window.closeModal('stockModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
-      </div>
-      <div class="p-4 space-y-3 flex-1 overflow-y-auto" id="stockListContainer">
-        <div class="text-center text-zinc-500 py-6">Inventario cargado.</div>
-      </div>
+    <div class="bg-zinc-900 border-t sm:border border-purple-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs text-zinc-300">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><h3 class="font-bold text-white text-sm">Stock</h3><button type="button" onclick="window.closeModal('stockModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button></div>
+      <div class="p-4 space-y-3 flex-1 overflow-y-auto" id="stockListContainer"><div class="text-center text-zinc-500 py-6">Inventario cargado.</div></div>
     </div>
   </div>
 
-  <!-- MODAL HISTORIAL DE VENTAS -->
   <div id="ventasModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-indigo-700/80 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
-        <h3 class="font-bold text-white text-sm">Historial de Ventas</h3>
-        <button type="button" onclick="window.closeModal('ventasModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
-      </div>
-      <div class="p-4 space-y-3 flex-1 overflow-y-auto" id="ventasListContainer">
-        <div class="text-center text-zinc-500 py-6">Sin ventas registradas.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL BÓVEDA DE LICENCIA -->
-  <div id="licenseModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3.5 shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
-      <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x"></i></button></div>
-      <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center">
-        <span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia:</span>
-        <div id="licenseStatusText" class="font-mono text-base font-black text-amber-400 py-1">DEMO</div>
-      </div>
-      <div class="space-y-1.5 pt-1">
-        <label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar Clave Master / PRO:</label>
-        <div class="flex gap-1.5">
-          <input type="password" id="inpActivationKey" placeholder="Pega tu clave aquí..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs">
-          <button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs active:scale-95">Activar</button>
-        </div>
-      </div>
-      <button type="button" onclick="window.closeModal('licenseModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1 shrink-0">Cerrar</button>
+    <div class="bg-zinc-900 border-t sm:border border-indigo-700/80 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs text-zinc-300">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><h3 class="font-bold text-white text-sm">Historial Ventas</h3><button type="button" onclick="window.closeModal('ventasModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button></div>
+      <div class="p-4 space-y-3 flex-1 overflow-y-auto" id="ventasListContainer"><div class="text-center text-zinc-500 py-6">Sin ventas registradas.</div></div>
     </div>
   </div>
 
   <div id="toastContainer" class="fixed top-4 right-4 z-[100000] flex flex-col items-center gap-2 pointer-events-none"></div>
 
-  <!-- MOTOR DE MIGRACIÓN HISTÓRICA UNIVERSAL Y MANEJADORES GLOBALES -->
+  <!-- CONTROLADOR PRINCIPAL Y DE NAVEGACIÓN -->
   <script>
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var PERMANENT_LICENSE_KEY = 'openline_perm_vitalicio_shield';
 
-    var currentWorkshopId = localStorage.getItem(WORKSHOP_ID_KEY) || localStorage.getItem('openline_current_workshop_id');
-    if (!currentWorkshopId) {
-      currentWorkshopId = 'TALLER-' + Math.floor(1000 + Math.random() * 9000);
-      localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
-    }
+    var currentWorkshopId = 'TALLER-9572';
+    localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
 
     var repairs = [];
     var cashMovements = [];
-    var stockItems = [];
-    var sales = [];
+    var clients = [];
 
     function $(id) { return document.getElementById(id); }
 
-    // EXPOSICIÓN GLOBAL DE CONTROLADORES DE PESTAÑAS Y MODALES
-    window.openModal = function(id) {
-      var el = $(id);
-      if (el) { el.classList.remove('hidden'); el.classList.add('active'); el.style.display = 'flex'; }
-    };
-
-    window.closeModal = function(id) {
-      var el = $(id);
-      if (el) { el.classList.remove('active'); el.classList.add('hidden'); el.style.display = 'none'; }
-    };
+    window.openModal = function(id) { var el = $(id); if(el) { el.classList.remove('hidden'); el.classList.add('active'); el.style.display = 'flex'; } };
+    window.closeModal = function(id) { var el = $(id); if(el) { el.classList.remove('active'); el.classList.add('hidden'); el.style.display = 'none'; } };
 
     window.openNewRepairModal = function() { window.openModal('newRepairModal'); };
     window.openSalesModal = function() { window.openModal('salesModal'); };
-    window.openVentasHistoryModal = function() { window.openModal('ventasModal'); window.renderVentasList(); };
-    window.openStockModal = function() { window.openModal('stockModal'); window.renderStockList(); };
-    window.openCashModal = function() { window.openModal('cashModal'); window.renderCashMovements(); };
-    window.openLicenseModal = function() { window.openModal('licenseModal'); };
-    window.openTeamModal = function() { window.openLicenseModal(); };
+    window.openVentasHistoryModal = function() { window.openModal('ventasModal'); };
+    window.openStockModal = function() { window.openModal('stockModal'); };
+    window.openCashModal = function() { window.openModal('cashModal'); };
+    window.openNewClientModal = function() { window.openModal('clientModal'); };
 
-    window.showToast = function(title, msg) {
-      var tc = $('toastContainer');
-      if (tc) {
-        var t = document.createElement('div');
-        t.className = 'bg-zinc-800 border border-zinc-700 text-white px-3.5 py-2 rounded-xl text-xs shadow-xl mb-1 pointer-events-auto';
-        t.innerHTML = '<b>'+title+'</b><br>'+msg;
-        tc.appendChild(t);
-        setTimeout(function(){ try { t.remove(); } catch(e){} }, 3000);
-      }
+    window.switchView = function(viewName) {
+      ['taller', 'clientes', 'caja'].forEach(v => {
+        const mod = $('viewModule' + v.charAt(0).toUpperCase() + v.slice(1));
+        const btn = $('nav' + v.charAt(0).toUpperCase() + v.slice(1));
+        if (v === viewName) {
+          mod?.classList.remove('hidden');
+          btn?.classList.add('bg-zinc-800', 'text-white', 'font-bold');
+          btn?.classList.remove('text-zinc-400');
+        } else {
+          mod?.classList.add('hidden');
+          btn?.classList.remove('bg-zinc-800', 'text-white', 'font-bold');
+          btn?.classList.add('text-zinc-400');
+        }
+      });
+      if (viewName === 'clientes') window.renderClientsList();
+      if (viewName === 'caja') window.renderCashMovements();
     };
 
-    // ESCÁNER UNIVERSAL DE HISTORIAL COMPLETO
+    // DEEP SCAN HISTÓRICO Y SEPARACIÓN DE REPARACIONES / CAJA / CLIENTES
     function deepScanAllHistoricalData() {
       var allKeys = Object.keys(localStorage);
       var repairMap = {};
       var cashMap = {};
 
       allKeys.forEach(function(key) {
-        if (key.includes('repairs') || key.includes('vault') || key.includes('openline')) {
-          try {
-            var data = JSON.parse(localStorage.getItem(key));
-            if (Array.isArray(data)) {
-              data.forEach(function(item) {
-                if (item && item.id) repairMap[item.id] = item;
-              });
-            }
-          } catch(e) {}
-        }
-        if (key.includes('cash') || key.includes('vault')) {
-          try {
-            var cashData = JSON.parse(localStorage.getItem(key));
-            if (Array.isArray(cashData)) {
-              cashData.forEach(function(c) {
-                if (c && c.id) cashMap[c.id] = c;
-              });
-            }
-          } catch(e) {}
-        }
+        try {
+          var data = JSON.parse(localStorage.getItem(key));
+          if (Array.isArray(data)) {
+            data.forEach(function(item) {
+              // 1. Filtrar únicamente Órdenes de Reparación (evitando items CSH)
+              if (item && item.id && String(item.id).startsWith('OL-')) {
+                repairMap[item.id] = item;
+              }
+              // 2. Movimientos de Caja
+              if (item && item.id && (String(item.id).startsWith('CSH-') || String(item.id).startsWith('VTA-'))) {
+                cashMap[item.id] = item;
+              }
+            });
+          }
+        } catch(e) {}
       });
 
-      repairs = Object.values(repairMap).sort(function(a,b){ return (b.createdAt || 0) - (a.createdAt || 0); });
-      cashMovements = Object.values(cashMap).sort(function(a,b){ return (b.date || 0) - (a.date || 0); });
+      repairs = Object.values(repairMap).sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+      cashMovements = Object.values(cashMap).sort((a,b) => (b.date || 0) - (a.date || 0));
 
-      // Guardar en boveda estandarizada
-      localStorage.setItem('openline_vault_' + currentWorkshopId + '_repairs', JSON.stringify(repairs));
-      localStorage.setItem('openline_vault_' + currentWorkshopId + '_cash', JSON.stringify(cashMovements));
-
-      window.checkLicenseStatus();
+      window.syncClientsFromRepairs();
       window.renderRepairsList();
       window.updateCashBalanceUI();
     }
 
-    // CONTROL DE BÓVEDA DE LICENCIA MAESTRA
-    window.checkLicenseStatus = function() {
-      var permKey = localStorage.getItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId);
-      var allKeys = Object.keys(localStorage);
-      var isPro = (permKey === 'TRUE');
+    // CARTERA AUTO-CONSTRUIDA DE CLIENTES DESDE LAS ÓRDENES HISTÓRICAS
+    window.syncClientsFromRepairs = function() {
+      var clientMap = {};
+      
+      repairs.forEach(r => {
+        if (!r.clientPhone) return;
+        var cleanPhone = r.clientPhone.trim();
+        if (!clientMap[cleanPhone]) {
+          clientMap[cleanPhone] = {
+            name: r.clientName || 'Cliente',
+            phone: cleanPhone,
+            totalBilled: 0,
+            repairsCount: 0
+          };
+        }
+        clientMap[cleanPhone].totalBilled += (parseFloat(r.budget) || 0);
+        clientMap[cleanPhone].repairsCount += 1;
+      });
 
-      if (!isPro) {
-        allKeys.forEach(function(k) {
-          if (k.includes('license') || k.includes('perm')) {
-            try {
-              var val = localStorage.getItem(k);
-              if (val === 'TRUE' || val.includes('LIFETIME') || val.includes('PRO')) isPro = true;
-            } catch(e){}
-          }
-        });
-      }
-
-      var text = $('headerLicenseText');
-      var btn = $('headerLicenseBtn');
-      var modalText = $('licenseStatusText');
-
-      if (isPro) {
-        localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId, 'TRUE');
-        if(text) text.textContent = 'PRO / VITALICIO';
-        if(btn) btn.className = 'text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1';
-        if(modalText) { modalText.textContent = 'PRO / VITALICIO'; modalText.className = 'font-mono text-base font-black text-emerald-400 py-1'; }
-        return 'PRO';
-      } else {
-        if(text) text.textContent = 'DEMO';
-        if(btn) btn.className = 'text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1';
-        if(modalText) { modalText.textContent = 'DEMO'; modalText.className = 'font-mono text-base font-black text-amber-400 py-1'; }
-        return 'DEMO';
-      }
+      clients = Object.values(clientMap);
     };
 
-    window.applyKey = function() {
-      var k = $('inpActivationKey').value.trim().toUpperCase();
-      if (k.length > 3) {
-        localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId, 'TRUE');
-        window.checkLicenseStatus();
-        window.closeModal('licenseModal');
-        window.showToast("Licencia Activada", "Tu taller se ha actualizado a PRO.");
-      } else {
-        window.showToast("Error", "Clave no válida.");
+    window.renderClientsList = function() {
+      var container = $('clientsListContainer');
+      var query = $('searchClientInput')?.value.toLowerCase().trim() || '';
+
+      if (!container) return;
+
+      var filtered = clients.filter(c => !query || c.name.toLowerCase().includes(query) || c.phone.toLowerCase().includes(query));
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="text-center py-10 text-zinc-500 text-xs">Sin clientes registrados.</div>`;
+        return;
       }
+
+      container.innerHTML = filtered.map(c => `
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex justify-between items-center">
+          <div>
+            <h4 class="text-xs font-bold text-white flex items-center gap-1"><i class="ph-bold ph-user text-indigo-400"></i> ${c.name}</h4>
+            <p class="text-[10px] font-mono text-zinc-400 mt-0.5"><i class="ph-bold ph-whatsapp-logo text-emerald-400"></i> ${c.phone}</p>
+          </div>
+          <div class="text-right">
+            <span class="text-[9px] text-zinc-500 uppercase font-bold block">${c.repairsCount} Trabajos</span>
+            <span class="text-xs font-mono font-bold text-emerald-400">$${c.totalBilled.toLocaleString()}</span>
+          </div>
+        </div>
+      `).join('');
+    };
+
+    window.renderRepairsList = function() {
+      var container = $('repairsList');
+      var empty = $('emptyState');
+      if (!container) return;
+
+      if ($('counterTotal'))$('counterTotal').textContent = repairs.length;
+      if ($('counterInProgress'))$('counterInProgress').textContent = repairs.filter(r => r.status === 'IN_PROGRESS').length;
+      if ($('counterReady'))$('counterReady').textContent = repairs.filter(r => r.status === 'READY').length;
+
+      if (!repairs || repairs.length === 0) {
+        container.innerHTML = '';
+        empty?.classList.remove('hidden');
+        return;
+      }
+
+      empty?.classList.add('hidden');
+      container.innerHTML = repairs.map(r => `
+        <div class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl flex justify-between items-center">
+          <div>
+            <span class="font-mono text-xs font-bold text-iosBlue">#${r.id}</span>
+            <h4 class="text-xs font-bold text-white mt-0.5">${r.deviceBrand || ''} ${r.deviceModel || ''}</h4>
+            <div class="text-[10px] text-zinc-400">${r.clientName || 'Cliente'} <span class="font-mono text-zinc-500">(${r.clientPhone || 'S/T'})</span></div>
+          </div>
+          <div class="text-right">
+            <span class="text-[9px] px-2 py-0.5 rounded bg-zinc-800 text-amber-400 font-bold">${r.status || 'IN_PROGRESS'}</span>
+            <div class="font-mono text-xs font-bold text-emerald-400 mt-1">$${(r.budget || 0).toLocaleString()}</div>
+          </div>
+        </div>
+      `).join('');
+    };
+
+    window.updateCashBalanceUI = function() {
+      var total = 0;
+      cashMovements.forEach(c => { total += (c.amount || 0); });
+      if ($('cashNetBalance')) $('cashNetBalance').textContent = '$' + total.toLocaleString();
+    };
+
+    window.renderCashMovements = function() {
+      var container = $('cashMovementsList');
+      var modalContainer = $('cashModalList');
+      var html = cashMovements.length === 0 ? '<div class="text-center text-zinc-500 py-4">Sin movimientos.</div>' : cashMovements.map(c => `
+        <div class="p-2 bg-zinc-900 border border-zinc-800 rounded-lg flex justify-between items-center">
+          <div>
+            <span class="text-white text-xs font-bold">${c.concept || 'Movimiento'}</span>
+            <div class="text-[9px] text-zinc-500">${new Date(c.date || Date.now()).toLocaleDateString('es-AR')}</div>
+          </div>
+          <span class="font-mono text-emerald-400 font-bold text-xs">+$${(c.amount || 0).toLocaleString()}</span>
+        </div>
+      `).join('');
+
+      if (container) container.innerHTML = html;
+      if (modalContainer) modalContainer.innerHTML = html;
     };
 
     window.guardarIngresoDirecto = function(e) {
-      if(e && e.preventDefault) e.preventDefault();
+      if (e && e.preventDefault) e.preventDefault();
       var id = 'OL-' + Math.floor(1000 + Math.random() * 9000);
       var budget = parseFloat($('inpDeviceBudget').value) || 0;
       var advance = parseFloat($('inpDeviceAdvance').value) || 0;
@@ -391,101 +433,19 @@
       }
 
       window.closeModal('newRepairModal');
-      window.renderRepairsList();
-      window.updateCashBalanceUI();
-      window.showToast("Guardado", "Orden creada: #" + id);
-    };
-
-    window.completePosSale = function(e) {
-      if(e && e.preventDefault) e.preventDefault();
-      var name = $('posManualName').value;
-      var price = parseFloat($('posManualPrice').value) || 0;
-
-      if (!name || price <= 0) return;
-
-      var saleId = 'VTA-' + Math.floor(1000 + Math.random() * 9000);
-      cashMovements.unshift({ id: saleId, amount: price, concept: 'Venta Mostrador: ' + name, date: Date.now() });
-      localStorage.setItem('openline_vault_' + currentWorkshopId + '_cash', JSON.stringify(cashMovements));
-
-      $('posManualName').value = '';
-      $('posManualPrice').value = '';
-
-      window.closeModal('salesModal');
-      window.updateCashBalanceUI();
-      window.showToast("Venta Registrada", "Monto de $" + price + " agregado a caja.");
-    };
-
-    window.renderRepairsList = function() {
-      var container = $('repairsList');
-      var empty = $('emptyState');
-      if (!container) return;
-
-      if ($('counterTotal')) $('counterTotal').textContent = repairs.length;
-      if ($('counterInProgress')) $('counterInProgress').textContent = repairs.filter(function(r){ return r.status === 'IN_PROGRESS'; }).length;
-      if ($('counterReady')) $('counterReady').textContent = repairs.filter(function(r){ return r.status === 'READY'; }).length;
-
-      if (!repairs || repairs.length === 0) {
-        container.innerHTML = '';
-        if(empty) empty.classList.remove('hidden');
-        return;
-      }
-
-      if(empty) empty.classList.add('hidden');
-      container.innerHTML = repairs.map(function(r) {
-        return '<div class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl flex justify-between items-center">' +
-               '<div><span class="font-mono text-xs font-bold text-iosBlue">#' + r.id + '</span>' +
-               '<h4 class="text-xs font-bold text-white mt-0.5">' + (r.deviceBrand || '') + ' ' + (r.deviceModel || '') + '</h4>' +
-               '<div class="text-[10px] text-zinc-400">' + (r.clientName || 'Cliente') + ' (' + (r.clientPhone || 'S/T') + ')</div></div>' +
-               '<div class="text-right"><span class="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-amber-400 font-bold">' + (r.status || 'Taller') + '</span>' +
-               '<div class="font-mono text-xs font-bold text-emerald-400 mt-1">$' + (r.budget || 0) + '</div></div></div>';
-      }).join('');
-    };
-
-    window.updateCashBalanceUI = function() {
-      var total = 0;
-      cashMovements.forEach(function(c) { total += (c.amount || 0); });
-      if($('cashNetBalance')) $('cashNetBalance').textContent = '$' + total.toLocaleString();
-      if($('counterCashTotal')) $('counterCashTotal').textContent = '$' + total.toLocaleString();
-    };
-
-    window.renderCashMovements = function() {
-      var container = $('cashMovementsList');
-      if (!container) return;
-      if (cashMovements.length === 0) {
-        container.innerHTML = '<div class="text-center text-zinc-500 py-4">Sin movimientos.</div>';
-        return;
-      }
-      container.innerHTML = cashMovements.map(function(c) {
-        return '<div class="p-2 bg-zinc-950 border border-zinc-800 rounded-lg flex justify-between items-center">' +
-               '<div><span class="text-white text-xs font-bold">' + c.concept + '</span>' +
-               '<div class="text-[9px] text-zinc-500">' + new Date(c.date || Date.now()).toLocaleDateString('es-AR') + '</div></div>' +
-               '<span class="font-mono text-emerald-400 font-bold text-xs">+$' + (c.amount || 0) + '</span></div>';
-      }).join('');
-    };
-
-    window.renderStockList = function() {
-      var container = $('stockListContainer');
-      if (container) container.innerHTML = '<div class="text-center text-zinc-500 py-6">Inventario cargado.</div>';
-    };
-
-    window.renderVentasList = function() {
-      var container = $('ventasListContainer');
-      if (container) container.innerHTML = '<div class="text-center text-zinc-500 py-6">Ventas sincronizadas.</div>';
+      deepScanAllHistoricalData();
     };
 
     window.exportFullBackupJSON = function() {
-      var backup = { workshopId: currentWorkshopId, repairs: repairs, cashMovements: cashMovements, exportedAt: new Date().toISOString() };
+      var backup = { workshopId: currentWorkshopId, repairs, cashMovements, exportedAt: new Date().toISOString() };
       var blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
       var a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'backup_' + currentWorkshopId + '_' + new Date().toISOString().slice(0,10) + '.json';
+      a.download = `backup_${currentWorkshopId}_${new Date().toISOString().slice(0,10)}.json`;
       a.click();
-      window.showToast("Backup Descargado", "Copia completa guardada en tu archivo.");
     };
 
-    // ARRANCAR APLICACIÓN Y ESCANEO EN CASCADA
     window.addEventListener('DOMContentLoaded', function() {
-      if($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
       deepScanAllHistoricalData();
     });
   </script>
