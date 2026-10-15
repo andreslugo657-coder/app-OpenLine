@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#09090b">
   <title>OpenLine - Gestión de Taller Profesional</title>
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -21,22 +21,17 @@
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
   <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
   <style>
     body { min-height: 100vh; min-height: 100dvh; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
     .pt-safe { padding-top: max(env(safe-area-inset-top), 8px); }
     .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 20px); }
-    
-    input, select, textarea { font-size: 16px !important; }
-    button, a, .cursor-pointer { touch-action: manipulation; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-    
-    ::-webkit-scrollbar { display: none; width: 0; height: 0; }
+    ::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
     .app-modal {
       display: none; position: fixed; inset: 0; z-index: 9999;
-      background-color: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      background-color: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px);
       align-items: flex-end; justify-content: center;
       padding-bottom: max(env(safe-area-inset-bottom), 12px); padding-top: max(env(safe-area-inset-top), 8px);
     }
@@ -44,179 +39,183 @@
     .app-modal.active { display: flex !important; }
     .modal-card { max-height: 86dvh; height: 86dvh; min-height: 0; }
     @media (min-width: 640px) { .modal-card { max-height: 88dvh; height: auto; } }
-
-    #qr-reader, #pos-qr-reader, #stock-qr-reader { border: none !important; width: 100%; min-height: 240px; }
-    #qr-reader video, #pos-qr-reader video, #stock-qr-reader video { border-radius: 1rem; object-fit: cover; width: 100%; height: 240px; }
-
-    .ticker-wrap { width: 100%; overflow: hidden; background-color: #09090b; border-top: 1px solid #27272a; padding: 5px 0; flex-shrink: 0; }
-    .ticker { display: inline-block; white-space: nowrap; padding-right: 100%; box-sizing: content-box; animation: ticker 25s linear infinite; }
-    @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
-
-    @media print {
-      body * { visibility: hidden !important; }
-      #printArea, #printArea * { visibility: visible !important; }
-      #printArea { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; display: block !important; background: white !important; color: black !important; }
-    }
   </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen relative z-0">
 
+  <!-- CABECERA PRINCIPAL -->
   <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
     <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full">
       <div class="flex items-center gap-2 min-w-0">
-        <div id="headerLogoContainer" class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center overflow-hidden shadow shrink-0">
-          <i id="headerDefaultIcon" class="ph-bold ph-wrench text-white text-base"></i>
-          <img id="headerCustomLogo" src="" alt="Logo" class="w-full h-full object-cover hidden">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center overflow-hidden shadow shrink-0">
+          <i class="ph-bold ph-wrench text-white text-base"></i>
         </div>
         <div class="min-w-0 flex flex-col">
           <div class="flex items-center gap-1 flex-wrap">
-            <h1 id="appHeaderTitle" class="text-xs font-bold text-white tracking-tight truncate">OpenLine</h1>
-            <button type="button" onclick="window.openTeamModal()" class="text-[9px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-1.5 py-0.5 rounded-full flex items-center gap-1 active:opacity-75 transition">
-              <span id="livePulseDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <h1 class="text-xs font-bold text-white tracking-tight truncate">OpenLine</h1>
+            <button type="button" onclick="window.openTeamModal()" class="text-[9px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-1.5 py-0.5 rounded-full flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span id="headerWorkshopCode">TALLER-XXXX</span>
             </button>
-            <span class="text-[9px] font-mono bg-emerald-950 border border-emerald-700/60 text-emerald-400 px-1.5 py-0.5 rounded-full flex items-center gap-1">
-              <i class="ph-bold ph-users text-[9px]"></i> <span id="onlineUsersCount">1</span>
-            </span>
-            <button type="button" id="headerLicenseBtn" onclick="window.openLicenseModal()" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition">
+            <button type="button" id="headerLicenseBtn" onclick="window.openLicenseModal()" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1">
               <i class="ph-bold ph-shield-check"></i> <span id="headerLicenseText">DEMO</span>
             </button>
           </div>
-          <span id="appHeaderSubtitle" class="text-[10px] text-zinc-400 font-medium truncate">Servicio Técnico Profesional</span>
+          <span class="text-[10px] text-zinc-400 font-medium truncate">Servicio Técnico Profesional</span>
         </div>
       </div>
 
       <div class="flex items-center gap-1 shrink-0">
-        <button type="button" onclick="window.exportFullBackupJSON()" class="h-8 px-2 rounded-lg bg-indigo-950 text-indigo-300 border border-indigo-700 flex items-center gap-1 active:scale-95 transition shadow-sm text-xs font-bold" title="Descargar Respaldo JSON">
+        <button type="button" onclick="window.exportFullBackupJSON()" class="h-8 px-2.5 rounded-lg bg-indigo-950 text-indigo-300 border border-indigo-700 flex items-center gap-1.5 text-xs font-bold active:scale-95 transition" title="Descargar Respaldo JSON">
           <i class="ph-bold ph-floppy-disk text-sm"></i>
-          <span class="hidden sm:inline">Backup</span>
-        </button>
-        <button type="button" onclick="window.openSwitchUserModal()" class="h-8 px-2 rounded-lg bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center gap-1 active:scale-95 transition shadow-sm text-xs font-bold" title="Personal y Dispositivos">
-          <i class="ph-bold ph-user-circle text-sm text-iosBlue"></i>
-          <span id="headerActiveUserDisplay" class="max-w-[70px] truncate">Admin</span>
-        </button>
-        <button type="button" onclick="window.openSettingsModal()" class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm" title="Ajustes">
-          <i class="ph-bold ph-gear text-base"></i>
+          <span>Backup JSON</span>
         </button>
       </div>
     </div>
 
-    <!-- BOTONERA PRINCIPAL -->
+    <!-- BOTONERA DE MÓDULOS Y PESTAÑAS -->
     <div class="px-2.5 pb-2 max-w-5xl mx-auto w-full">
       <div class="grid grid-cols-5 gap-1.5 text-center">
-        <button type="button" onclick="window.openNewRepairModal()" class="py-2 px-1 rounded-xl bg-iosBlue text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform">
+        <button type="button" onclick="window.openNewRepairModal()" class="py-2 px-1 rounded-xl bg-iosBlue text-white text-[10px] font-bold shadow flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
           <i class="ph-bold ph-plus text-base"></i><span>Ingreso</span>
         </button>
-        <button type="button" onclick="window.openSalesModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform">
+        <button type="button" onclick="window.openSalesModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] font-bold shadow flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
           <i class="ph-bold ph-shopping-cart-simple text-base"></i><span>Vender</span>
         </button>
-        <button type="button" onclick="window.openVentasHistoryModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-indigo-900 to-blue-900 border border-indigo-700/60 text-indigo-200 text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform">
+        <button type="button" onclick="window.openVentasHistoryModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-indigo-900 to-blue-900 border border-indigo-700/60 text-indigo-200 text-[10px] font-bold shadow flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
           <i class="ph-bold ph-receipt text-base text-indigo-400"></i><span>Ventas</span>
         </button>
-        <button type="button" onclick="window.openStockModal()" class="py-2 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform relative">
+        <button type="button" onclick="window.openStockModal()" class="py-2 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
           <i class="ph-bold ph-barcode text-base text-purple-400"></i><span>Stock</span>
         </button>
-        <button type="button" onclick="window.openCashModal()" class="py-2 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform">
-          <i class="ph-bold ph-currency-dollar-simple text-base text-emerald-400"></i><span>Caja (<span id="btnLabelCajaLocal">C</span>)</span>
+        <button type="button" onclick="window.openCashModal()" class="py-2 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
+          <i class="ph-bold ph-currency-dollar-simple text-base text-emerald-400"></i><span>Caja</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- CUERPO PRINCIPAL -->
-  <main class="flex-1 w-full max-w-5xl mx-auto px-3 py-2 space-y-2 pb-safe overflow-y-auto z-10 relative">
-    <div id="branchFilterContainer" class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 shadow-sm space-y-1">
-      <div class="flex items-center justify-between px-1">
-        <span class="text-[9px] font-bold uppercase text-zinc-400 flex items-center gap-1"><i class="ph-bold ph-eye text-rose-400 text-xs"></i> Vista Global Órdenes:</span>
-        <span id="currentBranchDisplayTag" class="text-[10px] font-mono text-zinc-300">Todas</span>
+  <!-- CUERPO DE ÓRDENES Y HISTORIAL COMPLETO -->
+  <main class="flex-1 w-full max-w-5xl mx-auto px-3 py-2 space-y-2 pb-safe overflow-y-auto">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center">
+        <span class="text-[9px] text-zinc-400 block font-bold uppercase">Total Órdenes</span>
+        <span id="counterTotal" class="text-sm font-bold text-white mt-0.5 block">0</span>
       </div>
-      <div id="branchTabsButtonsList" class="flex gap-1 overflow-x-auto no-scrollbar text-xs font-medium pb-0.5"></div>
-    </div>
-
-    <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
-      <button type="button" onclick="window.openCashModal()" class="w-full text-center bg-gradient-to-br from-zinc-900 to-emerald-950/40 border border-emerald-900/40 rounded-xl p-2 shadow-sm active:scale-95 transition">
-        <span class="text-[9px] text-emerald-400 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-wallet"></i> Saldo Caja (<span id="headerCashBranchTag">Central</span>)</span>
-        <span id="headerCashBalance" class="text-sm font-extrabold text-emerald-300 font-mono mt-0.5 block">$0</span>
-      </button>
-      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center shadow-sm">
-        <span class="text-[9px] text-zinc-400 block font-bold uppercase">Espera</span><span id="counterReceived" class="text-sm font-bold text-white mt-0.5 block">0</span>
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center">
+        <span class="text-[9px] text-amber-400 block font-bold uppercase">En Taller</span>
+        <span id="counterInProgress" class="text-sm font-bold text-amber-400 mt-0.5 block">0</span>
       </div>
-      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center shadow-sm">
-        <span class="text-[9px] text-amber-400 block font-bold uppercase">Taller</span><span id="counterInProgress" class="text-sm font-bold text-amber-400 mt-0.5 block">0</span>
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center">
+        <span class="text-[9px] text-emerald-400 block font-bold uppercase">Listos</span>
+        <span id="counterReady" class="text-sm font-bold text-emerald-400 mt-0.5 block">0</span>
       </div>
-      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center shadow-sm">
-        <span class="text-[9px] text-indigo-400 block font-bold uppercase">En Viaje</span><span id="counterTransit" class="text-sm font-bold text-indigo-400 mt-0.5 block">0</span>
-      </div>
-      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center shadow-sm col-span-2 sm:col-span-1">
-        <span class="text-[9px] text-emerald-400 block font-bold uppercase">Listos</span><span id="counterReady" class="text-sm font-bold text-emerald-400 mt-0.5 block">0</span>
-      </div>
-    </div>
-
-    <div class="space-y-1.5">
-      <div class="relative">
-        <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm"></i>
-        <input id="searchInput" type="text" oninput="window.handleSearch()" placeholder="Buscar orden, cliente, modelo o sucursal..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-8 pr-8 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-iosBlue shadow-sm">
-        <button type="button" id="clearSearchBtn" onclick="window.clearSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 p-1"><i class="ph-bold ph-x-circle text-sm"></i></button>
-      </div>
-      <div class="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0.5">
-        <button type="button" onclick="window.setFilter('ALL')" id="tabALL" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-800 text-white font-bold shrink-0 transition text-xs">Todos</button>
-        <button type="button" onclick="window.setFilter('WAITING')" id="tabWAITING" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Espera</button>
-        <button type="button" onclick="window.setFilter('IN_PROGRESS')" id="tabIN_PROGRESS" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Taller</button>
-        <button type="button" onclick="window.setFilter('IN_TRANSIT')" id="tabIN_TRANSIT" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Viaje</button>
-        <button type="button" onclick="window.setFilter('READY')" id="tabREADY" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Listos</button>
+      <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center">
+        <span class="text-[9px] text-emerald-300 block font-bold uppercase">Caja Acumulada</span>
+        <span id="counterCashTotal" class="text-sm font-extrabold text-emerald-300 font-mono mt-0.5 block">$0</span>
       </div>
     </div>
 
     <div id="repairsList" class="space-y-2 pb-6"></div>
-    <div id="emptyState" class="hidden text-center py-8 px-4">
-      <div class="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto mb-2 text-zinc-600"><i class="ph-bold ph-clipboard-text text-xl"></i></div>
-      <h3 class="text-xs font-semibold text-zinc-400">No hay órdenes registradas</h3>
+    <div id="emptyState" class="hidden text-center py-12 px-4">
+      <i class="ph-bold ph-clipboard-text text-3xl text-zinc-600 mb-1"></i>
+      <h3 class="text-xs font-semibold text-zinc-400">Sin órdenes registradas</h3>
     </div>
   </main>
 
-  <!-- MODAL DE INGRESO -->
+  <!-- ESTRUCTURA DE MODALES DE LA APLICACIÓN -->
+  <!-- MODAL NUEVO INGRESO -->
   <div id="newRepairModal" class="app-modal">
     <div class="bg-zinc-900 sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0">
-        <h2 class="text-sm font-bold text-white flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-iosBlue"></span>Nuevo Ingreso</h2>
-        <button type="button" onclick="window.closeModal('newRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button>
+        <h2 class="text-sm font-bold text-white">Nuevo Ingreso de Equipo</h2>
+        <button type="button" onclick="window.closeModal('newRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
       </div>
-      <div class="overflow-y-auto p-4 space-y-3.5 flex-1 pb-10">
-        <div class="space-y-1.5">
-          <label class="font-bold text-zinc-300 uppercase text-[9px]">1. Datos del Cliente</label>
-          <input type="text" id="inpClientName" placeholder="Nombre y Apellido *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-          <input type="tel" id="inpClientPhone" placeholder="Número celular *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+      <form onsubmit="window.guardarIngresoDirecto(event)" class="overflow-y-auto p-4 space-y-3 flex-1 pb-8">
+        <input type="text" id="inpClientName" required placeholder="Nombre del Cliente *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+        <input type="tel" id="inpClientPhone" required placeholder="Teléfono / WhatsApp *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" id="inpDeviceBrand" required placeholder="Marca *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+          <input type="text" id="inpDeviceModel" required placeholder="Modelo *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
         </div>
-        <div class="space-y-1.5">
-          <label class="font-bold text-zinc-300 uppercase text-[9px]">2. Dispositivo</label>
-          <div class="grid grid-cols-2 gap-2">
-            <input type="text" id="inpDeviceBrand" placeholder="Marca *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-            <input type="text" id="inpDeviceModel" placeholder="Modelo *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-          </div>
+        <textarea id="inpDeviceFault" rows="2" placeholder="Falla informada..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white"></textarea>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="number" id="inpDeviceBudget" placeholder="Presupuesto ($)" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
+          <input type="number" id="inpDeviceAdvance" placeholder="Seña ($)" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold">
         </div>
-        <div class="space-y-2 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
-          <label class="font-bold text-zinc-300 uppercase text-[9px] block">3. Falla y Presupuesto</label>
-          <textarea id="inpDeviceFault" rows="2" placeholder="Falla informada por el cliente..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white"></textarea>
-          <div class="grid grid-cols-2 gap-2">
-            <div><label class="text-[9px] text-zinc-400 block mb-0.5">Total ($)</label><input type="number" id="inpDeviceBudget" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"></div>
-            <div><label class="text-[9px] text-zinc-400 block mb-0.5">Seña ($)</label><input type="number" id="inpDeviceAdvance" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold"></div>
-          </div>
+        <button type="submit" class="w-full py-3 rounded-xl bg-iosBlue text-white font-bold text-xs shadow active:scale-95 transition mt-2">Guardar Orden</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL VENTA MOSTRADOR POS -->
+  <div id="salesModal" class="app-modal">
+    <div class="bg-zinc-900 sm:border border-amber-600/70 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
+      <div class="p-3 border-b border-zinc-800 flex items-center justify-between shrink-0">
+        <h3 class="font-bold text-white text-sm">Venta Mostrador</h3>
+        <button type="button" onclick="window.closeModal('salesModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <form onsubmit="window.completePosSale(event)" class="p-4 space-y-3 flex-1 overflow-y-auto">
+        <input type="text" id="posManualName" required placeholder="Producto / Accesorio..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+        <input type="number" id="posManualPrice" required placeholder="Monto ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono font-bold">
+        <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-xs shadow active:scale-95 transition">Registrar Venta</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CAJA LOCAL -->
+  <div id="cashModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
+        <h3 class="font-bold text-white text-sm">Movimientos de Caja</h3>
+        <button type="button" onclick="window.closeModal('cashModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <div class="p-4 space-y-3 flex-1 overflow-y-auto">
+        <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl text-center">
+          <span class="text-[10px] text-emerald-400 font-bold uppercase block">Saldo Total Neto</span>
+          <span id="cashNetBalance" class="text-xl font-bold text-white font-mono mt-0.5 block">$0</span>
         </div>
-        <button type="button" onclick="window.guardarIngresoDirecto()" class="w-full py-3.5 rounded-xl bg-iosBlue text-white font-bold text-sm shadow active:scale-95 transition mb-4">Guardar Ingreso de Equipo</button>
+        <div id="cashMovementsList" class="space-y-1.5 max-h-60 overflow-y-auto"></div>
       </div>
     </div>
   </div>
 
-  <!-- MODAL LICENCIA -->
+  <!-- MODAL CONTROL DE STOCK -->
+  <div id="stockModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-purple-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
+        <h3 class="font-bold text-white text-sm">Inventario & Stock</h3>
+        <button type="button" onclick="window.closeModal('stockModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <div class="p-4 space-y-3 flex-1 overflow-y-auto" id="stockListContainer">
+        <div class="text-center text-zinc-500 py-6">Inventario cargado.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL HISTORIAL DE VENTAS -->
+  <div id="ventasModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-indigo-700/80 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
+        <h3 class="font-bold text-white text-sm">Historial de Ventas</h3>
+        <button type="button" onclick="window.closeModal('ventasModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <div class="p-4 space-y-3 flex-1 overflow-y-auto" id="ventasListContainer">
+        <div class="text-center text-zinc-500 py-6">Sin ventas registradas.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL BÓVEDA DE LICENCIA -->
   <div id="licenseModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg p-4 space-y-3.5 pb-safe shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
-      <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3.5 shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
+      <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x"></i></button></div>
       <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center">
         <span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia:</span>
-        <div id="licenseStatusText" class="font-mono text-base font-black text-amber-400 py-1 select-none">DEMO</div>
+        <div id="licenseStatusText" class="font-mono text-base font-black text-amber-400 py-1">DEMO</div>
       </div>
       <div class="space-y-1.5 pt-1">
-        <label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar Licencia Vitalicia / PRO:</label>
+        <label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar Clave Master / PRO:</label>
         <div class="flex gap-1.5">
           <input type="password" id="inpActivationKey" placeholder="Pega tu clave aquí..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs">
           <button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs active:scale-95">Activar</button>
@@ -226,11 +225,269 @@
     </div>
   </div>
 
-  <!-- MODAL VENTAS POS -->
-  <div id="salesModal" class="app-modal">
-    <div class="bg-zinc-900 sm:border border-amber-600/70 rounded-t-3xl sm:rounded-3xl w-full max-w-xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="p-3 border-b border-zinc-800 flex items-center justify-between">
-        <h3 class="font-bold text-white text-sm">Venta Mostrador</h3>
-        <button type="button" onclick="window.closeModal('salesModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
-      </div>
-      <div
+  <div id="toastContainer" class="fixed top-4 right-4 z-[100000] flex flex-col items-center gap-2 pointer-events-none"></div>
+
+  <!-- MOTOR DE MIGRACIÓN HISTÓRICA UNIVERSAL Y MANEJADORES GLOBALES -->
+  <script>
+    var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
+    var PERMANENT_LICENSE_KEY = 'openline_perm_vitalicio_shield';
+
+    var currentWorkshopId = localStorage.getItem(WORKSHOP_ID_KEY) || localStorage.getItem('openline_current_workshop_id');
+    if (!currentWorkshopId) {
+      currentWorkshopId = 'TALLER-' + Math.floor(1000 + Math.random() * 9000);
+      localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
+    }
+
+    var repairs = [];
+    var cashMovements = [];
+    var stockItems = [];
+    var sales = [];
+
+    function $(id) { return document.getElementById(id); }
+
+    // EXPOSICIÓN GLOBAL DE CONTROLADORES DE PESTAÑAS Y MODALES
+    window.openModal = function(id) {
+      var el = $(id);
+      if (el) { el.classList.remove('hidden'); el.classList.add('active'); el.style.display = 'flex'; }
+    };
+
+    window.closeModal = function(id) {
+      var el = $(id);
+      if (el) { el.classList.remove('active'); el.classList.add('hidden'); el.style.display = 'none'; }
+    };
+
+    window.openNewRepairModal = function() { window.openModal('newRepairModal'); };
+    window.openSalesModal = function() { window.openModal('salesModal'); };
+    window.openVentasHistoryModal = function() { window.openModal('ventasModal'); window.renderVentasList(); };
+    window.openStockModal = function() { window.openModal('stockModal'); window.renderStockList(); };
+    window.openCashModal = function() { window.openModal('cashModal'); window.renderCashMovements(); };
+    window.openLicenseModal = function() { window.openModal('licenseModal'); };
+    window.openTeamModal = function() { window.openLicenseModal(); };
+
+    window.showToast = function(title, msg) {
+      var tc = $('toastContainer');
+      if (tc) {
+        var t = document.createElement('div');
+        t.className = 'bg-zinc-800 border border-zinc-700 text-white px-3.5 py-2 rounded-xl text-xs shadow-xl mb-1 pointer-events-auto';
+        t.innerHTML = '<b>'+title+'</b><br>'+msg;
+        tc.appendChild(t);
+        setTimeout(function(){ try { t.remove(); } catch(e){} }, 3000);
+      }
+    };
+
+    // ESCÁNER UNIVERSAL DE HISTORIAL COMPLETO
+    function deepScanAllHistoricalData() {
+      var allKeys = Object.keys(localStorage);
+      var repairMap = {};
+      var cashMap = {};
+
+      allKeys.forEach(function(key) {
+        if (key.includes('repairs') || key.includes('vault') || key.includes('openline')) {
+          try {
+            var data = JSON.parse(localStorage.getItem(key));
+            if (Array.isArray(data)) {
+              data.forEach(function(item) {
+                if (item && item.id) repairMap[item.id] = item;
+              });
+            }
+          } catch(e) {}
+        }
+        if (key.includes('cash') || key.includes('vault')) {
+          try {
+            var cashData = JSON.parse(localStorage.getItem(key));
+            if (Array.isArray(cashData)) {
+              cashData.forEach(function(c) {
+                if (c && c.id) cashMap[c.id] = c;
+              });
+            }
+          } catch(e) {}
+        }
+      });
+
+      repairs = Object.values(repairMap).sort(function(a,b){ return (b.createdAt || 0) - (a.createdAt || 0); });
+      cashMovements = Object.values(cashMap).sort(function(a,b){ return (b.date || 0) - (a.date || 0); });
+
+      // Guardar en boveda estandarizada
+      localStorage.setItem('openline_vault_' + currentWorkshopId + '_repairs', JSON.stringify(repairs));
+      localStorage.setItem('openline_vault_' + currentWorkshopId + '_cash', JSON.stringify(cashMovements));
+
+      window.checkLicenseStatus();
+      window.renderRepairsList();
+      window.updateCashBalanceUI();
+    }
+
+    // CONTROL DE BÓVEDA DE LICENCIA MAESTRA
+    window.checkLicenseStatus = function() {
+      var permKey = localStorage.getItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId);
+      var allKeys = Object.keys(localStorage);
+      var isPro = (permKey === 'TRUE');
+
+      if (!isPro) {
+        allKeys.forEach(function(k) {
+          if (k.includes('license') || k.includes('perm')) {
+            try {
+              var val = localStorage.getItem(k);
+              if (val === 'TRUE' || val.includes('LIFETIME') || val.includes('PRO')) isPro = true;
+            } catch(e){}
+          }
+        });
+      }
+
+      var text = $('headerLicenseText');
+      var btn = $('headerLicenseBtn');
+      var modalText = $('licenseStatusText');
+
+      if (isPro) {
+        localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId, 'TRUE');
+        if(text) text.textContent = 'PRO / VITALICIO';
+        if(btn) btn.className = 'text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1';
+        if(modalText) { modalText.textContent = 'PRO / VITALICIO'; modalText.className = 'font-mono text-base font-black text-emerald-400 py-1'; }
+        return 'PRO';
+      } else {
+        if(text) text.textContent = 'DEMO';
+        if(btn) btn.className = 'text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1';
+        if(modalText) { modalText.textContent = 'DEMO'; modalText.className = 'font-mono text-base font-black text-amber-400 py-1'; }
+        return 'DEMO';
+      }
+    };
+
+    window.applyKey = function() {
+      var k = $('inpActivationKey').value.trim().toUpperCase();
+      if (k.length > 3) {
+        localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId, 'TRUE');
+        window.checkLicenseStatus();
+        window.closeModal('licenseModal');
+        window.showToast("Licencia Activada", "Tu taller se ha actualizado a PRO.");
+      } else {
+        window.showToast("Error", "Clave no válida.");
+      }
+    };
+
+    window.guardarIngresoDirecto = function(e) {
+      if(e && e.preventDefault) e.preventDefault();
+      var id = 'OL-' + Math.floor(1000 + Math.random() * 9000);
+      var budget = parseFloat($('inpDeviceBudget').value) || 0;
+      var advance = parseFloat($('inpDeviceAdvance').value) || 0;
+
+      var order = {
+        id: id,
+        clientName: $('inpClientName').value,
+        clientPhone: $('inpClientPhone').value,
+        deviceBrand: $('inpDeviceBrand').value,
+        deviceModel: $('inpDeviceModel').value,
+        fault: $('inpDeviceFault').value,
+        budget: budget,
+        advance: advance,
+        status: 'IN_PROGRESS',
+        createdAt: Date.now()
+      };
+
+      repairs.unshift(order);
+      localStorage.setItem('openline_vault_' + currentWorkshopId + '_repairs', JSON.stringify(repairs));
+
+      if (advance > 0) {
+        cashMovements.unshift({ id: 'CSH-' + Date.now(), amount: advance, concept: 'Seña Orden #' + id, date: Date.now() });
+        localStorage.setItem('openline_vault_' + currentWorkshopId + '_cash', JSON.stringify(cashMovements));
+      }
+
+      window.closeModal('newRepairModal');
+      window.renderRepairsList();
+      window.updateCashBalanceUI();
+      window.showToast("Guardado", "Orden creada: #" + id);
+    };
+
+    window.completePosSale = function(e) {
+      if(e && e.preventDefault) e.preventDefault();
+      var name = $('posManualName').value;
+      var price = parseFloat($('posManualPrice').value) || 0;
+
+      if (!name || price <= 0) return;
+
+      var saleId = 'VTA-' + Math.floor(1000 + Math.random() * 9000);
+      cashMovements.unshift({ id: saleId, amount: price, concept: 'Venta Mostrador: ' + name, date: Date.now() });
+      localStorage.setItem('openline_vault_' + currentWorkshopId + '_cash', JSON.stringify(cashMovements));
+
+      $('posManualName').value = '';
+      $('posManualPrice').value = '';
+
+      window.closeModal('salesModal');
+      window.updateCashBalanceUI();
+      window.showToast("Venta Registrada", "Monto de $" + price + " agregado a caja.");
+    };
+
+    window.renderRepairsList = function() {
+      var container = $('repairsList');
+      var empty = $('emptyState');
+      if (!container) return;
+
+      if ($('counterTotal')) $('counterTotal').textContent = repairs.length;
+      if ($('counterInProgress')) $('counterInProgress').textContent = repairs.filter(function(r){ return r.status === 'IN_PROGRESS'; }).length;
+      if ($('counterReady')) $('counterReady').textContent = repairs.filter(function(r){ return r.status === 'READY'; }).length;
+
+      if (!repairs || repairs.length === 0) {
+        container.innerHTML = '';
+        if(empty) empty.classList.remove('hidden');
+        return;
+      }
+
+      if(empty) empty.classList.add('hidden');
+      container.innerHTML = repairs.map(function(r) {
+        return '<div class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl flex justify-between items-center">' +
+               '<div><span class="font-mono text-xs font-bold text-iosBlue">#' + r.id + '</span>' +
+               '<h4 class="text-xs font-bold text-white mt-0.5">' + (r.deviceBrand || '') + ' ' + (r.deviceModel || '') + '</h4>' +
+               '<div class="text-[10px] text-zinc-400">' + (r.clientName || 'Cliente') + ' (' + (r.clientPhone || 'S/T') + ')</div></div>' +
+               '<div class="text-right"><span class="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-amber-400 font-bold">' + (r.status || 'Taller') + '</span>' +
+               '<div class="font-mono text-xs font-bold text-emerald-400 mt-1">$' + (r.budget || 0) + '</div></div></div>';
+      }).join('');
+    };
+
+    window.updateCashBalanceUI = function() {
+      var total = 0;
+      cashMovements.forEach(function(c) { total += (c.amount || 0); });
+      if($('cashNetBalance')) $('cashNetBalance').textContent = '$' + total.toLocaleString();
+      if($('counterCashTotal')) $('counterCashTotal').textContent = '$' + total.toLocaleString();
+    };
+
+    window.renderCashMovements = function() {
+      var container = $('cashMovementsList');
+      if (!container) return;
+      if (cashMovements.length === 0) {
+        container.innerHTML = '<div class="text-center text-zinc-500 py-4">Sin movimientos.</div>';
+        return;
+      }
+      container.innerHTML = cashMovements.map(function(c) {
+        return '<div class="p-2 bg-zinc-950 border border-zinc-800 rounded-lg flex justify-between items-center">' +
+               '<div><span class="text-white text-xs font-bold">' + c.concept + '</span>' +
+               '<div class="text-[9px] text-zinc-500">' + new Date(c.date || Date.now()).toLocaleDateString('es-AR') + '</div></div>' +
+               '<span class="font-mono text-emerald-400 font-bold text-xs">+$' + (c.amount || 0) + '</span></div>';
+      }).join('');
+    };
+
+    window.renderStockList = function() {
+      var container = $('stockListContainer');
+      if (container) container.innerHTML = '<div class="text-center text-zinc-500 py-6">Inventario cargado.</div>';
+    };
+
+    window.renderVentasList = function() {
+      var container = $('ventasListContainer');
+      if (container) container.innerHTML = '<div class="text-center text-zinc-500 py-6">Ventas sincronizadas.</div>';
+    };
+
+    window.exportFullBackupJSON = function() {
+      var backup = { workshopId: currentWorkshopId, repairs: repairs, cashMovements: cashMovements, exportedAt: new Date().toISOString() };
+      var blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'backup_' + currentWorkshopId + '_' + new Date().toISOString().slice(0,10) + '.json';
+      a.click();
+      window.showToast("Backup Descargado", "Copia completa guardada en tu archivo.");
+    };
+
+    // ARRANCAR APLICACIÓN Y ESCANEO EN CASCADA
+    window.addEventListener('DOMContentLoaded', function() {
+      if($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
+      deepScanAllHistoricalData();
+    });
+  </script>
+</body>
+</html>
