@@ -40,7 +40,7 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen relative z-0">
 
-  <!-- CABECERA PRINCIPAL -->
+  <!-- CABECERA -->
   <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
     <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full">
       <div class="flex items-center gap-2 min-w-0">
@@ -70,7 +70,7 @@
       </div>
     </div>
 
-    <!-- BOTONERA Y NAVEGACIÓN -->
+    <!-- BOTONERA NAVEGACIÓN -->
     <div class="px-2.5 pb-2 max-w-5xl mx-auto w-full space-y-2">
       <div class="grid grid-cols-5 gap-1.5 text-center">
         <button type="button" onclick="window.openNewRepairModal()" class="py-2 px-1 rounded-xl bg-iosBlue text-white text-[10px] font-bold shadow flex flex-col items-center justify-center gap-0.5 active:scale-95 transition">
@@ -104,10 +104,10 @@
     </div>
   </header>
 
-  <!-- MÓDULOS Y VISTAS -->
+  <!-- CONTENIDO PRINCIPAL -->
   <main class="flex-1 w-full max-w-5xl mx-auto px-3 py-2 space-y-2 pb-safe overflow-y-auto">
 
-    <!-- VISTA 1: LISTADO DE ÓRDENES -->
+    <!-- VISTA 1: TALLER -->
     <div id="viewModuleTaller" class="space-y-2">
       <div class="grid grid-cols-3 gap-1.5">
         <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center">
@@ -130,13 +130,13 @@
       </div>
     </div>
 
-    <!-- VISTA 2: CARTERA DE CLIENTES -->
+    <!-- VISTA 2: CLIENTES -->
     <div id="viewModuleClientes" class="hidden space-y-2.5">
       <input type="text" id="searchClientInput" oninput="window.renderClientsList()" placeholder="Buscar por cliente o teléfono..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white">
       <div id="clientsListContainer" class="space-y-2 pb-6"></div>
     </div>
 
-    <!-- VISTA 3: BALANCE DE CAJA -->
+    <!-- VISTA 3: CAJA -->
     <div id="viewModuleCaja" class="hidden space-y-2.5">
       <div class="p-3 bg-zinc-900 border border-zinc-800 rounded-2xl text-center">
         <span class="text-[10px] text-emerald-400 font-bold uppercase block">Caja Net Balance</span>
@@ -147,7 +147,7 @@
 
   </main>
 
-  <!-- MODAL DE DETALLE DE LA ÓRDEN (ABRE AL CLICKEAR) -->
+  <!-- MODAL VER DETALLE DE ÓRDEN (MUESTRA CLIENTE, WHATSAPP Y DATOS) -->
   <div id="repairDetailModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col text-xs text-zinc-300">
       <div class="flex items-center justify-between p-4 border-b border-zinc-800 shrink-0">
@@ -159,7 +159,6 @@
       </div>
 
       <div class="p-4 space-y-3.5 flex-1 overflow-y-auto">
-        <!-- CLIENTE Y WHATSAPP -->
         <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-1">
           <span class="text-[9px] font-bold text-zinc-500 uppercase block">Cliente</span>
           <div id="detailClientName" class="text-white font-bold text-xs">Nombre Cliente</div>
@@ -168,27 +167,24 @@
           </a>
         </div>
 
-        <!-- FALLA -->
         <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-1">
           <span class="text-[9px] font-bold text-zinc-500 uppercase block">Falla / Diagnóstico</span>
-          <p id="detailDeviceFault" class="text-zinc-300 leading-relaxed">Detalle de la falla...</p>
+          <p id="detailDeviceFault" class="text-zinc-300 leading-relaxed">Sin observaciones.</p>
         </div>
 
-        <!-- PRESUPUESTO Y SEÑA -->
         <div class="grid grid-cols-2 gap-2">
           <div class="bg-zinc-950 p-2.5 rounded-xl border border-zinc-800">
             <span class="text-[9px] font-bold text-zinc-500 uppercase block">Presupuesto</span>
             <span id="detailBudget" class="text-emerald-400 font-mono font-bold text-sm">$0</span>
           </div>
           <div class="bg-zinc-950 p-2.5 rounded-xl border border-zinc-800">
-            <span class="text-[9px] font-bold text-zinc-500 uppercase block">Seña Dejada</span>
+            <span class="text-[9px] font-bold text-zinc-500 uppercase block">Seña</span>
             <span id="detailAdvance" class="text-amber-400 font-mono font-bold text-sm">$0</span>
           </div>
         </div>
 
-        <!-- CAMBIO DE ESTADO -->
         <div class="space-y-1">
-          <label class="text-[9px] font-bold text-zinc-400 uppercase block">Estado de la Orden</label>
+          <label class="text-[9px] font-bold text-zinc-400 uppercase block">Estado</label>
           <select id="detailStatusSelect" onchange="window.updateOrderStatusFromModal()" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
             <option value="IN_PROGRESS">En Taller (IN_PROGRESS)</option>
             <option value="READY">Listo para Entregar (READY)</option>
@@ -223,7 +219,7 @@
     </div>
   </div>
 
-  <!-- MODALES ADICIONALES -->
+  <!-- MODALES DE APOYO -->
   <div id="salesModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-amber-600/70 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col text-xs text-zinc-300">
       <div class="p-3 border-b border-zinc-800 flex items-center justify-between shrink-0"><h3 class="font-bold text-white text-sm">Venta Mostrador</h3><button type="button" onclick="window.closeModal('salesModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button></div>
@@ -245,7 +241,7 @@
   <div id="stockModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-purple-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><h3 class="font-bold text-white text-sm">Stock</h3><button type="button" onclick="window.closeModal('stockModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button></div>
-      <div class="p-4 space-y-3 flex-1 overflow-y-auto"><div class="text-center text-zinc-500 py-6">Inventario sincronizado.</div></div>
+      <div class="p-4 space-y-3 flex-1 overflow-y-auto"><div class="text-center text-zinc-500 py-6">Stock actualizado.</div></div>
     </div>
   </div>
 
@@ -256,6 +252,7 @@
     </div>
   </div>
 
+  <!-- SCRIPT DE RECUPERACIÓN FLEXIBLE DE MEMORIA -->
   <script>
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var currentWorkshopId = 'TALLER-9572';
@@ -277,23 +274,22 @@
     window.openCashModal = function() { window.openModal('cashModal'); };
 
     window.switchView = function(viewName) {
-      ['taller', 'clientes', 'caja'].forEach(v => {
-        const mod = $('viewModule' + v.charAt(0).toUpperCase() + v.slice(1));
-        const btn = $('nav' + v.charAt(0).toUpperCase() + v.slice(1));
+      ['taller', 'clientes', 'caja'].forEach(function(v) {
+        var mod = $('viewModule' + v.charAt(0).toUpperCase() + v.slice(1));
+        var btn = $('nav' + v.charAt(0).toUpperCase() + v.slice(1));
         if (v === viewName) {
-          mod?.classList.remove('hidden');
-          btn?.classList.add('bg-zinc-800', 'text-white', 'font-bold');
-          btn?.classList.remove('text-zinc-400');
+          if (mod) mod.classList.remove('hidden');
+          if (btn) { btn.classList.add('bg-zinc-800', 'text-white', 'font-bold'); btn.classList.remove('text-zinc-400'); }
         } else {
-          mod?.classList.add('hidden');
-          btn?.classList.remove('bg-zinc-800', 'text-white', 'font-bold');
-          btn?.classList.add('text-zinc-400');
+          if (mod) mod.classList.add('hidden');
+          if (btn) { btn.classList.remove('bg-zinc-800', 'text-white', 'font-bold'); btn.classList.add('text-zinc-400'); }
         }
       });
       if (viewName === 'clientes') window.renderClientsList();
       if (viewName === 'caja') window.renderCashMovements();
     };
 
+    // BARRIDO PROFUNDO MULTI-FORMATO PARA RECUPERAR TODO
     function deepScanAllHistoricalData() {
       var allKeys = Object.keys(localStorage);
       var repairMap = {};
@@ -301,41 +297,74 @@
 
       allKeys.forEach(function(key) {
         try {
-          var data = JSON.parse(localStorage.getItem(key));
+          var raw = localStorage.getItem(key);
+          var data = JSON.parse(raw);
           if (Array.isArray(data)) {
             data.forEach(function(item) {
-              if (item && item.id && String(item.id).startsWith('OL-')) repairMap[item.id] = item;
-              if (item && item.id && (String(item.id).startsWith('CSH-') || String(item.id).startsWith('VTA-'))) cashMap[item.id] = item;
+              if (!item) return;
+
+              // Detección flexible de Órdenes
+              var isRepair = (item.id && String(item.id).startsWith('OL-')) || item.deviceBrand || item.deviceModel || item.fault;
+              if (isRepair) {
+                var orderId = item.id || ('OL-' + Math.floor(1000 + Math.random() * 9000));
+                
+                // Normalización de campos de cliente para abarcar cualquier formato histórico
+                var normName = item.clientName || item.cliente || item.name || item.customerName || 'Cliente';
+                var normPhone = item.clientPhone || item.telefono || item.phone || item.celular || '';
+
+                repairMap[orderId] = {
+                  id: orderId,
+                  clientName: normName,
+                  clientPhone: normPhone,
+                  deviceBrand: item.deviceBrand || item.marca || '',
+                  deviceModel: item.deviceModel || item.modelo || '',
+                  fault: item.fault || item.falla || 'Sin diagnóstico registrado',
+                  budget: parseFloat(item.budget || item.presupuesto || 0),
+                  advance: parseFloat(item.advance || item.sena || 0),
+                  status: item.status || item.estado || 'IN_PROGRESS',
+                  createdAt: item.createdAt || item.fecha || Date.now()
+                };
+              }
+
+              // Detección de Movimientos de Caja
+              if (item.id && (String(item.id).startsWith('CSH-') || String(item.id).startsWith('VTA-'))) {
+                cashMap[item.id] = item;
+              }
             });
           }
         } catch(e) {}
       });
 
-      repairs = Object.values(repairMap).sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
-      cashMovements = Object.values(cashMap).sort((a,b) => (b.date || 0) - (a.date || 0));
+      repairs = Object.values(repairMap).sort(function(a,b){ return (b.createdAt || 0) - (a.createdAt || 0); });
+      cashMovements = Object.values(cashMap).sort(function(a,b){ return (b.date || 0) - (a.date || 0); });
+
+      // Guardar resguardo de estabilidad en la bóveda
+      try {
+        localStorage.setItem('openline_vault_' + currentWorkshopId + '_repairs', JSON.stringify(repairs));
+      } catch(e){}
 
       window.renderRepairsList();
       window.updateCashBalanceUI();
     }
 
-    // ABRIR EL MODAL AL CLICKEAR EN UNA ÓRDEN
+    // ABRIR Y POBLAR DETALLE DE LA ÓRDEN AL CLICKEAR
     window.openRepairDetailModal = function(orderId) {
-      var order = repairs.find(r => r.id === orderId);
+      var order = repairs.find(function(r){ return r.id === orderId; });
       if (!order) return;
 
       activeOrderSelected = order;
-      $('detailOrderNumber').textContent = '#' + order.id;
-      $('detailDeviceTitle').textContent = (order.deviceBrand || '') + ' ' + (order.deviceModel || '');
-      $('detailClientName').textContent = order.clientName || 'Cliente';
+      if ($('detailOrderNumber')) $('detailOrderNumber').textContent = '#' + order.id;
+      if ($('detailDeviceTitle')) $('detailDeviceTitle').textContent = (order.deviceBrand || '') + ' ' + (order.deviceModel || '');
+      if ($('detailClientName')) $('detailClientName').textContent = order.clientName || 'Cliente';
       
       var phone = order.clientPhone || 'Sin número';
-      $('detailClientPhone').textContent = phone;
-      $('detailClientPhoneLink').href = 'https://wa.me/' + phone.replace(/[^0-9]/g, '');
+      if ($('detailClientPhone')) $('detailClientPhone').textContent = phone;
+      if ($('detailClientPhoneLink')) $('detailClientPhoneLink').href = 'https://wa.me/' + phone.replace(/[^0-9]/g, '');
 
-      $('detailDeviceFault').textContent = order.fault || 'Sin observaciones cargadas.';
-      $('detailBudget').textContent = '$' + (parseFloat(order.budget) || 0).toLocaleString();
-      $('detailAdvance').textContent = '$' + (parseFloat(order.advance) || 0).toLocaleString();
-      $('detailStatusSelect').value = order.status || 'IN_PROGRESS';
+      if ($('detailDeviceFault')) $('detailDeviceFault').textContent = order.fault || 'Sin observaciones cargadas.';
+      if ($('detailBudget')) $('detailBudget').textContent = '$' + (parseFloat(order.budget) || 0).toLocaleString();
+      if ($('detailAdvance')) $('detailAdvance').textContent = '$' + (parseFloat(order.advance) || 0).toLocaleString();
+      if ($('detailStatusSelect')) $('detailStatusSelect').value = order.status || 'IN_PROGRESS';
 
       window.openModal('repairDetailModal');
     };
@@ -355,55 +384,136 @@
       if (!container) return;
 
       if ($('counterTotal')) $('counterTotal').textContent = repairs.length;
-      if ($('counterInProgress')) $('counterInProgress').textContent = repairs.filter(r => r.status === 'IN_PROGRESS').length;
-      if ($('counterReady')) $('counterReady').textContent = repairs.filter(r => r.status === 'READY').length;
+      if ($('counterInProgress')) $('counterInProgress').textContent = repairs.filter(function(r){ return r.status === 'IN_PROGRESS'; }).length;
+      if ($('counterReady')) $('counterReady').textContent = repairs.filter(function(r){ return r.status === 'READY'; }).length;
 
       if (!repairs || repairs.length === 0) {
         container.innerHTML = '';
-        empty?.classList.remove('hidden');
+        if (empty) empty.classList.remove('hidden');
         return;
       }
 
-      empty?.classList.add('hidden');
-      container.innerHTML = repairs.map(r => `
-        <div onclick="window.openRepairDetailModal('${r.id}')" class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl flex justify-between items-center cursor-pointer active:scale-98 transition hover:border-zinc-700">
-          <div>
-            <span class="font-mono text-xs font-bold text-iosBlue">#${r.id}</span>
-            <h4 class="text-xs font-bold text-white mt-0.5">${r.deviceBrand \vert{}\vert{} ''}${r.deviceModel || ''}</h4>
-            <div class="text-[10px] text-zinc-400">${r.clientName || 'Cliente'} <span class="font-mono text-zinc-500">(${r.clientPhone || 'S/T'})</span></div>
-          </div>
-          <div class="text-right">
-            <span class="text-[9px] px-2 py-0.5 rounded bg-zinc-800 text-amber-400 font-bold">${r.status \vert{}\vert{} 'IN_PROGRESS'}</span> <div class="font-mono text-xs font-bold text-emerald-400 mt-1">$${(r.budget || 0).toLocaleString()}</div>
-          </div>
-        </div>
-      `).join('');
+      if (empty) empty.classList.add('hidden');
+      container.innerHTML = repairs.map(function(r) {
+        var phoneDisplay = r.clientPhone ? '(' + r.clientPhone + ')' : '(S/T)';
+        return '<div onclick="window.openRepairDetailModal(\'' + r.id + '\')" class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl flex justify-between items-center cursor-pointer active:scale-98 transition hover:border-zinc-700">' +
+                 '<div>' +
+                   '<span class="font-mono text-xs font-bold text-iosBlue">#' + r.id + '</span>' +
+                   '<h4 class="text-xs font-bold text-white mt-0.5">' + (r.deviceBrand || '') + ' ' + (r.deviceModel || '') + '</h4>' +
+                   '<div class="text-[10px] text-zinc-400">' + (r.clientName || 'Cliente') + ' <span class="font-mono text-zinc-500">' + phoneDisplay + '</span></div>' +
+                 '</div>' +
+                 '<div class="text-right">' +
+                   '<span class="text-[9px] px-2 py-0.5 rounded bg-zinc-800 text-amber-400 font-bold">' + (r.status || 'IN_PROGRESS') + '</span>' +
+                   '<div class="font-mono text-xs font-bold text-emerald-400 mt-1">$' + (r.budget || 0).toLocaleString() + '</div>' +
+                 '</div>' +
+               '</div>';
+      }).join('');
     };
 
     window.renderClientsList = function() {
       var container = $('clientsListContainer');
       var clientMap = {};
 
-      repairs.forEach(r => {
-        if (!r.clientPhone) return;
-        var phone = r.clientPhone.trim();
-        if (!clientMap[phone]) clientMap[phone] = { name: r.clientName || 'Cliente', phone: phone, total: 0, count: 0 };
-        clientMap[phone].total += (parseFloat(r.budget) || 0);
-        clientMap[phone].count += 1;
+      repairs.forEach(function(r) {
+        var phone = r.clientPhone ? r.clientPhone.trim() : '';
+        var key = phone || (r.clientName ? r.clientName.trim() : '');
+        if (!key) return;
+
+        if (!clientMap[key]) {
+          clientMap[key] = { name: r.clientName || 'Cliente', phone: phone || 'Sin teléfono', total: 0, count: 0 };
+        }
+        clientMap[key].total += (parseFloat(r.budget) || 0);
+        clientMap[key].count += 1;
       });
 
       var clients = Object.values(clientMap);
       if (!container) return;
 
       if (clients.length === 0) {
-        container.innerHTML = `<div class="text-center py-10 text-zinc-500 text-xs">Sin clientes registrados.</div>`;
+        container.innerHTML = '<div class="text-center py-10 text-zinc-500 text-xs">Sin clientes registrados.</div>';
         return;
       }
 
-      container.innerHTML = clients.map(c => `
-        <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex justify-between items-center">
-          <div>
-            <h4 class="text-xs font-bold text-white flex items-center gap-1"><i class="ph-bold ph-user text-indigo-400"></i> ${c.name}</h4>
-            <p class="text-[10px] font-mono text-zinc-400 mt-0.5"><i class="ph-bold ph-whatsapp-logo text-emerald-400"></i> ${c.phone}</p>
-          </div>
-          <div class="text-right">
-            <span class="text-[9px] text-zinc-500 uppercase font-bold block
+      container.innerHTML = clients.map(function(c) {
+        return '<div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex justify-between items-center">' +
+                 '<div>' +
+                   '<h4 class="text-xs font-bold text-white flex items-center gap-1"><i class="ph-bold ph-user text-indigo-400"></i> ' + c.name + '</h4>' +
+                   '<p class="text-[10px] font-mono text-zinc-400 mt-0.5"><i class="ph-bold ph-whatsapp-logo text-emerald-400"></i> ' + c.phone + '</p>' +
+                 '</div>' +
+                 '<div class="text-right">' +
+                   '<span class="text-[9px] text-zinc-500 uppercase font-bold block">' + c.count + ' Trabajos</span>' +
+                   '<span class="text-xs font-mono font-bold text-emerald-400">$' + c.total.toLocaleString() + '</span>' +
+                 '</div>' +
+               '</div>';
+      }).join('');
+    };
+
+    window.updateCashBalanceUI = function() {
+      var total = 0;
+      cashMovements.forEach(function(c) { total += (c.amount || 0); });
+      if ($('cashNetBalance')) $('cashNetBalance').textContent = '$' + total.toLocaleString();
+    };
+
+    window.renderCashMovements = function() {
+      var container = $('cashMovementsList');
+      var modalContainer = $('cashModalList');
+      var html = cashMovements.length === 0 ? '<div class="text-center text-zinc-500 py-4">Sin movimientos.</div>' : cashMovements.map(function(c) {
+        return '<div class="p-2 bg-zinc-900 border border-zinc-800 rounded-lg flex justify-between items-center">' +
+                 '<div>' +
+                   '<span class="text-white text-xs font-bold">' + (c.concept || 'Movimiento') + '</span>' +
+                   '<div class="text-[9px] text-zinc-500">' + new Date(c.date || Date.now()).toLocaleDateString('es-AR') + '</div>' +
+                 '</div>' +
+                 '<span class="font-mono text-emerald-400 font-bold text-xs">+$' + (c.amount || 0).toLocaleString() + '</span>' +
+               '</div>';
+      }).join('');
+
+      if (container) container.innerHTML = html;
+      if (modalContainer) modalContainer.innerHTML = html;
+    };
+
+    window.guardarIngresoDirecto = function(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      var id = 'OL-' + Math.floor(1000 + Math.random() * 9000);
+      var budget = parseFloat($('inpDeviceBudget').value) || 0;
+      var advance = parseFloat($('inpDeviceAdvance').value) || 0;
+
+      var order = {
+        id: id,
+        clientName: $('inpClientName').value,
+        clientPhone: $('inpClientPhone').value,
+        deviceBrand: $('inpDeviceBrand').value,
+        deviceModel: $('inpDeviceModel').value,
+        fault: $('inpDeviceFault').value,
+        budget: budget,
+        advance: advance,
+        status: 'IN_PROGRESS',
+        createdAt: Date.now()
+      };
+
+      repairs.unshift(order);
+      localStorage.setItem('openline_vault_' + currentWorkshopId + '_repairs', JSON.stringify(repairs));
+
+      if (advance > 0) {
+        cashMovements.unshift({ id: 'CSH-' + Date.now(), amount: advance, concept: 'Seña Orden #' + id, date: Date.now() });
+        localStorage.setItem('openline_vault_' + currentWorkshopId + '_cash', JSON.stringify(cashMovements));
+      }
+
+      window.closeModal('newRepairModal');
+      deepScanAllHistoricalData();
+    };
+
+    window.exportFullBackupJSON = function() {
+      var backup = { workshopId: currentWorkshopId, repairs: repairs, cashMovements: cashMovements, exportedAt: new Date().toISOString() };
+      var blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'backup_' + currentWorkshopId + '_' + new Date().toISOString().slice(0,10) + '.json';
+      a.click();
+    };
+
+    window.addEventListener('DOMContentLoaded', function() {
+      deepScanAllHistoricalData();
+    });
+  </script>
+</body>
+</html>
