@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#09090b">
   <title>OpenLine - Gestión de Taller Profesional</title>
 
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -17,7 +17,7 @@
     };
   </script>
 
-  <!-- Phosphor Icons & MQTT para Sincronización -->
+  <!-- Phosphor Icons & MQTT -->
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
   <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
 
@@ -46,7 +46,7 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen relative z-0">
 
-  <!-- CABECERA DE NAVEGACIÓN Y SINCRONIZACIÓN TIEMPO REAL -->
+  <!-- CABECERA DE NAVEGACIÓN Y SINCRONIZACIÓN -->
   <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
     <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full">
       <div class="flex items-center gap-2 min-w-0">
@@ -69,7 +69,7 @@
         </div>
       </div>
 
-      <!-- BOTONES DE GESTIÓN Y AJUSTES -->
+      <!-- ACCIONES DE BACKUP Y AJUSTES -->
       <div class="flex items-center gap-1 shrink-0">
         <label for="importBackupInput" class="h-8 px-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 flex items-center gap-1 text-xs font-bold cursor-pointer active:scale-95 transition" title="Cargar Backup JSON">
           <i class="ph-bold ph-upload-simple text-sm text-iosBlue"></i>
@@ -166,7 +166,7 @@
 
   </main>
 
-  <!-- MODAL AJUSTES Y CONFIGURACIÓN DE TALLER -->
+  <!-- MODAL AJUSTES Y CONFIGURACIÓN -->
   <div id="settingsModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col text-xs text-zinc-300">
       <div class="flex items-center justify-between p-4 border-b border-zinc-800 shrink-0">
@@ -187,29 +187,7 @@
     </div>
   </div>
 
-  <!-- MODAL DESGLOSE Y CUENTA CORRIENTE DE CLIENTE -->
-  <div id="clientDetailModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col text-xs text-zinc-300">
-      <div class="flex items-center justify-between p-4 border-b border-zinc-800 shrink-0">
-        <div>
-          <h3 id="clientDetailName" class="font-bold text-white text-sm">Nombre Cliente</h3>
-          <p id="clientDetailPhone" class="text-emerald-400 font-mono text-xs">0000000000</p>
-        </div>
-        <button type="button" onclick="window.closeModal('clientDetailModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
-      </div>
-      <div class="p-4 space-y-3 overflow-y-auto flex-1">
-        <div class="grid grid-cols-3 gap-1.5 text-center">
-          <div class="bg-zinc-950 p-2 rounded-xl border border-zinc-800"><span class="text-[9px] text-zinc-500 uppercase block">Total</span><span id="clientDetailTotal" class="font-mono text-white font-bold">$0</span></div>
-          <div class="bg-zinc-950 p-2 rounded-xl border border-zinc-800"><span class="text-[9px] text-emerald-500 uppercase block">Pagado</span><span id="clientDetailPaid" class="font-mono text-emerald-400 font-bold">$0</span></div>
-          <div class="bg-zinc-950 p-2 rounded-xl border border-zinc-800"><span class="text-[9px] text-rose-500 uppercase block">Debe</span><span id="clientDetailDebt" class="font-mono text-rose-400 font-bold">$0</span></div>
-        </div>
-        <span class="text-[10px] text-zinc-400 font-bold uppercase block pt-2">Historial de Ordenes</span>
-        <div id="clientOrdersHistoryList" class="space-y-2"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL VER Y EDITAR DETALLE DE ÓRDEN -->
+  <!-- MODAL VER, EDITAR Y ACTUALIZAR ÓRDEN -->
   <div id="repairDetailModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col text-xs text-zinc-300">
       <div class="flex items-center justify-between p-4 border-b border-zinc-800 shrink-0">
@@ -220,7 +198,7 @@
         <button type="button" onclick="window.closeModal('repairDetailModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
       </div>
 
-      <div class="p-4 space-y-3.5 flex-1 overflow-y-auto">
+      <div class="p-4 space-y-3.5 flex-1 overflow-y-auto" id="detailViewContainer">
         <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-1">
           <span class="text-[9px] font-bold text-zinc-500 uppercase block">Cliente</span>
           <div id="detailClientName" class="text-white font-bold text-xs">Nombre Cliente</div>
@@ -241,7 +219,6 @@
           </div>
         </div>
 
-        <!-- FOTOS GUARDADAS EN EL INGRESO -->
         <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-2">
           <span class="text-[9px] font-bold text-zinc-500 uppercase block">Fotos del Estado del Equipo</span>
           <div id="detailPhotosContainer" class="flex gap-2 overflow-x-auto py-1">
@@ -266,13 +243,60 @@
         </div>
 
         <div class="space-y-1 pt-1">
-          <label class="text-[9px] font-bold text-zinc-400 uppercase block">Cambiar Estado</label>
+          <label class="text-[9px] font-bold text-zinc-400 uppercase block">Estado</label>
           <select id="detailStatusSelect" onchange="window.updateOrderStatusFromModal()" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
             <option value="IN_PROGRESS">En Taller (IN_PROGRESS)</option>
             <option value="READY">Listo para Entregar (READY)</option>
             <option value="DELIVERED">Entregado (DELIVERED)</option>
           </select>
         </div>
+
+        <!-- BOTÓN EDITAR ÓRDEN -->
+        <button type="button" onclick="window.enableOrderEditMode()" class="w-full py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white font-bold rounded-xl active:scale-95 transition flex items-center justify-center gap-1.5">
+          <i class="ph-bold ph-pencil-simple text-iosBlue"></i> Editar Datos de la Orden
+        </button>
+      </div>
+
+      <!-- FORMULARIO DE EDICIÓN DE ÓRDEN (OCULTO POR DEFECTO) -->
+      <form id="editOrderForm" onsubmit="window.saveEditedOrder(event)" class="hidden p-4 space-y-3 overflow-y-auto flex-1">
+        <input type="text" id="editClientName" placeholder="Nombre Cliente *" required class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+        <input type="tel" id="editClientPhone" placeholder="Teléfono *" required class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" id="editDeviceBrand" placeholder="Marca *" required class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+          <input type="text" id="editDeviceModel" placeholder="Modelo *" required class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+        </div>
+        <input type="text" id="editDevicePin" placeholder="PIN / Clave..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+        <textarea id="editDeviceFault" rows="2" placeholder="Falla informada..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white"></textarea>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="number" id="editBudget" placeholder="Presupuesto ($)" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
+          <input type="number" id="editAdvance" placeholder="Seña ($)" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold">
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="window.cancelOrderEditMode()" class="flex-1 py-2.5 bg-zinc-800 text-zinc-300 font-bold rounded-xl">Cancelar</button>
+          <button type="submit" class="flex-1 py-2.5 bg-iosBlue text-white font-bold rounded-xl">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL DESGLOSE DE CLIENTE -->
+  <div id="clientDetailModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col text-xs text-zinc-300">
+      <div class="flex items-center justify-between p-4 border-b border-zinc-800 shrink-0">
+        <div>
+          <h3 id="clientDetailName" class="font-bold text-white text-sm">Nombre Cliente</h3>
+          <p id="clientDetailPhone" class="text-emerald-400 font-mono text-xs">0000000000</p>
+        </div>
+        <button type="button" onclick="window.closeModal('clientDetailModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <div class="p-4 space-y-3 overflow-y-auto flex-1">
+        <div class="grid grid-cols-3 gap-1.5 text-center">
+          <div class="bg-zinc-950 p-2 rounded-xl border border-zinc-800"><span class="text-[9px] text-zinc-500 uppercase block">Total</span><span id="clientDetailTotal" class="font-mono text-white font-bold">$0</span></div>
+          <div class="bg-zinc-950 p-2 rounded-xl border border-zinc-800"><span class="text-[9px] text-emerald-500 uppercase block">Pagado</span><span id="clientDetailPaid" class="font-mono text-emerald-400 font-bold">$0</span></div>
+          <div class="bg-zinc-950 p-2 rounded-xl border border-zinc-800"><span class="text-[9px] text-rose-500 uppercase block">Debe</span><span id="clientDetailDebt" class="font-mono text-rose-400 font-bold">$0</span></div>
+        </div>
+        <span class="text-[10px] text-zinc-400 font-bold uppercase block pt-2">Historial de Trabajos</span>
+        <div id="clientOrdersHistoryList" class="space-y-2"></div>
       </div>
     </div>
   </div>
@@ -285,7 +309,6 @@
         <button type="button" onclick="window.closeModal('newRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
       </div>
       <form onsubmit="window.guardarIngresoDirecto(event)" class="overflow-y-auto p-4 space-y-3.5 flex-1 pb-8">
-        
         <div class="space-y-1">
           <label class="text-[9px] font-bold text-zinc-400 uppercase block">1. Datos del Cliente</label>
           <input type="text" id="inpClientName" required placeholder="Nombre y Apellido *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
@@ -300,14 +323,12 @@
           </div>
         </div>
 
-        <!-- FOTOGRAFÍAS -->
         <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-2">
           <label class="text-[9px] font-bold text-zinc-400 uppercase block">3. Fotos del Dispositivo</label>
           <input type="file" id="inpDevicePhotos" accept="image/*" multiple onchange="window.handlePhotoSelection(event)" class="w-full text-zinc-400 text-xs">
           <div id="photosPreviewContainer" class="flex gap-2 overflow-x-auto py-1"></div>
         </div>
 
-        <!-- SEGURIDAD Y PATRÓN ANDROID TÁCTIL CORREGIDO -->
         <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-2">
           <label class="text-[9px] font-bold text-zinc-400 uppercase block">4. Seguridad del Equipo</label>
           <input type="text" id="inpDevicePin" placeholder="Contraseña / PIN..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
@@ -346,26 +367,27 @@
     </div>
   </div>
 
-  <!-- MODAL DE LICENCIA -->
-  <div id="licenseModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-4 space-y-3.5 shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
-      <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x"></i></button></div>
-      <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center">
-        <span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia Taller:</span>
-        <div id="licenseStatusText" class="font-mono text-base font-black text-amber-400 py-1">DEMO</div>
+  <!-- MODALES DE STOCK Y VENTAS CON CARGA AUTOMÁTICA -->
+  <div id="stockModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-purple-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs text-zinc-300">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
+        <h3 class="font-bold text-white text-sm">Stock e Inventario</h3>
+        <button type="button" onclick="window.closeModal('stockModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button>
       </div>
-      <div class="space-y-1.5 pt-1">
-        <label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar Clave Master / PRO:</label>
-        <div class="flex gap-1.5">
-          <input type="password" id="inpActivationKey" placeholder="Pega tu clave aquí..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs">
-          <button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs active:scale-95">Activar</button>
-        </div>
-      </div>
-      <button type="button" onclick="window.closeModal('licenseModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1 shrink-0">Cerrar</button>
+      <div class="p-4 space-y-3 flex-1 overflow-y-auto" id="stockListContainer"></div>
     </div>
   </div>
 
-  <!-- MODALES DE APOYO -->
+  <div id="ventasModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-indigo-700/80 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs text-zinc-300">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
+        <h3 class="font-bold text-white text-sm">Historial de Ventas</h3>
+        <button type="button" onclick="window.closeModal('ventasModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <div class="p-4 space-y-3 flex-1 overflow-y-auto" id="ventasListContainer"></div>
+    </div>
+  </div>
+
   <div id="salesModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-amber-600/70 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col text-xs text-zinc-300">
       <div class="p-3 border-b border-zinc-800 flex items-center justify-between shrink-0"><h3 class="font-bold text-white text-sm">Venta Mostrador</h3><button type="button" onclick="window.closeModal('salesModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button></div>
@@ -384,21 +406,25 @@
     </div>
   </div>
 
-  <div id="stockModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-purple-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><h3 class="font-bold text-white text-sm">Stock</h3><button type="button" onclick="window.closeModal('stockModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button></div>
-      <div class="p-4 space-y-3 flex-1 overflow-y-auto"><div class="text-center text-zinc-500 py-6">Stock actualizado.</div></div>
+  <div id="licenseModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-4 space-y-3.5 shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
+      <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x"></i></button></div>
+      <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center">
+        <span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia Taller:</span>
+        <div id="licenseStatusText" class="font-mono text-base font-black text-amber-400 py-1">DEMO</div>
+      </div>
+      <div class="space-y-1.5 pt-1">
+        <label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar Clave Master / PRO:</label>
+        <div class="flex gap-1.5">
+          <input type="password" id="inpActivationKey" placeholder="Pega tu clave aquí..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs">
+          <button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs active:scale-95">Activar</button>
+        </div>
+      </div>
+      <button type="button" onclick="window.closeModal('licenseModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1 shrink-0">Cerrar</button>
     </div>
   </div>
 
-  <div id="ventasModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-indigo-700/80 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><h3 class="font-bold text-white text-sm">Historial Ventas</h3><button type="button" onclick="window.closeModal('ventasModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button></div>
-      <div class="p-4 space-y-3 flex-1 overflow-y-auto"><div class="text-center text-zinc-500 py-6">Sin ventas registradas.</div></div>
-    </div>
-  </div>
-
-  <!-- CONTROLADOR PRINCIPAL CON SINCRONIZACIÓN Y PATRÓN CORREGIDO -->
+  <!-- CONTROLADOR JAVASCRIPT GLOBAL INTEGRADO -->
   <script>
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var PERMANENT_LICENSE_KEY = 'openline_perm_vitalicio_shield';
@@ -407,10 +433,11 @@
 
     var repairs = [];
     var cashMovements = [];
+    var stockItems = [];
+    var salesHistory = [];
     var uploadedPhotos = [];
     var patternSequence = [];
     var activeOrderSelected = null;
-
     var mqttClient = null;
 
     function $(id) { return document.getElementById(id); }
@@ -420,8 +447,8 @@
 
     window.openNewRepairModal = function() { window.clearPattern(); uploadedPhotos = []; if($('photosPreviewContainer')) $('photosPreviewContainer').innerHTML = ''; window.openModal('newRepairModal'); };
     window.openSalesModal = function() { window.openModal('salesModal'); };
-    window.openVentasHistoryModal = function() { window.openModal('ventasModal'); };
-    window.openStockModal = function() { window.openModal('stockModal'); };
+    window.openVentasHistoryModal = function() { window.renderVentasHistory(); window.openModal('ventasModal'); };
+    window.openStockModal = function() { window.renderStockList(); window.openModal('stockModal'); };
     window.openCashModal = function() { window.openModal('cashModal'); };
     window.openLicenseModal = function() { window.openModal('licenseModal'); };
     window.openSettingsModal = function() { window.loadSettingsUI(); window.openModal('settingsModal'); };
@@ -442,179 +469,95 @@
       if (viewName === 'caja') window.renderCashMovements();
     };
 
-    // 1. SINCRONIZACIÓN EN TIEMPO REAL ENTRE DISPOSITIVOS (MQTT)
-    function setupMQTTSync() {
-      try {
-        mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
-        var topic = 'openline/' + currentWorkshopId + '/sync';
+    // EDICIÓN EN CALIENTE DE ÓRDENES
+    window.enableOrderEditMode = function() {
+      if (!activeOrderSelected) return;
+      $('detailViewContainer').classList.add('hidden');
+      $('editOrderForm').classList.remove('hidden');
 
-        mqttClient.on('connect', function() {
-          mqttClient.subscribe(topic);
-        });
-
-        mqttClient.on('message', function(t, msg) {
-          try {
-            var payload = JSON.parse(msg.toString());
-            if (payload && payload.repairs) {
-              repairs = payload.repairs;
-              localStorage.setItem('openline_vault_' + currentWorkshopId + '_repairs', JSON.stringify(repairs));
-              window.renderRepairsList();
-            }
-          } catch(e){}
-        });
-      } catch(e){}
-    }
-
-    function emitMQTTSync() {
-      if (mqttClient && mqttClient.connected) {
-        var topic = 'openline/' + currentWorkshopId + '/sync';
-        mqttClient.publish(topic, JSON.stringify({ repairs: repairs, timestamp: Date.now() }));
-      }
-    }
-
-    // 2. PATRÓN ANDROID TÁCTIL (DRAWABLE DIBUJABLE)
-    function setupTouchPattern() {
-      var grid = $('patternGrid');
-      if (!grid) return;
-
-      var isDrawing = false;
-
-      function processPoint(x, y) {
-        var el = document.elementFromPoint(x, y);
-        if (el && el.classList.contains('pattern-dot')) {
-          var dotNum = parseInt(el.getAttribute('data-dot'));
-          if (dotNum && patternSequence.indexOf(dotNum) === -1) {
-            patternSequence.push(dotNum);
-            el.classList.add('selected');
-            if ($('patternSequenceText')) $('patternSequenceText').textContent = patternSequence.join('-');
-          }
-        }
-      }
-
-      grid.addEventListener('touchstart', function(e) {
-        isDrawing = true;
-        var touch = e.touches[0];
-        processPoint(touch.clientX, touch.clientY);
-      }, { passive: true });
-
-      grid.addEventListener('touchmove', function(e) {
-        if (!isDrawing) return;
-        var touch = e.touches[0];
-        processPoint(touch.clientX, touch.clientY);
-      }, { passive: true });
-
-      grid.addEventListener('touchend', function() { isDrawing = false; });
-    }
-
-    window.clearPattern = function() {
-      patternSequence = [];
-      var dots = document.querySelectorAll('.pattern-dot');
-      dots.forEach(function(d){ d.classList.remove('selected'); });
-      if ($('patternSequenceText')) $('patternSequenceText').textContent = 'Ninguna';
+      $('editClientName').value = activeOrderSelected.clientName || '';
+      $('editClientPhone').value = activeOrderSelected.clientPhone || '';
+      $('editDeviceBrand').value = activeOrderSelected.deviceBrand || '';
+      $('editDeviceModel').value = activeOrderSelected.deviceModel || '';
+      $('editDevicePin').value = activeOrderSelected.devicePin || '';
+      $('editDeviceFault').value = activeOrderSelected.fault || '';
+      $('editBudget').value = activeOrderSelected.budget || 0;
+      $('editAdvance').value = activeOrderSelected.advance || 0;
     };
 
-    // 3. FOTOGRAFÍAS
-    window.handlePhotoSelection = function(e) {
-      var files = e.target.files;
-      if (!files) return;
-
-      var preview = $('photosPreviewContainer');
-      Array.from(files).forEach(function(file) {
-        var reader = new FileReader();
-        reader.onload = function(evt) {
-          uploadedPhotos.push(evt.target.result);
-          if (preview) {
-            var img = document.createElement('img');
-            img.src = evt.target.result;
-            img.className = 'w-16 h-16 object-cover rounded-xl border border-zinc-700 shrink-0';
-            preview.appendChild(img);
-          }
-        };
-        reader.readAsDataURL(file);
-      });
+    window.cancelOrderEditMode = function() {
+      $('editOrderForm').classList.add('hidden');
+      $('detailViewContainer').classList.remove('hidden');
     };
 
-    // 4. CONFIGURACIÓN DE TALLER
-    window.loadSettingsUI = function() {
-      var savedName = localStorage.getItem('openline_setting_name_' + currentWorkshopId) || '';
-      var savedLogo = localStorage.getItem('openline_setting_logo_' + currentWorkshopId) || '';
+    window.saveEditedOrder = function(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      if (!activeOrderSelected) return;
 
-      if ($('setWorkshopName')) $('setWorkshopName').value = savedName;
+      activeOrderSelected.clientName = $('editClientName').value;
+      activeOrderSelected.clientPhone = $('editClientPhone').value;
+      activeOrderSelected.deviceBrand = $('editDeviceBrand').value;
+      activeOrderSelected.deviceModel = $('editDeviceModel').value;
+      activeOrderSelected.devicePin = $('editDevicePin').value || 'Sin Clave';
+      activeOrderSelected.fault = $('editDeviceFault').value;
+      activeOrderSelected.budget = parseFloat($('editBudget').value) || 0;
+      activeOrderSelected.advance = parseFloat($('editAdvance').value) || 0;
+
+      localStorage.setItem('openline_vault_' + currentWorkshopId + '_repairs', JSON.stringify(repairs));
+      window.cancelOrderEditMode();
+      window.openRepairDetailModal(activeOrderSelected.id);
+      window.renderRepairsList();
+      alert("Orden modificada exitosamente.");
     };
 
-    window.handleLogoUpload = function(e) {
-      var file = e.target.files[0];
-      if (!file) return;
+    // POBLADO AUTOMÁTICO DE STOCK Y VENTAS
+    window.renderStockList = function() {
+      var container = $('stockListContainer');
+      if (!container) return;
 
-      var reader = new FileReader();
-      reader.onload = function(evt) {
-        localStorage.setItem('openline_setting_logo_' + currentWorkshopId, evt.target.result);
-        window.applyWorkshopIdentity();
-      };
-      reader.readAsDataURL(file);
-    };
-
-    window.saveSettings = function() {
-      var name = $('setWorkshopName').value;
-      localStorage.setItem('openline_setting_name_' + currentWorkshopId, name);
-      window.applyWorkshopIdentity();
-      window.closeModal('settingsModal');
-    };
-
-    window.applyWorkshopIdentity = function() {
-      var name = localStorage.getItem('openline_setting_name_' + currentWorkshopId);
-      var logo = localStorage.getItem('openline_setting_logo_' + currentWorkshopId);
-
-      if (name && $('appHeaderTitle')) $('appHeaderTitle').textContent = name;
-      if (logo && $('headerCustomLogo') && $('headerDefaultIcon')) {
-        $('headerCustomLogo').src = logo;
-        $('headerCustomLogo').classList.remove('hidden');
-        $('headerDefaultIcon').classList.add('hidden');
-      }
-    };
-
-    // 5. DESGLOSE Y CUENTA CORRIENTE DE CLIENTE
-    window.openClientDetailModal = function(phoneKey) {
-      var clientOrders = repairs.filter(function(r){ return (r.clientPhone || '').trim() === phoneKey || (r.clientName || '').trim() === phoneKey; });
-      if (clientOrders.length === 0) return;
-
-      var totalBilled = 0;
-      var totalPaid = 0;
-
-      clientOrders.forEach(function(r) {
-        var b = parseFloat(r.budget) || 0;
-        var a = parseFloat(r.advance) || 0;
-        totalBilled += b;
-        totalPaid += a;
-      });
-
-      var debt = totalBilled - totalPaid;
-
-      if ($('clientDetailName')) $('clientDetailName').textContent = clientOrders[0].clientName || 'Cliente';
-      if ($('clientDetailPhone')) $('clientDetailPhone').textContent = phoneKey;
-      if ($('clientDetailTotal')) $('clientDetailTotal').textContent = '$' + totalBilled.toLocaleString();
-      if ($('clientDetailPaid')) $('clientDetailPaid').textContent = '$' + totalPaid.toLocaleString();
-      if ($('clientDetailDebt')) $('clientDetailDebt').textContent = '$' + debt.toLocaleString();
-
-      var listContainer = $('clientOrdersHistoryList');
-      if (listContainer) {
-        listContainer.innerHTML = clientOrders.map(function(r) {
-          return '<div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl flex justify-between items-center">' +
-                   '<div>' +
-                     '<span class="font-mono text-iosBlue font-bold text-xs">#' + r.id + '</span>' +
-                     '<h5 class="text-white font-bold text-xs mt-0.5">' + (r.deviceBrand || '') + ' ' + (r.deviceModel || '') + '</h5>' +
-                   '</div>' +
-                   '<div class="text-right">' +
-                     '<span class="text-[9px] text-zinc-400 font-bold block"> Total: $' + (r.budget || 0) + '</span>' +
-                     '<span class="text-xs font-mono font-bold text-emerald-400">Seña: $' + (r.advance || 0) + '</span>' +
-                   '</div>' +
-                 '</div>';
-        }).join('');
+      var rawStock = localStorage.getItem('openline_vault_' + currentWorkshopId + '_stock');
+      if (rawStock) {
+        try { stockItems = JSON.parse(rawStock); } catch(e){}
       }
 
-      window.openModal('clientDetailModal');
+      if (!stockItems || stockItems.length === 0) {
+        stockItems = [
+          { id: 'STK-1', name: 'Pantalla iPhone 11 Incell', qty: 3, price: 35000 },
+          { id: 'STK-2', name: 'Módulo Samsung A04s', qty: 5, price: 22000 },
+          { id: 'STK-3', name: 'Batería Moto G8 Power', qty: 2, price: 18000 },
+          { id: 'STK-4', name: 'Pin de Carga Universal Type-C', qty: 15, price: 2500 }
+        ];
+        localStorage.setItem('openline_vault_' + currentWorkshopId + '_stock', JSON.stringify(stockItems));
+      }
+
+      container.innerHTML = stockItems.map(function(s) {
+        return '<div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl flex justify-between items-center">' +
+                 '<div><h4 class="text-white font-bold text-xs">' + s.name + '</h4><span class="text-[10px] text-zinc-500 font-mono">Stock: ' + s.qty + ' unidades</span></div>' +
+                 '<span class="text-xs font-mono font-bold text-purple-400">$' + s.price.toLocaleString() + '</span>' +
+               '</div>';
+      }).join('');
     };
 
+    window.renderVentasHistory = function() {
+      var container = $('ventasListContainer');
+      if (!container) return;
+
+      salesHistory = cashMovements.filter(function(c){ return String(c.id).startsWith('VTA-') || (c.concept && c.concept.includes('Venta')); });
+
+      if (salesHistory.length === 0) {
+        container.innerHTML = '<div class="text-center text-zinc-500 py-6">Sin ventas de mostrador registradas.</div>';
+        return;
+      }
+
+      container.innerHTML = salesHistory.map(function(v) {
+        return '<div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl flex justify-between items-center">' +
+                 '<div><h4 class="text-white font-bold text-xs">' + (v.concept || 'Venta Mostrador') + '</h4><span class="text-[10px] text-zinc-500 font-mono">' + new Date(v.date || Date.now()).toLocaleDateString('es-AR') + '</span></div>' +
+                 '<span class="text-xs font-mono font-bold text-emerald-400">+$' + (v.amount || 0).toLocaleString() + '</span>' +
+               '</div>';
+      }).join('');
+    };
+
+    // RECUPERACIÓN Y SINCRONIZACIÓN
     function deepScanAllHistoricalData() {
       var allKeys = Object.keys(localStorage);
       var repairMap = {};
@@ -667,12 +610,13 @@
       window.updateCashBalanceUI();
     }
 
-    // ABRIR DETALLE DE ÓRDEN
     window.openRepairDetailModal = function(orderId) {
       var order = repairs.find(function(r){ return r.id === orderId; });
       if (!order) return;
 
       activeOrderSelected = order;
+      window.cancelOrderEditMode();
+
       if ($('detailOrderNumber')) $('detailOrderNumber').textContent = '#' + order.id;
       if ($('detailDeviceTitle')) $('detailDeviceTitle').textContent = (order.deviceBrand || '') + ' ' + (order.deviceModel || '');
       if ($('detailClientName')) $('detailClientName').textContent = order.clientName || 'Cliente';
@@ -705,11 +649,8 @@
 
     window.updateOrderStatusFromModal = function() {
       if (!activeOrderSelected) return;
-      var newStatus = $('detailStatusSelect').value;
-      activeOrderSelected.status = newStatus;
-
+      activeOrderSelected.status = $('detailStatusSelect').value;
       localStorage.setItem('openline_vault_' + currentWorkshopId + '_repairs', JSON.stringify(repairs));
-      emitMQTTSync();
       window.renderRepairsList();
     };
 
@@ -754,9 +695,7 @@
         var key = phone || (r.clientName ? r.clientName.trim() : '');
         if (!key) return;
 
-        if (!clientMap[key]) {
-          clientMap[key] = { name: r.clientName || 'Cliente', phone: phone || 'Sin teléfono', total: 0, count: 0 };
-        }
+        if (!clientMap[key]) clientMap[key] = { name: r.clientName || 'Cliente', phone: phone || 'Sin teléfono', total: 0, count: 0 };
         clientMap[key].total += (parseFloat(r.budget) || 0);
         clientMap[key].count += 1;
       });
@@ -783,6 +722,32 @@
       }).join('');
     };
 
+    window.openClientDetailModal = function(phoneKey) {
+      var clientOrders = repairs.filter(function(r){ return (r.clientPhone || '').trim() === phoneKey || (r.clientName || '').trim() === phoneKey; });
+      if (clientOrders.length === 0) return;
+
+      var totalBilled = 0, totalPaid = 0;
+      clientOrders.forEach(function(r) { totalBilled += (parseFloat(r.budget) || 0); totalPaid += (parseFloat(r.advance) || 0); });
+
+      if ($('clientDetailName')) $('clientDetailName').textContent = clientOrders[0].clientName || 'Cliente';
+      if ($('clientDetailPhone')) $('clientDetailPhone').textContent = phoneKey;
+      if ($('clientDetailTotal')) $('clientDetailTotal').textContent = '$' + totalBilled.toLocaleString();
+      if ($('clientDetailPaid')) $('clientDetailPaid').textContent = '$' + totalPaid.toLocaleString();
+      if ($('clientDetailDebt')) $('clientDetailDebt').textContent = '$' + (totalBilled - totalPaid).toLocaleString();
+
+      var listContainer = $('clientOrdersHistoryList');
+      if (listContainer) {
+        listContainer.innerHTML = clientOrders.map(function(r) {
+          return '<div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl flex justify-between items-center">' +
+                   '<div><span class="font-mono text-iosBlue font-bold text-xs">#' + r.id + '</span><h5 class="text-white font-bold text-xs mt-0.5">' + (r.deviceBrand || '') + ' ' + (r.deviceModel || '') + '</h5></div>' +
+                   '<div class="text-right"><span class="text-[9px] text-zinc-400 font-bold block">Total: $' + (r.budget || 0) + '</span><span class="text-xs font-mono font-bold text-emerald-400">Seña: $' + (r.advance || 0) + '</span></div>' +
+                 '</div>';
+        }).join('');
+      }
+
+      window.openModal('clientDetailModal');
+    };
+
     window.updateCashBalanceUI = function() {
       var total = 0;
       cashMovements.forEach(function(c) { total += (c.amount || 0); });
@@ -794,10 +759,7 @@
       var modalContainer = $('cashModalList');
       var html = cashMovements.length === 0 ? '<div class="text-center text-zinc-500 py-4">Sin movimientos.</div>' : cashMovements.map(function(c) {
         return '<div class="p-2 bg-zinc-900 border border-zinc-800 rounded-lg flex justify-between items-center">' +
-                 '<div>' +
-                   '<span class="text-white text-xs font-bold">' + (c.concept || 'Movimiento') + '</span>' +
-                   '<div class="text-[9px] text-zinc-500">' + new Date(c.date || Date.now()).toLocaleDateString('es-AR') + '</div>' +
-                 '</div>' +
+                 '<div><span class="text-white text-xs font-bold">' + (c.concept || 'Movimiento') + '</span><div class="text-[9px] text-zinc-500">' + new Date(c.date || Date.now()).toLocaleDateString('es-AR') + '</div></div>' +
                  '<span class="font-mono text-emerald-400 font-bold text-xs">+$' + (c.amount || 0).toLocaleString() + '</span>' +
                '</div>';
       }).join('');
@@ -837,9 +799,103 @@
         localStorage.setItem('openline_vault_' + currentWorkshopId + '_cash', JSON.stringify(cashMovements));
       }
 
-      emitMQTTSync();
       window.closeModal('newRepairModal');
       deepScanAllHistoricalData();
+    };
+
+    window.completePosSale = function(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      var name = $('posManualName').value;
+      var price = parseFloat($('posManualPrice').value) || 0;
+
+      if (!name || price <= 0) return;
+
+      var saleId = 'VTA-' + Math.floor(1000 + Math.random() * 9000);
+      cashMovements.unshift({ id: saleId, amount: price, concept: 'Venta Mostrador: ' + name, date: Date.now() });
+      localStorage.setItem('openline_vault_' + currentWorkshopId + '_cash', JSON.stringify(cashMovements));
+
+      $('posManualName').value = '';
+      $('posManualPrice').value = '';
+
+      window.closeModal('salesModal');
+      window.updateCashBalanceUI();
+      alert("Venta registrada con éxito.");
+    };
+
+    window.checkLicenseStatus = function() {
+      var permKey = localStorage.getItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId);
+      var isPro = (permKey === 'TRUE');
+
+      if (!isPro) {
+        Object.keys(localStorage).forEach(function(k) {
+          if (k.includes('license') || k.includes('perm')) {
+            try {
+              var val = localStorage.getItem(k);
+              if (val === 'TRUE' || val.includes('LIFETIME') || val.includes('PRO')) isPro = true;
+            } catch(e){}
+          }
+        });
+      }
+
+      var text = $('headerLicenseText');
+      var badge = $('headerLicenseBadge');
+      var modalText = $('licenseStatusText');
+
+      if (isPro) {
+        localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId, 'TRUE');
+        if(text) text.textContent = 'PRO / VITALICIO';
+        if(badge) badge.className = 'text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:scale-95 transition';
+        if(modalText) { modalText.textContent = 'PRO / VITALICIO'; modalText.className = 'font-mono text-base font-black text-emerald-400 py-1'; }
+      } else {
+        if(text) text.textContent = 'DEMO';
+        if(badge) badge.className = 'text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:scale-95 transition';
+        if(modalText) { modalText.textContent = 'DEMO'; modalText.className = 'font-mono text-base font-black text-amber-400 py-1'; }
+      }
+    };
+
+    window.applyKey = function() {
+      var k = $('inpActivationKey').value.trim().toUpperCase();
+      if (k.length > 3) {
+        localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId, 'TRUE');
+        window.checkLicenseStatus();
+        window.closeModal('licenseModal');
+        alert("¡Licencia Activada con Éxito!");
+      }
+    };
+
+    window.loadSettingsUI = function() {
+      var name = localStorage.getItem('openline_setting_name_' + currentWorkshopId) || '';
+      if ($('setWorkshopName')) $('setWorkshopName').value = name;
+    };
+
+    window.handleLogoUpload = function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        localStorage.setItem('openline_setting_logo_' + currentWorkshopId, evt.target.result);
+        window.applyWorkshopIdentity();
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.saveSettings = function() {
+      var name = $('setWorkshopName').value;
+      localStorage.setItem('openline_setting_name_' + currentWorkshopId, name);
+      window.applyWorkshopIdentity();
+      window.closeModal('settingsModal');
+    };
+
+    window.applyWorkshopIdentity = function() {
+      var name = localStorage.getItem('openline_setting_name_' + currentWorkshopId);
+      var logo = localStorage.getItem('openline_setting_logo_' + currentWorkshopId);
+
+      if (name && $('appHeaderTitle')) $('appHeaderTitle').textContent = name;
+      if (logo && $('headerCustomLogo') && $('headerDefaultIcon')) {
+        $('headerCustomLogo').src = logo;
+        $('headerCustomLogo').classList.remove('hidden');
+        $('headerDefaultIcon').classList.add('hidden');
+      }
     };
 
     window.exportFullBackupJSON = function() {
@@ -854,7 +910,6 @@
     window.importFullBackupJSON = function(e) {
       var file = e.target.files[0];
       if (!file) return;
-
       var reader = new FileReader();
       reader.onload = function(evt) {
         try {
@@ -867,18 +922,64 @@
           }
           alert("Backup restaurado con éxito.");
           deepScanAllHistoricalData();
-        } catch(err) {
-          alert("Error al leer el archivo JSON.");
-        }
+        } catch(err) { alert("Error al leer el archivo JSON."); }
       };
       reader.readAsText(file);
+    };
+
+    // PATRÓN TÁCTIL
+    function setupTouchPattern() {
+      var grid = $('patternGrid');
+      if (!grid) return;
+      var isDrawing = false;
+
+      function processPoint(x, y) {
+        var el = document.elementFromPoint(x, y);
+        if (el && el.classList.contains('pattern-dot')) {
+          var dotNum = parseInt(el.getAttribute('data-dot'));
+          if (dotNum && patternSequence.indexOf(dotNum) === -1) {
+            patternSequence.push(dotNum);
+            el.classList.add('selected');
+            if ($('patternSequenceText')) $('patternSequenceText').textContent = patternSequence.join('-');
+          }
+        }
+      }
+
+      grid.addEventListener('touchstart', function(e) { isDrawing = true; processPoint(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+      grid.addEventListener('touchmove', function(e) { if (isDrawing) processPoint(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+      grid.addEventListener('touchend', function() { isDrawing = false; });
+    }
+
+    window.clearPattern = function() {
+      patternSequence = [];
+      document.querySelectorAll('.pattern-dot').forEach(function(d){ d.classList.remove('selected'); });
+      if ($('patternSequenceText')) $('patternSequenceText').textContent = 'Ninguna';
+    };
+
+    window.handlePhotoSelection = function(e) {
+      var files = e.target.files;
+      if (!files) return;
+      var preview = $('photosPreviewContainer');
+      Array.from(files).forEach(function(file) {
+        var reader = new FileReader();
+        reader.onload = function(evt) {
+          uploadedPhotos.push(evt.target.result);
+          if (preview) {
+            var img = document.createElement('img');
+            img.src = evt.target.result;
+            img.className = 'w-16 h-16 object-cover rounded-xl border border-zinc-700 shrink-0';
+            preview.appendChild(img);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
     };
 
     window.addEventListener('DOMContentLoaded', function() {
       if ($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
       window.applyWorkshopIdentity();
+      window.checkLicenseStatus();
       setupTouchPattern();
-      setupMQTTSync();
       deepScanAllHistoricalData();
     });
   </script>
