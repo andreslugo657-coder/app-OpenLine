@@ -29,7 +29,7 @@
     .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 20px); }
     
     input, select, textarea { font-size: 16px !important; }
-    button, a, .cursor-pointer { touch-action: manipulation; cursor: pointer; -webkit-tap-highlight-color: transparent; position: relative; z-index: 10; }
+    button, a, .cursor-pointer { touch-action: manipulation; cursor: pointer; -webkit-tap-highlight-color: transparent; position: relative; z-index: 20; }
     
     ::-webkit-scrollbar { display: none; width: 0; height: 0; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -717,11 +717,17 @@
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3 text-xs text-zinc-300">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Equipo & Sincronización Cloud</h3><button type="button" onclick="window.closeModal('teamModal')" class="cursor-pointer"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 space-y-2">
-        <span class="text-[10px] text-zinc-400 block mb-0.5">Código Taller (Red Global):</span>
-        <div id="modalWorkshopCodeDisplay" class="font-mono text-base font-bold text-white">TALLER-MASTER</div>
-        <p class="text-[10px] text-zinc-400">Comparte este código o abre el enlace con el parámetro en la otra PC para unirlas instantáneamente.</p>
+        <span class="text-[10px] text-zinc-400 block mb-0.5">Código Taller (Red Global Actual):</span>
+        <div id="modalWorkshopCodeDisplay" class="font-mono text-base font-bold text-white mb-2">TALLER-MASTER</div>
+        <div class="space-y-1.5 pt-2 border-t border-zinc-800">
+          <label class="text-[10px] text-zinc-400 block font-bold">Cambiar o Unirme a otro Taller manualmente:</label>
+          <div class="flex gap-2">
+            <input type="text" id="manualWorkshopInput" placeholder="Ej: TALLER-MI-NEGOCIO" class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono text-xs uppercase">
+            <button type="button" onclick="window.saveManualWorkshopCode()" class="px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs active:scale-95 shadow cursor-pointer">Vincular</button>
+          </div>
+        </div>
       </div>
-      <div class="space-y-1"><label class="text-[10px] text-zinc-400 block font-bold">Vincular a otro Taller:</label><button type="button" onclick="window.joinWorkshop()" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold shadow active:scale-95 transition cursor-pointer">Vincularme a Taller Maestro</button></div>
+      <div class="space-y-1"><button type="button" onclick="window.shareAppWA()" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-bold flex items-center justify-center gap-2 shadow active:scale-95 transition cursor-pointer"><i class="ph-bold ph-whatsapp-logo text-base"></i> Compartir enlace por WhatsApp</button></div>
       <button type="button" onclick="window.closeModal('teamModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1 cursor-pointer">Cerrar</button>
     </div>
   </div>
@@ -790,7 +796,7 @@
 
   <!-- SCRIPT GENERAL -->
   <script>
-    var APP_CODE_VERSION = 'v35.2.0'; 
+    var APP_CODE_VERSION = 'v35.3.0'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var ACTIVE_USER_KEY = 'openline_current_active_user';
@@ -811,6 +817,7 @@
         } else if (localStorage.getItem(WORKSHOP_ID_KEY)) {
           currentWorkshopId = localStorage.getItem(WORKSHOP_ID_KEY);
         } else {
+          currentWorkshopId = 'TALLER-MASTER';
           localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
         }
 
@@ -831,6 +838,10 @@
           el.classList.add('active'); 
           el.style.display = 'flex'; 
           if(id === 'newRepairModal') { setTimeout(window.initPatternCanvas, 100); }
+          if(id === 'teamModal') {
+            if($('modalWorkshopCodeDisplay')) $('modalWorkshopCodeDisplay').textContent = currentWorkshopId;
+            if($('manualWorkshopInput')) $('manualWorkshopInput').value = currentWorkshopId;
+          }
         } 
       } catch(e) {} 
     };
@@ -959,6 +970,17 @@
     
     var activeUser = 'Admin'; try { activeUser = localStorage.getItem(ACTIVE_USER_KEY) || 'Admin'; } catch(e){}
     var currentFilter = 'ALL'; var currentBranchFilter = 'ALL'; var selectedRepairId = null; var currentTicketRepairId = null;
+
+    // --- VINCULACIÓN MANUAL DE TALLER ---
+    window.saveManualWorkshopCode = function() {
+      var val = $('manualWorkshopInput').value.trim().toUpperCase();
+      if(!val) { window.showToast("Error", "Ingresa un código de taller válido."); return; }
+      currentWorkshopId = val;
+      localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
+      window.closeModal('teamModal');
+      window.showToast("Taller Vinculado", "Cambiando a " + currentWorkshopId + " y recargando...");
+      setTimeout(function() { window.location.href = window.location.origin + window.location.pathname + '?taller=' + currentWorkshopId; }, 600);
+    };
 
     // --- SEGURIDAD Y CONTROL DE ACCESO (ADMIN) ---
     var pendingAdminAction = null;
@@ -1516,16 +1538,6 @@
     window.copyAppUrl = function() { var url = window.location.origin + window.location.pathname + '?taller=' + currentWorkshopId; window.fallbackCopyText(url); };
     window.fallbackCopyText = function(text) { var ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); window.showToast("Copiado", "Enlace con código de taller copiado."); } catch(e){} ta.remove(); };
 
-    window.joinWorkshop = function() {
-      window.appPrompt("Vincular", "Código del Taller Maestro (ej: TALLER-4821):", "text", "", function(code) {
-        if (!code) return;
-        var cleanCode = code.trim().toUpperCase();
-        localStorage.setItem(WORKSHOP_ID_KEY, cleanCode);
-        window.showToast("Vinculando", "Cambiando a " + cleanCode + " y recargando...");
-        setTimeout(function() { window.location.href = window.location.origin + window.location.pathname + '?taller=' + cleanCode; }, 700);
-      });
-    };
-
     var currentPhotos = []; var activeUnlockType = 'pin';
     window.setUnlockType = function(type) {
       activeUnlockType = type;
@@ -2058,6 +2070,7 @@
         if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
         if($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
         if($('modalWorkshopCodeDisplay')) $('modalWorkshopCodeDisplay').textContent = currentWorkshopId;
+        if($('manualWorkshopInput')) $('manualWorkshopInput').value = currentWorkshopId;
         window.applyWorkshopSettings(workshopSettings);
         window.updateLicenseUI();
         window.renderBranchTabs();
