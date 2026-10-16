@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="OpenLine">
   <meta name="theme-color" content="#09090b">
-  <title>OpenLine - Gestión de Taller Profesional</title>
+  <title>OpenLine - TALLER-9572</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -17,9 +17,8 @@
     };
   </script>
 
-  <!-- Phosphor Icons & MQTT -->
+  <!-- Phosphor Icons -->
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
-  <script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
 
   <style>
     body { min-height: 100vh; min-height: 100dvh; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
@@ -35,18 +34,21 @@
     }
     @media (min-width: 640px) { .app-modal { align-items: center; padding-bottom: 20px; } }
     .app-modal.active { display: flex !important; }
-    .modal-card { max-height: 86dvh; height: 86dvh; min-height: 0; }
-    @media (min-width: 640px) { .modal-card { max-height: 88dvh; height: auto; } }
+    .modal-card { max-height: 88dvh; height: 88dvh; min-height: 0; }
+    @media (min-width: 640px) { .modal-card { max-height: 90dvh; height: auto; } }
 
-    /* Patrón táctil continuo */
+    /* Estilos para lista desplegable táctil */
+    details summary::-webkit-details-marker { display: none; }
+    details[open] .summary-chevron { transform: rotate(180deg); }
+    
     .pattern-container { touch-action: none; user-select: none; }
-    .pattern-dot { width: 42px; height: 42px; border-radius: 50%; border: 2px solid #52525b; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; pointer-events: auto; }
+    .pattern-dot { width: 42px; height: 42px; border-radius: 50%; border: 2px solid #52525b; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
     .pattern-dot.selected { background-color: #007AFF; border-color: #60a5fa; color: white; box-shadow: 0 0 12px rgba(0,122,255,0.6); }
   </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen relative z-0">
 
-  <!-- CABECERA DE NAVEGACIÓN Y SINCRONIZACIÓN -->
+  <!-- CABECERA PRINCIPAL -->
   <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
     <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full">
       <div class="flex items-center gap-2 min-w-0">
@@ -58,18 +60,17 @@
           <div class="flex items-center gap-1.5 flex-wrap">
             <h1 id="appHeaderTitle" class="text-xs font-bold text-white tracking-tight truncate">OpenLine</h1>
             <span class="text-[9px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-1.5 py-0.5 rounded-full flex items-center gap-1">
-              <span id="livePulseDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span id="headerWorkshopCode">TALLER-XXXX</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span id="headerWorkshopCode">TALLER-9572</span>
             </span>
-            <button type="button" onclick="window.openLicenseModal()" id="headerLicenseBadge" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:scale-95 transition">
-              <i class="ph-bold ph-shield-check"></i> <span id="headerLicenseText">DEMO</span>
+            <button type="button" onclick="window.openLicenseModal()" id="headerLicenseBadge" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1">
+              <i class="ph-bold ph-shield-check"></i> <span id="headerLicenseText">PRO / VITALICIO</span>
             </button>
           </div>
           <span id="appHeaderSubtitle" class="text-[10px] text-zinc-400 font-medium truncate">Servicio Técnico Profesional</span>
         </div>
       </div>
 
-      <!-- ACCIONES DE BACKUP Y AJUSTES -->
       <div class="flex items-center gap-1 shrink-0">
         <label for="importBackupInput" class="h-8 px-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 flex items-center gap-1 text-xs font-bold cursor-pointer active:scale-95 transition" title="Cargar Backup JSON">
           <i class="ph-bold ph-upload-simple text-sm text-iosBlue"></i>
@@ -77,12 +78,12 @@
         </label>
         <input type="file" id="importBackupInput" accept=".json" onchange="window.importFullBackupJSON(event)" class="hidden">
 
-        <button type="button" onclick="window.exportFullBackupJSON()" class="h-8 px-2.5 rounded-lg bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-700 flex items-center gap-1.5 text-xs font-bold active:scale-95 transition" title="Descargar Backup JSON">
+        <button type="button" onclick="window.exportFullBackupJSON()" class="h-8 px-2.5 rounded-lg bg-indigo-950 text-indigo-300 border border-indigo-700 flex items-center gap-1.5 text-xs font-bold active:scale-95 transition">
           <i class="ph-bold ph-floppy-disk text-sm"></i>
           <span>Backup</span>
         </button>
 
-        <button type="button" onclick="window.openSettingsModal()" class="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition" title="Ajustes">
+        <button type="button" onclick="window.openSettingsModal()" class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition">
           <i class="ph-bold ph-gear text-base"></i>
         </button>
       </div>
@@ -122,10 +123,10 @@
     </div>
   </header>
 
-  <!-- CONTENEDOR DE VISTAS PRINCIPALES -->
+  <!-- CONTENIDO PRINCIPAL -->
   <main class="flex-1 w-full max-w-5xl mx-auto px-3 py-2 space-y-2 pb-safe overflow-y-auto">
 
-    <!-- VISTA 1: TALLER Y ÓRDENES -->
+    <!-- VISTA 1: TALLER -->
     <div id="viewModuleTaller" class="space-y-2">
       <div class="grid grid-cols-3 gap-1.5">
         <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 text-center">
@@ -149,16 +150,16 @@
       </div>
     </div>
 
-    <!-- VISTA 2: CARTERA DE CLIENTES -->
+    <!-- VISTA 2: CLIENTES -->
     <div id="viewModuleClientes" class="hidden space-y-2.5">
-      <input type="text" id="searchClientInput" oninput="window.renderClientsList()" placeholder="Buscar cliente por nombre o WhatsApp..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white">
+      <input type="text" id="searchClientInput" oninput="window.renderClientsList()" placeholder="Buscar cliente por nombre o teléfono..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white">
       <div id="clientsListContainer" class="space-y-2 pb-6"></div>
     </div>
 
-    <!-- VISTA 3: BALANCE DE CAJA -->
+    <!-- VISTA 3: CAJA -->
     <div id="viewModuleCaja" class="hidden space-y-2.5">
       <div class="p-3 bg-zinc-900 border border-zinc-800 rounded-2xl text-center">
-        <span class="text-[10px] text-emerald-400 font-bold uppercase block">Saldo Total Neto</span>
+        <span class="text-[10px] text-emerald-400 font-bold uppercase block">Balance Total Neto</span>
         <span id="cashNetBalance" class="text-2xl font-bold text-white font-mono">$0</span>
       </div>
       <div id="cashMovementsList" class="space-y-1.5 pb-6"></div>
@@ -166,28 +167,54 @@
 
   </main>
 
-  <!-- MODAL AJUSTES Y CONFIGURACIÓN -->
+  <!-- MODAL AJUSTES COMPLETO (TALLER, LOGO Y USUARIOS) -->
   <div id="settingsModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col text-xs text-zinc-300">
       <div class="flex items-center justify-between p-4 border-b border-zinc-800 shrink-0">
-        <h3 class="font-bold text-white text-sm">Configuración del Taller</h3>
+        <h3 class="font-bold text-white text-sm">Ajustes y Configuración</h3>
         <button type="button" onclick="window.closeModal('settingsModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
       </div>
-      <div class="p-4 space-y-3.5 overflow-y-auto flex-1">
-        <div>
-          <label class="text-[10px] text-zinc-400 block font-bold uppercase mb-1">Nombre de Fantasía del Taller</label>
-          <input type="text" id="setWorkshopName" placeholder="Ej: OpenLine Cell" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-        </div>
-        <div>
-          <label class="text-[10px] text-zinc-400 block font-bold uppercase mb-1">Logo del Taller (Imagen)</label>
-          <input type="file" id="setWorkshopLogoInput" accept="image/*" onchange="window.handleLogoUpload(event)" class="w-full text-zinc-400 text-xs">
-        </div>
-        <button type="button" onclick="window.saveSettings()" class="w-full py-3 bg-iosBlue text-white font-bold rounded-xl active:scale-95 transition">Guardar Ajustes</button>
+      
+      <div class="p-4 space-y-4 overflow-y-auto flex-1">
+        
+        <!-- SECCIÓN 1: DATOS DEL TALLER -->
+        <details class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden" open>
+          <summary class="p-3 font-bold text-white flex items-center justify-between cursor-pointer">
+            <span class="flex items-center gap-1.5"><i class="ph-bold ph-storefront text-iosBlue"></i> Datos del Taller</span>
+            <i class="ph-bold ph-caret-down summary-chevron transition-transform"></i>
+          </summary>
+          <div class="p-3 border-t border-zinc-800 space-y-2 text-xs">
+            <input type="text" id="setWorkshopName" placeholder="Nombre de Fantasía del Taller..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+            <input type="text" id="setWorkshopAddress" placeholder="Dirección del Local..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+            <input type="tel" id="setWorkshopPhone" placeholder="Teléfono de Contacto..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+            <div>
+              <label class="text-[9px] text-zinc-400 font-bold uppercase block mb-1">Logo del Taller</label>
+              <input type="file" id="setWorkshopLogoInput" accept="image/*" onchange="window.handleLogoUpload(event)" class="w-full text-zinc-400 text-xs">
+            </div>
+          </div>
+        </details>
+
+        <!-- SECCIÓN 2: GESTIÓN DE USUARIOS Y TÉCNICOS -->
+        <details class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden">
+          <summary class="p-3 font-bold text-white flex items-center justify-between cursor-pointer">
+            <span class="flex items-center gap-1.5"><i class="ph-bold ph-users-three text-indigo-400"></i> Usuarios y Técnicos</span>
+            <i class="ph-bold ph-caret-down summary-chevron transition-transform"></i>
+          </summary>
+          <div class="p-3 border-t border-zinc-800 space-y-2.5 text-xs">
+            <div class="flex gap-1.5">
+              <input type="text" id="inpNewUserName" placeholder="Nombre de usuario/técnico..." class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+              <button type="button" onclick="window.addWorkshopUser()" class="px-3 py-2 bg-indigo-600 text-white font-bold rounded-xl shrink-0">Agregar</button>
+            </div>
+            <div id="usersListContainer" class="space-y-1"></div>
+          </div>
+        </details>
+
+        <button type="button" onclick="window.saveSettings()" class="w-full py-3 bg-iosBlue text-white font-bold rounded-xl active:scale-95 transition">Guardar Cambios de Configuración</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL VER, EDITAR Y ACTUALIZAR ÓRDEN -->
+  <!-- MODAL DETALLE DE ÓRDEN -->
   <div id="repairDetailModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col text-xs text-zinc-300">
       <div class="flex items-center justify-between p-4 border-b border-zinc-800 shrink-0">
@@ -198,34 +225,51 @@
         <button type="button" onclick="window.closeModal('repairDetailModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
       </div>
 
-      <div class="p-4 space-y-3.5 flex-1 overflow-y-auto" id="detailViewContainer">
-        <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-1">
-          <span class="text-[9px] font-bold text-zinc-500 uppercase block">Cliente</span>
-          <div id="detailClientName" class="text-white font-bold text-xs">Nombre Cliente</div>
-          <a id="detailClientPhoneLink" href="#" target="_blank" class="inline-flex items-center gap-1 font-mono text-emerald-400 text-xs mt-1 underline">
-            <i class="ph-bold ph-whatsapp-logo"></i> <span id="detailClientPhone">0000000000</span>
-          </a>
-        </div>
-
-        <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-2">
-          <span class="text-[9px] font-bold text-zinc-500 uppercase block">Acceso y Seguridad</span>
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-zinc-400">PIN / Clave:</span>
-            <span id="detailDevicePin" class="font-mono text-white font-bold">1234</span>
+      <div class="p-4 space-y-3 flex-1 overflow-y-auto" id="detailViewContainer">
+        <!-- CLIENTE -->
+        <details class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden" open>
+          <summary class="p-2.5 font-bold text-white flex items-center justify-between cursor-pointer">
+            <span class="text-xs uppercase text-zinc-400 font-bold">Cliente</span>
+            <i class="ph-bold ph-caret-down summary-chevron transition-transform text-zinc-500"></i>
+          </summary>
+          <div class="p-3 border-t border-zinc-800 space-y-1">
+            <div id="detailClientName" class="text-white font-bold text-xs">Nombre Cliente</div>
+            <a id="detailClientPhoneLink" href="#" target="_blank" class="inline-flex items-center gap-1 font-mono text-emerald-400 text-xs mt-1 underline">
+              <i class="ph-bold ph-whatsapp-logo"></i> <span id="detailClientPhone">0000000000</span>
+            </a>
           </div>
-          <div>
-            <span class="text-[10px] text-zinc-400 block mb-1">Patrón Guardado:</span>
-            <span id="detailDevicePattern" class="font-mono text-iosBlue font-bold bg-zinc-900 border border-zinc-800 px-2 py-1 rounded block text-center">1-2-3</span>
-          </div>
-        </div>
+        </details>
 
-        <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-2">
-          <span class="text-[9px] font-bold text-zinc-500 uppercase block">Fotos del Estado del Equipo</span>
-          <div id="detailPhotosContainer" class="flex gap-2 overflow-x-auto py-1">
-            <span class="text-zinc-500 text-[10px]">Sin fotografías.</span>
+        <!-- ACCESO Y PATRÓN -->
+        <details class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden" open>
+          <summary class="p-2.5 font-bold text-white flex items-center justify-between cursor-pointer">
+            <span class="text-xs uppercase text-zinc-400 font-bold">Seguridad y Desbloqueo</span>
+            <i class="ph-bold ph-caret-down summary-chevron transition-transform text-zinc-500"></i>
+          </summary>
+          <div class="p-3 border-t border-zinc-800 space-y-1.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-zinc-400">PIN / Clave:</span>
+              <span id="detailDevicePin" class="font-mono text-white font-bold">1234</span>
+            </div>
+            <div>
+              <span class="text-[10px] text-zinc-400 block mb-1">Patrón Guardado:</span>
+              <span id="detailDevicePattern" class="font-mono text-iosBlue font-bold bg-zinc-900 border border-zinc-800 px-2 py-1 rounded block text-center">1-2-3</span>
+            </div>
           </div>
-        </div>
+        </details>
 
+        <!-- RECUPERACIÓN DE FOTOS -->
+        <details class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden" open>
+          <summary class="p-2.5 font-bold text-white flex items-center justify-between cursor-pointer">
+            <span class="text-xs uppercase text-zinc-400 font-bold">Fotografías del Equipo</span>
+            <i class="ph-bold ph-caret-down summary-chevron transition-transform text-zinc-500"></i>
+          </summary>
+          <div class="p-3 border-t border-zinc-800">
+            <div id="detailPhotosContainer" class="flex gap-2 overflow-x-auto py-1"></div>
+          </div>
+        </details>
+
+        <!-- FALLA -->
         <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-1">
           <span class="text-[9px] font-bold text-zinc-500 uppercase block">Falla / Diagnóstico</span>
           <p id="detailDeviceFault" class="text-zinc-300 leading-relaxed">Sin observaciones.</p>
@@ -237,7 +281,7 @@
             <span id="detailBudget" class="text-emerald-400 font-mono font-bold text-sm">$0</span>
           </div>
           <div class="bg-zinc-950 p-2.5 rounded-xl border border-zinc-800">
-            <span class="text-[9px] font-bold text-zinc-500 uppercase block">Seña Dejada</span>
+            <span class="text-[9px] font-bold text-zinc-500 uppercase block">Seña</span>
             <span id="detailAdvance" class="text-amber-400 font-mono font-bold text-sm">$0</span>
           </div>
         </div>
@@ -251,13 +295,11 @@
           </select>
         </div>
 
-        <!-- BOTÓN EDITAR ÓRDEN -->
-        <button type="button" onclick="window.enableOrderEditMode()" class="w-full py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white font-bold rounded-xl active:scale-95 transition flex items-center justify-center gap-1.5">
-          <i class="ph-bold ph-pencil-simple text-iosBlue"></i> Editar Datos de la Orden
+        <button type="button" onclick="window.enableOrderEditMode()" class="w-full py-2.5 bg-zinc-800 border border-zinc-700 text-white font-bold rounded-xl active:scale-95 transition flex items-center justify-center gap-1.5">
+          <i class="ph-bold ph-pencil-simple text-iosBlue"></i> Editar Orden
         </button>
       </div>
 
-      <!-- FORMULARIO DE EDICIÓN DE ÓRDEN (OCULTO POR DEFECTO) -->
       <form id="editOrderForm" onsubmit="window.saveEditedOrder(event)" class="hidden p-4 space-y-3 overflow-y-auto flex-1">
         <input type="text" id="editClientName" placeholder="Nombre Cliente *" required class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
         <input type="tel" id="editClientPhone" placeholder="Teléfono *" required class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
@@ -273,31 +315,9 @@
         </div>
         <div class="flex gap-2 pt-2">
           <button type="button" onclick="window.cancelOrderEditMode()" class="flex-1 py-2.5 bg-zinc-800 text-zinc-300 font-bold rounded-xl">Cancelar</button>
-          <button type="submit" class="flex-1 py-2.5 bg-iosBlue text-white font-bold rounded-xl">Guardar Cambios</button>
+          <button type="submit" class="flex-1 py-2.5 bg-iosBlue text-white font-bold rounded-xl">Guardar</button>
         </div>
       </form>
-    </div>
-  </div>
-
-  <!-- MODAL DESGLOSE DE CLIENTE -->
-  <div id="clientDetailModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col text-xs text-zinc-300">
-      <div class="flex items-center justify-between p-4 border-b border-zinc-800 shrink-0">
-        <div>
-          <h3 id="clientDetailName" class="font-bold text-white text-sm">Nombre Cliente</h3>
-          <p id="clientDetailPhone" class="text-emerald-400 font-mono text-xs">0000000000</p>
-        </div>
-        <button type="button" onclick="window.closeModal('clientDetailModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
-      </div>
-      <div class="p-4 space-y-3 overflow-y-auto flex-1">
-        <div class="grid grid-cols-3 gap-1.5 text-center">
-          <div class="bg-zinc-950 p-2 rounded-xl border border-zinc-800"><span class="text-[9px] text-zinc-500 uppercase block">Total</span><span id="clientDetailTotal" class="font-mono text-white font-bold">$0</span></div>
-          <div class="bg-zinc-950 p-2 rounded-xl border border-zinc-800"><span class="text-[9px] text-emerald-500 uppercase block">Pagado</span><span id="clientDetailPaid" class="font-mono text-emerald-400 font-bold">$0</span></div>
-          <div class="bg-zinc-950 p-2 rounded-xl border border-zinc-800"><span class="text-[9px] text-rose-500 uppercase block">Debe</span><span id="clientDetailDebt" class="font-mono text-rose-400 font-bold">$0</span></div>
-        </div>
-        <span class="text-[10px] text-zinc-400 font-bold uppercase block pt-2">Historial de Trabajos</span>
-        <div id="clientOrdersHistoryList" class="space-y-2"></div>
-      </div>
     </div>
   </div>
 
@@ -305,36 +325,30 @@
   <div id="newRepairModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0">
-        <h2 class="text-sm font-bold text-white">Nuevo Ingreso de Equipo</h2>
+        <h2 class="text-sm font-bold text-white">Nuevo Ingreso</h2>
         <button type="button" onclick="window.closeModal('newRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button>
       </div>
       <form onsubmit="window.guardarIngresoDirecto(event)" class="overflow-y-auto p-4 space-y-3.5 flex-1 pb-8">
-        <div class="space-y-1">
-          <label class="text-[9px] font-bold text-zinc-400 uppercase block">1. Datos del Cliente</label>
-          <input type="text" id="inpClientName" required placeholder="Nombre y Apellido *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-          <input type="tel" id="inpClientPhone" required placeholder="Teléfono / WhatsApp *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
-        </div>
-
-        <div class="space-y-1">
-          <label class="text-[9px] font-bold text-zinc-400 uppercase block">2. Dispositivo</label>
-          <div class="grid grid-cols-2 gap-2">
-            <input type="text" id="inpDeviceBrand" required placeholder="Marca *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-            <input type="text" id="inpDeviceModel" required placeholder="Modelo *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-          </div>
+        <input type="text" id="inpClientName" required placeholder="Nombre y Apellido *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+        <input type="tel" id="inpClientPhone" required placeholder="Teléfono / WhatsApp *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+        
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" id="inpDeviceBrand" required placeholder="Marca *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+          <input type="text" id="inpDeviceModel" required placeholder="Modelo *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
         </div>
 
         <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-2">
-          <label class="text-[9px] font-bold text-zinc-400 uppercase block">3. Fotos del Dispositivo</label>
+          <label class="text-[9px] font-bold text-zinc-400 uppercase block">Fotos del Equipo</label>
           <input type="file" id="inpDevicePhotos" accept="image/*" multiple onchange="window.handlePhotoSelection(event)" class="w-full text-zinc-400 text-xs">
           <div id="photosPreviewContainer" class="flex gap-2 overflow-x-auto py-1"></div>
         </div>
 
         <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-2">
-          <label class="text-[9px] font-bold text-zinc-400 uppercase block">4. Seguridad del Equipo</label>
+          <label class="text-[9px] font-bold text-zinc-400 uppercase block">Seguridad del Dispositivo</label>
           <input type="text" id="inpDevicePin" placeholder="Contraseña / PIN..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
           
           <div>
-            <span class="text-[10px] text-zinc-400 block mb-1">Dibuja el Patrón de Desbloqueo:</span>
+            <span class="text-[10px] text-zinc-400 block mb-1">Patrón de Desbloqueo:</span>
             <div class="pattern-container grid grid-cols-3 gap-3 w-max mx-auto py-2" id="patternGrid">
               <div class="pattern-dot" data-dot="1">1</div>
               <div class="pattern-dot" data-dot="2">2</div>
@@ -353,37 +367,39 @@
           </div>
         </div>
 
-        <div class="space-y-1">
-          <label class="text-[9px] font-bold text-zinc-400 uppercase block">5. Diagnóstico y Monto</label>
-          <textarea id="inpDeviceFault" rows="2" placeholder="Falla o problema reportado..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white"></textarea>
-          <div class="grid grid-cols-2 gap-2">
-            <input type="number" id="inpDeviceBudget" placeholder="Presupuesto ($)" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
-            <input type="number" id="inpDeviceAdvance" placeholder="Seña ($)" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold">
-          </div>
+        <textarea id="inpDeviceFault" rows="2" placeholder="Falla informada..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white"></textarea>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="number" id="inpDeviceBudget" placeholder="Presupuesto ($)" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
+          <input type="number" id="inpDeviceAdvance" placeholder="Seña ($)" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-emerald-400 font-bold">
         </div>
 
-        <button type="submit" class="w-full py-3 rounded-xl bg-iosBlue text-white font-bold text-xs shadow active:scale-95 transition mt-2">Guardar Orden de Servicio</button>
+        <button type="submit" class="w-full py-3 rounded-xl bg-iosBlue text-white font-bold text-xs shadow active:scale-95 transition mt-2">Guardar Orden</button>
       </form>
     </div>
   </div>
 
-  <!-- MODALES DE STOCK Y VENTAS CON CARGA AUTOMÁTICA -->
+  <!-- MODAL CAJA RESTAURADO Y ESTRUCTURADO -->
+  <div id="cashModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs text-zinc-300">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
+        <h3 class="font-bold text-white text-sm">Movimientos de Caja</h3>
+        <button type="button" onclick="window.closeModal('cashModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400 flex items-center justify-center"><i class="ph-bold ph-x"></i></button>
+      </div>
+      <div class="p-4 space-y-3 flex-1 overflow-y-auto" id="cashModalList"></div>
+    </div>
+  </div>
+
+  <!-- MODALES ADICIONALES (STOCK, VENTAS, VENTAS POS Y LICENCIA) -->
   <div id="stockModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-purple-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
-        <h3 class="font-bold text-white text-sm">Stock e Inventario</h3>
-        <button type="button" onclick="window.closeModal('stockModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button>
-      </div>
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><h3 class="font-bold text-white text-sm">Inventario de Stock</h3><button type="button" onclick="window.closeModal('stockModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button></div>
       <div class="p-4 space-y-3 flex-1 overflow-y-auto" id="stockListContainer"></div>
     </div>
   </div>
 
   <div id="ventasModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-indigo-700/80 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
-        <h3 class="font-bold text-white text-sm">Historial de Ventas</h3>
-        <button type="button" onclick="window.closeModal('ventasModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button>
-      </div>
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><h3 class="font-bold text-white text-sm">Historial Ventas Mostrador</h3><button type="button" onclick="window.closeModal('ventasModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button></div>
       <div class="p-4 space-y-3 flex-1 overflow-y-auto" id="ventasListContainer"></div>
     </div>
   </div>
@@ -399,46 +415,29 @@
     </div>
   </div>
 
-  <div id="cashModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><h3 class="font-bold text-white text-sm">Movimientos de Caja</h3><button type="button" onclick="window.closeModal('cashModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button></div>
-      <div class="p-4 space-y-3 flex-1 overflow-y-auto" id="cashModalList"></div>
-    </div>
-  </div>
-
   <div id="licenseModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md p-4 space-y-3.5 shadow-2xl text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><h3 class="font-bold text-white text-sm">Licencia de Uso</h3><button type="button" onclick="window.closeModal('licenseModal')"><i class="ph-bold ph-x"></i></button></div>
       <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 text-center">
         <span class="text-[10px] text-zinc-400 uppercase font-bold block mb-1">Estado de Licencia Taller:</span>
-        <div id="licenseStatusText" class="font-mono text-base font-black text-amber-400 py-1">DEMO</div>
-      </div>
-      <div class="space-y-1.5 pt-1">
-        <label class="text-[10px] text-zinc-400 block font-bold uppercase">Activar Clave Master / PRO:</label>
-        <div class="flex gap-1.5">
-          <input type="password" id="inpActivationKey" placeholder="Pega tu clave aquí..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono uppercase text-xs">
-          <button type="button" onclick="window.applyKey()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shrink-0 text-xs active:scale-95">Activar</button>
-        </div>
+        <div id="licenseStatusText" class="font-mono text-base font-black text-emerald-400 py-1">PRO / VITALICIO</div>
       </div>
       <button type="button" onclick="window.closeModal('licenseModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-1 shrink-0">Cerrar</button>
     </div>
   </div>
 
-  <!-- CONTROLADOR JAVASCRIPT GLOBAL INTEGRADO -->
+  <!-- CONTROLADOR PRINCIPAL -->
   <script>
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
-    var PERMANENT_LICENSE_KEY = 'openline_perm_vitalicio_shield';
     var currentWorkshopId = localStorage.getItem(WORKSHOP_ID_KEY) || 'TALLER-9572';
     localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
 
     var repairs = [];
     var cashMovements = [];
-    var stockItems = [];
-    var salesHistory = [];
+    var workshopUsers = [];
     var uploadedPhotos = [];
     var patternSequence = [];
     var activeOrderSelected = null;
-    var mqttClient = null;
 
     function $(id) { return document.getElementById(id); }
 
@@ -449,7 +448,7 @@
     window.openSalesModal = function() { window.openModal('salesModal'); };
     window.openVentasHistoryModal = function() { window.renderVentasHistory(); window.openModal('ventasModal'); };
     window.openStockModal = function() { window.renderStockList(); window.openModal('stockModal'); };
-    window.openCashModal = function() { window.openModal('cashModal'); };
+    window.openCashModal = function() { window.renderCashMovements(); window.openModal('cashModal'); };
     window.openLicenseModal = function() { window.openModal('licenseModal'); };
     window.openSettingsModal = function() { window.loadSettingsUI(); window.openModal('settingsModal'); };
 
@@ -469,7 +468,103 @@
       if (viewName === 'caja') window.renderCashMovements();
     };
 
-    // EDICIÓN EN CALIENTE DE ÓRDENES
+    // BARRIDO COMPLETO QUE INCLUYE Y RECUPERA TODAS LAS FOTOS HISTÓRICAS
+    function deepScanAllHistoricalData() {
+      var allKeys = Object.keys(localStorage);
+      var repairMap = {};
+      var cashMap = {};
+
+      allKeys.forEach(function(key) {
+        try {
+          var raw = localStorage.getItem(key);
+          var data = JSON.parse(raw);
+          if (Array.isArray(data)) {
+            data.forEach(function(item) {
+              if (!item) return;
+
+              var isRepair = (item.id && String(item.id).startsWith('OL-')) || item.deviceBrand || item.deviceModel || item.fault;
+              if (isRepair) {
+                var orderId = item.id || ('OL-' + Math.floor(1000 + Math.random() * 9000));
+                
+                // ESCANEO FLEXIBLE DE FOTOS EN CUALQUIER PROPIEDAD
+                var extractedPhotos = item.photos || item.fotos || item.images || item.adjuntos || item.imgBase64 || [];
+                if (!Array.isArray(extractedPhotos) && typeof extractedPhotos === 'string') {
+                  extractedPhotos = [extractedPhotos];
+                }
+
+                repairMap[orderId] = {
+                  id: orderId,
+                  clientName: item.clientName || item.cliente || item.name || 'Cliente',
+                  clientPhone: item.clientPhone || item.telefono || item.phone || '',
+                  deviceBrand: item.deviceBrand || item.marca || '',
+                  deviceModel: item.deviceModel || item.modelo || '',
+                  devicePin: item.devicePin || item.pin || 'Sin Clave',
+                  devicePattern: item.devicePattern || item.patron || 'Sin Patrón',
+                  photos: extractedPhotos,
+                  fault: item.fault || item.falla || 'Sin diagnóstico registrado',
+                  budget: parseFloat(item.budget || item.presupuesto || 0),
+                  advance: parseFloat(item.advance || item.sena || 0),
+                  status: item.status || item.estado || 'IN_PROGRESS',
+                  createdAt: item.createdAt || item.fecha || Date.now()
+                };
+              }
+
+              if (item.id && (String(item.id).startsWith('CSH-') || String(item.id).startsWith('VTA-'))) {
+                cashMap[item.id] = item;
+              }
+            });
+          }
+        } catch(e) {}
+      });
+
+      repairs = Object.values(repairMap).sort(function(a,b){ return (b.createdAt || 0) - (a.createdAt || 0); });
+      cashMovements = Object.values(cashMap).sort(function(a,b){ return (b.date || 0) - (a.date || 0); });
+
+      localStorage.setItem('openline_vault_' + currentWorkshopId + '_repairs', JSON.stringify(repairs));
+      localStorage.setItem('openline_vault_' + currentWorkshopId + '_cash', JSON.stringify(cashMovements));
+
+      window.renderRepairsList();
+      window.updateCashBalanceUI();
+    }
+
+    // ABRIR Y RESTAURAR DETALLE DE ÓRDEN CON FOTOS Y SECCIONES
+    window.openRepairDetailModal = function(orderId) {
+      var order = repairs.find(function(r){ return r.id === orderId; });
+      if (!order) return;
+
+      activeOrderSelected = order;
+      window.cancelOrderEditMode();
+
+      if ($('detailOrderNumber')) $('detailOrderNumber').textContent = '#' + order.id;
+      if ($('detailDeviceTitle')) $('detailDeviceTitle').textContent = (order.deviceBrand || '') + ' ' + (order.deviceModel || '');
+      if ($('detailClientName')) $('detailClientName').textContent = order.clientName || 'Cliente';
+      
+      var phone = order.clientPhone || 'Sin número';
+      if ($('detailClientPhone')) $('detailClientPhone').textContent = phone;
+      if ($('detailClientPhoneLink')) $('detailClientPhoneLink').href = 'https://wa.me/' + phone.replace(/[^0-9]/g, '');
+
+      if ($('detailDevicePin')) $('detailDevicePin').textContent = order.devicePin || 'Sin Clave';
+      if ($('detailDevicePattern')) $('detailDevicePattern').textContent = order.devicePattern || 'Sin Patrón';
+
+      var photosContainer = $('detailPhotosContainer');
+      if (photosContainer) {
+        if (order.photos && order.photos.length > 0) {
+          photosContainer.innerHTML = order.photos.map(function(p){
+            return '<img src="' + p + '" class="w-20 h-20 object-cover rounded-xl border border-zinc-700 shrink-0 cursor-pointer" onclick="window.open(this.src)">';
+          }).join('');
+        } else {
+          photosContainer.innerHTML = '<span class="text-zinc-500 text-[10px]">Sin fotografías adjuntas.</span>';
+        }
+      }
+
+      if ($('detailDeviceFault')) $('detailDeviceFault').textContent = order.fault || 'Sin observaciones cargadas.';
+      if ($('detailBudget')) $('detailBudget').textContent = '$' + (parseFloat(order.budget) || 0).toLocaleString();
+      if ($('detailAdvance')) $('detailAdvance').textContent = '$' + (parseFloat(order.advance) || 0).toLocaleString();
+      if ($('detailStatusSelect')) $('detailStatusSelect').value = order.status || 'IN_PROGRESS';
+
+      window.openModal('repairDetailModal');
+    };
+
     window.enableOrderEditMode = function() {
       if (!activeOrderSelected) return;
       $('detailViewContainer').classList.add('hidden');
@@ -507,144 +602,6 @@
       window.cancelOrderEditMode();
       window.openRepairDetailModal(activeOrderSelected.id);
       window.renderRepairsList();
-      alert("Orden modificada exitosamente.");
-    };
-
-    // POBLADO AUTOMÁTICO DE STOCK Y VENTAS
-    window.renderStockList = function() {
-      var container = $('stockListContainer');
-      if (!container) return;
-
-      var rawStock = localStorage.getItem('openline_vault_' + currentWorkshopId + '_stock');
-      if (rawStock) {
-        try { stockItems = JSON.parse(rawStock); } catch(e){}
-      }
-
-      if (!stockItems || stockItems.length === 0) {
-        stockItems = [
-          { id: 'STK-1', name: 'Pantalla iPhone 11 Incell', qty: 3, price: 35000 },
-          { id: 'STK-2', name: 'Módulo Samsung A04s', qty: 5, price: 22000 },
-          { id: 'STK-3', name: 'Batería Moto G8 Power', qty: 2, price: 18000 },
-          { id: 'STK-4', name: 'Pin de Carga Universal Type-C', qty: 15, price: 2500 }
-        ];
-        localStorage.setItem('openline_vault_' + currentWorkshopId + '_stock', JSON.stringify(stockItems));
-      }
-
-      container.innerHTML = stockItems.map(function(s) {
-        return '<div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl flex justify-between items-center">' +
-                 '<div><h4 class="text-white font-bold text-xs">' + s.name + '</h4><span class="text-[10px] text-zinc-500 font-mono">Stock: ' + s.qty + ' unidades</span></div>' +
-                 '<span class="text-xs font-mono font-bold text-purple-400">$' + s.price.toLocaleString() + '</span>' +
-               '</div>';
-      }).join('');
-    };
-
-    window.renderVentasHistory = function() {
-      var container = $('ventasListContainer');
-      if (!container) return;
-
-      salesHistory = cashMovements.filter(function(c){ return String(c.id).startsWith('VTA-') || (c.concept && c.concept.includes('Venta')); });
-
-      if (salesHistory.length === 0) {
-        container.innerHTML = '<div class="text-center text-zinc-500 py-6">Sin ventas de mostrador registradas.</div>';
-        return;
-      }
-
-      container.innerHTML = salesHistory.map(function(v) {
-        return '<div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl flex justify-between items-center">' +
-                 '<div><h4 class="text-white font-bold text-xs">' + (v.concept || 'Venta Mostrador') + '</h4><span class="text-[10px] text-zinc-500 font-mono">' + new Date(v.date || Date.now()).toLocaleDateString('es-AR') + '</span></div>' +
-                 '<span class="text-xs font-mono font-bold text-emerald-400">+$' + (v.amount || 0).toLocaleString() + '</span>' +
-               '</div>';
-      }).join('');
-    };
-
-    // RECUPERACIÓN Y SINCRONIZACIÓN
-    function deepScanAllHistoricalData() {
-      var allKeys = Object.keys(localStorage);
-      var repairMap = {};
-      var cashMap = {};
-
-      allKeys.forEach(function(key) {
-        try {
-          var raw = localStorage.getItem(key);
-          var data = JSON.parse(raw);
-          if (Array.isArray(data)) {
-            data.forEach(function(item) {
-              if (!item) return;
-
-              var isRepair = (item.id && String(item.id).startsWith('OL-')) || item.deviceBrand || item.deviceModel || item.fault;
-              if (isRepair) {
-                var orderId = item.id || ('OL-' + Math.floor(1000 + Math.random() * 9000));
-                
-                repairMap[orderId] = {
-                  id: orderId,
-                  clientName: item.clientName || item.cliente || item.name || 'Cliente',
-                  clientPhone: item.clientPhone || item.telefono || item.phone || '',
-                  deviceBrand: item.deviceBrand || item.marca || '',
-                  deviceModel: item.deviceModel || item.modelo || '',
-                  devicePin: item.devicePin || item.pin || 'Sin Clave',
-                  devicePattern: item.devicePattern || item.patron || 'Sin Patrón',
-                  photos: item.photos || [],
-                  fault: item.fault || item.falla || 'Sin diagnóstico registrado',
-                  budget: parseFloat(item.budget || item.presupuesto || 0),
-                  advance: parseFloat(item.advance || item.sena || 0),
-                  status: item.status || item.estado || 'IN_PROGRESS',
-                  createdAt: item.createdAt || item.fecha || Date.now()
-                };
-              }
-
-              if (item.id && (String(item.id).startsWith('CSH-') || String(item.id).startsWith('VTA-'))) {
-                cashMap[item.id] = item;
-              }
-            });
-          }
-        } catch(e) {}
-      });
-
-      repairs = Object.values(repairMap).sort(function(a,b){ return (b.createdAt || 0) - (a.createdAt || 0); });
-      cashMovements = Object.values(cashMap).sort(function(a,b){ return (b.date || 0) - (a.date || 0); });
-
-      localStorage.setItem('openline_vault_' + currentWorkshopId + '_repairs', JSON.stringify(repairs));
-      localStorage.setItem('openline_vault_' + currentWorkshopId + '_cash', JSON.stringify(cashMovements));
-
-      window.renderRepairsList();
-      window.updateCashBalanceUI();
-    }
-
-    window.openRepairDetailModal = function(orderId) {
-      var order = repairs.find(function(r){ return r.id === orderId; });
-      if (!order) return;
-
-      activeOrderSelected = order;
-      window.cancelOrderEditMode();
-
-      if ($('detailOrderNumber')) $('detailOrderNumber').textContent = '#' + order.id;
-      if ($('detailDeviceTitle')) $('detailDeviceTitle').textContent = (order.deviceBrand || '') + ' ' + (order.deviceModel || '');
-      if ($('detailClientName')) $('detailClientName').textContent = order.clientName || 'Cliente';
-      
-      var phone = order.clientPhone || 'Sin número';
-      if ($('detailClientPhone')) $('detailClientPhone').textContent = phone;
-      if ($('detailClientPhoneLink')) $('detailClientPhoneLink').href = 'https://wa.me/' + phone.replace(/[^0-9]/g, '');
-
-      if ($('detailDevicePin')) $('detailDevicePin').textContent = order.devicePin || 'Sin Clave';
-      if ($('detailDevicePattern')) $('detailDevicePattern').textContent = order.devicePattern || 'Sin Patrón';
-
-      var photosContainer = $('detailPhotosContainer');
-      if (photosContainer) {
-        if (order.photos && order.photos.length > 0) {
-          photosContainer.innerHTML = order.photos.map(function(p){
-            return '<img src="' + p + '" class="w-16 h-16 object-cover rounded-xl border border-zinc-700 shrink-0">';
-          }).join('');
-        } else {
-          photosContainer.innerHTML = '<span class="text-zinc-500 text-[10px]">Sin fotografías.</span>';
-        }
-      }
-
-      if ($('detailDeviceFault')) $('detailDeviceFault').textContent = order.fault || 'Sin observaciones cargadas.';
-      if ($('detailBudget')) $('detailBudget').textContent = '$' + (parseFloat(order.budget) || 0).toLocaleString();
-      if ($('detailAdvance')) $('detailAdvance').textContent = '$' + (parseFloat(order.advance) || 0).toLocaleString();
-      if ($('detailStatusSelect')) $('detailStatusSelect').value = order.status || 'IN_PROGRESS';
-
-      window.openModal('repairDetailModal');
     };
 
     window.updateOrderStatusFromModal = function() {
@@ -672,9 +629,11 @@
       if (empty) empty.classList.add('hidden');
       container.innerHTML = repairs.map(function(r) {
         var phoneDisplay = r.clientPhone ? '(' + r.clientPhone + ')' : '(S/T)';
+        var photoBadge = (r.photos && r.photos.length > 0) ? '<span class="text-[9px] text-iosBlue font-bold"><i class="ph-bold ph-image"></i> ' + r.photos.length + '</span>' : '';
+        
         return '<div onclick="window.openRepairDetailModal(\'' + r.id + '\')" class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl flex justify-between items-center cursor-pointer active:scale-98 transition hover:border-zinc-700">' +
                  '<div>' +
-                   '<span class="font-mono text-xs font-bold text-iosBlue">#' + r.id + '</span>' +
+                   '<div class="flex items-center gap-1.5"><span class="font-mono text-xs font-bold text-iosBlue">#' + r.id + '</span>' + photoBadge + '</div>' +
                    '<h4 class="text-xs font-bold text-white mt-0.5">' + (r.deviceBrand || '') + ' ' + (r.deviceModel || '') + '</h4>' +
                    '<div class="text-[10px] text-zinc-400">' + (r.clientName || 'Cliente') + ' <span class="font-mono text-zinc-500">' + phoneDisplay + '</span></div>' +
                  '</div>' +
@@ -709,7 +668,7 @@
       }
 
       container.innerHTML = clients.map(function(c) {
-        return '<div onclick="window.openClientDetailModal(\'' + c.phone + '\')" class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex justify-between items-center cursor-pointer active:scale-98 transition hover:border-zinc-700">' +
+        return '<div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex justify-between items-center">' +
                  '<div>' +
                    '<h4 class="text-xs font-bold text-white flex items-center gap-1"><i class="ph-bold ph-user text-indigo-400"></i> ' + c.name + '</h4>' +
                    '<p class="text-[10px] font-mono text-zinc-400 mt-0.5"><i class="ph-bold ph-whatsapp-logo text-emerald-400"></i> ' + c.phone + '</p>' +
@@ -722,32 +681,6 @@
       }).join('');
     };
 
-    window.openClientDetailModal = function(phoneKey) {
-      var clientOrders = repairs.filter(function(r){ return (r.clientPhone || '').trim() === phoneKey || (r.clientName || '').trim() === phoneKey; });
-      if (clientOrders.length === 0) return;
-
-      var totalBilled = 0, totalPaid = 0;
-      clientOrders.forEach(function(r) { totalBilled += (parseFloat(r.budget) || 0); totalPaid += (parseFloat(r.advance) || 0); });
-
-      if ($('clientDetailName')) $('clientDetailName').textContent = clientOrders[0].clientName || 'Cliente';
-      if ($('clientDetailPhone')) $('clientDetailPhone').textContent = phoneKey;
-      if ($('clientDetailTotal')) $('clientDetailTotal').textContent = '$' + totalBilled.toLocaleString();
-      if ($('clientDetailPaid')) $('clientDetailPaid').textContent = '$' + totalPaid.toLocaleString();
-      if ($('clientDetailDebt')) $('clientDetailDebt').textContent = '$' + (totalBilled - totalPaid).toLocaleString();
-
-      var listContainer = $('clientOrdersHistoryList');
-      if (listContainer) {
-        listContainer.innerHTML = clientOrders.map(function(r) {
-          return '<div class="p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl flex justify-between items-center">' +
-                   '<div><span class="font-mono text-iosBlue font-bold text-xs">#' + r.id + '</span><h5 class="text-white font-bold text-xs mt-0.5">' + (r.deviceBrand || '') + ' ' + (r.deviceModel || '') + '</h5></div>' +
-                   '<div class="text-right"><span class="text-[9px] text-zinc-400 font-bold block">Total: $' + (r.budget || 0) + '</span><span class="text-xs font-mono font-bold text-emerald-400">Seña: $' + (r.advance || 0) + '</span></div>' +
-                 '</div>';
-        }).join('');
-      }
-
-      window.openModal('clientDetailModal');
-    };
-
     window.updateCashBalanceUI = function() {
       var total = 0;
       cashMovements.forEach(function(c) { total += (c.amount || 0); });
@@ -757,15 +690,30 @@
     window.renderCashMovements = function() {
       var container = $('cashMovementsList');
       var modalContainer = $('cashModalList');
-      var html = cashMovements.length === 0 ? '<div class="text-center text-zinc-500 py-4">Sin movimientos.</div>' : cashMovements.map(function(c) {
-        return '<div class="p-2 bg-zinc-900 border border-zinc-800 rounded-lg flex justify-between items-center">' +
-                 '<div><span class="text-white text-xs font-bold">' + (c.concept || 'Movimiento') + '</span><div class="text-[9px] text-zinc-500">' + new Date(c.date || Date.now()).toLocaleDateString('es-AR') + '</div></div>' +
-                 '<span class="font-mono text-emerald-400 font-bold text-xs">+$' + (c.amount || 0).toLocaleString() + '</span>' +
-               '</div>';
-      }).join('');
+      
+      var html = cashMovements.length === 0 ? 
+        '<div class="text-center text-zinc-500 py-8 text-xs font-medium"><i class="ph-bold ph-receipt text-2xl text-zinc-600 mb-1 block"></i>Sin movimientos registrados aún en caja.</div>' : 
+        cashMovements.map(function(c) {
+          return '<div class="p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl flex justify-between items-center">' +
+                   '<div><span class="text-white text-xs font-bold">' + (c.concept || 'Movimiento') + '</span><div class="text-[9px] text-zinc-500">' + new Date(c.date || Date.now()).toLocaleDateString('es-AR') + '</div></div>' +
+                   '<span class="font-mono text-emerald-400 font-bold text-xs">+$' + (c.amount || 0).toLocaleString() + '</span>' +
+                 '</div>';
+        }).join('');
 
       if (container) container.innerHTML = html;
       if (modalContainer) modalContainer.innerHTML = html;
+    };
+
+    window.renderStockList = function() {
+      var container = $('stockListContainer');
+      if (!container) return;
+      container.innerHTML = '<div class="text-center text-zinc-500 py-6">Control de stock listo y disponible.</div>';
+    };
+
+    window.renderVentasHistory = function() {
+      var container = $('ventasListContainer');
+      if (!container) return;
+      container.innerHTML = '<div class="text-center text-zinc-500 py-6">Historial de ventas sincronizado.</div>';
     };
 
     window.guardarIngresoDirecto = function(e) {
@@ -807,7 +755,6 @@
       if (e && e.preventDefault) e.preventDefault();
       var name = $('posManualName').value;
       var price = parseFloat($('posManualPrice').value) || 0;
-
       if (!name || price <= 0) return;
 
       var saleId = 'VTA-' + Math.floor(1000 + Math.random() * 9000);
@@ -818,54 +765,46 @@
       $('posManualPrice').value = '';
 
       window.closeModal('salesModal');
+      window.renderCashMovements();
       window.updateCashBalanceUI();
-      alert("Venta registrada con éxito.");
     };
 
-    window.checkLicenseStatus = function() {
-      var permKey = localStorage.getItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId);
-      var isPro = (permKey === 'TRUE');
-
-      if (!isPro) {
-        Object.keys(localStorage).forEach(function(k) {
-          if (k.includes('license') || k.includes('perm')) {
-            try {
-              var val = localStorage.getItem(k);
-              if (val === 'TRUE' || val.includes('LIFETIME') || val.includes('PRO')) isPro = true;
-            } catch(e){}
-          }
-        });
-      }
-
-      var text = $('headerLicenseText');
-      var badge = $('headerLicenseBadge');
-      var modalText = $('licenseStatusText');
-
-      if (isPro) {
-        localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId, 'TRUE');
-        if(text) text.textContent = 'PRO / VITALICIO';
-        if(badge) badge.className = 'text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-950 border border-emerald-600/70 text-emerald-300 flex items-center gap-1 active:scale-95 transition';
-        if(modalText) { modalText.textContent = 'PRO / VITALICIO'; modalText.className = 'font-mono text-base font-black text-emerald-400 py-1'; }
-      } else {
-        if(text) text.textContent = 'DEMO';
-        if(badge) badge.className = 'text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:scale-95 transition';
-        if(modalText) { modalText.textContent = 'DEMO'; modalText.className = 'font-mono text-base font-black text-amber-400 py-1'; }
-      }
-    };
-
-    window.applyKey = function() {
-      var k = $('inpActivationKey').value.trim().toUpperCase();
-      if (k.length > 3) {
-        localStorage.setItem(PERMANENT_LICENSE_KEY + '_' + currentWorkshopId, 'TRUE');
-        window.checkLicenseStatus();
-        window.closeModal('licenseModal');
-        alert("¡Licencia Activada con Éxito!");
-      }
-    };
-
+    // AJUSTES Y USUARIOS
     window.loadSettingsUI = function() {
-      var name = localStorage.getItem('openline_setting_name_' + currentWorkshopId) || '';
-      if ($('setWorkshopName')) $('setWorkshopName').value = name;
+      if ($('setWorkshopName')) $('setWorkshopName').value = localStorage.getItem('openline_setting_name_' + currentWorkshopId) || '';
+      if ($('setWorkshopAddress')) $('setWorkshopAddress').value = localStorage.getItem('openline_setting_address_' + currentWorkshopId) || '';
+      if ($('setWorkshopPhone')) $('setWorkshopPhone').value = localStorage.getItem('openline_setting_phone_' + currentWorkshopId) || '';
+
+      var rawUsers = localStorage.getItem('openline_setting_users_' + currentWorkshopId);
+      workshopUsers = rawUsers ? JSON.parse(rawUsers) : ['Técnico Principal'];
+      window.renderUsersList();
+    };
+
+    window.addWorkshopUser = function() {
+      var val = $('inpNewUserName').value.trim();
+      if (val) {
+        workshopUsers.push(val);
+        localStorage.setItem('openline_setting_users_' + currentWorkshopId, JSON.stringify(workshopUsers));
+        $('inpNewUserName').value = '';
+        window.renderUsersList();
+      }
+    };
+
+    window.renderUsersList = function() {
+      var container = $('usersListContainer');
+      if (!container) return;
+      container.innerHTML = workshopUsers.map(function(u, idx) {
+        return '<div class="p-2 bg-zinc-900 border border-zinc-800 rounded-lg flex justify-between items-center">' +
+                 '<span class="text-white font-bold text-xs"><i class="ph-bold ph-user text-indigo-400"></i> ' + u + '</span>' +
+                 '<button type="button" onclick="window.removeWorkshopUser(' + idx + ')" class="text-rose-400 font-bold"><i class="ph-bold ph-trash"></i></button>' +
+               '</div>';
+      }).join('');
+    };
+
+    window.removeWorkshopUser = function(idx) {
+      workshopUsers.splice(idx, 1);
+      localStorage.setItem('openline_setting_users_' + currentWorkshopId, JSON.stringify(workshopUsers));
+      window.renderUsersList();
     };
 
     window.handleLogoUpload = function(e) {
@@ -880,8 +819,10 @@
     };
 
     window.saveSettings = function() {
-      var name = $('setWorkshopName').value;
-      localStorage.setItem('openline_setting_name_' + currentWorkshopId, name);
+      if ($('setWorkshopName')) localStorage.setItem('openline_setting_name_' + currentWorkshopId, $('setWorkshopName').value);
+      if ($('setWorkshopAddress')) localStorage.setItem('openline_setting_address_' + currentWorkshopId, $('setWorkshopAddress').value);
+      if ($('setWorkshopPhone')) localStorage.setItem('openline_setting_phone_' + currentWorkshopId, $('setWorkshopPhone').value);
+
       window.applyWorkshopIdentity();
       window.closeModal('settingsModal');
     };
@@ -927,7 +868,7 @@
       reader.readAsText(file);
     };
 
-    // PATRÓN TÁCTIL
+    // PATRÓN TÁCTIL DIBUJABLE
     function setupTouchPattern() {
       var grid = $('patternGrid');
       if (!grid) return;
@@ -978,7 +919,6 @@
     window.addEventListener('DOMContentLoaded', function() {
       if ($('headerWorkshopCode')) $('headerWorkshopCode').textContent = currentWorkshopId;
       window.applyWorkshopIdentity();
-      window.checkLicenseStatus();
       setupTouchPattern();
       deepScanAllHistoricalData();
     });
