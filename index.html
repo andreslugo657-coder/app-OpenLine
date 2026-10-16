@@ -29,7 +29,9 @@
     .pb-safe { padding-bottom: max(env(safe-area-inset-bottom), 20px); }
     
     input, select, textarea { font-size: 16px !important; }
-    button, a, .cursor-pointer { touch-action: manipulation; cursor: pointer; -webkit-tap-highlight-color: transparent; position: relative; z-index: 20; }
+    
+    /* CORRECCIÓN CRÍTICA DE CAPAS Y CLICS */
+    button, a, .cursor-pointer { touch-action: manipulation; cursor: pointer; -webkit-tap-highlight-color: transparent; position: relative; z-index: 50 !important; pointer-events: auto !important; }
     
     ::-webkit-scrollbar { display: none; width: 0; height: 0; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -39,6 +41,7 @@
       background-color: rgba(0, 0, 0, 0.88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
       align-items: flex-end; justify-content: center;
       padding-bottom: max(env(safe-area-inset-bottom), 12px); padding-top: max(env(safe-area-inset-top), 8px);
+      pointer-events: auto !important;
     }
     @media (min-width: 640px) { .app-modal { align-items: center; padding-bottom: 20px; } }
     .app-modal.active { display: flex !important; }
@@ -59,7 +62,7 @@
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen relative z-0">
 
   <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
-    <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full">
+    <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full relative z-50">
       <div class="flex items-center gap-2 min-w-0">
         <div id="headerLogoContainer" class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center overflow-hidden shadow shrink-0">
           <i id="headerDefaultIcon" class="ph-bold ph-wrench text-white text-base"></i>
@@ -68,14 +71,14 @@
         <div class="min-w-0 flex flex-col">
           <div class="flex items-center gap-1 flex-wrap">
             <h1 id="appHeaderTitle" class="text-xs font-bold text-white tracking-tight truncate">OpenLine</h1>
-            <button type="button" onclick="window.openTeamModal()" class="text-[9px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-1.5 py-0.5 rounded-full flex items-center gap-1 active:opacity-75 transition cursor-pointer">
+            <button type="button" onclick="window.openTeamModal()" class="text-[9px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-1.5 py-0.5 rounded-full flex items-center gap-1 active:opacity-75 transition cursor-pointer relative z-50">
               <span id="livePulseDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span id="headerWorkshopCode">TALLER-MASTER</span>
             </button>
             <span class="text-[9px] font-mono bg-emerald-950 border border-emerald-700/60 text-emerald-400 px-1.5 py-0.5 rounded-full flex items-center gap-1">
               <i class="ph-bold ph-users text-[9px]"></i> <span id="onlineUsersCount">1</span>
             </span>
-            <button type="button" id="headerLicenseBtn" onclick="window.openLicenseModal()" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition cursor-pointer">
+            <button type="button" id="headerLicenseBtn" onclick="window.openLicenseModal()" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition cursor-pointer relative z-50">
               <i class="ph-bold ph-shield-check"></i> <span id="headerLicenseText">DEMO</span>
             </button>
           </div>
@@ -83,42 +86,42 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-1 shrink-0">
-        <button type="button" onclick="window.forceCloudSync()" class="w-8 h-8 rounded-lg bg-zinc-800 text-emerald-400 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm cursor-pointer" title="Sincronizar Cloud">
+      <div class="flex items-center gap-1 shrink-0 relative z-50">
+        <button type="button" onclick="window.forceCloudSync()" class="w-8 h-8 rounded-lg bg-zinc-800 text-emerald-400 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm cursor-pointer relative z-50" title="Sincronizar Cloud">
           <i class="ph-bold ph-cloud-arrow-down text-base"></i>
         </button>
-        <button type="button" onclick="window.openSwitchUserModal()" class="h-8 px-2 rounded-lg bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center gap-1 active:scale-95 transition shadow-sm text-xs font-bold cursor-pointer" title="Personal y Dispositivos">
+        <button type="button" onclick="window.openSwitchUserModal()" class="h-8 px-2 rounded-lg bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center gap-1 active:scale-95 transition shadow-sm text-xs font-bold cursor-pointer relative z-50" title="Personal y Dispositivos">
           <i class="ph-bold ph-user-circle text-sm text-iosBlue"></i>
           <span id="headerActiveUserDisplay" class="max-w-[70px] truncate">Admin</span>
         </button>
-        <button type="button" onclick="window.openSettingsModal()" class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm cursor-pointer" title="Ajustes">
+        <button type="button" onclick="window.openSettingsModal()" class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm cursor-pointer relative z-50" title="Ajustes">
           <i class="ph-bold ph-gear text-base"></i>
         </button>
-        <button type="button" onclick="window.openInstallModal()" class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm cursor-pointer" title="Compartir App">
+        <button type="button" onclick="window.openInstallModal()" class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm cursor-pointer relative z-50" title="Compartir App">
           <i class="ph-bold ph-share-network text-base"></i>
         </button>
       </div>
     </div>
 
     <!-- BOTONERA PRINCIPAL -->
-    <div class="px-2.5 pb-2 max-w-5xl mx-auto w-full">
+    <div class="px-2.5 pb-2 max-w-5xl mx-auto w-full relative z-50">
       <div class="grid grid-cols-6 gap-1 text-center">
-        <button type="button" onclick="window.openNewRepairModal()" class="py-2 px-1 rounded-xl bg-iosBlue text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer">
+        <button type="button" onclick="window.openNewRepairModal()" class="py-2 px-1 rounded-xl bg-iosBlue text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer relative z-50">
           <i class="ph-bold ph-plus text-base"></i><span>Ingreso</span>
         </button>
-        <button type="button" onclick="window.openClientsModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-blue-700 to-indigo-700 text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer">
+        <button type="button" onclick="window.openClientsModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-blue-700 to-indigo-700 text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer relative z-50">
           <i class="ph-bold ph-address-book text-base"></i><span>Clientes</span>
         </button>
-        <button type="button" onclick="window.openSalesModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer">
+        <button type="button" onclick="window.openSalesModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer relative z-50">
           <i class="ph-bold ph-shopping-cart-simple text-base"></i><span>Vender</span>
         </button>
-        <button type="button" onclick="window.openVentasHistoryModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-indigo-900 to-blue-900 border border-indigo-700/60 text-indigo-200 text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer">
+        <button type="button" onclick="window.openVentasHistoryModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-indigo-900 to-blue-900 border border-indigo-700/60 text-indigo-200 text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer relative z-50">
           <i class="ph-bold ph-receipt text-base text-indigo-400"></i><span>Ventas</span>
         </button>
-        <button type="button" onclick="window.openStockModal()" class="py-2 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer relative">
+        <button type="button" onclick="window.openStockModal()" class="py-2 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer relative z-50">
           <i class="ph-bold ph-barcode text-base text-purple-400"></i><span>Stock</span>
         </button>
-        <button type="button" onclick="window.openCashModal()" class="py-2 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer">
+        <button type="button" onclick="window.openCashModal()" class="py-2 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer relative z-50">
           <i class="ph-bold ph-currency-dollar-simple text-base text-emerald-400"></i><span>Caja</span>
         </button>
       </div>
@@ -136,7 +139,7 @@
     </div>
 
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5">
-      <button type="button" onclick="window.openCashModal()" class="w-full text-center bg-gradient-to-br from-zinc-900 to-emerald-950/40 border border-emerald-900/40 rounded-xl p-2 shadow-sm active:scale-95 transition cursor-pointer">
+      <button type="button" onclick="window.openCashModal()" class="w-full text-center bg-gradient-to-br from-zinc-900 to-emerald-950/40 border border-emerald-900/40 rounded-xl p-2 shadow-sm active:scale-95 transition cursor-pointer relative z-20">
         <span class="text-[9px] text-emerald-400 font-bold flex items-center justify-center gap-1"><i class="ph-bold ph-wallet"></i> Saldo Caja (<span id="headerCashBranchTag">Central</span>)</span>
         <span id="headerCashBalance" class="text-sm font-extrabold text-emerald-300 font-mono mt-0.5 block">$0</span>
       </button>
@@ -164,12 +167,12 @@
         <button type="button" id="clearSearchBtn" onclick="window.clearSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 p-1 cursor-pointer"><i class="ph-bold ph-x-circle text-sm"></i></button>
       </div>
       <div class="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0.5">
-        <button type="button" onclick="window.setFilter('ALL')" id="tabALL" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-800 text-white font-bold shrink-0 transition text-xs cursor-pointer">Activos</button>
-        <button type="button" onclick="window.setFilter('WAITING')" id="tabWAITING" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs cursor-pointer">Espera</button>
-        <button type="button" onclick="window.setFilter('IN_PROGRESS')" id="tabIN_PROGRESS" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs cursor-pointer">Taller</button>
-        <button type="button" onclick="window.setFilter('WAITING_PARTS')" id="tabWAITING_PARTS" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs cursor-pointer">Repuestos</button>
-        <button type="button" onclick="window.setFilter('IN_TRANSIT')" id="tabIN_TRANSIT" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs cursor-pointer">Viaje</button>
-        <button type="button" onclick="window.setFilter('READY')" id="tabREADY" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs cursor-pointer">Listos (Archivados)</button>
+        <button type="button" onclick="window.setFilter('ALL')" id="tabALL" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-800 text-white font-bold shrink-0 transition text-xs cursor-pointer relative z-20">Activos</button>
+        <button type="button" onclick="window.setFilter('WAITING')" id="tabWAITING" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs cursor-pointer relative z-20">Espera</button>
+        <button type="button" onclick="window.setFilter('IN_PROGRESS')" id="tabIN_PROGRESS" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs cursor-pointer relative z-20">Taller</button>
+        <button type="button" onclick="window.setFilter('WAITING_PARTS')" id="tabWAITING_PARTS" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs cursor-pointer relative z-20">Repuestos</button>
+        <button type="button" onclick="window.setFilter('IN_TRANSIT')" id="tabIN_TRANSIT" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs cursor-pointer relative z-20">Viaje</button>
+        <button type="button" onclick="window.setFilter('READY')" id="tabREADY" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs cursor-pointer relative z-20">Listos (Archivados)</button>
       </div>
     </div>
 
@@ -187,7 +190,7 @@
   </div>
 
   <!-- MODALES DE ALERTA INTERNOS -->
-  <div id="appPromptModal" style="display: none; z-index: 100005;" class="fixed inset-0 bg-black/95 backdrop-blur-md items-center justify-center p-4">
+  <div id="appPromptModal" style="display: none; z-index: 100005;" class="app-modal">
     <div class="bg-zinc-900 border border-zinc-700 rounded-3xl w-full max-w-xs p-5 space-y-4 shadow-[0_0_50px_rgba(0,0,0,0.8)] text-center relative">
       <h3 class="font-black text-white text-sm" id="appPromptTitle">Mensaje</h3>
       <p class="text-[11px] text-zinc-400 leading-tight whitespace-pre-line" id="appPromptDesc"></p>
@@ -201,7 +204,7 @@
     </div>
   </div>
 
-  <div id="appConfirmModal" style="display: none; z-index: 100005;" class="fixed inset-0 bg-black/95 backdrop-blur-md items-center justify-center p-4">
+  <div id="appConfirmModal" style="display: none; z-index: 100005;" class="app-modal">
     <div class="bg-zinc-900 border border-rose-800/50 rounded-3xl w-full max-w-xs p-5 space-y-4 shadow-[0_0_50px_rgba(0,0,0,0.8)] text-center relative">
       <div class="w-10 h-10 bg-rose-500/20 text-rose-400 rounded-full flex items-center justify-center mx-auto text-lg"><i class="ph-bold ph-warning"></i></div>
       <h3 class="font-black text-white text-sm" id="appConfirmTitle">¿Estás seguro?</h3>
@@ -311,7 +314,7 @@
             <span class="text-zinc-400 font-bold uppercase">Resta pagar:</span><span id="newCalculatedBalance" class="font-mono font-bold text-amber-400 text-sm">$0</span>
           </div>
         </div>
-        <button type="button" onclick="window.guardarIngresoDirecto()" class="w-full py-3.5 rounded-xl bg-iosBlue text-white font-bold text-sm shadow active:scale-95 transition mb-4 cursor-pointer">Guardar Ingreso de Equipo</button>
+        <button type="button" onclick="window.guardarIngresoDirecto()" class="w-full py-3.5 rounded-xl bg-iosBlue text-white font-bold text-sm shadow active:scale-95 transition mb-4 cursor-pointer relative z-20">Guardar Ingreso de Equipo</button>
       </div>
     </div>
   </div>
@@ -796,7 +799,7 @@
 
   <!-- SCRIPT GENERAL -->
   <script>
-    var APP_CODE_VERSION = 'v35.3.0'; 
+    var APP_CODE_VERSION = 'v35.4.0'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var ACTIVE_USER_KEY = 'openline_current_active_user';
@@ -808,10 +811,11 @@
     var localBranch = 'Central';
     var currentCashBranch = 'Central';
     
+    // --- EVALUACIÓN ROBUSTA DE PARÁMETROS DE URL Y LOCALSTORAGE ---
     try {
         var urlParams = new URLSearchParams(window.location.search);
         var urlTaller = urlParams.get('taller') || urlParams.get('workshop');
-        if (urlTaller) {
+        if (urlTaller && urlTaller.trim() !== '') {
           currentWorkshopId = urlTaller.trim().toUpperCase();
           localStorage.setItem(WORKSHOP_ID_KEY, currentWorkshopId);
         } else if (localStorage.getItem(WORKSHOP_ID_KEY)) {
@@ -1476,8 +1480,8 @@
       var branches = workshopSettings.branches || ['Central'];
       var mainContainer = $('branchTabsButtonsList');
       if (mainContainer) {
-        var allBtn = '<button type="button" onclick="window.setBranchFilter(\'ALL\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition cursor-pointer '+(currentBranchFilter==='ALL'?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas</button>';
-        var bBtns = branches.map(function(b) { return '<button type="button" onclick="window.setBranchFilter(\''+b+'\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition cursor-pointer '+(currentBranchFilter===b?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">('+b+')</button>'; }).join('');
+        var allBtn = '<button type="button" onclick="window.setBranchFilter(\'ALL\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition cursor-pointer relative z-20 '+(currentBranchFilter==='ALL'?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">Todas</button>';
+        var bBtns = branches.map(function(b) { return '<button type="button" onclick="window.setBranchFilter(\''+b+'\')" class="px-2.5 py-1 rounded-lg font-bold text-xs shrink-0 transition cursor-pointer relative z-20 '+(currentBranchFilter===b?'bg-rose-600 text-white shadow':'bg-zinc-800 text-zinc-400')+'">('+b+')</button>'; }).join('');
         mainContainer.innerHTML = allBtn + bBtns;
         if($('currentBranchDisplayTag')) $('currentBranchDisplayTag').textContent = currentBranchFilter === 'ALL' ? 'Todas' : '(' + currentBranchFilter + ')';
       }
@@ -1802,7 +1806,7 @@
     window.setFilter = function(f) {
       currentFilter = f;
       ['ALL','WAITING','IN_PROGRESS','WAITING_PARTS','IN_TRANSIT','READY'].forEach(function(id) {
-        var el = $('tab'+id); if(el) el.className = (id === f) ? 'filter-tab px-2.5 py-1 rounded-lg bg-zinc-800 text-white font-bold shrink-0 transition text-xs cursor-pointer' : 'filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs cursor-pointer';
+        var el = $('tab'+id); if(el) el.className = (id === f) ? 'filter-tab px-2.5 py-1 rounded-lg bg-zinc-800 text-white font-bold shrink-0 transition text-xs cursor-pointer relative z-20' : 'filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs cursor-pointer relative z-20';
       });
       window.renderRepairsList();
     };
@@ -2065,6 +2069,7 @@
       }).join('') || '<div class="text-center text-zinc-500 text-xs p-4">Sin ventas registradas.</div>';
     };
 
+    // --- INICIALIZACIÓN GENERAL SEGURA ---
     document.addEventListener('DOMContentLoaded', function() {
       try {
         if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
