@@ -45,9 +45,6 @@
     .modal-card { max-height: 86dvh; height: 86dvh; min-height: 0; }
     @media (min-width: 640px) { .modal-card { max-height: 88dvh; height: auto; } }
 
-    #qr-reader, #pos-qr-reader, #stock-qr-reader { border: none !important; width: 100%; min-height: 240px; }
-    #qr-reader video, #pos-qr-reader video, #stock-qr-reader video { border-radius: 1rem; object-fit: cover; width: 100%; height: 240px; }
-
     .ticker-wrap { width: 100%; overflow: hidden; background-color: #09090b; border-top: 1px solid #27272a; padding: 5px 0; flex-shrink: 0; }
     .ticker { display: inline-block; white-space: nowrap; padding-right: 100%; box-sizing: content-box; animation: ticker 25s linear infinite; }
     @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
@@ -181,12 +178,12 @@
         <button type="button" id="clearSearchBtn" onclick="window.clearSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 p-1"><i class="ph-bold ph-x-circle text-sm"></i></button>
       </div>
       <div class="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0.5">
-        <button type="button" onclick="window.setFilter('ALL')" id="tabALL" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-800 text-white font-bold shrink-0 transition text-xs">Todos</button>
+        <button type="button" onclick="window.setFilter('ALL')" id="tabALL" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-800 text-white font-bold shrink-0 transition text-xs">Activos</button>
         <button type="button" onclick="window.setFilter('WAITING')" id="tabWAITING" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Espera</button>
         <button type="button" onclick="window.setFilter('IN_PROGRESS')" id="tabIN_PROGRESS" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Taller</button>
         <button type="button" onclick="window.setFilter('WAITING_PARTS')" id="tabWAITING_PARTS" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Repuestos</button>
         <button type="button" onclick="window.setFilter('IN_TRANSIT')" id="tabIN_TRANSIT" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Viaje</button>
-        <button type="button" onclick="window.setFilter('READY')" id="tabREADY" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Listos</button>
+        <button type="button" onclick="window.setFilter('READY')" id="tabREADY" class="filter-tab px-2.5 py-1 rounded-lg bg-zinc-900 text-zinc-400 font-medium shrink-0 transition text-xs">Listos (Archivados)</button>
       </div>
     </div>
 
@@ -319,13 +316,13 @@
     </div>
   </div>
 
-  <!-- MODAL MÓDULO CLIENTES -->
+  <!-- MODAL MÓDULO CLIENTES AGRUPADOS Y CONTROL DE PAGOS -->
   <div id="clientsModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-blue-600/70 rounded-t-3xl sm:rounded-3xl w-full max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
         <div class="flex items-center gap-2">
           <div class="w-7 h-7 rounded-lg bg-blue-950 border border-blue-700 flex items-center justify-center text-blue-400"><i class="ph-bold ph-address-book text-base"></i></div>
-          <div><h3 class="font-bold text-white text-sm">Directorio de Clientes</h3><span class="text-[10px] text-zinc-400">Saldos, Ingresos y Pagos sincronizados</span></div>
+          <div><h3 class="font-bold text-white text-sm">Directorio y Saldos por Cliente</h3><span class="text-[10px] text-zinc-400">Historial unificado y control de pagos</span></div>
         </div>
         <button type="button" onclick="window.closeModal('clientsModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button>
       </div>
@@ -337,7 +334,7 @@
           </div>
           <button type="button" onclick="window.openManualClientModal()" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs flex items-center gap-1 shrink-0 shadow active:scale-95 transition"><i class="ph-bold ph-plus"></i> + Cliente</button>
         </div>
-        <div id="clientsListContainer" class="space-y-2 max-h-[55vh] overflow-y-auto pr-1"></div>
+        <div id="clientsListContainer" class="space-y-2.5 max-h-[55vh] overflow-y-auto pr-1"></div>
       </div>
     </div>
   </div>
@@ -512,6 +509,10 @@
           <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1"><span class="text-[9px] text-zinc-500 uppercase block mb-0.5">Cliente:</span><b class="text-white text-sm" id="dtlClientName"></b><div class="text-zinc-400 font-mono text-xs mt-0.5" id="dtlClientPhone"></div></div>
           <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
             <div><span class="text-[9px] text-zinc-500 uppercase block mb-0.5">Diagnóstico / Falla:</span><p id="dtlDeviceFault" class="text-zinc-200 text-xs leading-relaxed"></p></div>
+            <div id="dtlPhotosSection" class="pt-2 border-t border-zinc-800/80">
+              <span class="text-[9px] text-iosBlue uppercase font-bold block mb-1">Fotos del Ingreso:</span>
+              <div id="dtlPhotosGrid" class="flex gap-2 overflow-x-auto no-scrollbar py-1"></div>
+            </div>
             <div id="dtlRepairDetailsBox" class="pt-2 border-t border-zinc-800/80"><span class="text-[9px] text-indigo-400 uppercase font-bold block mb-0.5">Reparación Realizada:</span><p id="dtlRepairDetailsText" class="text-zinc-200 text-xs whitespace-pre-line leading-relaxed"></p></div>
             <div class="grid grid-cols-2 gap-2 pt-1.5">
               <button type="button" onclick="window.sendRepairTicketWA(selectedRepairId)" class="py-2 rounded-xl bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 font-bold text-[10px] flex items-center justify-center gap-1 shadow active:scale-95 transition"><i class="ph-bold ph-whatsapp-logo text-sm text-emerald-400"></i> WA Comprobante</button>
@@ -589,12 +590,29 @@
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 space-y-3 shadow-2xl text-xs text-zinc-300 pb-safe modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1 shrink-0"><div class="flex items-center gap-1.5"><i class="ph-bold ph-gear text-lg text-zinc-300"></i><h3 class="font-bold text-white text-sm">Ajustes & Respaldo</h3></div><button type="button" onclick="window.closeModal('settingsModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="overflow-y-auto space-y-3.5 flex-1 pb-6">
-          <div class="space-y-2"><input type="text" id="cfgWorkshopName" placeholder="Nombre Comercial" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold"><input type="text" id="cfgWorkshopSubtitle" placeholder="Subtítulo" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white"></div>
+          <div class="space-y-2">
+            <input type="text" id="cfgWorkshopName" placeholder="Nombre Comercial" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
+            <input type="text" id="cfgWorkshopSubtitle" placeholder="Subtítulo" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+            
+            <!-- LOGOTIPO DEL TALLER -->
+            <div class="space-y-1 pt-1">
+              <label class="text-[10px] text-zinc-400 font-bold uppercase block">Logotipo del Taller:</label>
+              <div class="flex items-center gap-3">
+                <div id="settingsLogoPreviewBox" class="w-12 h-12 rounded-xl bg-zinc-800 border border-zinc-700 overflow-hidden flex items-center justify-center shrink-0">
+                  <i class="ph-bold ph-wrench text-zinc-400 text-lg"></i>
+                  <img id="settingsLogoImg" src="" class="w-full h-full object-cover hidden">
+                </div>
+                <label class="flex-1 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white font-bold rounded-xl text-center cursor-pointer text-xs active:scale-95 transition">
+                  Subir Logo
+                  <input type="file" accept="image/*" onchange="window.handleLogoUpload(this)" class="hidden">
+                </label>
+              </div>
+            </div>
+          </div>
           
-          <!-- SECCIÓN DE BACKUP CON SELECTOR DE UBICACIÓN -->
           <div class="p-3 bg-zinc-950 rounded-2xl border border-emerald-700/60 space-y-2.5">
-            <span class="text-[10px] font-bold text-emerald-400 uppercase block flex items-center gap-1"><i class="ph-bold ph-database"></i> Respaldo de Seguridad (Backup)</span>
-            <p class="text-[10px] text-zinc-400 leading-tight">Exporta o restaura toda la información de órdenes, stock, clientes y caja eligiendo dónde guardarlo en tu dispositivo.</p>
+            <span class="text-[10px] font-bold text-emerald-400 uppercase block flex items-center gap-1"><i class="ph-bold ph-database"></i> Respaldo Integral (Backup)</span>
+            <p class="text-[10px] text-zinc-400 leading-tight">Exporta absolutamente todo: órdenes, clientes, pagos, stock, caja, **fotografías de equipos** y el **logo del taller**.</p>
             <div class="grid grid-cols-2 gap-2">
               <button type="button" onclick="window.exportBackup()" class="py-2 bg-emerald-950 hover:bg-emerald-900 border border-emerald-700 text-emerald-300 font-bold rounded-xl flex items-center justify-center gap-1 shadow active:scale-95 transition"><i class="ph-bold ph-download-simple"></i> Guardar Como...</button>
               <label class="py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 font-bold rounded-xl flex items-center justify-center gap-1 shadow active:scale-95 transition cursor-pointer">
@@ -628,7 +646,7 @@
 
   <!-- SCRIPT CON CLOUD SYNC MQTT & FILE SYSTEM ACCESS API -->
   <script>
-    var APP_CODE_VERSION = 'v29.0.0'; 
+    var APP_CODE_VERSION = 'v31.0.0'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var ACTIVE_USER_KEY = 'openline_current_active_user';
@@ -779,47 +797,46 @@
     var activeUser = 'Admin'; try { activeUser = localStorage.getItem(ACTIVE_USER_KEY) || 'Admin'; } catch(e){}
     var currentFilter = 'ALL'; var currentBranchFilter = 'ALL'; var selectedRepairId = null; var currentTicketRepairId = null;
 
-    // --- FUNCIÓN BACKUP CON SELECTOR DE UBICACIÓN (File System Access API) ---
+    // --- FUNCIÓN BACKUP INTEGRAL (INCLUYENDO FOTOS DE ÓRDENES Y LOGO EN BASE64) ---
     window.exportBackup = async function() {
       try {
         var backupData = {
           version: APP_CODE_VERSION,
           workshopId: currentWorkshopId,
           timestamp: Date.now(),
-          repairs: repairs,
+          repairs: repairs,          // Incluye todas las fotos de cada orden
           stockItems: stockItems,
           cashMovements: cashMovements,
           sales: sales,
           manualClients: manualClients,
-          settings: workshopSettings
+          settings: workshopSettings // Incluye el logo del taller en Base64
         };
         var jsonData = JSON.stringify(backupData, null, 2);
-        var suggestedName = `OpenLine_Backup_${currentWorkshopId}_${new Date().toISOString().slice(0,10)}.json`;
+        var suggestedName = `OpenLine_Backup_Completo_${currentWorkshopId}_${new Date().toISOString().slice(0,10)}.json`;
 
         if ('showSaveFilePicker' in window) {
           try {
             var handle = await window.showSaveFilePicker({
               suggestedName: suggestedName,
-              types: [{ description: 'Archivo JSON de Respaldo', accept: { 'application/json': ['.json'] } }]
+              types: [{ description: 'Archivo JSON de Respaldo Integral', accept: { 'application/json': ['.json'] } }]
             });
             var writable = await handle.createWritable();
             await writable.write(jsonData);
             await writable.close();
-            window.showToast("Backup Exitoso", "Respaldo guardado correctamente.");
+            window.showToast("Backup Exitoso", "Respaldo integral guardado correctamente.");
             return;
           } catch (err) {
-            if (err.name === 'AbortError') return; // Cancelado por usuario
+            if (err.name === 'AbortError') return;
           }
         }
 
-        // Fallback tradicional para navegadores sin soporte
         var blob = new Blob([jsonData], { type: 'application/json' });
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = url; a.download = suggestedName;
         document.body.appendChild(a); a.click();
         document.body.removeChild(a); URL.revokeObjectURL(url);
-        window.showToast("Backup Exitoso", "El archivo de respaldo se ha descargado.");
+        window.showToast("Backup Exitoso", "El archivo de respaldo completo se ha descargado.");
       } catch(e) {
         window.showToast("Error", "No se pudo generar el respaldo.");
       }
@@ -832,7 +849,7 @@
           try {
             var data = JSON.parse(e.target.result);
             if (!data || !data.workshopId) { window.showToast("Error", "Archivo de respaldo no válido."); return; }
-            window.appConfirm("⚠️ RESTAURAR BACKUP", "Se sobrescribirán los datos actuales con los del archivo.\n\n¿Continuar?", function() {
+            window.appConfirm("⚠️ RESTAURAR BACKUP", "Se sobrescribirán todos los datos (órdenes, clientes, pagos, stock, fotos y logo) con los del archivo.\n\n¿Continuar?", function() {
               if (Array.isArray(data.repairs)) { repairs = data.repairs; StorageShield.save('repairs', repairs, true); }
               if (Array.isArray(data.stockItems)) { stockItems = data.stockItems; StorageShield.save('stock', stockItems, true); }
               if (Array.isArray(data.cashMovements)) { cashMovements = data.cashMovements; StorageShield.save('cash', cashMovements, true); }
@@ -842,7 +859,7 @@
               
               window.applyWorkshopSettings(workshopSettings);
               window.renderRepairsList(); window.updateCounters(); window.updateCashBalanceUI();
-              window.showToast("Restaurado", "Información recuperada con éxito.");
+              window.showToast("Restaurado", "Información y archivos recuperados con éxito.");
               window.closeModal('settingsModal');
               window.publishMQTT();
             });
@@ -852,7 +869,7 @@
       }
     };
 
-    // --- MÓDULO CLIENTES ---
+    // --- MÓDULO CLIENTES: AGRUPADOS Y CONTROL DE PAGOS PENDIENTES ---
     window.openClientsModal = function() { window.openModal('clientsModal'); setTimeout(window.renderClientsList, 50); };
     window.openManualClientModal = function() { if($('manClientName')) $('manClientName').value = ''; if($('manClientPhone')) $('manClientPhone').value = ''; window.openModal('manualClientModal'); };
     window.saveManualClient = function() {
@@ -870,19 +887,33 @@
       var clientsMap = {};
 
       manualClients.forEach(function(c) {
-        var key = (c.phone || c.name).toLowerCase();
-        clientsMap[key] = { name: c.name, phone: c.phone, ordersCount: 0, totalIngresos: 0, totalPagado: 0, saldoPendiente: 0 };
+        var key = (c.phone || c.name).toLowerCase().trim();
+        clientsMap[key] = { name: c.name, phone: c.phone, orders: [], totalIngresos: 0, totalPagado: 0, saldoPendiente: 0 };
       });
 
       repairs.forEach(function(r) {
         if (!r || !r.clientName) return;
-        var key = (r.clientPhone || r.clientName).toLowerCase();
+        var key = (r.clientPhone || r.clientName).toLowerCase().trim();
         if (!clientsMap[key]) {
-          clientsMap[key] = { name: r.clientName, phone: r.clientPhone || 'S/N', ordersCount: 0, totalIngresos: 0, totalPagado: 0, saldoPendiente: 0 };
+          clientsMap[key] = { name: r.clientName, phone: r.clientPhone || 'S/N', orders: [], totalIngresos: 0, totalPagado: 0, saldoPendiente: 0 };
         }
-        clientsMap[key].ordersCount++;
-        var budget = parseFloat(r.budget) || 0; var advance = parseFloat(r.advance) || 0;
-        clientsMap[key].totalIngresos += budget; clientsMap[key].totalPagado += advance; clientsMap[key].saldoPendiente += (budget - advance);
+        var budget = parseFloat(r.budget) || 0; 
+        var advance = parseFloat(r.advance) || 0;
+        var saldoOrden = budget - advance;
+
+        clientsMap[key].orders.push({
+          id: r.id,
+          device: (r.deviceBrand || '') + ' ' + (r.deviceModel || ''),
+          status: r.status,
+          budget: budget,
+          advance: advance,
+          balance: saldoOrden,
+          date: r.createdAt
+        });
+
+        clientsMap[key].totalIngresos += budget; 
+        clientsMap[key].totalPagado += advance; 
+        clientsMap[key].saldoPendiente += saldoOrden;
       });
 
       var clientList = Object.values(clientsMap).filter(function(c) {
@@ -891,17 +922,56 @@
 
       if (clientList.length === 0) { container.innerHTML = '<div class="text-center text-zinc-500 text-xs p-6">No hay clientes registrados.</div>'; return; }
 
-      container.innerHTML = clientList.map(function(c) {
+      container.innerHTML = clientList.map(function(c, index) {
         var saldoColor = c.saldoPendiente > 0 ? 'text-amber-400 font-bold' : 'text-emerald-400';
-        return '<div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2 shadow-sm">' +
-                 '<div class="flex items-center justify-between"><div><h4 class="font-bold text-white text-xs">' + c.name + '</h4><span class="text-[10px] text-zinc-400 font-mono">' + c.phone + '</span></div>' +
-                 '<a href="https://wa.me/' + c.phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent('Hola ' + c.name + ', nos comunicamos desde ' + workshopSettings.name) + '" target="_blank" class="px-2.5 py-1 bg-emerald-950 text-emerald-400 border border-emerald-800 rounded-lg text-[10px] font-bold flex items-center gap-1 active:scale-95"><i class="ph-bold ph-whatsapp-logo"></i> Chat</a></div>' +
-                 '<div class="grid grid-cols-3 gap-1 pt-1.5 border-t border-zinc-800/80 text-center">' +
-                   '<div class="bg-zinc-900 p-1.5 rounded-lg"><span class="text-[8px] text-zinc-400 block uppercase font-bold">Ingresos</span><b class="text-white font-mono text-xs">$' + c.totalIngresos.toLocaleString() + '</b></div>' +
-                   '<div class="bg-zinc-900 p-1.5 rounded-lg"><span class="text-[8px] text-emerald-400 block uppercase font-bold">Pagos</span><b class="text-emerald-400 font-mono text-xs">$' + c.totalPagado.toLocaleString() + '</b></div>' +
-                   '<div class="bg-zinc-900 p-1.5 rounded-lg"><span class="text-[8px] text-amber-400 block uppercase font-bold">Saldo</span><b class="font-mono text-xs ' + saldoColor + '">$' + c.saldoPendiente.toLocaleString() + '</b></div>' +
-                 '</div></div>';
+        var ordersHtml = c.orders.map(function(o) {
+          var orderSaldoColor = o.balance > 0 ? 'text-amber-400' : 'text-emerald-400';
+          return '<div class="p-2 bg-zinc-900 border border-zinc-800 rounded-lg flex items-center justify-between text-[11px]">' +
+                   '<div><span class="font-mono font-bold text-iosBlue">#' + o.id + '</span> • <span class="text-white">' + o.device + '</span><div class="text-[9px] text-zinc-400">Total: $' + o.budget + ' | Pagado: $' + o.advance + '</div></div>' +
+                   '<div class="text-right"><span class="font-mono font-bold ' + orderSaldoColor + '">Resta: $' + o.balance + '</span>' +
+                   (o.balance > 0 ? '<br><button type="button" onclick="window.payClientOrderBalance(\'' + o.id + '\')" class="mt-1 px-2 py-0.5 bg-emerald-950 text-emerald-300 border border-emerald-700/60 rounded text-[9px] font-bold active:scale-95">Cobrar Resta</button>' : '') +
+                   '</div></div>';
+        }).join('') || '<div class="text-[10px] text-zinc-500 italic">Sin trabajos asociados.</div>';
+
+        return '<div class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-sm">' +
+                 '<div class="p-3 flex items-center justify-between cursor-pointer" onclick="window.toggleClientDetails(\'client_card_' + index + '\')">' +
+                   '<div><h4 class="font-bold text-white text-xs">' + c.name + '</h4><span class="text-[10px] text-zinc-400 font-mono">' + c.phone + ' • ' + c.orders.length + ' trabajo(s)</span></div>' +
+                   '<div class="flex items-center gap-3">' +
+                     '<div class="text-right"><span class="text-[9px] uppercase text-zinc-400 block font-bold">Saldo Pendiente</span><b class="font-mono text-xs ' + saldoColor + '">$' + c.saldoPendiente.toLocaleString() + '</b></div>' +
+                     '<a href="https://wa.me/' + c.phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent('Hola ' + c.name + ', nos comunicamos desde ' + workshopSettings.name) + '" target="_blank" onclick="event.stopPropagation();" class="p-2 bg-emerald-950 text-emerald-400 border border-emerald-800 rounded-lg text-xs font-bold active:scale-95"><i class="ph-bold ph-whatsapp-logo"></i></a>' +
+                   '</div>' +
+                 '</div>' +
+                 '<div id="client_card_' + index + '" class="hidden p-3 bg-zinc-900/50 border-t border-zinc-800 space-y-2">' +
+                   '<span class="text-[9px] font-bold text-zinc-400 uppercase block">Desglose de Trabajos y Saldos Pendientes:</span>' +
+                   ordersHtml +
+                 '</div>' +
+               '</div>';
       }).join('');
+    };
+
+    window.toggleClientDetails = function(cardId) {
+      var el = $(cardId);
+      if (el) {
+        if (el.classList.contains('hidden')) el.classList.remove('hidden');
+        else el.classList.add('hidden');
+      }
+    };
+
+    window.payClientOrderBalance = function(orderId) {
+      var r = repairs.find(function(x) { return x.id === orderId; });
+      if (!r) return;
+      var balance = (parseFloat(r.budget) || 0) - (parseFloat(r.advance) || 0);
+      if (balance <= 0) return;
+
+      window.appConfirm("COBRAR SALDO", "¿Deseas cobrar el saldo pendiente de $" + balance + " para la orden #" + r.id + "?", function() {
+        cashMovements.unshift({ id: 'CSH-' + Date.now(), branch: localBranch, type: 'INCOME', amount: balance, concept: 'Cobro Saldo Orden #' + r.id, method: 'Efectivo', date: Date.now(), user: activeUser, closed: false });
+        StorageShield.save('cash', cashMovements);
+        r.advance = r.budget; 
+        StorageShield.save('repairs', repairs);
+        window.renderClientsList();
+        window.updateCashBalanceUI();
+        window.showToast("Cobrado", "Saldo registrado en caja exitosamente.");
+      });
     };
 
     window.applyWorkshopSettings = function(newSettings) {
@@ -914,7 +984,30 @@
       if ($('cfgWorkshopName')) $('cfgWorkshopName').value = workshopSettings.name || '';
       if ($('cfgWorkshopSubtitle')) $('cfgWorkshopSubtitle').value = workshopSettings.subtitle || '';
 
+      // Aplicar Logo en el Header y en el modal de Ajustes
+      if (workshopSettings.logo) {
+        if ($('headerDefaultIcon')) $('headerDefaultIcon').classList.add('hidden');
+        if ($('headerCustomLogo')) { $('headerCustomLogo').src = workshopSettings.logo; $('headerCustomLogo').classList.remove('hidden'); }
+        if ($('settingsLogoImg')) { $('settingsLogoImg').src = workshopSettings.logo; $('settingsLogoImg').classList.remove('hidden'); }
+      } else {
+        if ($('headerDefaultIcon')) $('headerDefaultIcon').classList.remove('hidden');
+        if ($('headerCustomLogo')) $('headerCustomLogo').classList.add('hidden');
+        if ($('settingsLogoImg')) $('settingsLogoImg').classList.add('hidden');
+      }
+
       window.renderBranchTabs();
+    };
+
+    window.handleLogoUpload = function(input) {
+      if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          workshopSettings.logo = e.target.result;
+          if ($('settingsLogoImg')) { $('settingsLogoImg').src = workshopSettings.logo; $('settingsLogoImg').classList.remove('hidden'); }
+          window.showToast("Logo", "Logotipo cargado correctamente. Haz clic en 'Guardar Ajustes'.");
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
     };
 
     window.checkLicenseStatus = function() {
@@ -986,6 +1079,10 @@
     window.openSettingsModal = function() {
       if($('cfgWorkshopName')) $('cfgWorkshopName').value = workshopSettings.name || '';
       if($('cfgWorkshopSubtitle')) $('cfgWorkshopSubtitle').value = workshopSettings.subtitle || '';
+      if (workshopSettings.logo && $('settingsLogoImg')) {
+        $('settingsLogoImg').src = workshopSettings.logo;
+        $('settingsLogoImg').classList.remove('hidden');
+      }
       window.openModal('settingsModal');
     };
 
@@ -1009,7 +1106,6 @@
       });
     };
 
-    // FOTOS Y PATRÓN
     var currentPhotos = []; var activeUnlockType = 'pin';
     window.setUnlockType = function(type) {
       activeUnlockType = type;
@@ -1095,7 +1191,6 @@
 
     window.executePrintRepairLabel = function(orderId) { window.print(); };
 
-    // STOCK & POS
     var currentStockTab = 'LIST';
     window.switchStockTab = function(tab) {
       currentStockTab = tab;
@@ -1184,7 +1279,6 @@
       posCart = []; window.closeModal('salesModal'); window.showToast("Venta Exitosa", "Cobrada en caja.");
     };
 
-    // ORDENES Y LISTA
     window.handleSearch = function() { window.renderRepairsList(); };
     window.clearSearch = function() { if($('searchInput')) $('searchInput').value = ''; window.renderRepairsList(); };
     window.setFilter = function(f) {
@@ -1209,7 +1303,13 @@
       var filtered = repairs.filter(function(r) {
         if(!r) return false;
         var matchBranch = currentBranchFilter === 'ALL' || r.branch === currentBranchFilter;
-        var matchStatus = currentFilter === 'ALL' || r.status === currentFilter;
+        var matchStatus = true;
+        if (currentFilter === 'ALL') {
+          matchStatus = r.status !== 'READY';
+        } else {
+          matchStatus = r.status === currentFilter;
+        }
+
         var matchSearch = !term || (r.id && r.id.toLowerCase().includes(term)) || (r.clientName && r.clientName.toLowerCase().includes(term)) || (r.deviceBrand && r.deviceBrand.toLowerCase().includes(term));
         return matchBranch && matchStatus && matchSearch;
       });
@@ -1248,6 +1348,21 @@
       if($('dtlBudgetTotal')) $('dtlBudgetTotal').textContent = '$' + (r.budget || 0);
       if($('dtlAdvancePaid')) $('dtlAdvancePaid').textContent = '$' + (r.advance || 0);
       if($('dtlBalanceDue')) $('dtlBalanceDue').textContent = '$' + ((r.budget || 0) - (r.advance || 0));
+
+      // Renderizar fotos del equipo en el modal detalle
+      var photosGrid = $('dtlPhotosGrid');
+      var photosSec = $('dtlPhotosSection');
+      if (photosGrid && photosSec) {
+        if (Array.isArray(r.photos) && r.photos.length > 0) {
+          photosSec.style.display = 'block';
+          photosGrid.innerHTML = r.photos.map(function(p) {
+            return '<a href="' + p + '" target="_blank" class="w-16 h-16 rounded-xl overflow-hidden border border-zinc-700 shrink-0 block"><img src="' + p + '" class="w-full h-full object-cover"></a>';
+          }).join('');
+        } else {
+          photosSec.style.display = 'none';
+        }
+      }
+
       window.openModal('detailModal');
     };
 
@@ -1274,6 +1389,9 @@
       var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
       r.status = st; StorageShield.save('repairs', repairs);
       window.renderRepairsList(); window.updateCounters(); window.openDetailModal(r.id);
+      if(st === 'READY') {
+        window.showToast("Orden Lista", "El equipo ha sido marcado como listo y archivado de la lista activa.");
+      }
     };
 
     window.chargeRepairToCash = function() {
