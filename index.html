@@ -30,8 +30,9 @@
     
     input, select, textarea { font-size: 16px !important; }
     
-    /* CORRECCIÓN CRÍTICA DE CAPAS Y CLICS */
-    button, a, .cursor-pointer { touch-action: manipulation; cursor: pointer; -webkit-tap-highlight-color: transparent; position: relative; z-index: 50 !important; pointer-events: auto !important; }
+    /* CORRECCIÓN ABSOLUTA DE CAPAS Y CLICS */
+    header { pointer-events: auto !important; position: relative; z-index: 100 !important; }
+    button, a, .cursor-pointer { touch-action: manipulation; cursor: pointer; -webkit-tap-highlight-color: transparent; position: relative; z-index: 150 !important; pointer-events: auto !important; }
     
     ::-webkit-scrollbar { display: none; width: 0; height: 0; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -61,8 +62,8 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen relative z-0">
 
-  <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
-    <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full relative z-50">
+  <header class="sticky top-0 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
+    <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full relative">
       <div class="flex items-center gap-2 min-w-0">
         <div id="headerLogoContainer" class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center overflow-hidden shadow shrink-0">
           <i id="headerDefaultIcon" class="ph-bold ph-wrench text-white text-base"></i>
@@ -71,14 +72,14 @@
         <div class="min-w-0 flex flex-col">
           <div class="flex items-center gap-1 flex-wrap">
             <h1 id="appHeaderTitle" class="text-xs font-bold text-white tracking-tight truncate">OpenLine</h1>
-            <button type="button" onclick="window.openTeamModal()" class="text-[9px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-1.5 py-0.5 rounded-full flex items-center gap-1 active:opacity-75 transition cursor-pointer relative z-50">
+            <button type="button" onclick="window.openTeamModal()" class="text-[9px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-700/60 px-1.5 py-0.5 rounded-full flex items-center gap-1 active:opacity-75 transition cursor-pointer">
               <span id="livePulseDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span id="headerWorkshopCode">TALLER-MASTER</span>
             </button>
             <span class="text-[9px] font-mono bg-emerald-950 border border-emerald-700/60 text-emerald-400 px-1.5 py-0.5 rounded-full flex items-center gap-1">
               <i class="ph-bold ph-users text-[9px]"></i> <span id="onlineUsersCount">1</span>
             </span>
-            <button type="button" id="headerLicenseBtn" onclick="window.openLicenseModal()" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition cursor-pointer relative z-50">
+            <button type="button" id="headerLicenseBtn" onclick="window.openLicenseModal()" class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-950 border border-amber-600/70 text-amber-300 flex items-center gap-1 active:opacity-75 transition cursor-pointer">
               <i class="ph-bold ph-shield-check"></i> <span id="headerLicenseText">DEMO</span>
             </button>
           </div>
@@ -86,42 +87,42 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-1 shrink-0 relative z-50">
-        <button type="button" onclick="window.forceCloudSync()" class="w-8 h-8 rounded-lg bg-zinc-800 text-emerald-400 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm cursor-pointer relative z-50" title="Sincronizar Cloud">
+      <div class="flex items-center gap-1 shrink-0">
+        <button type="button" onclick="window.forceCloudSync()" class="w-8 h-8 rounded-lg bg-zinc-800 text-emerald-400 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm cursor-pointer" title="Sincronizar Cloud">
           <i class="ph-bold ph-cloud-arrow-down text-base"></i>
         </button>
-        <button type="button" onclick="window.openSwitchUserModal()" class="h-8 px-2 rounded-lg bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center gap-1 active:scale-95 transition shadow-sm text-xs font-bold cursor-pointer relative z-50" title="Personal y Dispositivos">
+        <button type="button" onclick="window.openSwitchUserModal()" class="h-8 px-2 rounded-lg bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center gap-1 active:scale-95 transition shadow-sm text-xs font-bold cursor-pointer" title="Personal y Dispositivos">
           <i class="ph-bold ph-user-circle text-sm text-iosBlue"></i>
           <span id="headerActiveUserDisplay" class="max-w-[70px] truncate">Admin</span>
         </button>
-        <button type="button" onclick="window.openSettingsModal()" class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm cursor-pointer relative z-50" title="Ajustes">
+        <button type="button" onclick="window.openSettingsModal()" class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm cursor-pointer" title="Ajustes">
           <i class="ph-bold ph-gear text-base"></i>
         </button>
-        <button type="button" onclick="window.openInstallModal()" class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm cursor-pointer relative z-50" title="Compartir App">
+        <button type="button" onclick="window.openInstallModal()" class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 border border-zinc-700 flex items-center justify-center active:scale-95 transition shadow-sm cursor-pointer" title="Compartir App">
           <i class="ph-bold ph-share-network text-base"></i>
         </button>
       </div>
     </div>
 
     <!-- BOTONERA PRINCIPAL -->
-    <div class="px-2.5 pb-2 max-w-5xl mx-auto w-full relative z-50">
+    <div class="px-2.5 pb-2 max-w-5xl mx-auto w-full">
       <div class="grid grid-cols-6 gap-1 text-center">
-        <button type="button" onclick="window.openNewRepairModal()" class="py-2 px-1 rounded-xl bg-iosBlue text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer relative z-50">
+        <button type="button" onclick="window.openNewRepairModal()" class="py-2 px-1 rounded-xl bg-iosBlue text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer">
           <i class="ph-bold ph-plus text-base"></i><span>Ingreso</span>
         </button>
-        <button type="button" onclick="window.openClientsModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-blue-700 to-indigo-700 text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer relative z-50">
+        <button type="button" onclick="window.openClientsModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-blue-700 to-indigo-700 text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer">
           <i class="ph-bold ph-address-book text-base"></i><span>Clientes</span>
         </button>
-        <button type="button" onclick="window.openSalesModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer relative z-50">
+        <button type="button" onclick="window.openSalesModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer">
           <i class="ph-bold ph-shopping-cart-simple text-base"></i><span>Vender</span>
         </button>
-        <button type="button" onclick="window.openVentasHistoryModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-indigo-900 to-blue-900 border border-indigo-700/60 text-indigo-200 text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer relative z-50">
+        <button type="button" onclick="window.openVentasHistoryModal()" class="py-2 px-1 rounded-xl bg-gradient-to-r from-indigo-900 to-blue-900 border border-indigo-700/60 text-indigo-200 text-[10px] font-bold shadow-md flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer">
           <i class="ph-bold ph-receipt text-base text-indigo-400"></i><span>Ventas</span>
         </button>
-        <button type="button" onclick="window.openStockModal()" class="py-2 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer relative z-50">
+        <button type="button" onclick="window.openStockModal()" class="py-2 px-1 rounded-xl bg-purple-950 border border-purple-700/60 text-purple-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer">
           <i class="ph-bold ph-barcode text-base text-purple-400"></i><span>Stock</span>
         </button>
-        <button type="button" onclick="window.openCashModal()" class="py-2 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer relative z-50">
+        <button type="button" onclick="window.openCashModal()" class="py-2 px-1 rounded-xl bg-emerald-950 border border-emerald-700/60 text-emerald-200 text-[10px] font-semibold flex flex-col items-center justify-center gap-0.5 active:scale-95 transition transform cursor-pointer">
           <i class="ph-bold ph-currency-dollar-simple text-base text-emerald-400"></i><span>Caja</span>
         </button>
       </div>
@@ -129,7 +130,7 @@
   </header>
 
   <!-- CUERPO PRINCIPAL -->
-  <main class="flex-1 w-full max-w-5xl mx-auto px-3 py-2 space-y-2 pb-safe overflow-y-auto z-10 relative">
+  <main class="flex-1 w-full max-w-5xl mx-auto px-3 py-2 space-y-2 pb-safe overflow-y-auto relative z-10">
     <div id="branchFilterContainer" class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 shadow-sm space-y-1">
       <div class="flex items-center justify-between px-1">
         <span class="text-[9px] font-bold uppercase text-zinc-400 flex items-center gap-1"><i class="ph-bold ph-eye text-rose-400 text-xs"></i> Vista Global Órdenes:</span>
@@ -799,7 +800,7 @@
 
   <!-- SCRIPT GENERAL -->
   <script>
-    var APP_CODE_VERSION = 'v35.4.0'; 
+    var APP_CODE_VERSION = 'v35.5.0'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var ACTIVE_USER_KEY = 'openline_current_active_user';
@@ -811,7 +812,6 @@
     var localBranch = 'Central';
     var currentCashBranch = 'Central';
     
-    // --- EVALUACIÓN ROBUSTA DE PARÁMETROS DE URL Y LOCALSTORAGE ---
     try {
         var urlParams = new URLSearchParams(window.location.search);
         var urlTaller = urlParams.get('taller') || urlParams.get('workshop');
@@ -975,7 +975,6 @@
     var activeUser = 'Admin'; try { activeUser = localStorage.getItem(ACTIVE_USER_KEY) || 'Admin'; } catch(e){}
     var currentFilter = 'ALL'; var currentBranchFilter = 'ALL'; var selectedRepairId = null; var currentTicketRepairId = null;
 
-    // --- VINCULACIÓN MANUAL DE TALLER ---
     window.saveManualWorkshopCode = function() {
       var val = $('manualWorkshopInput').value.trim().toUpperCase();
       if(!val) { window.showToast("Error", "Ingresa un código de taller válido."); return; }
@@ -986,7 +985,6 @@
       setTimeout(function() { window.location.href = window.location.origin + window.location.pathname + '?taller=' + currentWorkshopId; }, 600);
     };
 
-    // --- SEGURIDAD Y CONTROL DE ACCESO (ADMIN) ---
     var pendingAdminAction = null;
     window.requestAdminAccess = function(callback) {
       if(activeUser === 'Admin') { callback(); return; }
@@ -1008,7 +1006,6 @@
       }
     };
 
-    // --- GESTIÓN DE NUEVOS USUARIOS Y SUCURSALES MANUALES ---
     window.addNewSystemUser = function() {
       var name = $('newUserNameInput').value.trim();
       var branch = $('newUserBranchSelect').value;
@@ -1038,7 +1035,6 @@
       window.showToast("Sesión Cambiada", "Usuario: " + activeUser + " (" + localBranch + ")");
     };
 
-    // --- SEGURIDAD DE CAMBIO DE CLAVE CON VALIDACIÓN ACTUAL Y PREGUNTA SECRETA ---
     window.saveAdminPasswordSecure = function() {
       var oldPass = $('adminOldPassInput').value.trim();
       var newPass = $('adminNewPassInput').value.trim();
@@ -1066,7 +1062,6 @@
       if($('adminSecAnswer')) $('adminSecAnswer').value = '';
     };
 
-    // --- RECUPERACIÓN DE CONTRASEÑA ---
     window.openRecoveryModal = function() {
       window.closeModal('adminAuthModal');
       if($('recoveryQuestionLabel')) $('recoveryQuestionLabel').textContent = 'Pregunta: ' + (workshopSettings.secQuestion || '¿Nombre de tu primera mascota?');
@@ -1115,7 +1110,6 @@
       } catch(e) { window.showToast("Error", "No se pudo recuperar desde la nube."); }
     };
 
-    // --- ACCESO A CAJA CON RESTRICCIÓN ADMIN ---
     window.openCashModal = function() {
       if(activeUser !== 'Admin') {
         window.requestAdminAccess(function() {
@@ -1153,7 +1147,6 @@
       orderSel.innerHTML = orderOpts;
     };
 
-    // --- BACKUP INTEGRAL ---
     window.exportBackup = async function() {
       try {
         var backupData = {
@@ -1210,7 +1203,6 @@
       }
     };
 
-    // --- PATRÓN 3X3 INTERACTIVO FUNCIONAL ---
     var currentPatternCode = '';
     window.initPatternCanvas = function() {
       var canvas = $('patternCanvas');
@@ -1626,7 +1618,6 @@
 
     window.executePrintRepairLabel = function(orderId) { window.print(); };
 
-    // --- MÓDULO STOCK, ESCÁNER CÁMARA QR Y BARRAS ---
     var currentStockTab = 'LIST';
     var html5QrCode = null;
 
@@ -1922,7 +1913,6 @@
       window.closeModal('detailModal'); window.renderRepairsList(); window.updateCounters();
     };
 
-    // --- CAJA LOCAL CON REGISTRO DE CLIENTE Y ORDEN ---
     window.switchCashTab = function(tab) {
       var isMov = (tab === 'MOV');
       if($('cashViewMov')) $('cashViewMov').style.display = isMov ? 'block' : 'none';
@@ -2069,7 +2059,6 @@
       }).join('') || '<div class="text-center text-zinc-500 text-xs p-4">Sin ventas registradas.</div>';
     };
 
-    // --- INICIALIZACIÓN GENERAL SEGURA ---
     document.addEventListener('DOMContentLoaded', function() {
       try {
         if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
