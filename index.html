@@ -4,13 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Taller</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Estilos base para ordenar el encabezado y que luzca bien ordenado */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        #taller-logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        #logo-preview {
+            max-height: 50px;
+            object-fit: contain;
+        }
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        nav button {
+            padding: 8px 15px;
+            margin-left: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        nav button:hover {
+            background-color: #0056b3;
+        }
+        main {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 <body>
     <header>
         <div id="taller-logo-container">
-            <!-- Aquí se mostrará el logo del taller cargado -->
-            <img id="logo-preview" src="" alt="Logo del Taller" style="max-height: 50px; display: none;">
+            <!-- Aquí se muestra el logo del taller cargado -->
+            <img id="logo-preview" src="" alt="Logo del Taller" style="display: none;">
             <h1 id="taller-nombre">Mi Taller</h1>
         </div>
         <nav>
@@ -20,7 +73,7 @@
     </header>
 
     <main>
-        <!-- Sección de Inicio (Funcionalidad actual intacta) -->
+        <!-- Sección de Inicio -->
         <section id="seccion-inicio" class="seccion">
             <h2>Panel Principal</h2>
             <p>Bienvenido al sistema. Todo está funcionando correctamente.</p>
@@ -31,7 +84,7 @@
             <h2>Configuración del Taller</h2>
             <form id="form-configuracion">
                 <div class="form-group">
-                    <label for="input-logo">Subir Logo del Taller:</label>
+                    <label for="input-logo">Subir Logo del Taller:</label><br><br>
                     <input type="file" id="input-logo" accept="image/*">
                 </div>
                 <button type="button" onclick="guardarConfiguracion()">Guardar Cambios</button>
@@ -45,7 +98,7 @@
             document.getElementById('seccion-configuracion').style.display = seccion === 'configuracion' ? 'block' : 'none';
         }
 
-        // Lógica para previsualizar el logo seleccionado
+        // Lógica para previsualizar el logo seleccionado y guardarlo
         document.getElementById('input-logo').addEventListener('change', function(event) {
             const archivo = event.target.files[0];
             if (archivo) {
@@ -54,14 +107,13 @@
                     const logoPreview = document.getElementById('logo-preview');
                     logoPreview.src = e.target.result;
                     logoPreview.style.display = 'block';
-                    // Opcional: Guardar en localStorage para persistencia
                     localStorage.setItem('tallerLogo', e.target.result);
                 }
                 lector.readAsDataURL(archivo);
             }
         });
 
-        // Cargar el logo guardado previamente al iniciar
+        // Cargar el logo guardado previamente al iniciar la página
         window.onload = function() {
             const logoGuardado = localStorage.getItem('tallerLogo');
             if (logoGuardado) {
