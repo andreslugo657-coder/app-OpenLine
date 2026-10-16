@@ -632,29 +632,21 @@
     </div>
   </div>
 
-  <!-- PANEL PERSONAL, USUARIOS Y RESTRICCIONES ADMIN (MODIFICADO CON PREGUNTA DE SEGURIDAD) -->
+  <!-- PANEL PERSONAL, USUARIOS Y RESTRICCIONES ADMIN -->
   <div id="switchUserModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3.5 text-xs text-zinc-300 modal-card flex flex-col">
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Gestión de Usuarios & Roles</h3><button type="button" onclick="window.closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
-      <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 space-y-2.5">
+      <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 space-y-2">
         <span class="text-[10px] text-zinc-400 font-bold uppercase block">Configurar Clave de Administrador:</span>
-        <input type="password" id="adminOldPassInput" placeholder="Clave de Admin Actual (Obligatoria para cambiarla)..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono text-xs">
-        <input type="password" id="adminNewPassInput" placeholder="Nueva Clave de Admin..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono text-xs">
-        
-        <div class="pt-2 border-t border-zinc-800 space-y-1.5">
-          <span class="text-[10px] text-purple-400 font-bold uppercase block">🔒 Pregunta Secreta de Recuperación:</span>
-          <input type="text" id="adminSecQuestion" placeholder="Pregunta (ej: ¿Nombre de tu primer perro?)" class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-1.5 text-white text-xs">
-          <input type="text" id="adminSecAnswer" placeholder="Respuesta Secreta..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-1.5 text-white text-xs">
-        </div>
-
-        <button type="button" onclick="window.saveAdminPasswordSecure()" class="w-full py-2.5 bg-iosBlue text-white font-bold rounded-xl active:scale-95 shadow">Actualizar Clave y Pregunta</button>
+        <input type="password" id="adminPassInput" placeholder="Nueva clave Admin..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono text-xs">
+        <button type="button" onclick="window.saveAdminPassword()" class="w-full py-2 bg-iosBlue text-white font-bold rounded-xl active:scale-95">Guardar Clave Admin</button>
       </div>
       <div class="space-y-1.5"><label class="text-[10px] text-zinc-400 uppercase font-bold block">👤 Cambiar Sesión Actual:</label><div id="usersUnifiedList" class="space-y-1.5 max-h-36 overflow-y-auto pr-1"></div></div>
       <button type="button" onclick="window.closeModal('switchUserModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-2">Cerrar</button>
     </div>
   </div>
 
-  <!-- MODAL VERIFICAR ADMIN PARA CAJA / USUARIOS (CON RESTABLECIMIENTO) -->
+  <!-- MODAL VERIFICAR ADMIN PARA CAJA / USUARIOS -->
   <div id="adminAuthModal" style="display: none; z-index: 100008;" class="app-modal">
     <div class="bg-zinc-900 border border-amber-600/70 rounded-3xl w-full max-w-xs p-5 space-y-4 shadow-2xl text-center">
       <div class="w-10 h-10 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center mx-auto text-lg"><i class="ph-bold ph-lock-key"></i></div>
@@ -665,29 +657,6 @@
         <button type="button" onclick="window.closeModal('adminAuthModal')" class="py-2 bg-zinc-800 text-white font-bold rounded-xl">Cancelar</button>
         <button type="button" onclick="window.verifyAdminAuth()" class="py-2 bg-amber-600 text-white font-bold rounded-xl">Ingresar</button>
       </div>
-      <button type="button" onclick="window.openRecoveryModal()" class="w-full text-center text-[10px] text-amber-400 underline font-semibold pt-1">¿Olvidaste tu contraseña?</button>
-    </div>
-  </div>
-
-  <!-- MODAL RECUPERACIÓN DE CLAVE POR PREGUNTA SECRETA O RESTAURACIÓN CLOUD -->
-  <div id="recoveryModal" style="display: none; z-index: 100010;" class="app-modal">
-    <div class="bg-zinc-900 border border-rose-800/70 rounded-3xl w-full max-w-xs p-5 space-y-4 shadow-2xl text-center">
-      <div class="w-10 h-10 bg-rose-500/20 text-rose-400 rounded-full flex items-center justify-center mx-auto text-lg"><i class="ph-bold ph-shield-warning"></i></div>
-      <h3 class="font-black text-white text-sm">Recuperación de Clave Admin</h3>
-      <div id="recoveryStep1" class="space-y-2">
-        <p class="text-[11px] text-zinc-400" id="recoveryQuestionLabel">Responde la pregunta secreta configurada:</p>
-        <input type="text" id="recoveryAnswerInput" placeholder="Respuesta..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white text-center text-xs">
-        <button type="button" onclick="window.verifyRecoveryAnswer()" class="w-full py-2 bg-rose-600 text-white font-bold rounded-xl text-xs">Validar Respuesta</button>
-      </div>
-      <div id="recoveryStep2" class="hidden space-y-2">
-        <p class="text-[11px] text-emerald-400 font-bold">¡Respuesta correcta! Ingresa tu nueva clave:</p>
-        <input type="password" id="recoveryNewPass" placeholder="Nueva Clave Admin..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white text-center font-mono text-xs">
-        <button type="button" onclick="window.saveRecoveredPassword()" class="w-full py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs">Guardar Nueva Clave</button>
-      </div>
-      <div class="pt-2 border-t border-zinc-800">
-        <button type="button" onclick="window.restoreAdminFromCloudBackup()" class="w-full py-1.5 bg-zinc-800 hover:bg-zinc-700 text-indigo-300 font-bold rounded-xl text-[10px]">Restaurar desde Respaldo Automático (Cloud)</button>
-      </div>
-      <button type="button" onclick="window.closeModal('recoveryModal')" class="w-full py-2 bg-zinc-900 text-zinc-400 font-bold rounded-xl text-xs">Cancelar</button>
     </div>
   </div>
 
@@ -724,6 +693,7 @@
               </div>
             </div>
 
+            <!-- Botón de acceso a Usuarios en Ajustes -->
             <button type="button" onclick="window.openSwitchUserModal()" class="w-full py-2.5 rounded-xl bg-zinc-800 text-iosBlue font-bold border border-zinc-700 flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
               <i class="ph-bold ph-users text-base"></i> Gestionar Usuarios y Clave Admin
             </button>
@@ -765,7 +735,7 @@
 
   <!-- SCRIPT GENERAL -->
   <script>
-    var APP_CODE_VERSION = 'v34.0.0'; 
+    var APP_CODE_VERSION = 'v33.0.0'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var ACTIVE_USER_KEY = 'openline_current_active_user';
@@ -910,7 +880,7 @@
     var manualClients = StorageShield.load('manualClients', []); if(!Array.isArray(manualClients)) manualClients = [];
     
     var loadedSettings = StorageShield.load('settings', {}); if (typeof loadedSettings !== 'object' || loadedSettings === null) loadedSettings = {};
-    var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPin: '1234', secQuestion: '¿Nombre de tu primer mascota?', secAnswer: 'luna', adminPhone: '', branches: ['Central'], usersByBranch: {}, logo: '' }, loadedSettings);
+    var workshopSettings = Object.assign({ name: 'OpenLine', subtitle: 'Servicio Técnico', adminPin: '1234', adminPhone: '', branches: ['Central'], usersByBranch: {}, logo: '' }, loadedSettings);
     if(!Array.isArray(workshopSettings.branches)) workshopSettings.branches = ['Central'];
     
     var activeUser = 'Admin'; try { activeUser = localStorage.getItem(ACTIVE_USER_KEY) || 'Admin'; } catch(e){}
@@ -938,81 +908,13 @@
       }
     };
 
-    // --- SEGURIDAD DE CAMBIO DE CLAVE CON VALIDACIÓN ACTUAL Y PREGUNTA SECRETA ---
-    window.saveAdminPasswordSecure = function() {
-      var oldPass = $('adminOldPassInput').value.trim();
-      var newPass = $('adminNewPassInput').value.trim();
-      var q = $('adminSecQuestion').value.trim();
-      var a = $('adminSecAnswer').value.trim();
-      var currentPin = workshopSettings.adminPin || '1234';
-
-      if (oldPass !== currentPin && oldPass !== 'OL-MASTER-PERMANENT') {
-        window.showToast("Error de Seguridad", "Debes ingresar tu clave de administrador actual para poder modificarla.");
-        return;
-      }
-      if (!newPass) {
-        window.showToast("Error", "La nueva clave no puede estar vacía.");
-        return;
-      }
-
-      workshopSettings.adminPin = newPass;
-      if(q) workshopSettings.secQuestion = q;
-      if(a) workshopSettings.secAnswer = a.toLowerCase();
-
-      StorageShield.save('settings', workshopSettings);
-      window.showToast("Actualizado", "Clave de administrador y pregunta secreta guardadas correctamente.");
-      $('adminOldPassInput').value = '';
-      $('adminNewPassInput').value = '';
-      if($('adminSecAnswer')) $('adminSecAnswer').value = '';
-    };
-
-    // --- RECUPERACIÓN DE CONTRASEÑA ---
-    window.openRecoveryModal = function() {
-      window.closeModal('adminAuthModal');
-      if($('recoveryQuestionLabel')) $('recoveryQuestionLabel').textContent = 'Pregunta: ' + (workshopSettings.secQuestion || '¿Nombre de tu primera mascota?');
-      if($('recoveryAnswerInput')) $('recoveryAnswerInput').value = '';
-      if($('recoveryNewPass')) $('recoveryNewPass').value = '';
-      if($('recoveryStep1')) $('recoveryStep1').style.display = 'block';
-      if($('recoveryStep2')) $('recoveryStep2').style.display = 'none';
-      window.openModal('recoveryModal');
-    };
-
-    window.verifyRecoveryAnswer = function() {
-      var ans = $('recoveryAnswerInput').value.trim().toLowerCase();
-      var correctAns = (workshopSettings.secAnswer || 'luna').toLowerCase();
-      if(ans === correctAns) {
-        if($('recoveryStep1')) $('recoveryStep1').style.display = 'none';
-        if($('recoveryStep2')) $('recoveryStep2').style.display = 'block';
-        window.showToast("Correcto", "Respuesta validada. Ingresa tu nueva clave.");
-      } else {
-        window.showToast("Error", "La respuesta secreta es incorrecta.");
-      }
-    };
-
-    window.saveRecoveredPassword = function() {
-      var newPin = $('recoveryNewPass').value.trim();
-      if(!newPin) { window.showToast("Error", "Ingresa una nueva clave."); return; }
+    window.saveAdminPassword = function() {
+      var newPin = $('adminPassInput').value.trim();
+      if(!newPin) { window.showToast("Error", "Ingresa una clave válida."); return; }
       workshopSettings.adminPin = newPin;
       StorageShield.save('settings', workshopSettings);
-      window.closeModal('recoveryModal');
-      window.showToast("Recuperado", "Clave restablecida con éxito. Ya puedes ingresar.");
-    };
-
-    window.restoreAdminFromCloudBackup = function() {
-      try {
-        var cloudSettings = StorageShield.load('settings', null);
-        if(cloudSettings && cloudSettings.adminPin) {
-          workshopSettings.adminPin = cloudSettings.adminPin;
-          StorageShield.save('settings', workshopSettings);
-          window.closeModal('recoveryModal');
-          window.showToast("Restaurado", "Clave recuperada desde la copia de seguridad guardada.");
-        } else {
-          window.showToast("Aviso", "No se encontró respaldo previo, se restauró clave predeterminada: 1234");
-          workshopSettings.adminPin = '1234';
-          StorageShield.save('settings', workshopSettings);
-          window.closeModal('recoveryModal');
-        }
-      } catch(e) { window.showToast("Error", "No se pudo recuperar desde la nube."); }
+      window.showToast("Guardado", "Clave de administrador actualizada con éxito.");
+      $('adminPassInput').value = '';
     };
 
     // --- ACCESO A CAJA CON RESTRICCIÓN ADMIN ---
@@ -1360,7 +1262,7 @@
     window.openNewRepairModal = function() { 
       window.openModal('newRepairModal'); 
       setTimeout(function() {
-        ['inpClientName','inpClientDniCuit','inpClientPhone','inpDeviceBrand','inpDeviceModel','inpDeviceFault','inpDeviceBudget','inpDeviceAdvance','inpUnlockPin'].forEach(function(el){ if($(el)) $(el].value=''; });
+        ['inpClientName','inpClientDniCuit','inpClientPhone','inpDeviceBrand','inpDeviceModel','inpDeviceFault','inpDeviceBudget','inpDeviceAdvance','inpUnlockPin'].forEach(function(el){ if($(el)) $(el).value=''; });
         currentPhotos = []; window.renderNewPhotos();
         if($('newCalculatedBalance')) $('newCalculatedBalance').textContent = '$0';
         if(typeof window.resetPatternCanvas === 'function') window.resetPatternCanvas();
@@ -1396,11 +1298,6 @@
     window.openSwitchUserModal = function() {
       window.openModal('switchUserModal');
       setTimeout(function() {
-        if($('adminOldPassInput')) $('adminOldPassInput').value = '';
-        if($('adminNewPassInput')) $('adminNewPassInput').value = '';
-        if($('adminSecQuestion')) $('adminSecQuestion').value = workshopSettings.secQuestion || '';
-        if($('adminSecAnswer')) $('adminSecAnswer').value = '';
-
         var usersContainer = $('usersUnifiedList');
         if (usersContainer) {
           usersContainer.innerHTML = '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800"><div class="flex items-center gap-1.5"><i class="ph-bold ph-user text-sm text-iosBlue"></i><span class="font-bold text-xs text-white">Admin (Acceso Total a Caja y Usuarios)</span><span class="text-[8px] bg-emerald-950 text-emerald-400 px-1 rounded font-bold">ACTIVO</span></div></div>';
