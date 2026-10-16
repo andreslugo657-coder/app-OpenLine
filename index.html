@@ -174,7 +174,7 @@
     <div class="space-y-1.5">
       <div class="relative">
         <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm"></i>
-        <input id="searchInput" type="text" oninput="window.handleSearch()" placeholder="Buscar orden, cliente, modelo o sucursal..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-8 pr-8 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-iosBlue shadow-sm">
+        <input id="searchInput" type="text" oninput="window.handleSearch()" placeholder="Buscar orden, cliente, modelo, DNI/CUIT o sucursal..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-8 pr-8 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-iosBlue shadow-sm">
         <button type="button" id="clearSearchBtn" onclick="window.clearSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 p-1"><i class="ph-bold ph-x-circle text-sm"></i></button>
       </div>
       <div class="flex items-center gap-1 overflow-x-auto no-scrollbar pb-0.5">
@@ -237,7 +237,10 @@
       <div class="overflow-y-auto p-4 space-y-3.5 flex-1 pb-10">
         <div class="space-y-1.5">
           <label class="font-bold text-zinc-300 uppercase text-[9px]">1. Datos del Cliente</label>
-          <input type="text" id="inpClientName" placeholder="Nombre y Apellido *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input type="text" id="inpClientName" placeholder="Nombre y Apellido *" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+            <input type="text" id="inpClientDniCuit" placeholder="DNI o CUIT (Opcional)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+          </div>
           <div class="flex gap-2">
             <select id="inpClientCountryCode" class="bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-2 text-white font-bold w-[135px] shrink-0 text-xs">
               <option value="549" selected>🇦🇷 +54 9 (Argentina)</option>
@@ -268,7 +271,15 @@
         <div class="space-y-1.5">
           <label class="font-bold text-zinc-300 uppercase text-[9px]">2. Dispositivo</label>
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            <select id="inpDeviceType" class="bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-2 text-white col-span-2 sm:col-span-1"><option value="Celular">Celular</option><option value="Tablet">Tablet</option><option value="Notebook">Notebook</option></select>
+            <select id="inpDeviceType" class="bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-2 text-white col-span-2 sm:col-span-1">
+              <option value="Celular">Celular</option>
+              <option value="Tablet">Tablet</option>
+              <option value="Netbook">Netbook</option>
+              <option value="Consolas">Consolas</option>
+              <option value="TV">TV</option>
+              <option value="Impresoras">Impresoras</option>
+              <option value="Otros">Otros</option>
+            </select>
             <input type="text" id="inpDeviceBrand" placeholder="Marca *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
             <input type="text" id="inpDeviceModel" placeholder="Modelo *" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
           </div>
@@ -283,7 +294,10 @@
             </div>
           </div>
           <div id="unlockViewPin"><input type="text" id="inpUnlockPin" placeholder="Ej: 1234" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-center font-mono tracking-widest"></div>
-          <div id="unlockViewPattern" class="hidden text-center space-y-1"><canvas id="patternCanvas" width="220" height="220" class="bg-black border border-zinc-800 rounded-2xl mx-auto touch-none block"></canvas><div class="text-[10px] text-zinc-400 mt-1"><span id="patternStatusLabel">Dibuja el patrón en los puntos</span> • <button type="button" onclick="window.resetPatternCanvas()" class="text-rose-400 underline font-bold">Borrar trazo</button></div></div>
+          <div id="unlockViewPattern" class="hidden text-center space-y-1">
+            <canvas id="patternCanvas" width="220" height="220" class="bg-black border border-zinc-800 rounded-2xl mx-auto touch-none block cursor-crosshair"></canvas>
+            <div class="text-[10px] text-zinc-400 mt-1"><span id="patternStatusLabel">Dibuja el patrón uniendo los puntos</span> • <button type="button" onclick="window.resetPatternCanvas()" class="text-rose-400 underline font-bold">Borrar trazo</button></div>
+          </div>
           <div id="unlockViewNone" class="hidden py-1 text-center text-[11px] text-zinc-500">Sin clave / Dispositivo apagado.</div>
         </div>
         <div class="space-y-2 bg-zinc-950 p-3 rounded-2xl border border-zinc-800">
@@ -322,7 +336,7 @@
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
         <div class="flex items-center gap-2">
           <div class="w-7 h-7 rounded-lg bg-blue-950 border border-blue-700 flex items-center justify-center text-blue-400"><i class="ph-bold ph-address-book text-base"></i></div>
-          <div><h3 class="font-bold text-white text-sm">Directorio y Saldos por Cliente</h3><span class="text-[10px] text-zinc-400">Historial unificado y control de pagos</span></div>
+          <div><h3 class="font-bold text-white text-sm">Directorio y Saldos por Cliente</h3><span class="text-[10px] text-zinc-400">Historial unificado y control de pagos (DNI/CUIT o Nombre)</span></div>
         </div>
         <button type="button" onclick="window.closeModal('clientsModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button>
       </div>
@@ -330,7 +344,7 @@
         <div class="flex gap-2">
           <div class="relative flex-1">
             <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i>
-            <input type="text" id="clientSearchInput" oninput="window.renderClientsList()" placeholder="Buscar cliente por nombre o teléfono..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-8 pr-3 py-2 text-xs text-white">
+            <input type="text" id="clientSearchInput" oninput="window.renderClientsList()" placeholder="Buscar por nombre, teléfono o DNI/CUIT..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-8 pr-3 py-2 text-xs text-white">
           </div>
           <button type="button" onclick="window.openManualClientModal()" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs flex items-center gap-1 shrink-0 shadow active:scale-95 transition"><i class="ph-bold ph-plus"></i> + Cliente</button>
         </div>
@@ -345,6 +359,7 @@
       <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Nuevo Cliente Manual</h3><button type="button" onclick="window.closeModal('manualClientModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
       <div class="space-y-2">
         <input type="text" id="manClientName" placeholder="Nombre y Apellido *" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+        <input type="text" id="manClientDni" placeholder="DNI o CUIT (Opcional)" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
         <input type="tel" id="manClientPhone" placeholder="Teléfono / Celular *" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
       </div>
       <button type="button" onclick="window.saveManualClient()" class="w-full py-2.5 bg-blue-600 text-white font-bold rounded-xl mt-2 active:scale-95 transition">Guardar Cliente</button>
@@ -401,9 +416,6 @@
           <div id="posCatalogGrid" class="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-2 content-start pb-12 min-h-[260px]"></div>
         </div>
         <div id="posViewScanManual" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6 min-h-0">
-          <div class="p-3 bg-zinc-950 rounded-2xl border border-purple-800/80 space-y-2 shrink-0">
-            <div class="flex items-center justify-between"><span class="text-[10px] font-bold text-purple-300 uppercase flex items-center gap-1"><i class="ph-bold ph-barcode text-sm"></i> Lector de Códigos</span></div>
-          </div>
           <div class="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2 shrink-0">
             <span class="text-[10px] font-bold text-amber-400 uppercase flex items-center gap-1"><i class="ph-bold ph-tag text-sm"></i> Venta Manual Rápida</span>
             <input type="text" id="posManualName" placeholder="Descripción (Funda, Cable, etc)..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white">
@@ -479,24 +491,57 @@
     </div>
   </div>
 
-  <!-- MODAL CAJA LOCAL -->
+  <!-- MODAL CAJA LOCAL CON CIERRE Y BALANCE -->
   <div id="cashModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
-      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><div class="flex items-center gap-2"><i class="ph-bold ph-currency-dollar-simple text-emerald-400 text-lg"></i><div><h3 class="font-bold text-white text-sm">Caja Local</h3><span class="text-[10px] text-zinc-400">Sucursal: <b id="cashModalTitleBranch" class="text-emerald-400">(Central)</b></span></div></div><button type="button" onclick="window.closeModal('cashModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div>
-      <div class="p-3.5 overflow-y-auto space-y-3 flex-1 pb-8">
-        <div class="grid grid-cols-3 gap-1.5 text-center">
-          <div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[8px] text-emerald-400 font-bold block uppercase">Ingresos</span><span id="cashTotalIncome" class="text-sm font-bold text-emerald-400 font-mono mt-0.5 block">$0</span></div>
-          <div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[8px] text-rose-400 font-bold block uppercase">Egresos</span><span id="cashTotalExpense" class="text-sm font-bold text-rose-400 font-mono mt-0.5 block">$0</span></div>
-          <div class="p-2 bg-gradient-to-b from-zinc-900 to-indigo-950 border border-indigo-700/60 rounded-xl"><span class="text-[8px] text-indigo-300 font-bold block uppercase">Saldo Final</span><span id="cashNetBalance" class="text-sm font-bold text-white font-mono mt-0.5 block">$0</span></div>
+      <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
+        <div class="flex items-center gap-2">
+          <i class="ph-bold ph-currency-dollar-simple text-emerald-400 text-lg"></i>
+          <div><h3 class="font-bold text-white text-sm">Caja Local y Balances</h3><span class="text-[10px] text-zinc-400">Sucursal: <b id="cashModalTitleBranch" class="text-emerald-400">(Central)</b></span></div>
         </div>
-        <div class="flex gap-1.5"><button type="button" onclick="window.showCashIncome()" class="flex-1 py-2 rounded-xl bg-emerald-950 border border-emerald-600/70 text-emerald-200 font-bold flex items-center justify-center gap-1 active:scale-95 text-xs"><i class="ph-bold ph-arrow-down-left"></i> + Ingreso</button><button type="button" onclick="window.showCashExpense()" class="flex-1 py-2 rounded-xl bg-rose-950 border border-rose-600/70 text-rose-200 font-bold flex items-center justify-center gap-1 active:scale-95 text-xs"><i class="ph-bold ph-arrow-up-right"></i> - Salida</button></div>
-        <div id="cashMovementForm" class="hidden p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2 mt-2">
-          <div class="flex items-center justify-between"><span id="cashFormTitle" class="font-bold text-white text-xs">Registrar Movimiento</span><button type="button" onclick="window.hideCashForm()"><i class="ph-bold ph-x"></i></button></div>
-          <input type="hidden" id="cshType" value="INCOME">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><input type="number" id="cshAmount" placeholder="Monto ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white font-mono font-bold"><select id="cshMethod" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-white"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia</option><option value="Tarjeta">Tarjeta</option></select></div>
-          <input type="text" id="cshConcept" placeholder="Concepto del movimiento..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-1.5 text-white text-xs"><button type="button" onclick="window.saveCashMovement()" class="w-full py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow active:scale-95">Guardar en Caja</button>
+        <button type="button" onclick="window.closeModal('cashModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button>
+      </div>
+      <div class="p-3.5 overflow-y-auto space-y-3.5 flex-1 pb-8">
+        
+        <!-- PESTAÑAS DENTRO DE CAJA -->
+        <div class="grid grid-cols-2 gap-1 p-1 bg-zinc-950 rounded-xl border border-zinc-800">
+          <button type="button" id="cashTabMovBtn" onclick="window.switchCashTab('MOV')" class="py-1.5 rounded-lg font-bold text-xs transition bg-emerald-700 text-white shadow">Movimientos</button>
+          <button type="button" id="cashTabBalanceBtn" onclick="window.switchCashTab('BALANCE')" class="py-1.5 rounded-lg font-bold text-xs transition bg-zinc-800 text-zinc-400 hover:text-white">Cierre & Balance</button>
         </div>
-        <div><span class="text-[9px] font-bold text-zinc-400 uppercase block mb-1">Movimientos Activos en esta Caja:</span><div id="cashListContainer" class="space-y-1.5 max-h-[22vh] overflow-y-auto pr-1"></div></div>
+
+        <!-- VISTA MOVIMIENTOS -->
+        <div id="cashViewMov" class="space-y-3">
+          <div class="grid grid-cols-3 gap-1.5 text-center">
+            <div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[8px] text-emerald-400 font-bold block uppercase">Ingresos</span><span id="cashTotalIncome" class="text-sm font-bold text-emerald-400 font-mono mt-0.5 block">$0</span></div>
+            <div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[8px] text-rose-400 font-bold block uppercase">Egresos</span><span id="cashTotalExpense" class="text-sm font-bold text-rose-400 font-mono mt-0.5 block">$0</span></div>
+            <div class="p-2 bg-gradient-to-b from-zinc-900 to-indigo-950 border border-indigo-700/60 rounded-xl"><span class="text-[8px] text-indigo-300 font-bold block uppercase">Saldo Final</span><span id="cashNetBalance" class="text-sm font-bold text-white font-mono mt-0.5 block">$0</span></div>
+          </div>
+          <div class="flex gap-1.5">
+            <button type="button" onclick="window.showCashIncome()" class="flex-1 py-2 rounded-xl bg-emerald-950 border border-emerald-600/70 text-emerald-200 font-bold flex items-center justify-center gap-1 active:scale-95 text-xs"><i class="ph-bold ph-arrow-down-left"></i> + Ingreso</button>
+            <button type="button" onclick="window.showCashExpense()" class="flex-1 py-2 rounded-xl bg-rose-950 border border-rose-600/70 text-rose-200 font-bold flex items-center justify-center gap-1 active:scale-95 text-xs"><i class="ph-bold ph-arrow-up-right"></i> - Salida</button>
+          </div>
+          <div id="cashMovementForm" class="hidden p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2 mt-2">
+            <div class="flex items-center justify-between"><span id="cashFormTitle" class="font-bold text-white text-xs">Registrar Movimiento</span><button type="button" onclick="window.hideCashForm()"><i class="ph-bold ph-x"></i></button></div>
+            <input type="hidden" id="cshEditId" value="">
+            <input type="hidden" id="cshType" value="INCOME">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><input type="number" id="cshAmount" placeholder="Monto ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white font-mono font-bold"><select id="cshMethod" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-white"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia</option><option value="Tarjeta">Tarjeta</option></select></div>
+            <input type="text" id="cshConcept" placeholder="Concepto del movimiento..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-1.5 text-white text-xs"><button type="button" onclick="window.saveCashMovement()" class="w-full py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow active:scale-95">Guardar en Caja</button>
+          </div>
+          <div><span class="text-[9px] font-bold text-zinc-400 uppercase block mb-1">Movimientos Activos en esta Caja:</span><div id="cashListContainer" class="space-y-1.5 max-h-[22vh] overflow-y-auto pr-1"></div></div>
+        </div>
+
+        <!-- VISTA CIERRE & BALANCE -->
+        <div id="cashViewBalance" class="hidden space-y-3">
+          <div class="p-3.5 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-3">
+            <h4 class="font-bold text-white text-xs flex items-center gap-1.5"><i class="ph-bold ph-chart-line-up text-emerald-400 text-sm"></i> Balance Tipo Resumen (Ganancias)</h4>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[9px] text-zinc-400 uppercase font-bold block">Ganancia Semanal</span><span id="balanceWeeklyProfit" class="text-sm font-black text-emerald-400 font-mono block mt-0.5">$0</span></div>
+              <div class="p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl"><span class="text-[9px] text-zinc-400 uppercase font-bold block">Ganancia Mensual</span><span id="balanceMonthlyProfit" class="text-sm font-black text-emerald-400 font-mono block mt-0.5">$0</span></div>
+            </div>
+            <button type="button" onclick="window.executeDailyCashClose()" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-700 text-white font-bold rounded-xl shadow active:scale-95 transition flex items-center justify-center gap-1.5"><i class="ph-bold ph-lock-key text-base"></i> Realizar Cierre Diario de Caja</button>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -506,7 +551,7 @@
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-lg modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0"><div><div class="flex items-center gap-1.5"><span id="dtlOrderId" class="text-xs font-mono font-bold text-iosBlue">#OL-0000</span></div><h3 id="dtlDeviceTitle" class="text-sm font-bold text-white mt-0.5">Dispositivo</h3></div><div class="flex items-center gap-2"><button type="button" onclick="window.openEditRepairModal()" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-[10px] border border-zinc-700 flex items-center gap-1 active:scale-95 transition"><i class="ph-bold ph-pencil-simple text-amber-400"></i> Editar</button><button type="button" onclick="window.closeModal('detailModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-sm"></i></button></div></div>
       <div class="overflow-y-auto p-4 space-y-3.5 flex-1 pb-10">
-          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1"><span class="text-[9px] text-zinc-500 uppercase block mb-0.5">Cliente:</span><b class="text-white text-sm" id="dtlClientName"></b><div class="text-zinc-400 font-mono text-xs mt-0.5" id="dtlClientPhone"></div></div>
+          <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-1"><span class="text-[9px] text-zinc-500 uppercase block mb-0.5">Cliente:</span><b class="text-white text-sm" id="dtlClientName"></b><div class="text-zinc-400 font-mono text-xs mt-0.5" id="dtlClientPhone"></div><div class="text-zinc-400 font-mono text-[10px]" id="dtlClientDni"></div></div>
           <div class="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2">
             <div><span class="text-[9px] text-zinc-500 uppercase block mb-0.5">Diagnóstico / Falla:</span><p id="dtlDeviceFault" class="text-zinc-200 text-xs leading-relaxed"></p></div>
             <div id="dtlPhotosSection" class="pt-2 border-t border-zinc-800/80">
@@ -542,6 +587,7 @@
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-zinc-900 shrink-0"><h3 class="text-sm font-bold text-white">Editar Orden</h3><button type="button" onclick="window.closeModal('editRepairModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x text-sm"></i></button></div>
       <form onsubmit="window.saveEditedRepair(event)" class="overflow-y-auto p-4 space-y-3 flex-1 pb-8">
         <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Cliente</label><input type="text" id="editClientName" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white"></div>
+        <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">DNI o CUIT</label><input type="text" id="editClientDniCuit" class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white font-mono"></div>
         <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Equipo</label><div class="grid grid-cols-2 gap-2"><input type="text" id="editDeviceBrand" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white"><input type="text" id="editDeviceModel" required class="w-full bg-zinc-800 rounded-xl px-3 py-2 text-white"></div></div>
         <div class="space-y-1"><label class="font-bold text-zinc-400 text-[10px]">Diagnóstico / Falla</label><textarea id="editDeviceFault" rows="2" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"></textarea></div>
         <div class="grid grid-cols-2 gap-2">
@@ -594,7 +640,6 @@
             <input type="text" id="cfgWorkshopName" placeholder="Nombre Comercial" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
             <input type="text" id="cfgWorkshopSubtitle" placeholder="Subtítulo" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white">
             
-            <!-- LOGOTIPO DEL TALLER -->
             <div class="space-y-1 pt-1">
               <label class="text-[10px] text-zinc-400 font-bold uppercase block">Logotipo del Taller:</label>
               <div class="flex items-center gap-3">
@@ -612,7 +657,7 @@
           
           <div class="p-3 bg-zinc-950 rounded-2xl border border-emerald-700/60 space-y-2.5">
             <span class="text-[10px] font-bold text-emerald-400 uppercase block flex items-center gap-1"><i class="ph-bold ph-database"></i> Respaldo Integral (Backup)</span>
-            <p class="text-[10px] text-zinc-400 leading-tight">Exporta absolutamente todo: órdenes, clientes, pagos, stock, caja, **fotografías de equipos** y el **logo del taller**.</p>
+            <p class="text-[10px] text-zinc-400 leading-tight">Exporta absolutamente todo: órdenes, clientes, pagos, stock, caja, fotografías y logotipo.</p>
             <div class="grid grid-cols-2 gap-2">
               <button type="button" onclick="window.exportBackup()" class="py-2 bg-emerald-950 hover:bg-emerald-900 border border-emerald-700 text-emerald-300 font-bold rounded-xl flex items-center justify-center gap-1 shadow active:scale-95 transition"><i class="ph-bold ph-download-simple"></i> Guardar Como...</button>
               <label class="py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 font-bold rounded-xl flex items-center justify-center gap-1 shadow active:scale-95 transition cursor-pointer">
@@ -644,9 +689,9 @@
   <div id="toastContainer" class="fixed top-safe left-0 right-0 z-[100000] flex flex-col items-center gap-2 pointer-events-none mt-2 px-4"></div>
   <div id="printArea" class="hidden"></div>
 
-  <!-- SCRIPT CON CLOUD SYNC MQTT & FILE SYSTEM ACCESS API -->
+  <!-- SCRIPT COMPLETO CON PATRÓN 3X3 FUNCIONAL Y GESTIÓN DE CAJA/CLIENTES -->
   <script>
-    var APP_CODE_VERSION = 'v31.0.0'; 
+    var APP_CODE_VERSION = 'v32.0.0'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var ACTIVE_USER_KEY = 'openline_current_active_user';
@@ -669,7 +714,17 @@
 
     function $(id) { return document.getElementById(id); }
 
-    window.openModal = function(id) { try { var el = $(id); if (el) { el.classList.remove('hidden'); el.classList.add('active'); el.style.display = 'flex'; } } catch(e) {} };
+    window.openModal = function(id) { 
+      try { 
+        var el = $(id); 
+        if (el) { 
+          el.classList.remove('hidden'); 
+          el.classList.add('active'); 
+          el.style.display = 'flex'; 
+          if(id === 'newRepairModal') { setTimeout(window.initPatternCanvas, 100); }
+        } 
+      } catch(e) {} 
+    };
     window.closeModal = function(id) { try { var el = $(id); if (el) { el.classList.remove('active'); el.classList.add('hidden'); el.style.display = 'none'; } } catch(e) {} };
 
     window.dismissRealtimeBanner = function() {
@@ -727,7 +782,7 @@
       if (activeConfirmCallback) { var cb = activeConfirmCallback; activeConfirmCallback = null; if(res) cb(); }
     };
 
-    // --- MOTOR DE SINCRONIZACIÓN CLOUD MQTT EN TIEMPO REAL ---
+    // --- MOTOR MQTT CLOUD SYNC ---
     var mqttClient = null;
     var isSyncingRemote = false;
 
@@ -797,49 +852,34 @@
     var activeUser = 'Admin'; try { activeUser = localStorage.getItem(ACTIVE_USER_KEY) || 'Admin'; } catch(e){}
     var currentFilter = 'ALL'; var currentBranchFilter = 'ALL'; var selectedRepairId = null; var currentTicketRepairId = null;
 
-    // --- FUNCIÓN BACKUP INTEGRAL (INCLUYENDO FOTOS DE ÓRDENES Y LOGO EN BASE64) ---
+    // --- BACKUP INTEGRAL ---
     window.exportBackup = async function() {
       try {
         var backupData = {
-          version: APP_CODE_VERSION,
-          workshopId: currentWorkshopId,
-          timestamp: Date.now(),
-          repairs: repairs,          // Incluye todas las fotos de cada orden
-          stockItems: stockItems,
-          cashMovements: cashMovements,
-          sales: sales,
-          manualClients: manualClients,
-          settings: workshopSettings // Incluye el logo del taller en Base64
+          version: APP_CODE_VERSION, workshopId: currentWorkshopId, timestamp: Date.now(),
+          repairs: repairs, stockItems: stockItems, cashMovements: cashMovements,
+          sales: sales, manualClients: manualClients, settings: workshopSettings
         };
         var jsonData = JSON.stringify(backupData, null, 2);
         var suggestedName = `OpenLine_Backup_Completo_${currentWorkshopId}_${new Date().toISOString().slice(0,10)}.json`;
 
         if ('showSaveFilePicker' in window) {
           try {
-            var handle = await window.showSaveFilePicker({
-              suggestedName: suggestedName,
-              types: [{ description: 'Archivo JSON de Respaldo Integral', accept: { 'application/json': ['.json'] } }]
-            });
+            var handle = await window.showSaveFilePicker({ suggestedName: suggestedName, types: [{ description: 'Backup JSON', accept: { 'application/json': ['.json'] } }] });
             var writable = await handle.createWritable();
             await writable.write(jsonData);
             await writable.close();
             window.showToast("Backup Exitoso", "Respaldo integral guardado correctamente.");
             return;
-          } catch (err) {
-            if (err.name === 'AbortError') return;
-          }
+          } catch (err) { if (err.name === 'AbortError') return; }
         }
 
         var blob = new Blob([jsonData], { type: 'application/json' });
         var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url; a.download = suggestedName;
-        document.body.appendChild(a); a.click();
-        document.body.removeChild(a); URL.revokeObjectURL(url);
-        window.showToast("Backup Exitoso", "El archivo de respaldo completo se ha descargado.");
-      } catch(e) {
-        window.showToast("Error", "No se pudo generar el respaldo.");
-      }
+        var a = document.createElement('a'); a.href = url; a.download = suggestedName;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+        window.showToast("Backup Exitoso", "El archivo de respaldo se ha descargado.");
+      } catch(e) { window.showToast("Error", "No se pudo generar el respaldo."); }
     };
 
     window.importBackup = function(input) {
@@ -848,8 +888,8 @@
         reader.onload = function(e) {
           try {
             var data = JSON.parse(e.target.result);
-            if (!data || !data.workshopId) { window.showToast("Error", "Archivo de respaldo no válido."); return; }
-            window.appConfirm("⚠️ RESTAURAR BACKUP", "Se sobrescribirán todos los datos (órdenes, clientes, pagos, stock, fotos y logo) con los del archivo.\n\n¿Continuar?", function() {
+            if (!data || !data.workshopId) { window.showToast("Error", "Archivo no válido."); return; }
+            window.appConfirm("⚠️ RESTAURAR BACKUP", "Se sobrescribirán todos los datos con los del archivo.\n\n¿Continuar?", function() {
               if (Array.isArray(data.repairs)) { repairs = data.repairs; StorageShield.save('repairs', repairs, true); }
               if (Array.isArray(data.stockItems)) { stockItems = data.stockItems; StorageShield.save('stock', stockItems, true); }
               if (Array.isArray(data.cashMovements)) { cashMovements = data.cashMovements; StorageShield.save('cash', cashMovements, true); }
@@ -859,7 +899,7 @@
               
               window.applyWorkshopSettings(workshopSettings);
               window.renderRepairsList(); window.updateCounters(); window.updateCashBalanceUI();
-              window.showToast("Restaurado", "Información y archivos recuperados con éxito.");
+              window.showToast("Restaurado", "Información recuperada con éxito.");
               window.closeModal('settingsModal');
               window.publishMQTT();
             });
@@ -869,13 +909,111 @@
       }
     };
 
-    // --- MÓDULO CLIENTES: AGRUPADOS Y CONTROL DE PAGOS PENDIENTES ---
+    // --- PATRÓN 3X3 INTERACTIVO FUNCIONAL ---
+    var currentPatternCode = '';
+    window.initPatternCanvas = function() {
+      var canvas = $('patternCanvas');
+      if(!canvas) return;
+      var ctx = canvas.getContext('2d');
+      var width = canvas.width; var height = canvas.height;
+      var points = [
+        {x: width*0.2, y: height*0.2, id: 1}, {x: width*0.5, y: height*0.2, id: 2}, {x: width*0.8, y: height*0.2, id: 3},
+        {x: width*0.2, y: height*0.5, id: 4}, {x: width*0.5, y: height*0.5, id: 5}, {x: width*0.8, y: height*0.5, id: 6},
+        {x: width*0.2, y: height*0.8, id: 7}, {x: width*0.5, y: height*0.8, id: 8}, {x: width*0.8, y: height*0.8, id: 9}
+      ];
+      var activePoints = [];
+      var isDrawing = false;
+      var currentPos = {x: 0, y: 0};
+
+      function draw() {
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(0, 0, width, height);
+
+        // Líneas de unión
+        if(activePoints.length > 0) {
+          ctx.beginPath();
+          ctx.strokeStyle = '#007AFF';
+          ctx.lineWidth = 4;
+          ctx.lineCap = 'round';
+          ctx.moveTo(points[activePoints[0]-1].x, points[activePoints[0]-1].y);
+          for(var i=1; i<activePoints.length; i++) {
+            ctx.lineTo(points[activePoints[i]-1].x, points[activePoints[i]-1].y);
+          }
+          if(isDrawing) {
+            ctx.lineTo(currentPos.x, currentPos.y);
+          }
+          ctx.stroke();
+        }
+
+        // Puntos
+        points.forEach(function(p) {
+          var isActive = activePoints.includes(p.id);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, isActive ? 16 : 12, 0, Math.PI * 2);
+          ctx.fillStyle = isActive ? '#007AFF' : '#27272a';
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = isActive ? '#ffffff' : '#52525b';
+          ctx.stroke();
+        });
+      }
+
+      function getPointId(x, y) {
+        for(var i=0; i<points.length; i++) {
+          var p = points[i];
+          var dist = Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2));
+          if(dist < 28) return p.id;
+        }
+        return null;
+      }
+
+      canvas.onpointerdown = function(e) {
+        var rect = canvas.getBoundingClientRect();
+        var x = e.clientX - rect.left; var y = e.clientY - rect.top;
+        isDrawing = true; activePoints = [];
+        var pid = getPointId(x, y);
+        if(pid) activePoints.push(pid);
+        currentPos = {x: x, y: y};
+        draw();
+      };
+
+      canvas.onpointermove = function(e) {
+        if(!isDrawing) return;
+        var rect = canvas.getBoundingClientRect();
+        var x = e.clientX - rect.left; var y = e.clientY - rect.top;
+        currentPos = {x: x, y: y};
+        var pid = getPointId(x, y);
+        if(pid && !activePoints.includes(pid)) {
+          activePoints.push(pid);
+        }
+        draw();
+      };
+
+      canvas.onpointerup = function() {
+        if(!isDrawing) return;
+        isDrawing = false;
+        currentPatternCode = activePoints.join('-');
+        if($('patternStatusLabel')) $('patternStatusLabel').textContent = activePoints.length > 0 ? 'Patrón registrado (' + activePoints.length + ' puntos)' : 'Patrón vacío';
+        draw();
+      };
+
+      window.resetPatternCanvas = function() {
+        activePoints = []; currentPatternCode = '';
+        if($('patternStatusLabel')) $('patternStatusLabel').textContent = 'Dibuja el patrón en los puntos';
+        draw();
+      };
+
+      draw();
+    };
+
+    // --- MÓDULO CLIENTES AGRUPADOS Y DNI/CUIT ---
     window.openClientsModal = function() { window.openModal('clientsModal'); setTimeout(window.renderClientsList, 50); };
-    window.openManualClientModal = function() { if($('manClientName')) $('manClientName').value = ''; if($('manClientPhone')) $('manClientPhone').value = ''; window.openModal('manualClientModal'); };
+    window.openManualClientModal = function() { ['manClientName','manClientDni','manClientPhone'].forEach(function(id){ if($(id)) $(id).value = ''; }); window.openModal('manualClientModal'); };
+    
     window.saveManualClient = function() {
-      var name = $('manClientName').value.trim(); var phone = $('manClientPhone').value.trim();
+      var name = $('manClientName').value.trim(); var phone = $('manClientPhone').value.trim(); var dni = $('manClientDni').value.trim();
       if (!name || !phone) { window.showToast("Error", "Completa nombre y teléfono."); return; }
-      manualClients.unshift({ id: 'CLI-' + Date.now(), name: name, phone: phone, createdAt: Date.now() });
+      manualClients.unshift({ id: 'CLI-' + Date.now(), name: name, phone: phone, dni: dni, createdAt: Date.now() });
       StorageShield.save('manualClients', manualClients);
       window.closeModal('manualClientModal'); window.renderClientsList();
       window.showToast("Cliente", "Cliente guardado con éxito.");
@@ -887,28 +1025,23 @@
       var clientsMap = {};
 
       manualClients.forEach(function(c) {
-        var key = (c.phone || c.name).toLowerCase().trim();
-        clientsMap[key] = { name: c.name, phone: c.phone, orders: [], totalIngresos: 0, totalPagado: 0, saldoPendiente: 0 };
+        var key = (c.dni || c.phone || c.name).toLowerCase().trim();
+        clientsMap[key] = { name: c.name, phone: c.phone, dni: c.dni || '', orders: [], totalIngresos: 0, totalPagado: 0, saldoPendiente: 0 };
       });
 
       repairs.forEach(function(r) {
         if (!r || !r.clientName) return;
-        var key = (r.clientPhone || r.clientName).toLowerCase().trim();
+        var key = (r.clientDniCuit || r.clientPhone || r.clientName).toLowerCase().trim();
         if (!clientsMap[key]) {
-          clientsMap[key] = { name: r.clientName, phone: r.clientPhone || 'S/N', orders: [], totalIngresos: 0, totalPagado: 0, saldoPendiente: 0 };
+          clientsMap[key] = { name: r.clientName, phone: r.clientPhone || 'S/N', dni: r.clientDniCuit || '', orders: [], totalIngresos: 0, totalPagado: 0, saldoPendiente: 0 };
         }
         var budget = parseFloat(r.budget) || 0; 
         var advance = parseFloat(r.advance) || 0;
         var saldoOrden = budget - advance;
 
         clientsMap[key].orders.push({
-          id: r.id,
-          device: (r.deviceBrand || '') + ' ' + (r.deviceModel || ''),
-          status: r.status,
-          budget: budget,
-          advance: advance,
-          balance: saldoOrden,
-          date: r.createdAt
+          id: r.id, device: (r.deviceBrand || '') + ' ' + (r.deviceModel || ''),
+          status: r.status, budget: budget, advance: advance, balance: saldoOrden, date: r.createdAt
         });
 
         clientsMap[key].totalIngresos += budget; 
@@ -917,7 +1050,7 @@
       });
 
       var clientList = Object.values(clientsMap).filter(function(c) {
-        return !term || c.name.toLowerCase().includes(term) || c.phone.toLowerCase().includes(term);
+        return !term || c.name.toLowerCase().includes(term) || c.phone.toLowerCase().includes(term) || (c.dni && c.dni.toLowerCase().includes(term));
       });
 
       if (clientList.length === 0) { container.innerHTML = '<div class="text-center text-zinc-500 text-xs p-6">No hay clientes registrados.</div>'; return; }
@@ -935,7 +1068,7 @@
 
         return '<div class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-sm">' +
                  '<div class="p-3 flex items-center justify-between cursor-pointer" onclick="window.toggleClientDetails(\'client_card_' + index + '\')">' +
-                   '<div><h4 class="font-bold text-white text-xs">' + c.name + '</h4><span class="text-[10px] text-zinc-400 font-mono">' + c.phone + ' • ' + c.orders.length + ' trabajo(s)</span></div>' +
+                   '<div><h4 class="font-bold text-white text-xs">' + c.name + (c.dni ? ' <span class="font-mono font-normal text-zinc-400">(DNI/CUIT: ' + c.dni + ')</span>' : '') + '</h4><span class="text-[10px] text-zinc-400 font-mono">' + c.phone + ' • ' + c.orders.length + ' trabajo(s)</span></div>' +
                    '<div class="flex items-center gap-3">' +
                      '<div class="text-right"><span class="text-[9px] uppercase text-zinc-400 block font-bold">Saldo Pendiente</span><b class="font-mono text-xs ' + saldoColor + '">$' + c.saldoPendiente.toLocaleString() + '</b></div>' +
                      '<a href="https://wa.me/' + c.phone.replace(/[^0-9]/g, '') + '?text=' + encodeURIComponent('Hola ' + c.name + ', nos comunicamos desde ' + workshopSettings.name) + '" target="_blank" onclick="event.stopPropagation();" class="p-2 bg-emerald-950 text-emerald-400 border border-emerald-800 rounded-lg text-xs font-bold active:scale-95"><i class="ph-bold ph-whatsapp-logo"></i></a>' +
@@ -951,25 +1084,19 @@
 
     window.toggleClientDetails = function(cardId) {
       var el = $(cardId);
-      if (el) {
-        if (el.classList.contains('hidden')) el.classList.remove('hidden');
-        else el.classList.add('hidden');
-      }
+      if (el) { if (el.classList.contains('hidden')) el.classList.remove('hidden'); else el.classList.add('hidden'); }
     };
 
     window.payClientOrderBalance = function(orderId) {
-      var r = repairs.find(function(x) { return x.id === orderId; });
-      if (!r) return;
+      var r = repairs.find(function(x) { return x.id === orderId; }); if (!r) return;
       var balance = (parseFloat(r.budget) || 0) - (parseFloat(r.advance) || 0);
       if (balance <= 0) return;
 
       window.appConfirm("COBRAR SALDO", "¿Deseas cobrar el saldo pendiente de $" + balance + " para la orden #" + r.id + "?", function() {
         cashMovements.unshift({ id: 'CSH-' + Date.now(), branch: localBranch, type: 'INCOME', amount: balance, concept: 'Cobro Saldo Orden #' + r.id, method: 'Efectivo', date: Date.now(), user: activeUser, closed: false });
         StorageShield.save('cash', cashMovements);
-        r.advance = r.budget; 
-        StorageShield.save('repairs', repairs);
-        window.renderClientsList();
-        window.updateCashBalanceUI();
+        r.advance = r.budget; StorageShield.save('repairs', repairs);
+        window.renderClientsList(); window.updateCashBalanceUI();
         window.showToast("Cobrado", "Saldo registrado en caja exitosamente.");
       });
     };
@@ -984,7 +1111,6 @@
       if ($('cfgWorkshopName')) $('cfgWorkshopName').value = workshopSettings.name || '';
       if ($('cfgWorkshopSubtitle')) $('cfgWorkshopSubtitle').value = workshopSettings.subtitle || '';
 
-      // Aplicar Logo en el Header y en el modal de Ajustes
       if (workshopSettings.logo) {
         if ($('headerDefaultIcon')) $('headerDefaultIcon').classList.add('hidden');
         if ($('headerCustomLogo')) { $('headerCustomLogo').src = workshopSettings.logo; $('headerCustomLogo').classList.remove('hidden'); }
@@ -994,7 +1120,6 @@
         if ($('headerCustomLogo')) $('headerCustomLogo').classList.add('hidden');
         if ($('settingsLogoImg')) $('settingsLogoImg').classList.add('hidden');
       }
-
       window.renderBranchTabs();
     };
 
@@ -1004,7 +1129,7 @@
         reader.onload = function(e) {
           workshopSettings.logo = e.target.result;
           if ($('settingsLogoImg')) { $('settingsLogoImg').src = workshopSettings.logo; $('settingsLogoImg').classList.remove('hidden'); }
-          window.showToast("Logo", "Logotipo cargado correctamente. Haz clic en 'Guardar Ajustes'.");
+          window.showToast("Logo", "Logotipo cargado. Haz clic en 'Guardar Ajustes'.");
         };
         reader.readAsDataURL(input.files[0]);
       }
@@ -1036,16 +1161,17 @@
     window.openNewRepairModal = function() { 
       window.openModal('newRepairModal'); 
       setTimeout(function() {
-        ['inpClientName','inpClientPhone','inpDeviceBrand','inpDeviceModel','inpDeviceFault','inpDeviceBudget','inpDeviceAdvance','inpUnlockPin'].forEach(function(el){ if($(el)) $(el).value=''; });
+        ['inpClientName','inpClientDniCuit','inpClientPhone','inpDeviceBrand','inpDeviceModel','inpDeviceFault','inpDeviceBudget','inpDeviceAdvance','inpUnlockPin'].forEach(function(el){ if($(el)) $(el).value=''; });
         currentPhotos = []; window.renderNewPhotos();
         if($('newCalculatedBalance')) $('newCalculatedBalance').textContent = '$0';
+        if(typeof window.resetPatternCanvas === 'function') window.resetPatternCanvas();
       }, 50);
     };
 
     window.openSalesModal = function() { window.openModal('salesModal'); setTimeout(function() { window.switchPosTab('CATALOG'); }, 50); };
     window.openVentasHistoryModal = function() { window.openModal('ventasModal'); setTimeout(window.renderVentasList, 50); };
     window.openStockModal = function() { window.openModal('stockModal'); setTimeout(function() { window.switchStockTab('LIST'); window.renderStockList(); }, 50); };
-    window.openCashModal = function() { currentCashBranch = localBranch; window.openModal('cashModal'); setTimeout(window.updateCashBalanceUI, 50); };
+    window.openCashModal = function() { currentCashBranch = localBranch; window.openModal('cashModal'); setTimeout(function(){ window.switchCashTab('MOV'); window.updateCashBalanceUI(); }, 50); };
     window.openTeamModal = function() { window.openModal('teamModal'); };
     window.openLicenseModal = function() { window.openModal('licenseModal'); };
     window.openInstallModal = function() { window.openModal('installModal'); };
@@ -1080,8 +1206,7 @@
       if($('cfgWorkshopName')) $('cfgWorkshopName').value = workshopSettings.name || '';
       if($('cfgWorkshopSubtitle')) $('cfgWorkshopSubtitle').value = workshopSettings.subtitle || '';
       if (workshopSettings.logo && $('settingsLogoImg')) {
-        $('settingsLogoImg').src = workshopSettings.logo;
-        $('settingsLogoImg').classList.remove('hidden');
+        $('settingsLogoImg').src = workshopSettings.logo; $('settingsLogoImg').classList.remove('hidden');
       }
       window.openModal('settingsModal');
     };
@@ -1099,8 +1224,7 @@
     window.joinWorkshop = function() {
       window.appPrompt("Vincular", "Código del Taller Maestro (ej: TALLER-9572):", "text", "", function(code) {
         if (!code) return;
-        var targetCode = code.trim().toUpperCase();
-        localStorage.setItem(WORKSHOP_ID_KEY, targetCode);
+        localStorage.setItem(WORKSHOP_ID_KEY, code.trim().toUpperCase());
         window.showToast("Vinculando", "Reiniciando...");
         setTimeout(function() { window.location.reload(); }, 700);
       });
@@ -1115,15 +1239,12 @@
       if($('unlockViewPattern')) $('unlockViewPattern').style.display = type === 'pattern' ? 'block' : 'none';
       if($('unlockViewNone')) $('unlockViewNone').style.display = type === 'none' ? 'block' : 'none';
     };
-    window.resetPatternCanvas = function() {};
 
     window.handleNewPhotoUpload = function(input) {
       if (input.files && input.files[0]) {
         Array.from(input.files).forEach(function(file) {
           var reader = new FileReader();
-          reader.onload = function(e) {
-            currentPhotos.push(e.target.result); window.renderNewPhotos();
-          };
+          reader.onload = function(e) { currentPhotos.push(e.target.result); window.renderNewPhotos(); };
           reader.readAsDataURL(file);
         });
         input.value = '';
@@ -1152,10 +1273,11 @@
       var advanceAmt = parseFloat($('inpDeviceAdvance').value) || 0;
       var r = {
         id: id, branch: localBranch, clientName: $('inpClientName').value, 
+        clientDniCuit: $('inpClientDniCuit').value.trim(),
         clientPhone: $('inpClientCountryCode').value + $('inpClientPhone').value,
         deviceType: $('inpDeviceType').value, deviceBrand: $('inpDeviceBrand').value, deviceModel: $('inpDeviceModel').value,
         fault: $('inpDeviceFault').value, budget: parseFloat($('inpDeviceBudget').value) || 0, advance: advanceAmt,
-        unlockType: activeUnlockType, unlockPin: $('inpUnlockPin').value, photos: currentPhotos.slice(),
+        unlockType: activeUnlockType, unlockPin: $('inpUnlockPin').value, unlockPattern: currentPatternCode, photos: currentPhotos.slice(),
         status: 'WAITING', createdAt: Date.now(), createdBy: activeUser
       };
       if(!r.clientName || !r.deviceBrand || !r.deviceModel) { window.showToast("Error", "Completa campos obligatorios (*)"); return; }
@@ -1177,7 +1299,7 @@
       var box = $('repairTicketPreviewBox');
       if (box) {
         var balance = (parseFloat(r.budget) || 0) - (parseFloat(r.advance) || 0);
-        box.innerHTML = '<div style="text-align:center;border-bottom:1px dashed #000;padding-bottom:6px;margin-bottom:6px;"><b>' + workshopSettings.name.toUpperCase() + '</b><br><span style="font-size:9px;">ORDEN #' + r.id + '</span></div><div style="font-size:10px;line-height:1.3;"><b>Cliente:</b> ' + r.clientName + '<br><b>Equipo:</b> ' + r.deviceBrand + ' ' + r.deviceModel + '<br><b>Ppto:</b> $' + (r.budget||0) + '<br><b>Seña:</b> $' + (r.advance||0) + '<br><b>Resta:</b> $' + balance + '</div>';
+        box.innerHTML = '<div style="text-align:center;border-bottom:1px dashed #000;padding-bottom:6px;margin-bottom:6px;"><b>' + workshopSettings.name.toUpperCase() + '</b><br><span style="font-size:9px;">ORDEN #' + r.id + '</span></div><div style="font-size:10px;line-height:1.3;"><b>Cliente:</b> ' + r.clientName + (r.clientDniCuit ? ' (DNI: ' + r.clientDniCuit + ')' : '') + '<br><b>Equipo:</b> ' + r.deviceBrand + ' ' + r.deviceModel + '<br><b>Ppto:</b> $' + (r.budget||0) + '<br><b>Seña:</b> $' + (r.advance||0) + '<br><b>Resta:</b> $' + balance + '</div>';
       }
       window.openModal('repairTicketModal');
     };
@@ -1303,14 +1425,8 @@
       var filtered = repairs.filter(function(r) {
         if(!r) return false;
         var matchBranch = currentBranchFilter === 'ALL' || r.branch === currentBranchFilter;
-        var matchStatus = true;
-        if (currentFilter === 'ALL') {
-          matchStatus = r.status !== 'READY';
-        } else {
-          matchStatus = r.status === currentFilter;
-        }
-
-        var matchSearch = !term || (r.id && r.id.toLowerCase().includes(term)) || (r.clientName && r.clientName.toLowerCase().includes(term)) || (r.deviceBrand && r.deviceBrand.toLowerCase().includes(term));
+        var matchStatus = currentFilter === 'ALL' ? r.status !== 'READY' : r.status === currentFilter;
+        var matchSearch = !term || (r.id && r.id.toLowerCase().includes(term)) || (r.clientName && r.clientName.toLowerCase().includes(term)) || (r.clientDniCuit && r.clientDniCuit.toLowerCase().includes(term)) || (r.deviceBrand && r.deviceBrand.toLowerCase().includes(term));
         return matchBranch && matchStatus && matchSearch;
       });
 
@@ -1322,7 +1438,7 @@
           var meta = window.getOperationalStatusMeta(r.status);
           return '<div onclick="window.openDetailModal(\''+r.id+'\')" class="bg-zinc-900 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between shadow-sm cursor-pointer">' +
                  '<div><div class="flex items-center gap-1.5"><span class="font-mono text-xs font-bold text-iosBlue">'+r.id+'</span><span class="text-[9px] px-1.5 py-0.5 rounded font-bold '+meta.list+'">'+meta.label+'</span></div>' +
-                 '<h4 class="text-xs font-bold text-white mt-0.5">'+r.deviceBrand+' '+r.deviceModel+'</h4><div class="text-[10px] text-zinc-400 mt-0.5">'+r.clientName+'</div></div>' +
+                 '<h4 class="text-xs font-bold text-white mt-0.5">'+r.deviceBrand+' '+r.deviceModel+'</h4><div class="text-[10px] text-zinc-400 mt-0.5">'+r.clientName + (r.clientDniCuit ? ' ('+r.clientDniCuit+')' : '')+'</div></div>' +
                  '<i class="ph-bold ph-caret-right text-zinc-600 text-base"></i></div>';
         }).join('');
       }
@@ -1344,12 +1460,12 @@
       if($('dtlDeviceTitle')) $('dtlDeviceTitle').textContent = r.deviceBrand + ' ' + r.deviceModel;
       if($('dtlClientName')) $('dtlClientName').textContent = r.clientName;
       if($('dtlClientPhone')) $('dtlClientPhone').textContent = r.clientPhone;
+      if($('dtlClientDni')) $('dtlClientDni').textContent = r.clientDniCuit ? 'DNI/CUIT: ' + r.clientDniCuit : '';
       if($('dtlDeviceFault')) $('dtlDeviceFault').textContent = r.fault || 'Sin descripción';
       if($('dtlBudgetTotal')) $('dtlBudgetTotal').textContent = '$' + (r.budget || 0);
       if($('dtlAdvancePaid')) $('dtlAdvancePaid').textContent = '$' + (r.advance || 0);
       if($('dtlBalanceDue')) $('dtlBalanceDue').textContent = '$' + ((r.budget || 0) - (r.advance || 0));
 
-      // Renderizar fotos del equipo en el modal detalle
       var photosGrid = $('dtlPhotosGrid');
       var photosSec = $('dtlPhotosSection');
       if (photosGrid && photosSec) {
@@ -1358,17 +1474,15 @@
           photosGrid.innerHTML = r.photos.map(function(p) {
             return '<a href="' + p + '" target="_blank" class="w-16 h-16 rounded-xl overflow-hidden border border-zinc-700 shrink-0 block"><img src="' + p + '" class="w-full h-full object-cover"></a>';
           }).join('');
-        } else {
-          photosSec.style.display = 'none';
-        }
+        } else { photosSec.style.display = 'none'; }
       }
-
       window.openModal('detailModal');
     };
 
     window.openEditRepairModal = function() {
       var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
       if($('editClientName')) $('editClientName').value = r.clientName || '';
+      if($('editClientDniCuit')) $('editClientDniCuit').value = r.clientDniCuit || '';
       if($('editDeviceBrand')) $('editDeviceBrand').value = r.deviceBrand || '';
       if($('editDeviceModel')) $('editDeviceModel').value = r.deviceModel || '';
       if($('editDeviceBudget')) $('editDeviceBudget').value = r.budget || 0;
@@ -1379,7 +1493,8 @@
     window.saveEditedRepair = function(e) {
       if(e && e.preventDefault) e.preventDefault();
       var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
-      r.clientName = $('editClientName').value; r.deviceBrand = $('editDeviceBrand').value; r.deviceModel = $('editDeviceModel').value;
+      r.clientName = $('editClientName').value; r.clientDniCuit = $('editClientDniCuit').value.trim();
+      r.deviceBrand = $('editDeviceBrand').value; r.deviceModel = $('editDeviceModel').value;
       r.budget = parseFloat($('editDeviceBudget').value) || 0; r.advance = parseFloat($('editDeviceAdvance').value) || 0;
       StorageShield.save('repairs', repairs);
       window.closeModal('editRepairModal'); window.openDetailModal(r.id); window.renderRepairsList();
@@ -1389,9 +1504,7 @@
       var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
       r.status = st; StorageShield.save('repairs', repairs);
       window.renderRepairsList(); window.updateCounters(); window.openDetailModal(r.id);
-      if(st === 'READY') {
-        window.showToast("Orden Lista", "El equipo ha sido marcado como listo y archivado de la lista activa.");
-      }
+      if(st === 'READY') { window.showToast("Orden Lista", "El equipo ha sido marcado como listo."); }
     };
 
     window.chargeRepairToCash = function() {
@@ -1409,7 +1522,16 @@
       window.closeModal('detailModal'); window.renderRepairsList(); window.updateCounters();
     };
 
-    // CAJA LOCAL
+    // --- CAJA LOCAL CON EDICIÓN, ELIMINACIÓN Y CIERRE / BALANCES ---
+    window.switchCashTab = function(tab) {
+      var isMov = (tab === 'MOV');
+      if($('cashViewMov')) $('cashViewMov').style.display = isMov ? 'block' : 'none';
+      if($('cashViewBalance')) $('cashViewBalance').style.display = !isMov ? 'block' : 'none';
+      if($('cashTabMovBtn')) $('cashTabMovBtn').className = isMov ? 'py-1.5 rounded-lg font-bold text-xs transition bg-emerald-700 text-white shadow' : 'py-1.5 rounded-lg font-bold text-xs transition bg-zinc-800 text-zinc-400';
+      if($('cashTabBalanceBtn')) $('cashTabBalanceBtn').className = !isMov ? 'py-1.5 rounded-lg font-bold text-xs transition bg-emerald-700 text-white shadow' : 'py-1.5 rounded-lg font-bold text-xs transition bg-zinc-800 text-zinc-400';
+      if(!isMov) window.updateBalanceMetrics();
+    };
+
     window.updateCashBalanceUI = function() {
       var income = 0, expense = 0;
       cashMovements.forEach(function(m) {
@@ -1426,28 +1548,87 @@
       
       var container = $('cashListContainer');
       if(container) {
-        var filtered = cashMovements.filter(function(m) { return (m.branch || 'Central') === currentCashBranch && !m.closed; });
+        var filtered = cashMovements.filter(function(m) { return (m.branch || 'Central') === currentCashBranch; });
         container.innerHTML = filtered.map(function(m) {
           var isInc = m.type === 'INCOME';
-          return '<div class="flex justify-between items-center p-2 bg-zinc-950 rounded-xl"><div><div class="font-bold text-white">' + m.concept + '</div><span class="text-[9px] text-zinc-400">' + new Date(m.date).toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'}) + ' • ' + m.method + '</span></div><b class="font-mono ' + (isInc ? 'text-emerald-400' : 'text-rose-400') + '">' + (isInc ? '+' : '-') + '$' + (m.amount||0).toLocaleString() + '</b></div>';
+          return '<div class="flex justify-between items-center p-2 bg-zinc-950 rounded-xl"><div><div class="font-bold text-white">' + m.concept + ' ' + (m.closed ? '<span class="text-[8px] bg-zinc-800 text-zinc-400 px-1 rounded">Cerrado</span>' : '') + '</div><span class="text-[9px] text-zinc-400">' + new Date(m.date).toLocaleDateString('es-AR') + ' • ' + m.method + '</span></div><div class="flex items-center gap-2"><b class="font-mono ' + (isInc ? 'text-emerald-400' : 'text-rose-400') + '">' + (isInc ? '+' : '-') + '$' + (m.amount||0).toLocaleString() + '</b><button type="button" onclick="window.editCashMovement(\''+m.id+'\')" class="text-xs text-blue-400 px-1"><i class="ph-bold ph-pencil"></i></button><button type="button" onclick="window.deleteCashMovement(\''+m.id+'\')" class="text-xs text-rose-400 px-1"><i class="ph-bold ph-trash"></i></button></div></div>';
         }).join('') || '<div class="text-center text-zinc-500 text-xs py-3">Sin movimientos en esta caja.</div>';
       }
     };
 
-    window.showCashIncome = function() { if($('cashMovementForm')) $('cashMovementForm').style.display = 'block'; if($('cshType')) $('cshType').value = 'INCOME'; };
-    window.showCashExpense = function() { if($('cashMovementForm')) $('cashMovementForm').style.display = 'block'; if($('cshType')) $('cshType').value = 'EXPENSE'; };
+    window.showCashIncome = function() { if($('cashMovementForm')) $('cashMovementForm').style.display = 'block'; if($('cshType')) $('cshType').value = 'INCOME'; if($('cshEditId')) $('cshEditId').value = ''; if($('cshAmount')) $('cshAmount').value=''; if($('cshConcept')) $('cshConcept').value=''; };
+    window.showCashExpense = function() { if($('cashMovementForm')) $('cashMovementForm').style.display = 'block'; if($('cshType')) $('cshType').value = 'EXPENSE'; if($('cshEditId')) $('cshEditId').value = ''; if($('cshAmount')) $('cshAmount').value=''; if($('cshConcept')) $('cshConcept').value=''; };
     window.hideCashForm = function() { if($('cashMovementForm')) $('cashMovementForm').style.display = 'none'; };
 
     window.saveCashMovement = function() {
+      var editId = $('cshEditId').value;
       var amt = parseFloat($('cshAmount').value) || 0;
       var concept = $('cshConcept').value.trim();
       var type = $('cshType').value;
       var method = $('cshMethod').value;
       if(amt <= 0 || !concept) { window.showToast("Error", "Completa monto y concepto."); return; }
-      cashMovements.unshift({ id: 'CSH-' + Date.now(), branch: currentCashBranch, type: type, amount: amt, concept: concept, method: method, date: Date.now(), user: activeUser, closed: false });
+
+      if(editId) {
+        var m = cashMovements.find(function(x){ return x.id === editId; });
+        if(m) { m.amount = amt; m.concept = concept; m.type = type; m.method = method; }
+      } else {
+        cashMovements.unshift({ id: 'CSH-' + Date.now(), branch: currentCashBranch, type: type, amount: amt, concept: concept, method: method, date: Date.now(), user: activeUser, closed: false });
+      }
       StorageShield.save('cash', cashMovements);
-      $('cshAmount').value = ''; $('cshConcept').value = ''; window.hideCashForm(); window.updateCashBalanceUI();
-      window.showToast("Caja", "Movimiento registrado.");
+      $('cshAmount').value = ''; $('cshConcept').value = ''; $('cshEditId').value = ''; window.hideCashForm(); window.updateCashBalanceUI();
+      window.showToast("Caja", "Movimiento guardado con éxito.");
+    };
+
+    window.editCashMovement = function(id) {
+      var m = cashMovements.find(function(x){ return x.id === id; }); if(!m) return;
+      window.showCashIncome();
+      if($('cshEditId')) $('cshEditId').value = m.id;
+      if($('cshType')) $('cshType').value = m.type;
+      if($('cshAmount')) $('cshAmount').value = m.amount;
+      if($('cshConcept')) $('cshConcept').value = m.concept;
+      if($('cshMethod')) $('cshMethod').value = m.method;
+    };
+
+    window.deleteCashMovement = function(id) {
+      window.appConfirm("Eliminar Pago", "¿Estás seguro de eliminar este movimiento de caja?", function() {
+        cashMovements = cashMovements.filter(function(x){ return x.id !== id; });
+        StorageShield.save('cash', cashMovements);
+        window.updateCashBalanceUI();
+        window.showToast("Eliminado", "Movimiento eliminado.");
+      });
+    };
+
+    window.updateBalanceMetrics = function() {
+      var now = Date.now();
+      var oneWeekAgo = now - (7 * 24 * 60 * 60 * 1000);
+      var oneMonthAgo = now - (30 * 24 * 60 * 60 * 1000);
+      var weeklyInc = 0, weeklyExp = 0, monthlyInc = 0, monthlyExp = 0;
+
+      cashMovements.forEach(function(m) {
+        if((m.branch || 'Central') === currentCashBranch) {
+          var amt = parseFloat(m.amount) || 0;
+          if(m.date >= oneWeekAgo) {
+            if(m.type === 'INCOME') weeklyInc += amt; else weeklyExp += amt;
+          }
+          if(m.date >= oneMonthAgo) {
+            if(m.type === 'INCOME') monthlyInc += amt; else monthlyExp += amt;
+          }
+        }
+      });
+
+      if($('balanceWeeklyProfit')) $('balanceWeeklyProfit').textContent = '$' + (weeklyInc - weeklyExp).toLocaleString();
+      if($('balanceMonthlyProfit')) $('balanceMonthlyProfit').textContent = '$' + (monthlyInc - monthlyExp).toLocaleString();
+    };
+
+    window.executeDailyCashClose = function() {
+      window.appConfirm("Cierre Diario", "¿Deseas realizar el cierre diario? Los movimientos actuales quedarán archivados.", function() {
+        cashMovements.forEach(function(m) {
+          if((m.branch || 'Central') === currentCashBranch) m.closed = true;
+        });
+        StorageShield.save('cash', cashMovements);
+        window.updateCashBalanceUI();
+        window.showToast("Cierre Exitoso", "Caja cerrada correctamente.");
+      });
     };
 
     window.renderVentasList = function() {
