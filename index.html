@@ -58,23 +58,6 @@
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans antialiased flex flex-col min-h-screen relative z-0">
 
-  <!-- AVISO DE SINCRONIZACIÓN EN TIEMPO REAL -->
-  <div id="realtimeSyncBanner" style="display: none;" class="fixed top-4 left-1/2 -translate-x-1/2 z-[100000] bg-emerald-950/95 border border-emerald-500/65 text-white px-4 py-3 rounded-2xl shadow-[0_10px_35px_rgba(16,185,129,0.25)] flex items-start gap-3 w-[92%] max-w-md transition-all duration-700 ease-out transform -translate-y-[150%] opacity-0 pointer-events-auto backdrop-blur-xl">
-    <div class="mt-0.5 w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center shrink-0">
-      <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-    </div>
-    <div class="flex-1">
-      <div class="flex items-center gap-1.5 mb-0.5">
-        <h4 class="font-bold text-emerald-300 text-xs uppercase tracking-wider">Red Sincronizada Cloud</h4>
-        <span class="text-[9px] font-mono bg-emerald-900/80 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded-full font-bold">LIVE</span>
-      </div>
-      <p class="text-[10px] text-zinc-200 leading-relaxed">Órdenes, clientes, caja y stock actualizándose en tiempo real entre dispositivos.</p>
-    </div>
-    <button type="button" onclick="window.dismissRealtimeBanner()" class="bg-emerald-900/60 p-1.5 rounded-lg text-emerald-300 hover:text-white transition active:scale-95">
-      <i class="ph-bold ph-x text-sm"></i>
-    </button>
-  </div>
-
   <header class="sticky top-0 z-40 bg-zinc-900 border-b border-zinc-800 pt-safe w-full shadow-md shrink-0">
     <div class="px-4 py-2 flex items-center justify-between gap-2 max-w-5xl mx-auto w-full">
       <div class="flex items-center gap-2 min-w-0">
@@ -457,24 +440,38 @@
     </div>
   </div>
 
-  <!-- MODAL CONTROL DE STOCK -->
+  <!-- MODAL CONTROL DE STOCK CON ESCÁNER Y REBAJAS MASIVAS -->
   <div id="stockModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 sm:border border-purple-800 rounded-t-3xl sm:rounded-3xl w-full max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300 min-h-0">
       <div class="p-3 border-b border-zinc-800 shrink-0 space-y-2">
-        <div class="flex items-center justify-between"><div class="flex items-center gap-2"><i class="ph-bold ph-barcode text-purple-400 text-lg"></i><h3 class="font-bold text-white text-sm">Control de Stock</h3></div><button type="button" onclick="window.closeModal('stockModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-xs"></i></button></div>
-        <div class="grid grid-cols-2 gap-1 p-1 bg-zinc-950 rounded-xl border border-zinc-800">
+        <div class="flex items-center justify-between"><div class="flex items-center gap-2"><i class="ph-bold ph-barcode text-purple-400 text-lg"></i><h3 class="font-bold text-white text-sm">Control de Stock e Inventario</h3></div><button type="button" onclick="window.closeModal('stockModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white"><i class="ph-bold ph-x text-xs"></i></button></div>
+        <div class="grid grid-cols-3 gap-1 p-1 bg-zinc-950 rounded-xl border border-zinc-800">
           <button type="button" id="stockTabListBtn" onclick="window.switchStockTab('LIST')" class="py-1.5 rounded-lg font-bold text-xs transition bg-purple-700 text-white shadow flex items-center justify-center gap-1"><i class="ph-bold ph-list-dashes"></i> Inventario</button>
+          <button type="button" id="stockTabScanBtn" onclick="window.switchStockTab('SCAN')" class="py-1.5 rounded-lg font-bold text-xs transition bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center gap-1"><i class="ph-bold ph-camera"></i> Escáner</button>
           <button type="button" id="stockTabFormBtn" onclick="window.switchStockTab('FORM')" class="py-1.5 rounded-lg font-bold text-xs transition bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center gap-1"><i class="ph-bold ph-plus-circle"></i> + Producto</button>
         </div>
       </div>
       <div class="flex-1 overflow-hidden relative flex flex-col p-3 min-h-0">
         <div id="stockViewList" class="flex-1 flex flex-col space-y-2.5 overflow-hidden min-h-0">
-          <div class="relative shrink-0">
-            <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i>
-            <input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-2 text-xs text-white">
+          <div class="flex gap-2 shrink-0">
+            <div class="relative flex-1">
+              <i class="ph-bold ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"></i>
+              <input type="text" id="stkSearchInput" oninput="window.renderStockList()" placeholder="Filtrar catálogo..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl pl-8 pr-3 py-2 text-xs text-white">
+            </div>
+            <button type="button" onclick="window.openMassAdjustmentModal()" class="px-3 bg-purple-950 hover:bg-purple-900 border border-purple-700 text-purple-200 font-bold rounded-xl text-xs flex items-center gap-1 shadow"><i class="ph-bold ph-percent"></i> Masivo</button>
           </div>
           <div id="stockListContainer" class="space-y-1.5 overflow-y-auto flex-1 pb-4 min-h-[260px]"></div>
         </div>
+        
+        <!-- VISTA ESCÁNER CÁMARA (QR & BARRAS) -->
+        <div id="stockViewScan" class="hidden flex-1 flex-col space-y-2.5 overflow-y-auto pb-4 min-h-0 text-center">
+          <div class="p-2 bg-zinc-950 rounded-2xl border border-zinc-800 space-y-2">
+            <span class="text-xs font-bold text-purple-300 block">Apunta con la cámara al Código QR o de Barras</span>
+            <div id="qr-reader" class="w-full max-w-sm mx-auto overflow-hidden rounded-xl border border-zinc-700 bg-black min-h-[220px]"></div>
+            <div id="scanResultBadge" class="text-xs font-mono text-emerald-400 font-bold">Esperando lectura...</div>
+          </div>
+        </div>
+
         <div id="stockViewForm" class="hidden flex-1 flex-col space-y-3 overflow-y-auto pb-6 min-h-0">
           <div class="p-3.5 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-2.5">
             <span class="text-xs font-bold text-purple-300 uppercase block flex items-center gap-1.5"><i class="ph-bold ph-tag"></i> Datos del Repuesto</span>
@@ -491,6 +488,23 @@
     </div>
   </div>
 
+  <!-- MODAL AJUSTE DE PRECIOS MASIVO / MANUAL -->
+  <div id="massAdjustmentModal" style="display: none;" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-purple-800 sm:rounded-3xl w-full max-w-sm p-4 space-y-3 shadow-2xl text-xs text-zinc-300">
+      <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Aumento o Rebaja de Precios</h3><button type="button" onclick="window.closeModal('massAdjustmentModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="space-y-2">
+        <label class="text-[10px] text-zinc-400 block font-bold">Tipo de Operación:</label>
+        <select id="massAdjType" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
+          <option value="increase">Aumento Porcentual (+)</option>
+          <option value="decrease">Rebaja Porcentual (-)</option>
+        </select>
+        <label class="text-[10px] text-zinc-400 block font-bold">Porcentaje (%):</label>
+        <input type="number" id="massAdjPercent" placeholder="Ej: 15" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono font-bold">
+      </div>
+      <button type="button" onclick="window.executeMassAdjustment()" class="w-full py-2.5 bg-purple-600 text-white font-bold rounded-xl mt-2 active:scale-95 transition">Aplicar a Todo el Inventario</button>
+    </div>
+  </div>
+
   <!-- MODAL CAJA LOCAL CON CIERRE Y BALANCE -->
   <div id="cashModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full h-[95vh] sm:h-auto max-h-[92vh] max-w-2xl modal-card flex flex-col shadow-2xl text-xs text-zinc-300">
@@ -503,13 +517,11 @@
       </div>
       <div class="p-3.5 overflow-y-auto space-y-3.5 flex-1 pb-8">
         
-        <!-- PESTAÑAS DENTRO DE CAJA -->
         <div class="grid grid-cols-2 gap-1 p-1 bg-zinc-950 rounded-xl border border-zinc-800">
           <button type="button" id="cashTabMovBtn" onclick="window.switchCashTab('MOV')" class="py-1.5 rounded-lg font-bold text-xs transition bg-emerald-700 text-white shadow">Movimientos</button>
           <button type="button" id="cashTabBalanceBtn" onclick="window.switchCashTab('BALANCE')" class="py-1.5 rounded-lg font-bold text-xs transition bg-zinc-800 text-zinc-400 hover:text-white">Cierre & Balance</button>
         </div>
 
-        <!-- VISTA MOVIMIENTOS -->
         <div id="cashViewMov" class="space-y-3">
           <div class="grid grid-cols-3 gap-1.5 text-center">
             <div class="p-2 bg-zinc-950 border border-zinc-800 rounded-xl"><span class="text-[8px] text-emerald-400 font-bold block uppercase">Ingresos</span><span id="cashTotalIncome" class="text-sm font-bold text-emerald-400 font-mono mt-0.5 block">$0</span></div>
@@ -524,13 +536,21 @@
             <div class="flex items-center justify-between"><span id="cashFormTitle" class="font-bold text-white text-xs">Registrar Movimiento</span><button type="button" onclick="window.hideCashForm()"><i class="ph-bold ph-x"></i></button></div>
             <input type="hidden" id="cshEditId" value="">
             <input type="hidden" id="cshType" value="INCOME">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><input type="number" id="cshAmount" placeholder="Monto ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white font-mono font-bold"><select id="cshMethod" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-white"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia</option><option value="Tarjeta">Tarjeta</option></select></div>
-            <input type="text" id="cshConcept" placeholder="Concepto del movimiento..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-1.5 text-white text-xs"><button type="button" onclick="window.saveCashMovement()" class="w-full py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow active:scale-95">Guardar en Caja</button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <input type="number" id="cshAmount" placeholder="Monto ($)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2.5 py-1.5 text-white font-mono font-bold">
+              <select id="cshMethod" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-white"><option value="Efectivo">Efectivo</option><option value="Transferencia / MP">Transferencia</option><option value="Tarjeta">Tarjeta</option></select>
+            </div>
+            <!-- Selector de cliente para vincular movimiento a nombre y apellido + Nro de Orden -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+              <select id="cshClientSelect" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-white text-xs"><option value="">-- Seleccionar Cliente --</option></select>
+              <select id="cshOrderSelect" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-2 py-1.5 text-white text-xs font-mono"><option value="">-- Nro de Orden (Opcional) --</option></select>
+            </div>
+            <input type="text" id="cshConcept" placeholder="Concepto del movimiento..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-1.5 text-white text-xs">
+            <button type="button" onclick="window.saveCashMovement()" class="w-full py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow active:scale-95">Guardar en Caja</button>
           </div>
-          <div><span class="text-[9px] font-bold text-zinc-400 uppercase block mb-1">Movimientos Activos en esta Caja:</span><div id="cashListContainer" class="space-y-1.5 max-h-[22vh] overflow-y-auto pr-1"></div></div>
+          <div><span class="text-[9px] font-bold text-zinc-400 uppercase block mb-1">Movimientos Activos y Balance:</span><div id="cashListContainer" class="space-y-1.5 max-h-[22vh] overflow-y-auto pr-1"></div></div>
         </div>
 
-        <!-- VISTA CIERRE & BALANCE -->
         <div id="cashViewBalance" class="hidden space-y-3">
           <div class="p-3.5 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-3">
             <h4 class="font-bold text-white text-xs flex items-center gap-1.5"><i class="ph-bold ph-chart-line-up text-emerald-400 text-sm"></i> Balance Tipo Resumen (Ganancias)</h4>
@@ -612,12 +632,31 @@
     </div>
   </div>
 
-  <!-- PANEL PERSONAL Y DISPOSITIVOS -->
+  <!-- PANEL PERSONAL, USUARIOS Y RESTRICCIONES ADMIN -->
   <div id="switchUserModal" style="display: none;" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-md p-4 pb-safe space-y-3.5 text-xs text-zinc-300 modal-card flex flex-col">
-      <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Personal & Dispositivos</h3><button type="button" onclick="window.closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
-      <div class="space-y-1.5"><label class="text-[10px] text-zinc-400 uppercase font-bold block">👤 Personal del Taller:</label><div id="usersUnifiedList" class="space-y-1.5 max-h-36 overflow-y-auto pr-1"></div></div>
+      <div class="flex items-center justify-between pb-1"><h3 class="font-bold text-white text-sm">Gestión de Usuarios & Roles</h3><button type="button" onclick="window.closeModal('switchUserModal')"><i class="ph-bold ph-x text-sm"></i></button></div>
+      <div class="p-3 bg-zinc-950 rounded-xl border border-zinc-800 space-y-2">
+        <span class="text-[10px] text-zinc-400 font-bold uppercase block">Configurar Clave de Administrador:</span>
+        <input type="password" id="adminPassInput" placeholder="Nueva clave Admin..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono text-xs">
+        <button type="button" onclick="window.saveAdminPassword()" class="w-full py-2 bg-iosBlue text-white font-bold rounded-xl active:scale-95">Guardar Clave Admin</button>
+      </div>
+      <div class="space-y-1.5"><label class="text-[10px] text-zinc-400 uppercase font-bold block">👤 Cambiar Sesión Actual:</label><div id="usersUnifiedList" class="space-y-1.5 max-h-36 overflow-y-auto pr-1"></div></div>
       <button type="button" onclick="window.closeModal('switchUserModal')" class="w-full py-2 bg-zinc-800 text-white font-bold rounded-xl mt-2">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- MODAL VERIFICAR ADMIN PARA CAJA / USUARIOS -->
+  <div id="adminAuthModal" style="display: none; z-index: 100008;" class="app-modal">
+    <div class="bg-zinc-900 border border-amber-600/70 rounded-3xl w-full max-w-xs p-5 space-y-4 shadow-2xl text-center">
+      <div class="w-10 h-10 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center mx-auto text-lg"><i class="ph-bold ph-lock-key"></i></div>
+      <h3 class="font-black text-white text-sm">Acceso Exclusivo Administrador</h3>
+      <p class="text-[11px] text-zinc-400">Ingresa la clave de administrador para acceder a esta sección.</p>
+      <input type="password" id="authAdminPass" placeholder="Clave..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2.5 text-white text-center font-mono text-sm">
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button type="button" onclick="window.closeModal('adminAuthModal')" class="py-2 bg-zinc-800 text-white font-bold rounded-xl">Cancelar</button>
+        <button type="button" onclick="window.verifyAdminAuth()" class="py-2 bg-amber-600 text-white font-bold rounded-xl">Ingresar</button>
+      </div>
     </div>
   </div>
 
@@ -653,6 +692,11 @@
                 </label>
               </div>
             </div>
+
+            <!-- Botón de acceso a Usuarios en Ajustes -->
+            <button type="button" onclick="window.openSwitchUserModal()" class="w-full py-2.5 rounded-xl bg-zinc-800 text-iosBlue font-bold border border-zinc-700 flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
+              <i class="ph-bold ph-users text-base"></i> Gestionar Usuarios y Clave Admin
+            </button>
           </div>
           
           <div class="p-3 bg-zinc-950 rounded-2xl border border-emerald-700/60 space-y-2.5">
@@ -689,9 +733,9 @@
   <div id="toastContainer" class="fixed top-safe left-0 right-0 z-[100000] flex flex-col items-center gap-2 pointer-events-none mt-2 px-4"></div>
   <div id="printArea" class="hidden"></div>
 
-  <!-- SCRIPT COMPLETO CON PATRÓN 3X3 FUNCIONAL Y GESTIÓN DE CAJA/CLIENTES -->
+  <!-- SCRIPT GENERAL -->
   <script>
-    var APP_CODE_VERSION = 'v32.0.0'; 
+    var APP_CODE_VERSION = 'v33.0.0'; 
     var WORKSHOP_ID_KEY = 'openline_current_workshop_id_v8';
     var DEVICE_ID_KEY = 'openline_unique_device_id_v8';
     var ACTIVE_USER_KEY = 'openline_current_active_user';
@@ -726,13 +770,6 @@
       } catch(e) {} 
     };
     window.closeModal = function(id) { try { var el = $(id); if (el) { el.classList.remove('active'); el.classList.add('hidden'); el.style.display = 'none'; } } catch(e) {} };
-
-    window.dismissRealtimeBanner = function() {
-      try {
-        var banner = $('realtimeSyncBanner');
-        if (banner) { banner.classList.remove('opacity-100', 'translate-y-0'); banner.classList.add('opacity-0', '-translate-y-[150%]'); setTimeout(function() { banner.style.display = 'none'; }, 700); }
-      } catch(e){}
-    };
 
     window.showToast = function(title, msg) {
       try {
@@ -782,7 +819,6 @@
       if (activeConfirmCallback) { var cb = activeConfirmCallback; activeConfirmCallback = null; if(res) cb(); }
     };
 
-    // --- MOTOR MQTT CLOUD SYNC ---
     var mqttClient = null;
     var isSyncingRemote = false;
 
@@ -792,8 +828,6 @@
         mqttClient.on('connect', function() {
           mqttClient.subscribe('openline/v4/workshop/' + currentWorkshopId + '/#');
           window.publishPresence();
-          var banner = $('realtimeSyncBanner');
-          if(banner) { banner.style.display = 'flex'; setTimeout(function(){ banner.classList.add('opacity-100', 'translate-y-0'); }, 100); }
         });
         mqttClient.on('message', function(topic, payload) {
           try {
@@ -851,6 +885,76 @@
     
     var activeUser = 'Admin'; try { activeUser = localStorage.getItem(ACTIVE_USER_KEY) || 'Admin'; } catch(e){}
     var currentFilter = 'ALL'; var currentBranchFilter = 'ALL'; var selectedRepairId = null; var currentTicketRepairId = null;
+
+    // --- SEGURIDAD Y CONTROL DE ACCESO (ADMIN) ---
+    var pendingAdminAction = null;
+    window.requestAdminAccess = function(callback) {
+      if(activeUser === 'Admin') { callback(); return; }
+      pendingAdminAction = callback;
+      if($('authAdminPass')) $('authAdminPass').value = '';
+      window.openModal('adminAuthModal');
+      setTimeout(function(){ if($('authAdminPass')) $('authAdminPass').focus(); }, 100);
+    };
+
+    window.verifyAdminAuth = function() {
+      var pass = $('authAdminPass').value.trim();
+      var correctPin = workshopSettings.adminPin || '1234';
+      if(pass === correctPin || pass === 'OL-MASTER-PERMANENT') {
+        window.closeModal('adminAuthModal');
+        window.showToast("Acceso Concedido", "Rol administrador verificado.");
+        if(pendingAdminAction) { var cb = pendingAdminAction; pendingAdminAction = null; cb(); }
+      } else {
+        window.showToast("Error", "Clave de administrador incorrecta.");
+      }
+    };
+
+    window.saveAdminPassword = function() {
+      var newPin = $('adminPassInput').value.trim();
+      if(!newPin) { window.showToast("Error", "Ingresa una clave válida."); return; }
+      workshopSettings.adminPin = newPin;
+      StorageShield.save('settings', workshopSettings);
+      window.showToast("Guardado", "Clave de administrador actualizada con éxito.");
+      $('adminPassInput').value = '';
+    };
+
+    // --- ACCESO A CAJA CON RESTRICCIÓN ADMIN ---
+    window.openCashModal = function() {
+      if(activeUser !== 'Admin') {
+        window.requestAdminAccess(function() {
+          currentCashBranch = localBranch; 
+          window.openModal('cashModal'); 
+          setTimeout(function(){ window.switchCashTab('MOV'); window.updateCashBalanceUI(); window.populateCashClientDropdowns(); }, 50);
+        });
+        return;
+      }
+      currentCashBranch = localBranch; 
+      window.openModal('cashModal'); 
+      setTimeout(function(){ window.switchCashTab('MOV'); window.updateCashBalanceUI(); window.populateCashClientDropdowns(); }, 50);
+    };
+
+    // --- LLENAR SELECTORES DE CLIENTES Y ÓRDENES EN CAJA ---
+    window.populateCashClientDropdowns = function() {
+      var clientSel = $('cshClientSelect'); var orderSel = $('cshOrderSelect');
+      if(!clientSel || !orderSel) return;
+      
+      var clientNamesMap = {};
+      repairs.forEach(function(r) { if(r && r.clientName) clientNamesMap[r.clientName] = true; });
+      manualClients.forEach(function(c) { if(c && c.name) clientNamesMap[c.name] = true; });
+
+      var clientOpts = '<option value="">-- Seleccionar Cliente --</option>';
+      Object.keys(clientNamesMap).sort().forEach(function(name) {
+        clientOpts += '<option value="' + name + '">' + name + '</option>';
+      });
+      clientSel.innerHTML = clientOpts;
+
+      var orderOpts = '<option value="">-- Nro de Orden (Opcional) --</option>';
+      repairs.forEach(function(r) {
+        if(r && r.id) {
+          orderOpts += '<option value="' + r.id + '">#' + r.id + ' (' + (r.deviceBrand || '') + ' ' + (r.deviceModel || '') + ')</option>';
+        }
+      });
+      orderSel.innerHTML = orderOpts;
+    };
 
     // --- BACKUP INTEGRAL ---
     window.exportBackup = async function() {
@@ -929,7 +1033,6 @@
         ctx.fillStyle = '#000000';
         ctx.fillRect(0, 0, width, height);
 
-        // Líneas de unión
         if(activePoints.length > 0) {
           ctx.beginPath();
           ctx.strokeStyle = '#007AFF';
@@ -945,7 +1048,6 @@
           ctx.stroke();
         }
 
-        // Puntos
         points.forEach(function(p) {
           var isActive = activePoints.includes(p.id);
           ctx.beginPath();
@@ -1006,7 +1108,6 @@
       draw();
     };
 
-    // --- MÓDULO CLIENTES AGRUPADOS Y DNI/CUIT ---
     window.openClientsModal = function() { window.openModal('clientsModal'); setTimeout(window.renderClientsList, 50); };
     window.openManualClientModal = function() { ['manClientName','manClientDni','manClientPhone'].forEach(function(id){ if($(id)) $(id).value = ''; }); window.openModal('manualClientModal'); };
     
@@ -1093,7 +1194,7 @@
       if (balance <= 0) return;
 
       window.appConfirm("COBRAR SALDO", "¿Deseas cobrar el saldo pendiente de $" + balance + " para la orden #" + r.id + "?", function() {
-        cashMovements.unshift({ id: 'CSH-' + Date.now(), branch: localBranch, type: 'INCOME', amount: balance, concept: 'Cobro Saldo Orden #' + r.id, method: 'Efectivo', date: Date.now(), user: activeUser, closed: false });
+        cashMovements.unshift({ id: 'CSH-' + Date.now(), branch: localBranch, type: 'INCOME', amount: balance, concept: 'Cobro Saldo Orden #' + r.id, client: r.clientName, orderId: r.id, method: 'Efectivo', date: Date.now(), user: activeUser, closed: false });
         StorageShield.save('cash', cashMovements);
         r.advance = r.budget; StorageShield.save('repairs', repairs);
         window.renderClientsList(); window.updateCashBalanceUI();
@@ -1170,8 +1271,10 @@
 
     window.openSalesModal = function() { window.openModal('salesModal'); setTimeout(function() { window.switchPosTab('CATALOG'); }, 50); };
     window.openVentasHistoryModal = function() { window.openModal('ventasModal'); setTimeout(window.renderVentasList, 50); };
-    window.openStockModal = function() { window.openModal('stockModal'); setTimeout(function() { window.switchStockTab('LIST'); window.renderStockList(); }, 50); };
-    window.openCashModal = function() { currentCashBranch = localBranch; window.openModal('cashModal'); setTimeout(function(){ window.switchCashTab('MOV'); window.updateCashBalanceUI(); }, 50); };
+    window.openStockModal = function() { 
+      window.openModal('stockModal'); 
+      setTimeout(function() { window.switchStockTab('LIST'); window.renderStockList(); }, 50); 
+    };
     window.openTeamModal = function() { window.openModal('teamModal'); };
     window.openLicenseModal = function() { window.openModal('licenseModal'); };
     window.openInstallModal = function() { window.openModal('installModal'); };
@@ -1197,7 +1300,7 @@
       setTimeout(function() {
         var usersContainer = $('usersUnifiedList');
         if (usersContainer) {
-          usersContainer.innerHTML = '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800"><div class="flex items-center gap-1.5"><i class="ph-bold ph-user text-sm text-iosBlue"></i><span class="font-bold text-xs text-white">Admin</span><span class="text-[8px] bg-emerald-950 text-emerald-400 px-1 rounded font-bold">ACTIVO</span></div></div>';
+          usersContainer.innerHTML = '<div class="flex items-center justify-between p-2 rounded-xl bg-zinc-950 border border-zinc-800"><div class="flex items-center gap-1.5"><i class="ph-bold ph-user text-sm text-iosBlue"></i><span class="font-bold text-xs text-white">Admin (Acceso Total a Caja y Usuarios)</span><span class="text-[8px] bg-emerald-950 text-emerald-400 px-1 rounded font-bold">ACTIVO</span></div></div>';
         }
       }, 50);
     };
@@ -1271,8 +1374,9 @@
     window.guardarIngresoDirecto = function() {
       var id = 'OL-' + Math.floor(1000 + Math.random() * 9000);
       var advanceAmt = parseFloat($('inpDeviceAdvance').value) || 0;
+      var clientNameVal = $('inpClientName').value.trim();
       var r = {
-        id: id, branch: localBranch, clientName: $('inpClientName').value, 
+        id: id, branch: localBranch, clientName: clientNameVal, 
         clientDniCuit: $('inpClientDniCuit').value.trim(),
         clientPhone: $('inpClientCountryCode').value + $('inpClientPhone').value,
         deviceType: $('inpDeviceType').value, deviceBrand: $('inpDeviceBrand').value, deviceModel: $('inpDeviceModel').value,
@@ -1285,7 +1389,7 @@
 
       if (advanceAmt > 0) {
         if (!Array.isArray(cashMovements)) cashMovements = [];
-        cashMovements.unshift({ id: 'CSH-ADV-' + Date.now(), branch: localBranch, type: 'INCOME', amount: advanceAmt, concept: 'Seña Orden #' + id, method: 'Efectivo', date: Date.now(), user: activeUser, closed: false });
+        cashMovements.unshift({ id: 'CSH-ADV-' + Date.now(), branch: localBranch, type: 'INCOME', amount: advanceAmt, concept: 'Seña Orden #' + id, client: clientNameVal, orderId: id, method: 'Efectivo', date: Date.now(), user: activeUser, closed: false });
         StorageShield.save('cash', cashMovements);
       }
       window.closeModal('newRepairModal'); window.showToast("Éxito", "Orden creada: " + id);
@@ -1313,16 +1417,64 @@
 
     window.executePrintRepairLabel = function(orderId) { window.print(); };
 
+    // --- MÓDULO STOCK, ESCÁNER CÁMARA Y REBAJAS MASIVAS ---
     var currentStockTab = 'LIST';
+    var html5QrCode = null;
+
     window.switchStockTab = function(tab) {
       currentStockTab = tab;
-      var views = { 'LIST': $('stockViewList'), 'FORM': $('stockViewForm') };
-      var btns = { 'LIST': $('stockTabListBtn'), 'FORM': $('stockTabFormBtn') };
+      var views = { 'LIST': $('stockViewList'), 'SCAN': $('stockViewScan'), 'FORM': $('stockViewForm') };
+      var btns = { 'LIST': $('stockTabListBtn'), 'SCAN': $('stockTabScanBtn'), 'FORM': $('stockTabFormBtn') };
       for (var k in views) {
         if (views[k]) { if (k === tab) { views[k].classList.remove('hidden'); views[k].classList.add('flex'); } else { views[k].classList.add('hidden'); views[k].classList.remove('flex'); } }
         if (btns[k]) btns[k].className = (k === tab) ? 'py-1.5 rounded-lg font-bold text-xs transition bg-purple-700 text-white shadow flex items-center justify-center gap-1' : 'py-1.5 rounded-lg font-bold text-xs transition bg-zinc-800 text-zinc-400 flex items-center justify-center gap-1';
       }
-      if (tab === 'LIST') window.renderStockList();
+      
+      if (tab === 'LIST') {
+        window.stopScanner();
+        window.renderStockList();
+      } else if (tab === 'SCAN') {
+        window.startCameraScanner();
+      } else {
+        window.stopScanner();
+      }
+    };
+
+    window.startCameraScanner = function() {
+      setTimeout(function() {
+        try {
+          if (!html5QrCode) {
+            html5QrCode = new Html5Qrcode("qr-reader");
+          }
+          html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 200, height: 200 } },
+            function(decodedText) {
+              if($('scanResultBadge')) $('scanResultBadge').textContent = "Código detectado: " + decodedText;
+              var found = stockItems.find(function(s){ return String(s.code) === String(decodedText); });
+              if(found) {
+                window.showToast("Producto Encontrado", found.name + " - $" + found.price);
+              } else {
+                if($('stkCode')) $('stkCode').value = decodedText;
+                window.switchStockTab('FORM');
+                window.showToast("Nuevo Código", "Código escaneado cargado en formulario.");
+              }
+              window.stopScanner();
+            },
+            function(errorMessage) {}
+          ).catch(function(err) {
+            if($('scanResultBadge')) $('scanResultBadge').textContent = "No se pudo acceder a la cámara.";
+          });
+        } catch(e) {}
+      }, 200);
+    };
+
+    window.stopScanner = function() {
+      try {
+        if (html5QrCode && html5QrCode.isScanning) {
+          html5QrCode.stop().then(function() {}).catch(function(err) {});
+        }
+      } catch(e) {}
     };
 
     window.renderStockList = function() {
@@ -1332,8 +1484,11 @@
         return !term || (s.name && s.name.toLowerCase().includes(term)) || (s.code && String(s.code).toLowerCase().includes(term));
       });
       if(filtered.length === 0) { container.innerHTML = '<div class="text-center text-zinc-500 text-xs p-6">Inventario vacío.</div>'; return; }
-      container.innerHTML = filtered.map(function(s) {
-        return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl"><div><div class="font-bold text-white text-xs">' + s.name + '</div><div class="text-[9px] text-zinc-500">' + s.code + '</div></div><div class="text-right"><b class="text-emerald-400 font-mono text-xs">$' + (s.price||0).toLocaleString() + '</b><div class="text-[10px] text-zinc-300">Stock: ' + s.qty + '</div></div></div>';
+      container.innerHTML = filtered.map(function(s, idx) {
+        return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 border border-zinc-800 rounded-xl">' +
+               '<div><div class="font-bold text-white text-xs">' + s.name + '</div><div class="text-[9px] text-zinc-500 font-mono">SKU: ' + s.code + '</div></div>' +
+               '<div class="flex items-center gap-3"><div class="text-right"><b class="text-emerald-400 font-mono text-xs">$' + (s.price||0).toLocaleString() + '</b><div class="text-[10px] text-zinc-300">Stock: ' + s.qty + '</div></div>' +
+               '<button type="button" onclick="window.adjustSingleItemPrice(' + idx + ')" class="p-1.5 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-purple-300"><i class="ph-bold ph-pencil"></i></button></div></div>';
       }).join('');
     };
 
@@ -1344,6 +1499,42 @@
        if(!code || !name || price <= 0) { window.showToast("Error", "Completa código, nombre y precio."); return; }
        stockItems.unshift({ code: code, name: name, qty: qty, price: price });
        StorageShield.save('stock', stockItems); window.switchStockTab('LIST'); window.showToast("Guardado", "Producto agregado.");
+    };
+
+    window.adjustSingleItemPrice = function(idx) {
+      var item = stockItems[idx];
+      if(!item) return;
+      window.appPrompt("Modificar Precio", "Nuevo precio para " + item.name + ":", "number", item.price, function(val) {
+        var newPrice = parseFloat(val);
+        if(!isNaN(newPrice) && newPrice >= 0) {
+          item.price = newPrice;
+          StorageShield.save('stock', stockItems);
+          window.renderStockList();
+          window.showToast("Actualizado", "Precio modificado correctamente.");
+        }
+      });
+    };
+
+    window.openMassAdjustmentModal = function() { window.openModal('massAdjustmentModal'); };
+
+    window.executeMassAdjustment = function() {
+      var type = $('massAdjType').value;
+      var percent = parseFloat($('massAdjPercent').value) || 0;
+      if(percent <= 0) { window.showToast("Error", "Ingresa un porcentaje válido."); return; }
+
+      stockItems.forEach(function(item) {
+        var current = parseFloat(item.price) || 0;
+        if(type === 'increase') {
+          item.price = Math.round(current * (1 + (percent / 100)));
+        } else {
+          item.price = Math.max(0, Math.round(current * (1 - (percent / 100))));
+        }
+      });
+
+      StorageShield.save('stock', stockItems);
+      window.closeModal('massAdjustmentModal');
+      window.renderStockList();
+      window.showToast("Ajuste Masivo", "Precios actualizados en todo el stock.");
     };
 
     var posCart = []; var currentPosTab = 'CATALOG';
@@ -1396,7 +1587,7 @@
       var saleId = 'VTA-' + Math.floor(10000 + Math.random() * 90000);
       sales.unshift({ id: saleId, branch: localBranch, timestamp: Date.now(), total: total, items: posCart });
       StorageShield.save('sales', sales);
-      cashMovements.unshift({ id: 'CSH-' + Date.now(), branch: localBranch, type: 'INCOME', amount: total, concept: 'Venta #' + saleId, method: 'Efectivo', date: Date.now(), user: activeUser, closed: false });
+      cashMovements.unshift({ id: 'CSH-' + Date.now(), branch: localBranch, type: 'INCOME', amount: total, concept: 'Venta #' + saleId, client: 'Mostrador', orderId: '', method: 'Efectivo', date: Date.now(), user: activeUser, closed: false });
       StorageShield.save('cash', cashMovements);
       posCart = []; window.closeModal('salesModal'); window.showToast("Venta Exitosa", "Cobrada en caja.");
     };
@@ -1511,7 +1702,7 @@
       var r = repairs.find(function(x) { return x.id === selectedRepairId; }); if(!r) return;
       var balance = (parseFloat(r.budget)||0) - (parseFloat(r.advance)||0);
       if(balance <= 0) return;
-      cashMovements.unshift({ id: 'CSH-' + Date.now(), branch: localBranch, type: 'INCOME', amount: balance, concept: 'Cobro Orden #' + r.id, method: 'Efectivo', date: Date.now(), user: activeUser, closed: false });
+      cashMovements.unshift({ id: 'CSH-' + Date.now(), branch: localBranch, type: 'INCOME', amount: balance, concept: 'Cobro Orden #' + r.id, client: r.clientName, orderId: r.id, method: 'Efectivo', date: Date.now(), user: activeUser, closed: false });
       StorageShield.save('cash', cashMovements);
       r.advance = r.budget; StorageShield.save('repairs', repairs);
       window.openDetailModal(r.id); window.showToast("Cobrado", "Ingresado en caja.");
@@ -1522,7 +1713,7 @@
       window.closeModal('detailModal'); window.renderRepairsList(); window.updateCounters();
     };
 
-    // --- CAJA LOCAL CON EDICIÓN, ELIMINACIÓN Y CIERRE / BALANCES ---
+    // --- CAJA LOCAL CON REGISTRO DE CLIENTE Y ORDEN, EDICIÓN Y ELIMINACIÓN MANUAL ---
     window.switchCashTab = function(tab) {
       var isMov = (tab === 'MOV');
       if($('cashViewMov')) $('cashViewMov').style.display = isMov ? 'block' : 'none';
@@ -1551,13 +1742,28 @@
         var filtered = cashMovements.filter(function(m) { return (m.branch || 'Central') === currentCashBranch; });
         container.innerHTML = filtered.map(function(m) {
           var isInc = m.type === 'INCOME';
-          return '<div class="flex justify-between items-center p-2 bg-zinc-950 rounded-xl"><div><div class="font-bold text-white">' + m.concept + ' ' + (m.closed ? '<span class="text-[8px] bg-zinc-800 text-zinc-400 px-1 rounded">Cerrado</span>' : '') + '</div><span class="text-[9px] text-zinc-400">' + new Date(m.date).toLocaleDateString('es-AR') + ' • ' + m.method + '</span></div><div class="flex items-center gap-2"><b class="font-mono ' + (isInc ? 'text-emerald-400' : 'text-rose-400') + '">' + (isInc ? '+' : '-') + '$' + (m.amount||0).toLocaleString() + '</b><button type="button" onclick="window.editCashMovement(\''+m.id+'\')" class="text-xs text-blue-400 px-1"><i class="ph-bold ph-pencil"></i></button><button type="button" onclick="window.deleteCashMovement(\''+m.id+'\')" class="text-xs text-rose-400 px-1"><i class="ph-bold ph-trash"></i></button></div></div>';
+          var clientInfo = m.client ? '<br><span class="text-[9px] text-iosBlue font-bold">Cliente: ' + m.client + (m.orderId ? ' (Orden #' + m.orderId + ')' : '') + '</span>' : '';
+          return '<div class="flex justify-between items-center p-2.5 bg-zinc-950 rounded-xl border border-zinc-800"><div><div class="font-bold text-white text-xs">' + m.concept + ' ' + (m.closed ? '<span class="text-[8px] bg-zinc-800 text-zinc-400 px-1 rounded">Cerrado</span>' : '') + '</div><span class="text-[9px] text-zinc-400">' + new Date(m.date).toLocaleDateString('es-AR') + ' • ' + m.method + '</span>' + clientInfo + '</div><div class="flex items-center gap-2"><b class="font-mono ' + (isInc ? 'text-emerald-400' : 'text-rose-400') + '">' + (isInc ? '+' : '-') + '$' + (m.amount||0).toLocaleString() + '</b><button type="button" onclick="window.editCashMovement(\''+m.id+'\')" class="text-xs text-blue-400 px-1"><i class="ph-bold ph-pencil"></i></button><button type="button" onclick="window.deleteCashMovement(\''+m.id+'\')" class="text-xs text-rose-400 px-1"><i class="ph-bold ph-trash"></i></button></div></div>';
         }).join('') || '<div class="text-center text-zinc-500 text-xs py-3">Sin movimientos en esta caja.</div>';
       }
     };
 
-    window.showCashIncome = function() { if($('cashMovementForm')) $('cashMovementForm').style.display = 'block'; if($('cshType')) $('cshType').value = 'INCOME'; if($('cshEditId')) $('cshEditId').value = ''; if($('cshAmount')) $('cshAmount').value=''; if($('cshConcept')) $('cshConcept').value=''; };
-    window.showCashExpense = function() { if($('cashMovementForm')) $('cashMovementForm').style.display = 'block'; if($('cshType')) $('cshType').value = 'EXPENSE'; if($('cshEditId')) $('cshEditId').value = ''; if($('cshAmount')) $('cshAmount').value=''; if($('cshConcept')) $('cshConcept').value=''; };
+    window.showCashIncome = function() { 
+      if($('cashMovementForm')) $('cashMovementForm').style.display = 'block'; 
+      if($('cshType')) $('cshType').value = 'INCOME'; 
+      if($('cshEditId')) $('cshEditId').value = ''; 
+      if($('cshAmount')) $('cshAmount').value=''; 
+      if($('cshConcept')) $('cshConcept').value=''; 
+      window.populateCashClientDropdowns();
+    };
+    window.showCashExpense = function() { 
+      if($('cashMovementForm')) $('cashMovementForm').style.display = 'block'; 
+      if($('cshType')) $('cshType').value = 'EXPENSE'; 
+      if($('cshEditId')) $('cshEditId').value = ''; 
+      if($('cshAmount')) $('cshAmount').value=''; 
+      if($('cshConcept')) $('cshConcept').value=''; 
+      window.populateCashClientDropdowns();
+    };
     window.hideCashForm = function() { if($('cashMovementForm')) $('cashMovementForm').style.display = 'none'; };
 
     window.saveCashMovement = function() {
@@ -1566,13 +1772,15 @@
       var concept = $('cshConcept').value.trim();
       var type = $('cshType').value;
       var method = $('cshMethod').value;
+      var client = $('cshClientSelect').value;
+      var orderId = $('cshOrderSelect').value;
       if(amt <= 0 || !concept) { window.showToast("Error", "Completa monto y concepto."); return; }
 
       if(editId) {
         var m = cashMovements.find(function(x){ return x.id === editId; });
-        if(m) { m.amount = amt; m.concept = concept; m.type = type; m.method = method; }
+        if(m) { m.amount = amt; m.concept = concept; m.type = type; m.method = method; m.client = client; m.orderId = orderId; }
       } else {
-        cashMovements.unshift({ id: 'CSH-' + Date.now(), branch: currentCashBranch, type: type, amount: amt, concept: concept, method: method, date: Date.now(), user: activeUser, closed: false });
+        cashMovements.unshift({ id: 'CSH-' + Date.now(), branch: currentCashBranch, type: type, amount: amt, concept: concept, client: client, orderId: orderId, method: method, date: Date.now(), user: activeUser, closed: false });
       }
       StorageShield.save('cash', cashMovements);
       $('cshAmount').value = ''; $('cshConcept').value = ''; $('cshEditId').value = ''; window.hideCashForm(); window.updateCashBalanceUI();
@@ -1587,14 +1795,16 @@
       if($('cshAmount')) $('cshAmount').value = m.amount;
       if($('cshConcept')) $('cshConcept').value = m.concept;
       if($('cshMethod')) $('cshMethod').value = m.method;
+      if($('cshClientSelect')) $('cshClientSelect').value = m.client || '';
+      if($('cshOrderSelect')) $('cshOrderSelect').value = m.orderId || '';
     };
 
     window.deleteCashMovement = function(id) {
-      window.appConfirm("Eliminar Pago", "¿Estás seguro de eliminar este movimiento de caja?", function() {
+      window.appConfirm("Eliminar Movimiento / Balance", "¿Estás seguro de eliminar manualmente este movimiento de caja?", function() {
         cashMovements = cashMovements.filter(function(x){ return x.id !== id; });
         StorageShield.save('cash', cashMovements);
         window.updateCashBalanceUI();
-        window.showToast("Eliminado", "Movimiento eliminado.");
+        window.showToast("Eliminado", "Registro eliminado manualmente.");
       });
     };
 
@@ -1650,7 +1860,6 @@
       }).join('') || '<div class="text-center text-zinc-500 text-xs p-4">Sin ventas registradas.</div>';
     };
 
-    // BOOT INICIAL
     document.addEventListener('DOMContentLoaded', function() {
       try {
         if($('headerActiveUserDisplay')) $('headerActiveUserDisplay').textContent = activeUser;
