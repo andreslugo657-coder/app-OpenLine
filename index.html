@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="OpenLine">
   <meta name="theme-color" content="#09090b">
-  <title>OpenLine - TALLER-9572</title>
+  <title>OpenLine - Gestión de Taller Profesional</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -167,54 +167,7 @@
 
   </main>
 
-  <!-- MODAL AJUSTES COMPLETO (TALLER, LOGO Y USUARIOS) -->
-  <div id="settingsModal" class="app-modal">
-    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col text-xs text-zinc-300">
-      <div class="flex items-center justify-between p-4 border-b border-zinc-800 shrink-0">
-        <h3 class="font-bold text-white text-sm">Ajustes y Configuración</h3>
-        <button type="button" onclick="window.closeModal('settingsModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
-      </div>
-      
-      <div class="p-4 space-y-4 overflow-y-auto flex-1">
-        
-        <!-- SECCIÓN 1: DATOS DEL TALLER -->
-        <details class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden" open>
-          <summary class="p-3 font-bold text-white flex items-center justify-between cursor-pointer">
-            <span class="flex items-center gap-1.5"><i class="ph-bold ph-storefront text-iosBlue"></i> Datos del Taller</span>
-            <i class="ph-bold ph-caret-down summary-chevron transition-transform"></i>
-          </summary>
-          <div class="p-3 border-t border-zinc-800 space-y-2 text-xs">
-            <input type="text" id="setWorkshopName" placeholder="Nombre de Fantasía del Taller..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-            <input type="text" id="setWorkshopAddress" placeholder="Dirección del Local..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-            <input type="tel" id="setWorkshopPhone" placeholder="Teléfono de Contacto..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
-            <div>
-              <label class="text-[9px] text-zinc-400 font-bold uppercase block mb-1">Logo del Taller</label>
-              <input type="file" id="setWorkshopLogoInput" accept="image/*" onchange="window.handleLogoUpload(event)" class="w-full text-zinc-400 text-xs">
-            </div>
-          </div>
-        </details>
-
-        <!-- SECCIÓN 2: GESTIÓN DE USUARIOS Y TÉCNICOS -->
-        <details class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden">
-          <summary class="p-3 font-bold text-white flex items-center justify-between cursor-pointer">
-            <span class="flex items-center gap-1.5"><i class="ph-bold ph-users-three text-indigo-400"></i> Usuarios y Técnicos</span>
-            <i class="ph-bold ph-caret-down summary-chevron transition-transform"></i>
-          </summary>
-          <div class="p-3 border-t border-zinc-800 space-y-2.5 text-xs">
-            <div class="flex gap-1.5">
-              <input type="text" id="inpNewUserName" placeholder="Nombre de usuario/técnico..." class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
-              <button type="button" onclick="window.addWorkshopUser()" class="px-3 py-2 bg-indigo-600 text-white font-bold rounded-xl shrink-0">Agregar</button>
-            </div>
-            <div id="usersListContainer" class="space-y-1"></div>
-          </div>
-        </details>
-
-        <button type="button" onclick="window.saveSettings()" class="w-full py-3 bg-iosBlue text-white font-bold rounded-xl active:scale-95 transition">Guardar Cambios de Configuración</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL DETALLE DE ÓRDEN -->
+  <!-- MODAL DETALLE DE ÓRDEN (DESPLIEGUE COMPLETO VISUAL) -->
   <div id="repairDetailModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col text-xs text-zinc-300">
       <div class="flex items-center justify-between p-4 border-b border-zinc-800 shrink-0">
@@ -240,7 +193,7 @@
           </div>
         </details>
 
-        <!-- ACCESO Y PATRÓN -->
+        <!-- ACCESO Y SEGURIDAD -->
         <details class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden" open>
           <summary class="p-2.5 font-bold text-white flex items-center justify-between cursor-pointer">
             <span class="text-xs uppercase text-zinc-400 font-bold">Seguridad y Desbloqueo</span>
@@ -249,16 +202,16 @@
           <div class="p-3 border-t border-zinc-800 space-y-1.5">
             <div class="flex items-center justify-between text-xs">
               <span class="text-zinc-400">PIN / Clave:</span>
-              <span id="detailDevicePin" class="font-mono text-white font-bold">1234</span>
+              <span id="detailDevicePin" class="font-mono text-white font-bold">Sin Clave</span>
             </div>
             <div>
               <span class="text-[10px] text-zinc-400 block mb-1">Patrón Guardado:</span>
-              <span id="detailDevicePattern" class="font-mono text-iosBlue font-bold bg-zinc-900 border border-zinc-800 px-2 py-1 rounded block text-center">1-2-3</span>
+              <span id="detailDevicePattern" class="font-mono text-iosBlue font-bold bg-zinc-900 border border-zinc-800 px-2 py-1 rounded block text-center">Sin Patrón</span>
             </div>
           </div>
         </details>
 
-        <!-- RECUPERACIÓN DE FOTOS -->
+        <!-- FOTOGRAFÍAS DE INGRESO -->
         <details class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden" open>
           <summary class="p-2.5 font-bold text-white flex items-center justify-between cursor-pointer">
             <span class="text-xs uppercase text-zinc-400 font-bold">Fotografías del Equipo</span>
@@ -269,7 +222,7 @@
           </div>
         </details>
 
-        <!-- FALLA -->
+        <!-- FALLA / DIAGNÓSTICO -->
         <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 space-y-1">
           <span class="text-[9px] font-bold text-zinc-500 uppercase block">Falla / Diagnóstico</span>
           <p id="detailDeviceFault" class="text-zinc-300 leading-relaxed">Sin observaciones.</p>
@@ -287,7 +240,7 @@
         </div>
 
         <div class="space-y-1 pt-1">
-          <label class="text-[9px] font-bold text-zinc-400 uppercase block">Estado</label>
+          <label class="text-[9px] font-bold text-zinc-400 uppercase block">Estado de Trabajo</label>
           <select id="detailStatusSelect" onchange="window.updateOrderStatusFromModal()" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold">
             <option value="IN_PROGRESS">En Taller (IN_PROGRESS)</option>
             <option value="READY">Listo para Entregar (READY)</option>
@@ -295,11 +248,12 @@
           </select>
         </div>
 
-        <button type="button" onclick="window.enableOrderEditMode()" class="w-full py-2.5 bg-zinc-800 border border-zinc-700 text-white font-bold rounded-xl active:scale-95 transition flex items-center justify-center gap-1.5">
+        <button type="button" onclick="window.enableOrderEditMode()" class="w-full py-2.5 bg-zinc-800 border border-zinc-700 hover:bg-zinc-700 text-white font-bold rounded-xl active:scale-95 transition flex items-center justify-center gap-1.5">
           <i class="ph-bold ph-pencil-simple text-iosBlue"></i> Editar Orden
         </button>
       </div>
 
+      <!-- FORMULARIO DE EDICIÓN (OCULTO POR DEFECTO) -->
       <form id="editOrderForm" onsubmit="window.saveEditedOrder(event)" class="hidden p-4 space-y-3 overflow-y-auto flex-1">
         <input type="text" id="editClientName" placeholder="Nombre Cliente *" required class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
         <input type="tel" id="editClientPhone" placeholder="Teléfono *" required class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
@@ -318,6 +272,50 @@
           <button type="submit" class="flex-1 py-2.5 bg-iosBlue text-white font-bold rounded-xl">Guardar</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL AJUSTES Y CONFIGURACIÓN -->
+  <div id="settingsModal" class="app-modal">
+    <div class="bg-zinc-900 border-t sm:border border-zinc-800 rounded-t-3xl sm:rounded-3xl w-full max-w-md modal-card flex flex-col text-xs text-zinc-300">
+      <div class="flex items-center justify-between p-4 border-b border-zinc-800 shrink-0">
+        <h3 class="font-bold text-white text-sm">Ajustes y Configuración</h3>
+        <button type="button" onclick="window.closeModal('settingsModal')" class="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="ph-bold ph-x"></i></button>
+      </div>
+      
+      <div class="p-4 space-y-4 overflow-y-auto flex-1">
+        <details class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden" open>
+          <summary class="p-3 font-bold text-white flex items-center justify-between cursor-pointer">
+            <span class="flex items-center gap-1.5"><i class="ph-bold ph-storefront text-iosBlue"></i> Datos del Taller</span>
+            <i class="ph-bold ph-caret-down summary-chevron transition-transform"></i>
+          </summary>
+          <div class="p-3 border-t border-zinc-800 space-y-2 text-xs">
+            <input type="text" id="setWorkshopName" placeholder="Nombre de Fantasía del Taller..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+            <input type="text" id="setWorkshopAddress" placeholder="Dirección del Local..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+            <input type="tel" id="setWorkshopPhone" placeholder="Teléfono de Contacto..." class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white font-mono">
+            <div>
+              <label class="text-[9px] text-zinc-400 font-bold uppercase block mb-1">Logo del Taller</label>
+              <input type="file" id="setWorkshopLogoInput" accept="image/*" onchange="window.handleLogoUpload(event)" class="w-full text-zinc-400 text-xs">
+            </div>
+          </div>
+        </details>
+
+        <details class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden">
+          <summary class="p-3 font-bold text-white flex items-center justify-between cursor-pointer">
+            <span class="flex items-center gap-1.5"><i class="ph-bold ph-users-three text-indigo-400"></i> Usuarios y Técnicos</span>
+            <i class="ph-bold ph-caret-down summary-chevron transition-transform"></i>
+          </summary>
+          <div class="p-3 border-t border-zinc-800 space-y-2.5 text-xs">
+            <div class="flex gap-1.5">
+              <input type="text" id="inpNewUserName" placeholder="Nombre de usuario/técnico..." class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white">
+              <button type="button" onclick="window.addWorkshopUser()" class="px-3 py-2 bg-indigo-600 text-white font-bold rounded-xl shrink-0">Agregar</button>
+            </div>
+            <div id="usersListContainer" class="space-y-1"></div>
+          </div>
+        </details>
+
+        <button type="button" onclick="window.saveSettings()" class="w-full py-3 bg-iosBlue text-white font-bold rounded-xl active:scale-95 transition">Guardar Cambios de Configuración</button>
+      </div>
     </div>
   </div>
 
@@ -378,7 +376,7 @@
     </div>
   </div>
 
-  <!-- MODAL CAJA RESTAURADO Y ESTRUCTURADO -->
+  <!-- MODALES DE APOYO -->
   <div id="cashModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-zinc-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0">
@@ -389,7 +387,6 @@
     </div>
   </div>
 
-  <!-- MODALES ADICIONALES (STOCK, VENTAS, VENTAS POS Y LICENCIA) -->
   <div id="stockModal" class="app-modal">
     <div class="bg-zinc-900 border-t sm:border border-purple-800 sm:rounded-3xl w-full max-w-lg modal-card flex flex-col text-xs text-zinc-300">
       <div class="flex items-center justify-between px-4 py-3 border-b border-zinc-800 shrink-0"><h3 class="font-bold text-white text-sm">Inventario de Stock</h3><button type="button" onclick="window.closeModal('stockModal')" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-400"><i class="ph-bold ph-x"></i></button></div>
@@ -468,7 +465,6 @@
       if (viewName === 'caja') window.renderCashMovements();
     };
 
-    // BARRIDO COMPLETO QUE INCLUYE Y RECUPERA TODAS LAS FOTOS HISTÓRICAS
     function deepScanAllHistoricalData() {
       var allKeys = Object.keys(localStorage);
       var repairMap = {};
@@ -486,7 +482,6 @@
               if (isRepair) {
                 var orderId = item.id || ('OL-' + Math.floor(1000 + Math.random() * 9000));
                 
-                // ESCANEO FLEXIBLE DE FOTOS EN CUALQUIER PROPIEDAD
                 var extractedPhotos = item.photos || item.fotos || item.images || item.adjuntos || item.imgBase64 || [];
                 if (!Array.isArray(extractedPhotos) && typeof extractedPhotos === 'string') {
                   extractedPhotos = [extractedPhotos];
@@ -527,7 +522,6 @@
       window.updateCashBalanceUI();
     }
 
-    // ABRIR Y RESTAURAR DETALLE DE ÓRDEN CON FOTOS Y SECCIONES
     window.openRepairDetailModal = function(orderId) {
       var order = repairs.find(function(r){ return r.id === orderId; });
       if (!order) return;
@@ -769,7 +763,6 @@
       window.updateCashBalanceUI();
     };
 
-    // AJUSTES Y USUARIOS
     window.loadSettingsUI = function() {
       if ($('setWorkshopName')) $('setWorkshopName').value = localStorage.getItem('openline_setting_name_' + currentWorkshopId) || '';
       if ($('setWorkshopAddress')) $('setWorkshopAddress').value = localStorage.getItem('openline_setting_address_' + currentWorkshopId) || '';
@@ -868,7 +861,6 @@
       reader.readAsText(file);
     };
 
-    // PATRÓN TÁCTIL DIBUJABLE
     function setupTouchPattern() {
       var grid = $('patternGrid');
       if (!grid) return;
